@@ -9,7 +9,7 @@ Willkommen auf unserer Lernplattform! Hier findest du kleine, kindgerechte Web-A
 
 Die App deckt den kompletten LehrplanPLUS für die 3. Klasse ab. Ohne Anmeldung, direkt im Browser spielbar!
 
-[![Mathe Trainer Starten](https://img.shields.io/badge/🚀_Mathe_Trainer_starten-3498db?style=for-the-badge&logoColor=white)](mathe_trainer_3_klasse.html)
+[![Mathe Trainer Starten](https://img.shields.io/badge/🚀_Mathe_Trainer_starten-3498db?style=for-the-badge&logoColor=white)](https://christopheschneider86-rgb.github.io/Dritte-Klasse/mathe_trainer_3_klasse.html)
 
 *(Klicke auf den blauen Button, um direkt zur Mathe-App zu gelangen)*
 
