@@ -8,23 +8,21 @@
 <link rel="apple-touch-icon" href="main.png">
 <style>
 :root {
-  --bg: #e9f4ff;
-  --card: #ffffff;
-  --accent: #3498db;
-  --accent-soft: #d6ecff;
-  --danger: #e74c3c;
-  --success: #27ae60;
-  --text: #222222;
-  --muted: #666666;
+  --bg: #e9f4ff; --card: #ffffff; --accent: #3498db; --accent-soft: #d6ecff;
+  --danger: #e74c3c; --success: #27ae60; --text: #222222; --muted: #666666;
   --radius: 18px;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
+*{box-sizing:border-box;margin:0;padding:0; -webkit-tap-highlight-color: transparent;}
 body{
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background: var(--bg); color: var(--text);
   min-height: 100vh; display: flex; justify-content: center;
+  touch-action: manipulation;
 }
 .app{ width:100%; max-width:1100px; padding:12px; }
+
+@media(min-width: 768px) { .app { padding: 24px; } .card { padding: 24px; } }
+
 .card{
   background:var(--card); border-radius:var(--radius);
   box-shadow:0 8px 24px rgba(0,0,0,0.08); padding:16px;
@@ -32,105 +30,109 @@ body{
 .header{ display:flex; align-items:center; gap:16px; margin-bottom:14px; position: relative;}
 
 .back-home{
-  background: #ecf0f1; border: none; border-radius: 12px; padding: 10px 15px;
-  cursor: pointer; text-decoration: none; color: var(--text); font-size: 20px;
-  display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+  background: #ecf0f1; border: none; border-radius: 12px; padding: 10px 12px;
+  cursor: pointer; color: var(--text); display: flex; align-items: center; justify-content: center; transition: background 0.2s; text-decoration: none;
 }
+.back-home svg { width: 24px; height: 24px; }
 .back-home:hover{ background: #bdc3c7; }
 
-.app-icon{
-  width:64px; height:64px; border-radius:16px; object-fit:cover;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
-.icon-fallback{
-  width:64px; height:64px; border-radius:16px; background:#3498db;
-  display:flex; align-items:center; justify-content:center;
-  color:#fff; font-size:36px; font-weight:bold; display:none;
-}
+.app-icon{ width:64px; height:64px; border-radius:16px; object-fit:cover; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
 .header-text h1{ font-size:22px; margin-bottom:4px; color:#2c3e50; }
 .header-text p{ font-size:14px; color:var(--muted); }
-.profile-bar, .score-bar{
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:12px; flex-wrap:wrap; gap:8px;
-}
-.score-bar{ padding:10px 14px; border-radius:16px; background:var(--accent-soft); font-size:14px; }
-.score-bar strong{ font-size:16px; color:#1b6fab; }
-.stars{ color:#f39c12; font-size:18px; letter-spacing:2px; }
-select, .btn{ padding:8px 14px; border-radius:12px; font-size:14px; border:none; cursor:pointer; }
-select{ border:1px solid #ccd8e6; background:#f8fbff; font-weight:bold;}
+
+.profile-bar, .score-bar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px; }
+.score-bar{ padding:12px 16px; border-radius:16px; background:var(--accent-soft); font-size:14px; }
+.score-bar strong{ font-size:18px; color:#1b6fab; display:flex; align-items:center; gap:6px;}
+.score-icon { width: 24px; height: 24px; color: #1b6fab;}
+
+.stars{ color:#f39c12; display:flex; gap: 4px; }
+.star-icon { width: 26px; height: 26px; fill: currentColor; }
+.star-empty { fill: none; stroke: currentColor; stroke-width: 2;}
+
+select, .btn{ padding:12px 18px; border-radius:12px; font-size:15px; border:none; cursor:pointer; display:flex; align-items:center; gap:8px; justify-content:center; min-height: 44px;}
+select{ border:1px solid #ccd8e6; background:#f8fbff; font-weight:bold; font-size: 16px;}
 .btn-primary{ background:var(--accent); color:white; font-weight:bold; }
 .btn-secondary{ background:#ecf0f1; color:var(--text); }
 .btn-danger{ background:#ffe4e1; color:#c0392b; }
 .btn:active{ transform:scale(0.96); }
+.btn svg { width: 20px; height: 20px; }
 
-.main-layout{ display:grid; grid-template-columns: 1fr 1.2fr; gap:16px; }
-@media(max-width:800px){ .main-layout{ grid-template-columns:1fr; } }
-
-.tile-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(130px, 1fr)); gap:10px; }
-.tile{
-  background:#f7fbff; border-radius:12px; padding:12px; border:2px solid #d9e8f7;
-  cursor:pointer; transition:all .2s; min-height:85px; display:flex; flex-direction:column; justify-content: center;
+/* SPEAKER BUTTON */
+.speaker-btn {
+  background: var(--accent-soft); color: var(--accent); border: none; border-radius: 50%;
+  width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: transform 0.2s; flex-shrink: 0;
 }
-.tile:hover, .tile.active{ border-color:var(--accent); background:#edf5fc; transform:translateY(-2px); }
-.tile-title{ font-size:14px; font-weight:bold; margin-bottom:2px; color:#2c3e50; }
-.tile-sub{ font-size:10px; color:var(--muted); }
+.speaker-btn:active { transform: scale(0.9); }
+.speaker-btn svg { width: 24px; height: 24px; }
 
-.panel-title{ font-size:18px; font-weight:bold; margin-bottom:8px; color:#2c3e50; }
+/* LAYOUT */
+.main-layout{ display:grid; grid-template-columns: 1fr 1.2fr; gap:20px; align-items: start;}
+
+@media(max-width: 900px){ 
+  .main-layout{ grid-template-columns:1fr; } 
+  .header-text h1{ font-size: 18px; }
+  .app-icon { width: 48px; height: 48px; }
+}
+
+.tile-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:12px; }
+.tile{
+  background:#f7fbff; border-radius:14px; padding:16px 12px; border:2px solid #d9e8f7;
+  cursor:pointer; transition:all .2s; min-height:90px; display:flex; flex-direction:column; justify-content: center; align-items: center; text-align: center;
+}
+.tile:hover, .tile.active{ border-color:var(--accent); background:#edf5fc; transform:translateY(-2px); box-shadow: 0 4px 10px rgba(52, 152, 219, 0.15);}
+.tile-title{ font-size:15px; font-weight:bold; margin-bottom:4px; color:#2c3e50; }
+.tile-sub{ font-size:12px; color:var(--muted); }
+
+.panel-title{ font-size:20px; font-weight:bold; margin-bottom:12px; color:#2c3e50; display:flex; align-items:center; gap:8px;}
+.panel-icon { width: 24px; height: 24px; color: #3498db; }
+
 .task-box{
-  margin-top:12px; padding:20px; border-radius:16px; background:#fdfdfd;
+  margin-top:0; padding:24px; border-radius:16px; background:#fdfdfd;
   border:2px solid #e1e8f0; text-align:center; box-shadow:inset 0 2px 10px rgba(0,0,0,0.02);
 }
-.task-question{ font-size:22px; font-weight:bold; margin-bottom:10px; color:#2c3e50; line-height:1.3;}
-.visual-container{ margin:15px 0; display:flex; flex-direction: column; align-items:center; }
-.task-hint{ font-size:13px; color:var(--muted); margin-bottom:15px; }
+.question-wrapper { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 12px; }
+.task-question{ font-size:24px; font-weight:bold; color:#2c3e50; line-height:1.4;}
+.visual-container{ margin:20px 0; display:flex; flex-direction: column; align-items:center; }
+.task-hint{ font-size:15px; color:var(--muted); margin-bottom:20px; display:flex; justify-content:center; align-items:center; gap:6px;}
 
-/* MAUER */
-.mauer-wrapper{ display:flex; flex-direction:column; align-items:center; gap:4px; margin: 10px 0;}
+.mauer-wrapper{ display:flex; flex-direction:column; align-items:center; gap:6px; margin: 10px 0;}
 .mauer-row{ display:flex; justify-content:center; gap:8px; }
-.brick{
-  width:75px; height:45px; background:#e67e22; border-radius:6px;
-  border:2px solid #d35400; display:flex; align-items:center; justify-content:center;
-  font-size:18px; font-weight:bold; color:white; box-shadow:0 3px 0 #b33c00;
-}
-.brick input{
-  width:100%; height:100%; border:none; background:white; border-radius:4px;
-  text-align:center; font-size:20px; font-weight:bold; color:#d35400;
-}
+.brick{ width:80px; height:50px; background:#e67e22; border-radius:8px; border:2px solid #d35400; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:bold; color:white; box-shadow:0 4px 0 #b33c00; }
+.brick input{ width:100%; height:100%; border:none; background:white; border-radius:6px; text-align:center; font-size:22px; font-weight:bold; color:#d35400; }
 .brick input:focus{ outline:none; box-shadow:inset 0 0 0 3px #f1c40f; }
 
-/* TAUSENDERBUCH */
-.tausender-cross{ display:grid; grid-template-columns: 60px 60px 60px; gap:6px; justify-content:center; }
-.t-cell{ width:60px; height:60px; border-radius:8px; }
-.t-center{ background:#3498db; color:white; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:bold; box-shadow:0 4px 0 #2980b9;}
-.t-input{
-  width:100%; height:100%; text-align:center; font-size:20px; font-weight:bold;
-  border:2px solid #bdc3c7; border-radius:8px; background:#fff;
-}
+.tausender-cross{ display:grid; grid-template-columns: 65px 65px 65px; gap:8px; justify-content:center; }
+.t-cell{ width:65px; height:65px; border-radius:10px; }
+.t-center{ background:#3498db; color:white; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:bold; box-shadow:0 4px 0 #2980b9;}
+.t-input{ width:100%; height:100%; text-align:center; font-size:22px; font-weight:bold; border:2px solid #bdc3c7; border-radius:10px; background:#fff; }
 .t-input:focus{ border-color:#3498db; outline:none; }
 
-.std-input{
-  width:110px; padding:10px; font-size:24px; font-weight:bold; text-align:center;
-  border:3px solid #ccd8e6; border-radius:12px; margin:0 5px;
-}
+.std-input{ width:120px; padding:12px; font-size:26px; font-weight:bold; text-align:center; border:3px solid #ccd8e6; border-radius:14px; margin:0 5px; }
 .std-input:focus{ border-color:#3498db; outline:none; }
 
-.feedback{ margin-top:15px; font-size:16px; font-weight:bold; min-height:24px; }
+.feedback{ margin-top:20px; font-size:18px; font-weight:bold; min-height:28px; display:flex; justify-content:center; align-items:center; gap:8px;}
 .feedback.ok{ color:var(--success); }
 .feedback.bad{ color:var(--danger); }
+.fb-icon { width: 28px; height: 28px; }
 
-.stats-card{ background:#fdfdfd; border-radius:16px; padding:12px; border:2px solid #e1e8f0; margin-top:10px;}
-.stats-row{ display:flex; align-items:center; font-size:12px; margin-bottom:6px; }
-.stats-bar{ flex:1; height:8px; background:#ecf0f1; border-radius:10px; margin:0 10px; overflow:hidden; }
+.stats-card{ background:#fdfdfd; border-radius:16px; padding:16px; border:2px solid #e1e8f0; margin-top:16px;}
+.stats-row{ display:flex; align-items:center; font-size:13px; margin-bottom:8px; }
+.stats-bar{ flex:1; height:10px; background:#ecf0f1; border-radius:10px; margin:0 10px; overflow:hidden; }
 .stats-fill{ height:100%; background:var(--success); transition:width 0.5s; }
+
+@media(max-width: 900px) { #statsList { column-count: 1 !important; } }
+@media(min-width: 600px) and (max-width: 900px) { #statsList { column-count: 2 !important; } }
 </style>
 </head>
 <body>
 <div class="app">
   <div class="card">
     <div class="header">
-      <a href="index.html" class="back-home" title="Zurück zur Startseite">🏠</a>
-      <img src="main.png" class="app-icon" alt="Icon" onerror="this.style.display='none'; document.getElementById('icon-fb').style.display='flex';">
-      <div id="icon-fb" class="icon-fallback">M</div>
+      <a href="index.html" class="back-home" title="Zurück zur Startseite">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+      </a>
+      <img src="main.png" class="app-icon" alt="Icon" onerror="this.style.display='none'">
       <div class="header-text">
         <h1>Mathe-Trainer 3. Klasse</h1>
         <p>LehrplanPLUS Bayern · Endlos viele Aufgaben</p>
@@ -142,315 +144,62 @@ select{ border:1px solid #ccd8e6; background:#f8fbff; font-weight:bold;}
       <div>
         <select id="profileSelect"></select>
       </div>
-      <div>
-        <button class="btn btn-secondary" id="addBtn">Neues Kind</button>
-        <button class="btn btn-danger" id="delBtn">Profil löschen</button>
+      <div style="display:flex; gap:6px;">
+        <button class="btn btn-secondary" id="addBtn">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+          Neues Kind
+        </button>
+        <button class="btn btn-danger" id="delBtn">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+          Löschen
+        </button>
       </div>
     </div>
 
     <div class="score-bar">
-      <div><strong id="scoreText">Punkte: 0</strong></div>
-      <div class="stars" id="starsText">☆ ☆ ☆ ☆ ☆</div>
+      <div>
+        <strong>
+          <svg class="score-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+          <span id="scoreText">Punkte: 0</span>
+        </strong>
+      </div>
+      <div class="stars" id="starsText"></div>
     </div>
 
     <div class="main-layout">
       <!-- Links: Menü -->
       <div>
-        <div class="panel-title">Themengebiete</div>
+        <div class="panel-title">
+          <svg class="panel-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+          Themengebiete
+        </div>
         <div class="tile-grid" id="taskTiles"></div>
       </div>
 
       <!-- Rechts: Aufgabe -->
       <div>
-        <div class="panel-title" id="taskTitle">Aktuelle Aufgabe</div>
+        <div class="panel-title" id="taskTitle">
+          <svg class="panel-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+          Aktuelle Aufgabe
+        </div>
         <div class="task-box">
-          <div class="task-question" id="tQuestion">Wähle links ein Thema!</div>
+          
+          <div class="question-wrapper">
+            <div class="task-question" id="tQuestion">Wähle links ein Thema!</div>
+            <!-- NEU: Lautsprecher Icon -->
+            <button class="speaker-btn" id="readBtn" style="display:none;" title="Vorlesen">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+              </svg>
+            </button>
+          </div>
+
           <div class="visual-container" id="tVisual"></div>
           <div class="task-hint" id="tHint"></div>
           
-          <div style="margin-top:15px;">
-            <button class="btn btn-primary" id="checkBtn" style="padding:12px 24px; font-size:16px;" disabled>Antwort prüfen</button>
-            <button class="btn btn-secondary" id="nextBtn" style="padding:12px 24px; font-size:16px; display:none;">Nächste Aufgabe ➔</button>
-          </div>
-          <div class="feedback" id="feedback"></div>
-        </div>
-
-        <div class="stats-card">
-          <div style="font-weight:bold; margin-bottom:8px; color:#2c3e50;">📊 Profil-Statistik</div>
-          <div id="statsList" style="column-count: 2; column-gap: 20px;"></div>
-          <button class="btn btn-secondary" id="resetBtn" style="margin-top:10px; width:100%; font-size:12px;">Statistik leeren</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-/* ---------------- Audio ---------------- */
-function speak(text){
-  try{
-    if('speechSynthesis' in window){
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'de-DE'; u.rate = 1.0;
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(u);
-    }
-  }catch(e){}
-}
-
-function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
-
-/* ---------------- SVG Zeichner ---------------- */
-function drawClock(h, m) {
-  const hAngle = ((h % 12) + m/60) * 30 - 90;
-  const mAngle = m * 6 - 90;
-  const hx = 50 + 20 * Math.cos(hAngle*Math.PI/180);
-  const hy = 50 + 20 * Math.sin(hAngle*Math.PI/180);
-  const mx = 50 + 32 * Math.cos(mAngle*Math.PI/180);
-  const my = 50 + 32 * Math.sin(mAngle*Math.PI/180);
-  
-  let ticks = '';
-  for(let i=0; i<12; i++){
-    const a = (i*30-90)*Math.PI/180;
-    const x1 = 50 + 40*Math.cos(a), y1 = 50 + 40*Math.sin(a);
-    const x2 = 50 + 45*Math.cos(a), y2 = 50 + 45*Math.sin(a);
-    ticks += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#34495e" stroke-width="${i%3===0?3:1}"/>`;
-  }
-  return `<svg width="120" height="120" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="white" stroke="#bdc3c7" stroke-width="4"/>${ticks}<line x1="50" y1="50" x2="${hx}" y2="${hy}" stroke="#2c3e50" stroke-width="4" stroke-linecap="round"/><line x1="50" y1="50" x2="${mx}" y2="${my}" stroke="#e74c3c" stroke-width="3" stroke-linecap="round"/><circle cx="50" cy="50" r="3" fill="#2c3e50"/></svg>`;
-}
-
-function drawShape(type) {
-  let paths = '';
-  if (type === 'cube') {
-    paths = `<path d="M50 15 L85 30 L85 75 L50 90 L15 75 L15 30 Z" fill="#3498db" stroke="#1b6fab" stroke-width="2"/><path d="M50 15 L15 30 L50 45 L85 30 Z" fill="#85c1e9" stroke="#1b6fab" stroke-width="2"/><path d="M50 45 L50 90" stroke="#1b6fab" stroke-width="2"/>`;
-  } else if (type === 'cylinder') {
-    paths = `<path d="M25 30 L25 75 A 25 10 0 0 0 75 75 L75 30 Z" fill="#3498db" stroke="#1b6fab" stroke-width="2"/><ellipse cx="50" cy="30" rx="25" ry="10" fill="#85c1e9" stroke="#1b6fab" stroke-width="2"/><ellipse cx="50" cy="75" rx="25" ry="10" fill="none" stroke="#1b6fab" stroke-width="2" stroke-dasharray="4,4"/>`;
-  } else if (type === 'rect') { // Rechteck / Quader Grundfläche
-    paths = `<rect x="20" y="30" width="60" height="40" fill="#3498db" stroke="#1b6fab" stroke-width="2"/>`;
-  } else if (type === 'sym') { // Symmetrie-Figur (Schmetterling vereinfacht)
-    paths = `<path d="M50 10 C30 10 10 30 50 50 C10 70 30 90 50 90 C70 90 90 70 50 50 C90 30 70 10 50 10 Z" fill="#9b59b6" stroke="#8e44ad" stroke-width="2"/> <line x1="50" y1="5" x2="50" y2="95" stroke="#e74c3c" stroke-width="3" stroke-dasharray="5,5"/>`;
-  }
-  return `<svg width="120" height="120" viewBox="0 0 100 100">${paths}</svg>`;
-}
-
-function drawNumberLine(num, isHundred) {
-  const step = isHundred ? 100 : 10;
-  const lower = Math.floor(num/step)*step;
-  const upper = lower + step;
-  const percent = ((num - lower) / step) * 100;
-  return `<svg width="280" height="60" viewBox="0 0 280 60"><line x1="20" y1="30" x2="260" y2="30" stroke="#7f8c8d" stroke-width="4"/><line x1="20" y1="20" x2="20" y2="40" stroke="#2c3e50" stroke-width="4"/><line x1="260" y1="20" x2="260" y2="40" stroke="#2c3e50" stroke-width="4"/><text x="20" y="55" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#2c3e50">${lower}</text><text x="260" y="55" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#2c3e50">${upper}</text><circle cx="${20 + (percent*2.4)}" cy="30" r="8" fill="#e74c3c"/><text x="${20 + (percent*2.4)}" y="15" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#e74c3c">${num}</text></svg>`;
-}
-
-/* ---------------- Aufgaben-Module ---------------- */
-const tasks = {
-  rechnen_gross: {
-    title: "Schriftliches Rechnen", sub: "+ - × bis 1000",
-    gen() {
-      const op = ['+','-','*'][randInt(0,2)];
-      let a,b,s;
-      if(op==='+'){ a=randInt(150,500); b=randInt(150,400); s=a+b; }
-      else if(op==='-'){ a=randInt(400,900); b=randInt(110,a-50); s=a-b; }
-      else { a=randInt(12,30); b=randInt(3,9); s=a*b; }
-      return {
-        q: `${a} ${op==='*'?'×':op} ${b} = ?`,
-        hint: "Rechne halbschriftlich oder im Kopf.",
-        html: `<input type="number" class="std-input" id="inp_1">`,
-        ids: ['inp_1'], sol: [s], isFloat: false
-      };
-    }
-  },
-
-  div_rest: {
-    title: "Division mit Rest", sub: "zz.B. 25 : 4",
-    gen() {
-      let a = randInt(15, 89), b = randInt(3, 9);
-      while (a % b === 0) { a = randInt(15, 89); } // Garantiere einen Rest
-      return {
-        q: `${a} : ${b} = ?`,
-        hint: "Trage das Ergebnis und den Rest ein.",
-        html: `
-          <div style="display:flex; align-items:center; gap:10px;">
-            <input type="number" class="std-input" id="inp_1" placeholder="Erg" style="width:90px;">
-            <span style="font-size:24px; font-weight:bold;"> R </span>
-            <input type="number" class="std-input" id="inp_2" placeholder="Rest" style="width:90px;">
-          </div>`,
-        ids: ['inp_1', 'inp_2'], sol: [Math.floor(a/b), a%b], isFloat: false
-      };
-    }
-  },
-
-  geld_komma: {
-    title: "Geld & Komma", sub: "Euro und Cent addieren",
-    gen() {
-      const a_eur = randInt(1, 10); const a_ct = [10, 20, 25, 50, 75, 80][randInt(0,5)];
-      const b_eur = randInt(1, 5);  const b_ct = [10, 20, 25, 50, 75, 80][randInt(0,5)];
-      const a_val = a_eur + (a_ct/100); const b_val = b_eur + (b_ct/100);
-      const op = ['+','-'][randInt(0,1)];
-      let s;
-      if(op==='+') s = a_val + b_val; else { if(a_val <= b_val) s = b_val - a_val; else s = a_val - b_val; }
-      const a_str = (op==='-' && a_val <= b_val) ? b_val.toFixed(2).replace('.',',') : a_val.toFixed(2).replace('.',',');
-      const b_str = (op==='-' && a_val <= b_val) ? a_val.toFixed(2).replace('.',',') : b_val.toFixed(2).replace('.',',');
-      return {
-        q: `${a_str} €  ${op}  ${b_str} € = ?`,
-        hint: "Ergebnis mit Komma eintragen (z.B. 3,50 oder 3.50).",
-        html: `<div style="display:flex; align-items:center;"><input type="text" class="std-input" id="inp_1" placeholder="0,00" style="width:130px;"><span style="font-size:24px; font-weight:bold;">€</span></div>`,
-        ids: ['inp_1'], sol: [s], isFloat: true
-      };
-    }
-  },
-
-  masse_laengen: {
-    title: "Größen umwandeln", sub: "m, cm, mm, kg, g",
-    gen() {
-      const variant = randInt(0,3);
-      let q, hint, s;
-      if(variant===0) { const m = randInt(2,9); q = `${m} m = ? cm`; hint = "1 m = 100 cm"; s = m*100; }
-      else if(variant===1) { const cm = randInt(20,90); q = `${cm} cm = ? mm`; hint = "1 cm = 10 mm"; s = cm*10; }
-      else if(variant===2) { const mm = randInt(2,9)*10; q = `${mm} mm = ? cm`; hint = "10 mm = 1 cm"; s = mm/10; }
-      else { const kg = randInt(2,8); q = `${kg} kg = ? g`; hint = "1 kg = 1000 g"; s = kg*1000; }
-      
-      return {
-        q: q, hint: hint,
-        html: `<input type="number" class="std-input" id="inp_1">`,
-        ids: ['inp_1'], sol: [s], isFloat: false
-      };
-    }
-  },
-
-  sachaufgaben: {
-    title: "Textaufgaben", sub: "Lesen und verstehen",
-    gen() {
-      const v = randInt(0,3);
-      let q, s;
-      if(v===0) { const a=randInt(20,40), b=randInt(5,15); q=`Im Bus sitzen ${a} Leute. An der Haltestelle steigen ${b} Leute aus und 3 steigen ein. Wie viele sind jetzt im Bus?`; s = a-b+3; }
-      else if(v===1) { const a=randInt(4,8), b=randInt(3,6); q=`Tom kauft ${a} Eis für je ${b} Euro. Wie viel Euro muss er bezahlen?`; s = a*b; }
-      else if(v===2) { const a=randInt(3,6)*10; q=`Ein Seil ist ${a} cm lang. Lisa schneidet die Hälfte ab. Wie lang ist der Rest in cm?`; s = a/2; }
-      else { const a=randInt(50,90), b=randInt(20,40); q=`Mia hat ${a} Murmeln. Sie gewinnt ${b} dazu. Wie viele Murmeln hat sie jetzt?`; s = a+b; }
-      return {
-        q: `<div style="font-size:18px; line-height:1.4; max-width:400px; text-align:center;">${q}</div>`,
-        hint: "Überlege: Plus, Minus, Mal oder Geteilt?",
-        html: `<input type="number" class="std-input" id="inp_1">`,
-        ids: ['inp_1'], sol: [s], isFloat: false
-      };
-    }
-  },
-
-  reihen: {
-    title: "Zahlenfolgen", sub: "Muster erkennen",
-    gen() {
-      const step = [2, 5, 10, 20, 25, 50][randInt(0,5)];
-      const start = randInt(10, 300);
-      const isUp = Math.random() > 0.5;
-      const s1 = start;
-      const s2 = isUp ? start+step : start-step;
-      const s3 = isUp ? start+step*2 : start-step*2;
-      const s4 = isUp ? start+step*3 : start-step*3;
-      const sol = isUp ? start+step*4 : start-step*4;
-      
-      return {
-        q: `Führe die Reihe fort: <br><span style="color:#3498db">${s1} , ${s2} , ${s3} , ${s4} , ?</span>`,
-        hint: "Finde heraus, in welchen Schritten die Zahlen größer oder kleiner werden.",
-        html: `<input type="number" class="std-input" id="inp_1">`,
-        ids: ['inp_1'], sol: [sol], isFloat: false
-      };
-    }
-  },
-
-  geometrie: {
-    title: "Geometrie", sub: "Körper & Symmetrie",
-    gen() {
-      const v = randInt(0, 4);
-      let t, q, hint, s;
-      if (v === 0) { t = 'cube'; q = "Wie viele Ecken hat ein Würfel?"; hint = "Spitze Ecken zählen."; s = 8; }
-      else if (v === 1) { t = 'cube'; q = "Wie viele Kanten hat ein Würfel?"; hint = "Alle geraden Linien zählen."; s = 12; }
-      else if (v === 2) { t = 'cylinder'; q = "Wie viele Flächen hat ein Zylinder?"; hint = "Oben, unten, Außenhülle."; s = 3; }
-      else if (v === 3) { t = 'rect'; q = "Wie viele Ecken hat ein Rechteck?"; hint = "Das ist eine flache Figur."; s = 4; }
-      else { t = 'sym'; q = "Wie viele Symmetrieachsen (rote Linie) hat die Figur?"; hint = "Wie oft kann man sie spiegelgleich falten?"; s = 1; }
-      
-      return {
-        q: q, hint: hint, html: `${drawShape(t)}<br><input type="number" class="std-input" id="inp_1">`,
-        ids: ['inp_1'], sol: [s], isFloat: false
-      };
-    }
-  },
-
-  mauer: {
-    title: "Zahlenmauer", sub: "Zufällige Lücken",
-    gen() {
-      const b1 = randInt(10,40), b2 = randInt(10,40), b3 = randInt(10,40);
-      const m1 = b1+b2, m2 = b2+b3; const s1 = m1+m2;
-      const vals = [s1, m1, m2, b1, b2, b3];
-      let htmls = ['', '', '', '', '', ''];
-      
-      let hidden = [];
-      while(hidden.length < 3){
-        let r = randInt(0,5);
-        if(!hidden.includes(r)) hidden.push(r);
-      }
-      
-      let inputIds = [], solutions = [];
-      for(let i=0; i<6; i++){
-        if(hidden.includes(i)){
-          let id = `inp_m_${i}`;
-          inputIds.push(id); solutions.push(vals[i]);
-          htmls[i] = `<div class="brick"><input id="${id}" type="number"></div>`;
-        } else {
-          htmls[i] = `<div class="brick">${vals[i]}</div>`;
-        }
-      }
-      return {
-        q: `Fülle die 3 Lücken!`, hint: "Zwei Steine nebeneinander ergeben den Stein darüber.",
-        html: `<div class="mauer-wrapper"><div class="mauer-row">${htmls[0]}</div><div class="mauer-row">${htmls[1]}${htmls[2]}</div><div class="mauer-row">${htmls[3]}${htmls[4]}${htmls[5]}</div></div>`,
-        ids: inputIds, sol: solutions, isFloat: false
-      };
-    }
-  },
-
-  tausender: {
-    title: "Tausenderbuch", sub: "Nachbarzahlen",
-    gen() {
-      let n = randInt(120, 880);
-      while(n%10===0 || n%10===9) n = randInt(120,880); 
-      return {
-        q: "Finde die Nachbarn im Buch!", hint: "Oben = -10, Unten = +10, Links = -1, Rechts = +1",
-        html: `<div class="tausender-cross"><div></div><div class="t-cell"><input type="number" id="inp_1" class="t-input" placeholder="Oben"></div><div></div><div class="t-cell"><input type="number" id="inp_2" class="t-input" placeholder="Links"></div><div class="t-cell t-center">${n}</div><div class="t-cell"><input type="number" id="inp_3" class="t-input" placeholder="Rechts"></div><div></div><div class="t-cell"><input type="number" id="inp_4" class="t-input" placeholder="Unten"></div><div></div></div>`,
-        ids: ['inp_1', 'inp_2', 'inp_3', 'inp_4'], sol: [n-10, n-1, n+1, n+10], isFloat: false
-      };
-    }
-  },
-
-  hze: {
-    title: "Stellenwerte HZE", sub: "Hunderter, Zehner, Einer",
-    gen() {
-      const n = randInt(111, 999);
-      return {
-        q: `Zerlege die Zahl: ${n}`, hint: "Wie viele Hunderter, Zehner und Einer?",
-        html: `<div style="font-size:20px; font-weight:bold; margin-bottom:10px;"><span style="color:#e74c3c">H</span> <span style="color:#27ae60">Z</span> <span style="color:#2980b9">E</span></div><div><input type="number" class="std-input" id="inp_h" placeholder="H" style="color:#e74c3c; width:80px;"><input type="number" class="std-input" id="inp_z" placeholder="Z" style="color:#27ae60; width:80px;"><input type="number" class="std-input" id="inp_e" placeholder="E" style="color:#2980b9; width:80px;"></div>`,
-        ids: ['inp_h', 'inp_z', 'inp_e'], sol: [Math.floor(n/100), Math.floor((n%100)/10), n%10], isFloat: false
-      };
-    }
-  },
-
-  runden: {
-    title: "Runden", sub: "Auf Zehner/Hunderter",
-    gen() {
-      const isHundred = Math.random() > 0.5; const n = randInt(111, 888);
-      let sol;
-      if(isHundred){ const r = n % 100; sol = n + (100-r >= 50 && r >=50 ? 100-r : (r>=50 ? 100-r : -r)); } 
-      else { const r = n % 10; sol = n + (10-r >= 5 && r >=5 ? 10-r : (r>=5 ? 10-r : -r)); }
-      return {
-        q: `Runde auf den nächsten ${isHundred ? 'Hunderter' : 'Zehner'}!`, hint: `Tipp: Bei 0-4 abrunden, ab 5 aufrunden.`,
-        html: `${drawNumberLine(n, isHundred)}<br><input type="number" class="std-input" id="inp_1" placeholder="Runden">`,
-        ids: ['inp_1'], sol: [sol], isFloat: false
-      };
-    }
-  },
-
-  zeit: {
-    title: "Uhrzeit", sub: "Analog Uhr lesen",
-    gen() {
-      const h=randInt(7,16), m=[0,15,30,45][randInt(0,3)], d=[15,30,45,60][randInt(0,3)];
-      const total = h*60 + m + d;
-      return {
-        q: `Es ist ${h}:${m==0?'00':m} Uhr.`, hint: `Das Kino dauert ${d} Minuten. Wann ist es aus?`,
-        html: `${drawClock(h, m)}<br><input type="number" class="std-input" id="inp_h" placehold
+          <div style="margin-top:15px; display:flex; justify-content:center;">
+            <button class="btn btn-primary" id="checkBtn" style="padding:12px 24px; font-size:16px;" disabled>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              Antwort prüfen
+            </button>
+            <button class="btn btn-secondary" id="nextBtn"
