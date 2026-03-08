@@ -144,13 +144,13 @@ select{ border:1px solid #ccd8e6; background:#f8fbff; font-weight:bold; font-siz
     </div>
 
     <div class="profile-bar">
-      <div><select id="profileSelect"></select></div>
+      <div><select id="profileSelect" onchange="switchProfile()"></select></div>
       <div style="display:flex; gap:6px;">
         <button class="btn btn-outline" id="toggleDashBtn" onclick="toggleDashboard()">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
           <span id="dashBtnText">Eltern-Stats</span>
         </button>
-        <button class="btn btn-secondary" id="addBtn">Neues Kind</button>
+        <button class="btn btn-secondary" id="addBtn" onclick="addProfile()">Neues Kind</button>
       </div>
     </div>
 
@@ -172,16 +172,16 @@ select{ border:1px solid #ccd8e6; background:#f8fbff; font-weight:bold; font-siz
           <div class="task-box">
             <div class="question-wrapper">
               <div class="task-question" id="tQuestion">Wähle links ein Thema!</div>
-              <button class="speaker-btn" id="readBtn" style="display:none;" title="Vorlesen">
+              <button class="speaker-btn" id="readBtn" style="display:none;" title="Vorlesen" onclick="speakCurrent()">
                 <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
               </button>
             </div>
             <div class="visual-container" id="tVisual"></div>
             <div class="task-hint" id="tHint"></div>
             
-            <div style="margin-top:15px; display:flex; justify-content:center;">
-              <button class="btn btn-primary" id="checkBtn" disabled>Antwort prüfen</button>
-              <button class="btn btn-secondary" id="nextBtn" style="display:none;">Nächste Aufgabe ➔</button>
+            <div style="margin-top:15px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+              <button class="btn btn-primary" id="checkBtn" disabled onclick="checkAnswer()">Antwort prüfen</button>
+              <button class="btn btn-secondary" id="nextBtn" style="display:none;" onclick="nextTask()">Nächste Aufgabe ➔</button>
             </div>
             <div class="feedback" id="feedback"></div>
           </div>
@@ -191,15 +191,13 @@ select{ border:1px solid #ccd8e6; background:#f8fbff; font-weight:bold; font-siz
 
     <!-- ANSICHT 2: ELTERN-DASHBOARD -->
     <div id="view-dashboard" class="view-container">
-      <div class="panel-title" style="margin-top:10px;">Lernfortschritt & Auswertung</div>
+      <div class="panel-title" style="margin-top:10px;">Lernfortschritt &amp; Auswertung</div>
       <div class="dashboard-box">
-        
         <div class="filter-tabs">
-          <div class="filter-tab active" onclick="updateDashboard('today')">Heute</div>
-          <div class="filter-tab" onclick="updateDashboard('week')">Letzte 7 Tage</div>
-          <div class="filter-tab" onclick="updateDashboard('all')">Gesamtzeit</div>
+          <div class="filter-tab active" onclick="updateDashboard('today',this)">Heute</div>
+          <div class="filter-tab" onclick="updateDashboard('week',this)">Letzte 7 Tage</div>
+          <div class="filter-tab" onclick="updateDashboard('all',this)">Gesamtzeit</div>
         </div>
-
         <div class="kpi-grid">
           <div class="kpi-card">
             <div class="kpi-label">Gelöste Aufgaben</div>
@@ -210,24 +208,19 @@ select{ border:1px solid #ccd8e6; background:#f8fbff; font-weight:bold; font-siz
             <div class="kpi-value" id="dash-quote">0%</div>
           </div>
         </div>
-
         <div class="analysis-section">
           <h3>🟢 Stärken (Läuft super)</h3>
           <div id="dash-good"></div>
         </div>
-
         <div class="analysis-section">
           <h3>🟡 Übungsbedarf (Geht so)</h3>
           <div id="dash-medium"></div>
         </div>
-
         <div class="analysis-section">
           <h3>🔴 Problemzonen (Hier intensivieren)</h3>
-          <div id="dash-bad" style="color:var(--danger); font-size:14px;"></div>
+          <div id="dash-bad"></div>
         </div>
-        
         <button class="btn btn-secondary" style="width:100%; margin-top:30px; font-size:13px;" onclick="resetStats()">Gesamten Fortschritt für dieses Kind löschen</button>
-
       </div>
     </div>
 
@@ -235,87 +228,479 @@ select{ border:1px solid #ccd8e6; background:#f8fbff; font-weight:bold; font-siz
 </div>
 
 <script>
-// --- AUDIO & HELPER ---
-let currentAudioText = "";
-function speak(text){ try{ if('speechSynthesis' in window){ window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'de-DE'; u.rate = 0.9; window.speechSynthesis.speak(u); } }catch(e){} }
-function stripHTML(html) { let tmp = document.createElement("DIV"); tmp.innerHTML = html; return tmp.textContent || tmp.innerText || ""; }
-function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function randInt(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function speak(text){ try{ if('speechSynthesis' in window){ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='de-DE'; u.rate=0.9; window.speechSynthesis.speak(u); }}catch(e){} }
+function stripHTML(html){ let d=document.createElement("DIV"); d.innerHTML=html; return d.textContent||d.innerText||""; }
 
-// --- SVG ZEICHNER ---
+// ─── SVG HELPERS ──────────────────────────────────────────────────────────────
 function drawClock(h, m) {
-  const hA = ((h % 12) + m/60) * 30 - 90, mA = m * 6 - 90;
-  const hx = 50 + 20 * Math.cos(hA*Math.PI/180), hy = 50 + 20 * Math.sin(hA*Math.PI/180);
-  const mx = 50 + 32 * Math.cos(mA*Math.PI/180), my = 50 + 32 * Math.sin(mA*Math.PI/180);
-  let ticks = ''; for(let i=0; i<12; i++){ const a = (i*30-90)*Math.PI/180; ticks += `<line x1="${50+40*Math.cos(a)}" y1="${50+40*Math.sin(a)}" x2="${50+45*Math.cos(a)}" y2="${50+45*Math.sin(a)}" stroke="#34495e" stroke-width="${i%3===0?3:1}"/>`; }
-  return `<svg width="120" height="120" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="white" stroke="#bdc3c7" stroke-width="4"/>${ticks}<line x1="50" y1="50" x2="${hx}" y2="${hy}" stroke="#2c3e50" stroke-width="4" stroke-linecap="round"/><line x1="50" y1="50" x2="${mx}" y2="${my}" stroke="#e74c3c" stroke-width="3" stroke-linecap="round"/><circle cx="50" cy="50" r="3" fill="#2c3e50"/></svg>`;
+  const hA = ((h%12)+m/60)*30-90, mA = m*6-90;
+  const hx=50+20*Math.cos(hA*Math.PI/180), hy=50+20*Math.sin(hA*Math.PI/180);
+  const mx=50+32*Math.cos(mA*Math.PI/180), my=50+32*Math.sin(mA*Math.PI/180);
+  let ticks='';
+  for(let i=0;i<12;i++){ const a=(i*30-90)*Math.PI/180; ticks+=`<line x1="${50+40*Math.cos(a)}" y1="${50+40*Math.sin(a)}" x2="${50+45*Math.cos(a)}" y2="${50+45*Math.sin(a)}" stroke="#34495e" stroke-width="${i%3===0?3:1}"/>`; }
+  return `<svg width="130" height="130" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="white" stroke="#bdc3c7" stroke-width="4"/>${ticks}<line x1="50" y1="50" x2="${hx}" y2="${hy}" stroke="#2c3e50" stroke-width="4" stroke-linecap="round"/><line x1="50" y1="50" x2="${mx}" y2="${my}" stroke="#e74c3c" stroke-width="3" stroke-linecap="round"/><circle cx="50" cy="50" r="3" fill="#2c3e50"/></svg>`;
 }
 function drawShape(type) {
-  let paths = '';
-  if (type === 'cube') paths = `<path d="M50 15 L85 30 L85 75 L50 90 L15 75 L15 30 Z" fill="#3498db" stroke="#1b6fab" stroke-width="2"/><path d="M50 15 L15 30 L50 45 L85 30 Z" fill="#85c1e9" stroke="#1b6fab" stroke-width="2"/><path d="M50 45 L50 90" stroke="#1b6fab" stroke-width="2"/>`;
-  else if (type === 'cylinder') paths = `<path d="M25 30 L25 75 A 25 10 0 0 0 75 75 L75 30 Z" fill="#3498db" stroke="#1b6fab" stroke-width="2"/><ellipse cx="50" cy="30" rx="25" ry="10" fill="#85c1e9" stroke="#1b6fab" stroke-width="2"/><ellipse cx="50" cy="75" rx="25" ry="10" fill="none" stroke="#1b6fab" stroke-width="2" stroke-dasharray="4,4"/>`;
-  else if (type === 'rect') paths = `<rect x="20" y="30" width="60" height="40" fill="#3498db" stroke="#1b6fab" stroke-width="2"/>`;
-  return `<svg width="120" height="120" viewBox="0 0 100 100">${paths}</svg>`;
+  let paths='';
+  if(type==='cube') paths=`<path d="M50 15 L85 30 L85 75 L50 90 L15 75 L15 30 Z" fill="#3498db" stroke="#1b6fab" stroke-width="2"/><path d="M50 15 L15 30 L50 45 L85 30 Z" fill="#85c1e9" stroke="#1b6fab" stroke-width="2"/><path d="M50 45 L50 90" stroke="#1b6fab" stroke-width="2"/>`;
+  else if(type==='cylinder') paths=`<path d="M25 30 L25 75 A 25 10 0 0 0 75 75 L75 30 Z" fill="#3498db" stroke="#1b6fab" stroke-width="2"/><ellipse cx="50" cy="30" rx="25" ry="10" fill="#85c1e9" stroke="#1b6fab" stroke-width="2"/><ellipse cx="50" cy="75" rx="25" ry="10" fill="none" stroke="#1b6fab" stroke-width="2" stroke-dasharray="4,4"/>`;
+  else if(type==='rect') paths=`<rect x="20" y="30" width="60" height="40" fill="#3498db" stroke="#1b6fab" stroke-width="2"/>`;
+  else if(type==='cone') paths=`<path d="M50 15 L80 75 L20 75 Z" fill="#3498db" stroke="#1b6fab" stroke-width="2"/><ellipse cx="50" cy="75" rx="30" ry="10" fill="#85c1e9" stroke="#1b6fab" stroke-width="2"/>`;
+  else if(type==='sphere') paths=`<circle cx="50" cy="50" r="35" fill="#3498db" stroke="#1b6fab" stroke-width="2"/><ellipse cx="50" cy="50" rx="35" ry="12" fill="none" stroke="#1b6fab" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+  return `<svg width="130" height="130" viewBox="0 0 100 100">${paths}</svg>`;
 }
 function drawNumberLine(num, isHundred) {
-  const step = isHundred ? 100 : 10; const lower = Math.floor(num/step)*step, upper = lower + step, percent = ((num - lower) / step) * 100;
-  return `<svg width="280" height="60" viewBox="0 0 280 60"><line x1="20" y1="30" x2="260" y2="30" stroke="#7f8c8d" stroke-width="4"/><line x1="20" y1="20" x2="20" y2="40" stroke="#2c3e50" stroke-width="4"/><line x1="260" y1="20" x2="260" y2="40" stroke="#2c3e50" stroke-width="4"/><text x="20" y="55" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#2c3e50">${lower}</text><text x="260" y="55" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#2c3e50">${upper}</text><circle cx="${20 + (percent*2.4)}" cy="30" r="8" fill="#e74c3c"/><text x="${20 + (percent*2.4)}" y="15" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#e74c3c">${num}</text></svg>`;
+  const step=isHundred?100:10;
+  const lower=Math.floor(num/step)*step, upper=lower+step;
+  const percent=((num-lower)/step)*100;
+  return `<svg width="280" height="60" viewBox="0 0 280 60"><line x1="20" y1="30" x2="260" y2="30" stroke="#7f8c8d" stroke-width="4"/><line x1="20" y1="20" x2="20" y2="40" stroke="#2c3e50" stroke-width="4"/><line x1="260" y1="20" x2="260" y2="40" stroke="#2c3e50" stroke-width="4"/><text x="20" y="55" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#2c3e50">${lower}</text><text x="260" y="55" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#2c3e50">${upper}</text><circle cx="${20+(percent*2.4)}" cy="30" r="8" fill="#e74c3c"/><text x="${20+(percent*2.4)}" y="15" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#e74c3c">${num}</text></svg>`;
 }
 
-// --- TASKS ---
+// ─── AUFGABEN-DEFINITIONEN ────────────────────────────────────────────────────
 const tasks = {
   rechnen_gross: {
-    title: "Rechnen", sub: "+ - ×",
-    gen() {
-      const op = ['+','-','*'][randInt(0,2)]; let a,b,s;
-      if(op==='+'){ a=randInt(150,500); b=randInt(150,400); s=a+b; } else if(op==='-'){ a=randInt(400,900); b=randInt(110,a-50); s=a-b; } else { a=randInt(12,30); b=randInt(3,9); s=a*b; }
-      return { q: `${a} ${op==='*'?'×':op} ${b} = ?`, hint: "Rechne halbschriftlich oder im Kopf.", html: `<input type="number" class="std-input" id="inp_1">`, ids: ['inp_1'], sol: [s], isFloat: false };
+    title:"Rechnen", sub:"+ − ×",
+    gen(){
+      const op=['+','−','×'][randInt(0,2)]; let a,b,s;
+      if(op==='+'){a=randInt(150,500);b=randInt(150,400);s=a+b;}
+      else if(op==='−'){a=randInt(400,900);b=randInt(110,a-50);s=a-b;}
+      else{a=randInt(12,30);b=randInt(3,9);s=a*b;}
+      return{q:`${a} ${op} ${b} = ?`,hint:"Rechne halbschriftlich oder im Kopf.",
+        html:`<input type="number" class="std-input" id="inp_1">`,
+        ids:['inp_1'],sol:[s],isFloat:false};
     }
   },
-  div_rest: {
-    title: "Division", sub: "mit Rest",
-    gen() {
-      let a = randInt(15, 89), b = randInt(3, 9); while (a % b === 0) { a = randInt(15, 89); }
-      return { q: `${a} : ${b} = ?`, hint: "Trage Ergebnis und Rest ein.", html: `<div style="display:flex; align-items:center; gap:10px;"><input type="number" class="std-input" id="inp_1" placeholder="Erg" style="width:90px;"><span style="font-size:24px; font-weight:bold;"> R </span><input type="number" class="std-input" id="inp_2" placeholder="Rest" style="width:90px;"></div>`, ids: ['inp_1', 'inp_2'], sol: [Math.floor(a/b), a%b], isFloat: false };
+  div_rest:{
+    title:"Division", sub:"mit Rest",
+    gen(){
+      let a=randInt(15,89),b=randInt(3,9);
+      while(a%b===0){a=randInt(15,89);}
+      return{q:`${a} ÷ ${b} = ?`,hint:"Trage Ergebnis und Rest ein.",
+        html:`<div style="display:flex;align-items:center;gap:10px;justify-content:center;"><input type="number" class="std-input" id="inp_1" placeholder="Erg" style="width:90px;"><span style="font-size:24px;font-weight:bold;">R</span><input type="number" class="std-input" id="inp_2" placeholder="Rest" style="width:90px;"></div>`,
+        ids:['inp_1','inp_2'],sol:[Math.floor(a/b),a%b],isFloat:false};
     }
   },
-  geld_komma: {
-    title: "Geld", sub: "Kommazahlen",
-    gen() {
-      const a_val = randInt(1, 10) + ([10, 20, 25, 50, 75, 80][randInt(0,5)]/100), b_val = randInt(1, 5) + ([10, 20, 25, 50, 75, 80][randInt(0,5)]/100);
-      const op = ['+','-'][randInt(0,1)]; let s; if(op==='+') s = a_val + b_val; else { if(a_val <= b_val) s = b_val - a_val; else s = a_val - b_val; }
-      const a_str = (op==='-' && a_val <= b_val) ? b_val.toFixed(2).replace('.',',') : a_val.toFixed(2).replace('.',',');
-      const b_str = (op==='-' && a_val <= b_val) ? a_val.toFixed(2).replace('.',',') : b_val.toFixed(2).replace('.',',');
-      return { q: `${a_str} € ${op} ${b_str} € = ?`, hint: "Ergebnis mit Komma (z.B. 3,50).", html: `<div style="display:flex; align-items:center;"><input type="text" class="std-input" id="inp_1" placeholder="0,00" style="width:130px;"><span style="font-size:24px; font-weight:bold;">€</span></div>`, ids: ['inp_1'], sol: [s], isFloat: true };
+  geld_komma:{
+    title:"Geld", sub:"Kommazahlen",
+    gen(){
+      const cents=[10,20,25,50,75,80];
+      let a=randInt(1,10)+cents[randInt(0,5)]/100;
+      let b=randInt(1,5)+cents[randInt(0,5)]/100;
+      const op=['+','−'][randInt(0,1)];
+      let s; if(op==='+') s=a+b; else{ if(a<b){let t=a;a=b;b=t;} s=a-b;}
+      return{q:`${a.toFixed(2).replace('.',',')} € ${op} ${b.toFixed(2).replace('.',',')} € = ?`,
+        hint:"Ergebnis mit Komma (z.B. 3,50).",
+        html:`<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><input type="text" class="std-input" id="inp_1" placeholder="0,00" style="width:130px;"><span style="font-size:24px;font-weight:bold;">€</span></div>`,
+        ids:['inp_1'],sol:[s],isFloat:true};
     }
   },
-  masse_laengen: {
-    title: "Größen", sub: "m, cm, kg",
-    gen() {
-      const v = randInt(0,3); let q, hint, s;
-      if(v===0) { const m = randInt(2,9); q = `${m} m = ? cm`; hint = "1 m = 100 cm"; s = m*100; } else if(v===1) { const cm = randInt(20,90); q = `${cm} cm = ? mm`; hint = "1 cm = 10 mm"; s = cm*10; } else if(v===2) { const mm = randInt(2,9)*10; q = `${mm} mm = ? cm`; hint = "10 mm = 1 cm"; s = mm/10; } else { const kg = randInt(2,8); q = `${kg} kg = ? g`; hint = "1 kg = 1000 g"; s = kg*1000; }
-      return { q: q, hint: hint, html: `<input type="number" class="std-input" id="inp_1">`, ids: ['inp_1'], sol: [s], isFloat: false };
+  masse_laengen:{
+    title:"Größen", sub:"m, cm, kg",
+    gen(){
+      const v=randInt(0,3);let q,hint,s;
+      if(v===0){const m=randInt(2,9);q=`${m} m = ? cm`;hint="1 m = 100 cm";s=m*100;}
+      else if(v===1){const cm=randInt(20,90);q=`${cm} cm = ? mm`;hint="1 cm = 10 mm";s=cm*10;}
+      else if(v===2){const mm=randInt(2,9)*10;q=`${mm} mm = ? cm`;hint="10 mm = 1 cm";s=mm/10;}
+      else{const kg=randInt(2,8);q=`${kg} kg = ? g`;hint="1 kg = 1000 g";s=kg*1000;}
+      return{q,hint,html:`<input type="number" class="std-input" id="inp_1">`,ids:['inp_1'],sol:[s],isFloat:false};
     }
   },
-  sachaufgaben: {
-    title: "Textaufgaben", sub: "Lesen",
-    gen() {
-      const v = randInt(0,2); let q, s;
-      if(v===0) { const a=randInt(20,40), b=randInt(5,15); q=`Im Bus sind ${a} Leute. Es steigen ${b} aus. Wie viele sind es noch?`; s = a-b; } else if(v===1) { const a=randInt(4,8), b=randInt(3,6); q=`Tom kauft ${a} Eis für je ${b} Euro. Wie viel Euro zahlt er?`; s = a*b; } else { const a=randInt(3,6)*10; q=`Ein Seil ist ${a} cm lang. Lisa schneidet die Hälfte ab. Rest in cm?`; s = a/2; }
-      return { q: `<div style="font-size:18px; line-height:1.4;">${q}</div>`, hint: "Überlege: Plus, Minus, Mal oder Geteilt?", html: `<input type="number" class="std-input" id="inp_1">`, ids: ['inp_1'], sol: [s], isFloat: false };
+  sachaufgaben:{
+    title:"Textaufgaben", sub:"Lesen",
+    gen(){
+      const v=randInt(0,3);let q,s;
+      if(v===0){const a=randInt(20,40),b=randInt(5,15);q=`Im Bus sind ${a} Leute. Es steigen ${b} aus. Wie viele sind es noch?`;s=a-b;}
+      else if(v===1){const a=randInt(4,8),b=randInt(3,6);q=`Tom kauft ${a} Eis für je ${b} Euro. Wie viel Euro zahlt er?`;s=a*b;}
+      else if(v===2){const a=randInt(3,6)*10;q=`Ein Seil ist ${a} cm lang. Lisa schneidet die Hälfte ab. Rest in cm?`;s=a/2;}
+      else{const a=randInt(5,12),b=randInt(3,8);q=`Auf einem Baum sitzen ${a} Vögel. Es fliegen ${b} weg. Wie viele bleiben?`;s=a-b;}
+      return{q:`<div style="font-size:18px;line-height:1.5;">${q}</div>`,hint:"Überlege: Plus, Minus, Mal oder Geteilt?",
+        html:`<input type="number" class="std-input" id="inp_1">`,ids:['inp_1'],sol:[s],isFloat:false};
     }
   },
-  geometrie: {
-    title: "Geometrie", sub: "Körper",
-    gen() {
-      const v = randInt(0, 3); let t, q, hint, s;
-      if (v === 0) { t = 'cube'; q = "Wie viele Ecken hat ein Würfel?"; hint = "Spitze Ecken zählen."; s = 8; } else if (v === 1) { t = 'cube'; q = "Wie viele Kanten hat ein Würfel?"; hint = "Alle Linien zählen."; s = 12; } else if (v === 2) { t = 'cylinder'; q = "Wie viele Flächen hat ein Zylinder?"; hint = "Oben, unten, Außenhülle."; s = 3; } else { t = 'rect'; q = "Wie viele Ecken hat ein Rechteck?"; hint = "Flache Figur."; s = 4; }
-      return { q: q, hint: hint, html: `${drawShape(t)}<br><input type="number" class="std-input" id="inp_1">`, ids: ['inp_1'], sol: [s], isFloat: false };
+  geometrie:{
+    title:"Geometrie", sub:"Körper",
+    gen(){
+      const shapes=[
+        {t:'cube',q:"Wie viele Ecken hat ein Würfel?",hint:"Spitze Ecken zählen.",s:8},
+        {t:'cube',q:"Wie viele Kanten hat ein Würfel?",hint:"Alle Linien zählen.",s:12},
+        {t:'cube',q:"Wie viele Flächen hat ein Würfel?",hint:"Oben, unten, vorne, hinten, links, rechts.",s:6},
+        {t:'cylinder',q:"Wie viele Flächen hat ein Zylinder?",hint:"Oben, unten, Mantelfläche.",s:3},
+        {t:'rect',q:"Wie viele Ecken hat ein Rechteck?",hint:"Flache Figur.",s:4},
+        {t:'cone',q:"Wie viele Ecken hat ein Kegel?",hint:"Nur die Spitze zählt.",s:1},
+        {t:'sphere',q:"Wie viele Ecken hat eine Kugel?",hint:"Kugeln sind vollkommen rund.",s:0},
+      ];
+      const pick=shapes[randInt(0,shapes.length-1)];
+      return{q:pick.q,hint:pick.hint,
+        html:`${drawShape(pick.t)}<br><input type="number" class="std-input" id="inp_1">`,
+        ids:['inp_1'],sol:[pick.s],isFloat:false};
     }
   },
-  mauer: {
-    title: "Zahlenmauer", sub: "Pyramide",
-    gen() {
-      const b1=randInt(10,40), b2=randInt(10,40), b3=randInt(10,40), m1=b1+b2, m2=b2+b3, s1=m1+m2, vals=[s1, m1, m2, b1, b2, b3];
-      let htmls = ['', '', '', '', '', ''], hidden = [];
-      while(hidden.length < 3){ let r = randInt(0,5); if(!hidden.includes(r)) hidden.push(r); }
-      let inpu
+  mauer:{
+    title:"Zahlenmauer", sub:"Pyramide",
+    gen(){
+      const b1=randInt(10,40),b2=randInt(10,40),b3=randInt(10,40);
+      const m1=b1+b2,m2=b2+b3,top=m1+m2;
+      const allVals=[top,m1,m2,b1,b2,b3];
+      // Zufällig 3 verstecken, aber immer lösbar (mind. 2 sichtbare Nachbarn)
+      const hidden=[];
+      while(hidden.length<3){ const r=randInt(0,5); if(!hidden.includes(r)) hidden.push(r); }
+      const ids=[];
+      function brick(idx){
+        if(hidden.includes(idx)){
+          ids.push(`mw_${idx}`);
+          return `<div class="brick"><input type="number" id="mw_${idx}" style="width:100%;height:100%;border:none;background:white;border-radius:6px;text-align:center;font-size:20px;font-weight:bold;color:#d35400;"></div>`;
+        }
+        return `<div class="brick">${allVals[idx]}</div>`;
+      }
+      const html=`<div class="mauer-wrapper">
+        <div class="mauer-row">${brick(0)}</div>
+        <div class="mauer-row">${brick(1)}${brick(2)}</div>
+        <div class="mauer-row">${brick(3)}${brick(4)}${brick(5)}</div>
+      </div>`;
+      return{q:"Fülle die Zahlenmauer aus!",hint:"Jeder Stein = Summe der zwei darunter.",
+        html,ids,sol:[top,m1,m2,b1,b2,b3].filter((_,i)=>hidden.includes(i)),
+        hiddenIdx:hidden,isFloat:false};
+    }
+  },
+  uhrzeit:{
+    title:"Uhrzeit", sub:"Analog",
+    gen(){
+      const h=randInt(1,12);
+      const mOpts=[0,5,10,15,20,25,30,35,40,45,50,55];
+      const m=mOpts[randInt(0,mOpts.length-1)];
+      const mStr=m.toString().padStart(2,'0');
+      const v=randInt(0,1);
+      if(v===0){
+        // Uhr anzeigen → Zeit eingeben
+        return{q:"Welche Zeit zeigt die Uhr?",hint:"Stunden : Minuten (z.B. 8:30)",
+          html:`${drawClock(h,m)}<br><input type="text" class="std-input" id="inp_1" placeholder="${h}:${mStr}" style="width:120px;">`,
+          ids:['inp_1'],sol:[`${h}:${mStr}`],isFloat:'time'};
+      } else {
+        // Zeit vorgeben → Stunden und Minuten eingeben
+        return{q:`Die Uhr zeigt ${h}:${mStr} Uhr. Kleine Hand zeigt auf…`,hint:"Welche Zahl zeigt die kleine Hand?",
+          html:`${drawClock(h,m)}<br><input type="number" class="std-input" id="inp_1" style="width:100px;">`,
+          ids:['inp_1'],sol:[h],isFloat:false};
+      }
+    }
+  },
+  zahlenraum:{
+    title:"Zahlenraum", sub:"bis 1000",
+    gen(){
+      const v=randInt(0,3);let q,hint,s;
+      if(v===0){
+        const n=randInt(100,999);
+        const d=Math.floor(n/100),z=Math.floor((n%100)/10),e=n%10;
+        q=`${n} = ? × 100 + ? × 10 + ?`;hint="Stelle Hunderte, Zehner, Einer";
+        return{q,hint,
+          html:`<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;font-size:20px;">
+            <input type="number" class="std-input" id="inp_1" style="width:80px;">× 100 +
+            <input type="number" class="std-input" id="inp_2" style="width:80px;">× 10 +
+            <input type="number" class="std-input" id="inp_3" style="width:80px;">
+          </div>`,
+          ids:['inp_1','inp_2','inp_3'],sol:[d,z,e],isFloat:false};
+      } else if(v===1){
+        const n=randInt(101,899); const v2=randInt(1,2);
+        if(v2===1){q=`Welche Zahl ist 10 mehr als ${n}?`;s=n+10;}
+        else{q=`Welche Zahl ist 100 weniger als ${n+100}?`;s=n;}
+        hint="Rückwärts oder vorwärts zählen.";
+        return{q,hint,html:`<input type="number" class="std-input" id="inp_1">`,ids:['inp_1'],sol:[s],isFloat:false};
+      } else if(v===2){
+        const a=randInt(100,900);
+        const choices=[a-1,a+1,a-10,a+10,a-100,a+100].filter(x=>x>0&&x<=999);
+        const target=choices[randInt(0,choices.length-1)];
+        const diff=target-a;
+        const sign=diff>0?'+':'-';
+        q=`${a} ${sign} ${Math.abs(diff)} = ?`; s=target; hint="Hunderte, Zehner oder Einer?";
+        return{q,hint,html:`<input type="number" class="std-input" id="inp_1">`,ids:['inp_1'],sol:[s],isFloat:false};
+      } else {
+        const n=randInt(200,800);
+        const nxt=[100,200,300,400,500,600,700,800,900,1000].find(x=>x>n)||1000;
+        const prv=nxt-100;
+        q=`Zwischen welchen Hundertern liegt ${n}?`;hint="Runde auf Hundert.";
+        return{q,hint,
+          html:`<div style="display:flex;align-items:center;gap:8px;justify-content:center;font-size:20px;">
+            <input type="number" class="std-input" id="inp_1" style="width:90px;"> und 
+            <input type="number" class="std-input" id="inp_2" style="width:90px;">
+          </div>`,
+          ids:['inp_1','inp_2'],sol:[prv,nxt],isFloat:false};
+      }
+    }
+  },
+  zahlenstrahl:{
+    title:"Zahlenstrahl", sub:"Einordnen",
+    gen(){
+      const isHundred=randInt(0,1)===1;
+      const num=isHundred?randInt(1,9)*100+randInt(1,9)*10:randInt(1,9)*10+randInt(1,9);
+      return{q:"Welche Zahl zeigt der rote Punkt?",hint:isHundred?"Hunderterschritte beachten.":"Zehnerschritte beachten.",
+        html:`${drawNumberLine(num,isHundred)}<br><input type="number" class="std-input" id="inp_1">`,
+        ids:['inp_1'],sol:[num],isFloat:false};
+    }
+  },
+  tausenderkreuz:{
+    title:"1000er-Kreuz", sub:"Nachbarzahlen",
+    gen(){
+      const n=randInt(102,897);
+      const neighbors={links1:n-1,rechts1:n+1,oben10:n+10,unten10:n-10};
+      // Zufällig 3 der 4 zeigen, 1 verstecken
+      const keys=Object.keys(neighbors);
+      const hideKey=keys[randInt(0,keys.length-1)];
+      function cell(key,pos){
+        const val=neighbors[key];
+        const positions={links1:'left',rechts1:'right',oben10:'top',unten10:'bottom'};
+        if(key===hideKey){
+          return`<div class="t-cell" style="grid-area:${positions[key]};"><input type="number" class="t-input" id="inp_1" title="${key}"></div>`;
+        }
+        return`<div class="t-cell" style="grid-area:${positions[key]};background:#ecf0f1;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;border-radius:10px;">${val}</div>`;
+      }
+      const html=`<div style="display:grid;grid-template-areas:'... top ...''left center right''... bottom ...';grid-template-columns:65px 65px 65px;grid-template-rows:65px 65px 65px;gap:8px;justify-content:center;">
+        ${cell('oben10')}
+        ${cell('links1')}
+        <div class="t-cell t-center" style="grid-area:center;">${n}</div>
+        ${cell('rechts1')}
+        ${cell('unten10')}
+      </div>`;
+      return{q:"Fülle das Tausenderkreuz aus!",hint:"−10, +10, −1, +1",
+        html,ids:['inp_1'],sol:[neighbors[hideKey]],isFloat:false};
+    }
+  },
+};
+
+// ─── PROFIL-SYSTEM ────────────────────────────────────────────────────────────
+const DEFAULT_PROFILES = ['Kind 1'];
+let currentProfile = '';
+
+function loadProfiles(){
+  return JSON.parse(localStorage.getItem('mathe_profiles') || '["Kind 1"]');
+}
+function saveProfiles(p){ localStorage.setItem('mathe_profiles', JSON.stringify(p)); }
+function getProfileData(name){
+  return JSON.parse(localStorage.getItem('mathe_data_'+name) || '{"score":0,"stars":0,"history":[]}');
+}
+function saveProfileData(name, data){ localStorage.setItem('mathe_data_'+name, JSON.stringify(data)); }
+
+function initProfiles(){
+  const profiles = loadProfiles();
+  const sel = document.getElementById('profileSelect');
+  sel.innerHTML = '';
+  profiles.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p; opt.textContent = p;
+    sel.appendChild(opt);
+  });
+  currentProfile = profiles[0];
+  sel.value = currentProfile;
+  renderScore();
+}
+function switchProfile(){
+  currentProfile = document.getElementById('profileSelect').value;
+  renderScore();
+}
+function addProfile(){
+  const name = prompt("Name des Kindes:");
+  if(!name || !name.trim()) return;
+  const profiles = loadProfiles();
+  if(profiles.includes(name.trim())){ alert("Dieses Kind gibt es schon!"); return; }
+  profiles.push(name.trim());
+  saveProfiles(profiles);
+  initProfiles();
+  document.getElementById('profileSelect').value = name.trim();
+  switchProfile();
+}
+
+// ─── SCORE & STERNE ───────────────────────────────────────────────────────────
+function renderScore(){
+  const d = getProfileData(currentProfile);
+  document.getElementById('scoreText').textContent = `Punkte: ${d.score}`;
+  const stars = d.stars || 0;
+  const starsEl = document.getElementById('starsText');
+  let html = '';
+  for(let i=0;i<5;i++){
+    if(i<stars) html+=`<svg class="star-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+    else html+=`<svg class="star-icon star-empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+  }
+  starsEl.innerHTML = html;
+}
+
+// ─── AUFGABEN-LOGIK ───────────────────────────────────────────────────────────
+let currentTask = null;
+let currentTaskKey = null;
+let answered = false;
+
+function buildTiles(){
+  const grid = document.getElementById('taskTiles');
+  grid.innerHTML = '';
+  Object.keys(tasks).forEach(key => {
+    const t = tasks[key];
+    const tile = document.createElement('div');
+    tile.className = 'tile';
+    tile.id = 'tile_'+key;
+    tile.innerHTML = `<div class="tile-title">${t.title}</div><div class="tile-sub">${t.sub}</div>`;
+    tile.onclick = () => selectTask(key);
+    grid.appendChild(tile);
+  });
+}
+
+function selectTask(key){
+  currentTaskKey = key;
+  document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
+  document.getElementById('tile_'+key).classList.add('active');
+  document.getElementById('taskTitle').textContent = tasks[key].title;
+  loadTask(key);
+}
+
+function loadTask(key){
+  answered = false;
+  currentTask = tasks[key].gen();
+  
+  document.getElementById('tQuestion').innerHTML = currentTask.q;
+  document.getElementById('tVisual').innerHTML = '';
+  document.getElementById('tHint').textContent = currentTask.hint || '';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('checkBtn').disabled = false;
+  document.getElementById('checkBtn').style.display = '';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('readBtn').style.display = '';
+  
+  // Visual area gets the html
+  document.getElementById('tVisual').innerHTML = currentTask.html;
+  
+  // Focus auf erstes Input
+  setTimeout(() => {
+    const first = document.getElementById(currentTask.ids[0]);
+    if(first) {
+      first.focus();
+      // Enter-Taste → prüfen
+      currentTask.ids.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.addEventListener('keydown', e => { if(e.key==='Enter' && !answered) checkAnswer(); });
+      });
+    }
+  }, 100);
+}
+
+function speakCurrent(){
+  if(currentTask) speak(stripHTML(currentTask.q) + '. ' + (currentTask.hint||''));
+}
+
+function checkAnswer(){
+  if(!currentTask || answered) return;
+  answered = true;
+  
+  const d = getProfileData(currentProfile);
+  let correct = true;
+  
+  currentTask.ids.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    const raw = el.value.trim().replace(',','.');
+    const expected = currentTask.sol[i];
+    
+    if(currentTask.isFloat === 'time'){
+      // Uhrzeitvergleich
+      const norm = el.value.trim().replace(',',':').replace('.',':');
+      const expStr = String(expected);
+      correct = correct && (norm === expStr || norm === expStr.replace(/^(\d):/, '0$1:'));
+    } else if(currentTask.isFloat){
+      const parsed = parseFloat(raw);
+      correct = correct && !isNaN(parsed) && Math.abs(parsed - expected) < 0.01;
+    } else {
+      const parsed = parseInt(raw);
+      correct = correct && !isNaN(parsed) && parsed === expected;
+    }
+    el.disabled = true;
+  });
+  
+  // Stats speichern
+  const now = Date.now();
+  d.history.push({ key: currentTaskKey, correct, ts: now });
+  
+  if(correct){
+    d.score = (d.score||0) + 10;
+    d.stars = Math.min(5, Math.floor(d.score / 50));
+    document.getElementById('feedback').textContent = '✅ Super! Richtig!';
+    document.getElementById('feedback').className = 'feedback ok';
+    speak("Super! Richtig!");
+  } else {
+    // Lösung anzeigen
+    let solText = currentTask.sol.join(' / ');
+    document.getElementById('feedback').innerHTML = `❌ Nicht ganz. Richtig wäre: <strong>${solText}</strong>`;
+    document.getElementById('feedback').className = 'feedback bad';
+    speak("Nicht ganz. Die richtige Antwort ist " + solText);
+  }
+  
+  saveProfileData(currentProfile, d);
+  renderScore();
+  
+  document.getElementById('checkBtn').style.display = 'none';
+  document.getElementById('nextBtn').style.display = '';
+}
+
+function nextTask(){
+  if(currentTaskKey) loadTask(currentTaskKey);
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────────────────────────
+let dashView = false;
+let dashPeriod = 'today';
+
+function toggleDashboard(){
+  dashView = !dashView;
+  document.getElementById('view-practice').className = dashView ? 'view-container' : 'view-container active';
+  document.getElementById('view-dashboard').className = dashView ? 'view-container active' : 'view-container';
+  document.getElementById('dashBtnText').textContent = dashView ? 'Üben' : 'Eltern-Stats';
+  if(dashView) updateDashboard(dashPeriod);
+}
+
+function updateDashboard(period, el){
+  dashPeriod = period;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  
+  const d = getProfileData(currentProfile);
+  const now = Date.now();
+  const cutoff = period==='today' ? now-86400000 : period==='week' ? now-7*86400000 : 0;
+  const hist = (d.history||[]).filter(h => h.ts >= cutoff);
+  
+  const total = hist.length;
+  const correct = hist.filter(h=>h.correct).length;
+  document.getElementById('dash-total').textContent = total;
+  document.getElementById('dash-quote').textContent = total>0 ? Math.round(correct/total*100)+'%' : '—';
+  
+  // Per topic
+  const byTopic = {};
+  hist.forEach(h => {
+    if(!byTopic[h.key]) byTopic[h.key]={right:0,wrong:0};
+    if(h.correct) byTopic[h.key].right++; else byTopic[h.key].wrong++;
+  });
+  
+  const good=[], medium=[], bad=[];
+  Object.keys(byTopic).forEach(key => {
+    const t=byTopic[key]; const total=t.right+t.wrong; const rate=t.right/total;
+    const name=(tasks[key]||{title:key}).title;
+    const row=`<div class="topic-row"><span class="topic-name">${name}</span><span class="topic-stats">${t.right}/${total} richtig</span></div>`;
+    if(rate>=0.75) good.push(row);
+    else if(rate>=0.4) medium.push(row);
+    else bad.push(row);
+  });
+  
+  document.getElementById('dash-good').innerHTML = good.length ? good.join('') : '<p style="color:var(--muted);font-size:14px;">Noch keine Daten im gewählten Zeitraum.</p>';
+  document.getElementById('dash-medium').innerHTML = medium.length ? medium.join('') : '<p style="color:var(--muted);font-size:14px;">—</p>';
+  document.getElementById('dash-bad').innerHTML = bad.length ? bad.join('') : '<p style="color:var(--muted);font-size:14px;">—</p>';
+}
+
+function resetStats(){
+  if(!confirm(`Wirklich alle Daten für "${currentProfile}" löschen?`)) return;
+  localStorage.removeItem('mathe_data_'+currentProfile);
+  renderScore();
+  updateDashboard(dashPeriod);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+buildTiles();
+initProfiles();
+</script>
+</body>
+</html>
