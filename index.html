@@ -8,12 +8,8 @@
 <link rel="apple-touch-icon" href="main.png">
 <style>
 :root {
-  --bg: #f0f8ff;
-  --card: #ffffff;
-  --text: #2c3e50;
-  --math: #3498db;
-  --german: #e67e22;
-  --hsu: #27ae60;
+  --bg: #f0f8ff; --card: #ffffff; --text: #2c3e50;
+  --math: #3498db; --german: #e67e22; --hsu: #27ae60;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{
@@ -30,10 +26,7 @@ body{
 .hero h1{ font-size: 32px; margin-bottom: 10px; }
 .hero p{ font-size: 16px; color: #7f8c8d; max-width: 500px; margin: 0 auto; line-height: 1.5; }
 
-.grid{
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px; width: 100%; max-width: 900px;
-}
+.grid{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; width: 100%; max-width: 900px; }
 
 .subject-card{
   background: var(--card); border-radius: 20px; padding: 25px;
@@ -43,7 +36,7 @@ body{
 .subject-card:hover{ transform: translateY(-5px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
 .subject-card.disabled{ opacity: 0.7; cursor: not-allowed; }
 
-.card-icon{ font-size: 40px; margin-bottom: 10px; }
+.card-icon{ width: 48px; height: 48px; margin: 0 auto 15px auto; }
 .card-title{ font-size: 22px; font-weight: bold; margin-bottom: 8px; }
 .card-desc{ font-size: 14px; color: #7f8c8d; }
 
@@ -51,26 +44,21 @@ body{
 .badge-german{ position:absolute; top:0; left:0; width:100%; height:8px; background:var(--german); }
 .badge-hsu{ position:absolute; top:0; left:0; width:100%; height:8px; background:var(--hsu); }
 
-.status{
-  display: inline-block; margin-top: 15px; padding: 5px 12px; border-radius: 20px;
-  font-size: 12px; font-weight: bold;
-}
+.status{ display: inline-flex; align-items: center; gap: 6px; margin-top: 15px; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; }
 .status.active{ background: #e8f6f3; color: #27ae60; }
 .status.soon{ background: #fdf2e9; color: #e67e22; }
+.status svg { width: 16px; height: 16px; }
 
-.footer-tips{
-  margin-top: 50px; background: white; padding: 20px; border-radius: 15px;
-  max-width: 600px; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-.footer-tips h3{ font-size: 16px; margin-bottom: 10px; display:flex; align-items:center; gap:8px;}
+.footer-tips{ margin-top: 50px; background: white; padding: 20px; border-radius: 15px; max-width: 600px; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.footer-tips h3{ font-size: 16px; margin-bottom: 15px; display:flex; align-items:center; gap:8px;}
 .footer-tips ul{ list-style-type: none; }
-.footer-tips li{ font-size: 14px; color: #7f8c8d; margin-bottom: 8px; display:flex; gap:8px;}
+.footer-tips li{ font-size: 14px; color: #7f8c8d; margin-bottom: 12px; display:flex; align-items:flex-start; gap:10px;}
+.tip-icon { width: 20px; height: 20px; flex-shrink: 0; color: #3498db; }
 </style>
 </head>
 <body>
 
   <div class="hero">
-    <!-- Hier wird dein main.png geladen -->
     <img src="main.png" alt="Logo" class="hero-icon" onerror="this.style.display='none'">
     <h1>Lern-Abenteuer</h1>
     <p>Spielerisch lernen für die 3. Klasse in Bayern. Wähle ein Fach aus und starte dein Training für die nächste Probe!</p>
@@ -78,40 +66,69 @@ body{
 
   <div class="grid">
     <!-- MATHE APP -->
-    <!-- WICHTIG: Hier ist der Link zur Mathe-HTML -->
     <a href="mathe_trainer_3_klasse.html" class="subject-card">
       <div class="badge-math"></div>
-      <div class="card-icon">🔢</div>
+      <div class="card-icon" style="color: var(--math);">
+        <!-- Mathe Icon (Taschenrechner/Zahlen) -->
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+      </div>
       <div class="card-title">Mathematik</div>
       <div class="card-desc">Zahlenraum 1000, Rechnen, Geometrie, Uhrzeit und mehr.</div>
-      <div class="status active">🚀 Jetzt starten</div>
+      <div class="status active">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        Jetzt starten
+      </div>
     </a>
 
-    <!-- DEUTSCH APP (Platzhalter) -->
+    <!-- DEUTSCH APP -->
     <div class="subject-card disabled">
       <div class="badge-german"></div>
-      <div class="card-icon">📚</div>
+      <div class="card-icon" style="color: var(--german);">
+        <!-- Deutsch Icon (Buch) -->
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+      </div>
       <div class="card-title">Deutsch</div>
       <div class="card-desc">Rechtschreibung, Grammatik und Leseverständnis.</div>
-      <div class="status soon">⏳ Kommt bald</div>
+      <div class="status soon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        Kommt bald
+      </div>
     </div>
 
-    <!-- HSU APP (Platzhalter) -->
+    <!-- HSU APP -->
     <div class="subject-card disabled">
       <div class="badge-hsu"></div>
-      <div class="card-icon">🌍</div>
+      <div class="card-icon" style="color: var(--hsu);">
+        <!-- HSU Icon (Globus) -->
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      </div>
       <div class="card-title">HSU</div>
       <div class="card-desc">Wald, Gemeinde, Orientierung und Zeitleiste.</div>
-      <div class="status soon">⏳ Kommt bald</div>
+      <div class="status soon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        Kommt bald
+      </div>
     </div>
   </div>
 
   <div class="footer-tips">
-    <h3>💡 Tipps für Eltern</h3>
+    <h3>
+      <svg class="tip-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+      Tipps für Eltern
+    </h3>
     <ul>
-      <li>📱 <b>App installieren:</b> Öffne diese Seite im Chrome/Safari und wähle "Zum Startbildschirm hinzufügen".</li>
-      <li>🔊 <b>Ton an:</b> Schalte das Gerät laut, damit das Kind die Sprachausgabe hört.</li>
-      <li>📊 <b>Statistiken:</b> Alle Fortschritte werden lokal und sicher auf diesem Gerät gespeichert.</li>
+      <li>
+        <svg class="tip-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+        <b>App installieren:</b> Öffne diese Seite im Chrome/Safari und wähle "Zum Startbildschirm hinzufügen".
+      </li>
+      <li>
+        <svg class="tip-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+        <b>Ton an:</b> Schalte das Gerät laut, damit das Kind die Sprachausgabe hört.
+      </li>
+      <li>
+        <svg class="tip-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        <b>Statistiken:</b> Alle Fortschritte werden lokal und sicher auf diesem Gerät gespeichert.
+      </li>
     </ul>
   </div>
 
