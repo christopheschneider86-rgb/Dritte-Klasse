@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Lern-Abenteuer Grundschule</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<link rel="icon" type="image/png" href="main.png">
+<link rel="apple-touch-icon" href="main.png">
+<style>
+:root {
+  --bg: #f0f8ff;
+  --card: #ffffff;
+  --text: #2c3e50;
+  --math: #3498db;
+  --german: #e67e22;
+  --hsu: #27ae60;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  background: var(--bg); color: var(--text);
+  min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+  padding: 20px; text-align: center;
+}
+.hero{ margin-bottom: 40px; margin-top: 20px; }
+.hero-icon{
+  width: 100px; height: 100px; border-radius: 25px; object-fit: cover;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15); margin-bottom: 15px;
+}
+.hero h1{ font-size: 32px; margin-bottom: 10px; }
+.hero p{ font-size: 16px; color: #7f8c8d; max-width: 500px; margin: 0 auto; line-height: 1.5; }
+
+.grid{
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px; width: 100%; max-width: 900px;
+}
+
+.subject-card{
+  background: var(--card); border-radius: 20px; padding: 25px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06); text-decoration: none; color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden;
+}
+.subject-card:hover{ transform: translateY(-5px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+.subject-card.disabled{ opacity: 0.7; cursor: not-allowed; }
+
+.card-icon{ font-size: 40px; margin-bottom: 10px; }
+.card-title{ font-size: 22px; font-weight: bold; margin-bottom: 8px; }
+.card-desc{ font-size: 14px; color: #7f8c8d; }
+
+.badge-math{ position:absolute; top:0; left:0; width:100%; height:8px; background:var(--math); }
+.badge-german{ position:absolute; top:0; left:0; width:100%; height:8px; background:var(--german); }
+.badge-hsu{ position:absolute; top:0; left:0; width:100%; height:8px; background:var(--hsu); }
+
+.status{
+  display: inline-block; margin-top: 15px; padding: 5px 12px; border-radius: 20px;
+  font-size: 12px; font-weight: bold;
+}
+.status.active{ background: #e8f6f3; color: #27ae60; }
+.status.soon{ background: #fdf2e9; color: #e67e22; }
+
+.footer-tips{
+  margin-top: 50px; background: white; padding: 20px; border-radius: 15px;
+  max-width: 600px; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.footer-tips h3{ font-size: 16px; margin-bottom: 10px; display:flex; align-items:center; gap:8px;}
+.footer-tips ul{ list-style-type: none; }
+.footer-tips li{ font-size: 14px; color: #7f8c8d; margin-bottom: 8px; display:flex; gap:8px;}
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <!-- Hier wird dein main.png geladen -->
+    <img src="main.png" alt="Logo" class="hero-icon" onerror="this.style.display='none'">
+    <h1>Lern-Abenteuer</h1>
+    <p>Spielerisch lernen für die 3. Klasse in Bayern. Wähle ein Fach aus und starte dein Training für die nächste Probe!</p>
+  </div>
+
+  <div class="grid">
+    <!-- MATHE APP -->
+    <!-- WICHTIG: Hier ist der Link zur Mathe-HTML -->
+    <a href="mathe_trainer_3_klasse.html" class="subject-card">
+      <div class="badge-math"></div>
+      <div class="card-icon">🔢</div>
+      <div class="card-title">Mathematik</div>
+      <div class="card-desc">Zahlenraum 1000, Rechnen, Geometrie, Uhrzeit und mehr.</div>
+      <div class="status active">🚀 Jetzt starten</div>
+    </a>
+
+    <!-- DEUTSCH APP (Platzhalter) -->
+    <div class="subject-card disabled">
+      <div class="badge-german"></div>
+      <div class="card-icon">📚</div>
+      <div class="card-title">Deutsch</div>
+      <div class="card-desc">Rechtschreibung, Grammatik und Leseverständnis.</div>
+      <div class="status soon">⏳ Kommt bald</div>
+    </div>
+
+    <!-- HSU APP (Platzhalter) -->
+    <div class="subject-card disabled">
+      <div class="badge-hsu"></div>
+      <div class="card-icon">🌍</div>
+      <div class="card-title">HSU</div>
+      <div class="card-desc">Wald, Gemeinde, Orientierung und Zeitleiste.</div>
+      <div class="status soon">⏳ Kommt bald</div>
+    </div>
+  </div>
+
+  <div class="footer-tips">
+    <h3>💡 Tipps für Eltern</h3>
+    <ul>
+      <li>📱 <b>App installieren:</b> Öffne diese Seite im Chrome/Safari und wähle "Zum Startbildschirm hinzufügen".</li>
+      <li>🔊 <b>Ton an:</b> Schalte das Gerät laut, damit das Kind die Sprachausgabe hört.</li>
+      <li>📊 <b>Statistiken:</b> Alle Fortschritte werden lokal und sicher auf diesem Gerät gespeichert.</li>
+    </ul>
+  </div>
+
+</body>
+</html>
