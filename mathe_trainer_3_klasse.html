@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <title>Mathe-Trainer 3. Klasse Bayern</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<link rel="icon" type="image/png" href="main.png">
+<link rel="apple-touch-icon" href="main.png">
 <style>
 :root {
   --bg: #e9f4ff;
@@ -27,15 +29,19 @@ body{
   background:var(--card); border-radius:var(--radius);
   box-shadow:0 8px 24px rgba(0,0,0,0.08); padding:16px;
 }
-.header{ display:flex; align-items:center; gap:16px; margin-bottom:14px; }
+.header{ display:flex; align-items:center; gap:16px; margin-bottom:14px; position: relative;}
+
+/* NEU: ZURÜCK ZUR STARTSEITE BUTTON */
+.back-home{
+  background: #ecf0f1; border: none; border-radius: 12px; padding: 10px 15px;
+  cursor: pointer; text-decoration: none; color: var(--text); font-size: 20px;
+  display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+}
+.back-home:hover{ background: #bdc3c7; }
+
 .app-icon{
   width:64px; height:64px; border-radius:16px; object-fit:cover;
   box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
-.icon-fallback{
-  width:64px; height:64px; border-radius:16px; background:#3498db;
-  display:flex; align-items:center; justify-content:center;
-  color:#fff; font-size:36px; font-weight:bold; display:none;
 }
 .header-text h1{ font-size:22px; margin-bottom:4px; color:#2c3e50; }
 .header-text p{ font-size:14px; color:var(--muted); }
@@ -74,7 +80,6 @@ select{ border:1px solid #ccd8e6; background:#f8fbff; font-weight:bold;}
 .visual-container{ margin:15px 0; display:flex; justify-content:center; }
 .task-hint{ font-size:13px; color:var(--muted); margin-bottom:15px; }
 
-/* VISUELLE ELEMENTE (Mauer, Tausenderbuch, Inputs) */
 .mauer-row{ display:flex; justify-content:center; gap:8px; margin-bottom:8px; }
 .brick{
   width:75px; height:50px; background:#e67e22; border-radius:8px;
@@ -106,7 +111,6 @@ select{ border:1px solid #ccd8e6; background:#f8fbff; font-weight:bold;}
 .feedback.ok{ color:var(--success); }
 .feedback.bad{ color:var(--danger); }
 
-/* Statistik */
 .stats-card{ background:#fdfdfd; border-radius:16px; padding:12px; border:2px solid #e1e8f0; margin-top:10px;}
 .stats-row{ display:flex; align-items:center; font-size:13px; margin-bottom:6px; }
 .stats-bar{ flex:1; height:10px; background:#ecf0f1; border-radius:10px; margin:0 10px; overflow:hidden; }
@@ -117,10 +121,10 @@ select{ border:1px solid #ccd8e6; background:#f8fbff; font-weight:bold;}
 <div class="app">
   <div class="card">
     <div class="header">
-      <link rel="icon" type="image/png" href="icon.png">
-      <link rel="apple-touch-icon" href="icon.png">
-      <img src="icon.png" class="app-icon" alt="Icon" onerror="this.style.display='none'; document.getElementById('icon-fb').style.display='flex';">
-      <div id="icon-fb" class="icon-fallback">M</div>
+      <!-- NEUER BUTTON -->
+      <a href="index.html" class="back-home" title="Zurück zur Startseite">🏠</a>
+      
+      <img src="main.png" class="app-icon" alt="Icon" onerror="this.style.display='none'">
       <div class="header-text">
         <h1>Mathe-Trainer 3. Klasse</h1>
         <p>LehrplanPLUS Bayern · Visuelles Lernen</p>
@@ -302,33 +306,24 @@ const tasks = {
   mauer: {
     title: "Zahlenmauer", sub: "Optische Pyramide",
     gen() {
-      // Basis-Steine
       const a=randInt(10,50), b=randInt(10,50), c=randInt(10,50);
-      // Mitte
       const d=a+b, e=b+c;
-      // Spitze
       const f=d+e;
       
       return {
         q: `Baue die Zahlenmauer!`,
         hint: "Addiere zwei nebeneinanderliegende Steine für den Stein darüber.",
         html: `
-          <!-- Spitze -->
           <div class="mauer-row"><div class="brick"><input id="inp_1" type="number"></div></div>
-          <!-- Mitte -->
           <div class="mauer-row">
             <div class="brick"><input id="inp_2" type="number"></div>
             <div class="brick"><input id="inp_3" type="number"></div>
           </div>
-          <!-- Basis -->
           <div class="mauer-row">
             <div class="brick">${a}</div><div class="brick">${b}</div><div class="brick">${c}</div>
           </div>
         `,
-        // Lösungs-Reihenfolge muss exakt zu den IDs passen
-        // inp_1 = Spitze (f), inp_2 = Mitte links (d), inp_3 = Mitte rechts (e)
-        ids: ['inp_1', 'inp_2', 'inp_3'],
-        sol: [f, d, e]
+        ids: ['inp_1', 'inp_2', 'inp_3'], sol: [f, d, e]
       };
     }
   },
@@ -350,8 +345,7 @@ const tasks = {
             <div></div><div class="t-cell"><input type="number" id="inp_4" class="t-input" placeholder="Unten"></div><div></div>
           </div>
         `,
-        ids: ['inp_1', 'inp_2', 'inp_3', 'inp_4'],
-        sol: [n-10, n-1, n+1, n+10]
+        ids: ['inp_1', 'inp_2', 'inp_3', 'inp_4'], sol: [n-10, n-1, n+1, n+10]
       };
     }
   },
@@ -370,8 +364,7 @@ const tasks = {
           <input type="number" class="std-input" id="inp_h" placeholder="Std" style="width:70px"> : 
           <input type="number" class="std-input" id="inp_m" placeholder="Min" style="width:70px">
         `,
-        ids: ['inp_h', 'inp_m'],
-        sol: [Math.floor(total/60)%24, total%60]
+        ids: ['inp_h', 'inp_m'], sol: [Math.floor(total/60)%24, total%60]
       };
     }
   },
@@ -476,7 +469,6 @@ function genTask(){
   document.getElementById('checkBtn').disabled = false;
   document.getElementById('nextBtn').style.display = 'none';
   
-  // Enter-Taste
   curInstance.ids.forEach(id => {
     const el = document.getElementById(id);
     if(el) el.addEventListener('keypress', e => { if(e.key === 'Enter') check(); });
@@ -513,7 +505,6 @@ function check(){
   saveStorage(); updateUI();
 }
 
-// Event Listeners
 document.getElementById('profileSelect').onchange = e => { curProfId = e.target.value; updateUI(); };
 document.getElementById('checkBtn').onclick = check;
 document.getElementById('nextBtn').onclick = genTask;
