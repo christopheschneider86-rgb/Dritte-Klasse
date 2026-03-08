@@ -3,16 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <title>Mathe-Trainer 3. Klasse Bayern</title>
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<link rel="icon" type="image/png" href="icon.png">
-<link rel="apple-touch-icon" href="icon.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <style>
 :root {
   --bg: #e9f4ff;
   --card: #ffffff;
   --accent: #3498db;
   --accent-soft: #d6ecff;
-  --accent-strong: #1b6fab;
   --danger: #e74c3c;
   --success: #27ae60;
   --text: #222222;
@@ -21,355 +18,156 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{
-  font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg); color: var(--text);
+  min-height: 100vh; display: flex; justify-content: center;
 }
-.app{
-  width:100%;
-  max-width:1024px;
-  padding:12px;
-}
+.app{ width:100%; max-width:1000px; padding:12px; }
 .card{
-  background:var(--card);
-  border-radius:var(--radius);
-  box-shadow:0 8px 24px rgba(0,0,0,0.08);
-  padding:16px 16px 22px;
+  background:var(--card); border-radius:var(--radius);
+  box-shadow:0 8px 24px rgba(0,0,0,0.08); padding:16px;
 }
-.header{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin-bottom:14px;
-}
+.header{ display:flex; align-items:center; gap:16px; margin-bottom:14px; }
 .app-icon{
-  width:56px;
-  height:56px;
-  border-radius:18px;
-  background:linear-gradient(135deg,#3498db,#9b59b6);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#fff;
-  font-size:32px;
-  font-weight:700;
+  width:64px; height:64px; border-radius:16px; object-fit:cover;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
-.header-text h1{
-  font-size:20px;
-  margin-bottom:4px;
+/* Fallback, falls icon.png nicht da ist */
+.icon-fallback{
+  width:64px; height:64px; border-radius:16px; background:#3498db;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:36px; font-weight:bold; display:none;
 }
-.header-text p{
-  font-size:13px;
-  color:var(--muted);
+.header-text h1{ font-size:22px; margin-bottom:4px; color:#2c3e50; }
+.header-text p{ font-size:14px; color:var(--muted); }
+.profile-bar, .score-bar{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:12px; flex-wrap:wrap; gap:8px;
 }
-.profile-bar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:12px;
-  flex-wrap:wrap;
-  gap:8px;
-}
-.profile-select{
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-.profile-select label{
-  font-size:13px;
-  color:var(--muted);
-}
-.profile-select select{
-  padding:6px 8px;
-  border-radius:10px;
-  border:1px solid #ccd8e6;
-  background:#f8fbff;
-  font-size:14px;
-}
-.profile-buttons{
-  display:flex;
-  gap:6px;
-}
-.btn{
-  border:none;
-  border-radius:999px;
-  padding:7px 14px;
-  font-size:13px;
-  cursor:pointer;
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-}
-.btn-primary{
-  background:var(--accent);
-  color:white;
-}
-.btn-secondary{
-  background:#ecf0f1;
-  color:var(--text);
-}
-.btn-danger{
-  background:#ffe4e1;
-  color:#c0392b;
-}
-.btn:active{transform:scale(0.97);}
-.score-bar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:8px 10px;
-  border-radius:16px;
-  background:var(--accent-soft);
-  margin-bottom:12px;
-  font-size:13px;
-}
-.score-bar strong{font-size:15px;}
-.stars{
-  color:#f1c40f;
-  font-size:17px;
-}
-.main-layout{
-  display:grid;
-  grid-template-columns: minmax(0,1.2fr) minmax(0,1.1fr);
-  gap:14px;
-}
-@media(max-width:800px){
-  .main-layout{grid-template-columns:1fr;}
-}
-.tile-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-  gap:10px;
-}
+.score-bar{ padding:10px 14px; border-radius:16px; background:var(--accent-soft); font-size:14px; }
+.score-bar strong{ font-size:16px; color:#1b6fab; }
+.stars{ color:#f39c12; font-size:18px; letter-spacing:2px; }
+select, .btn{ padding:8px 14px; border-radius:12px; font-size:14px; border:none; cursor:pointer; }
+select{ border:1px solid #ccd8e6; background:#f8fbff; font-weight:bold;}
+.btn-primary{ background:var(--accent); color:white; font-weight:bold; }
+.btn-secondary{ background:#ecf0f1; color:var(--text); }
+.btn-danger{ background:#ffe4e1; color:#c0392b; }
+.btn:active{ transform:scale(0.96); }
+
+.main-layout{ display:grid; grid-template-columns: 1fr 1.1fr; gap:16px; }
+@media(max-width:800px){ .main-layout{ grid-template-columns:1fr; } }
+
+.tile-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(130px, 1fr)); gap:12px; }
 .tile{
-  background:#f7fbff;
-  border-radius:16px;
-  padding:10px;
-  border:1px solid #d9e8f7;
-  cursor:pointer;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  min-height:88px;
-  transition:transform .1s, box-shadow .1s, border-color .1s;
+  background:#f7fbff; border-radius:16px; padding:12px; border:2px solid #d9e8f7;
+  cursor:pointer; transition:all .2s; min-height:95px; display:flex; flex-direction:column;
 }
-.tile:hover{
-  transform:translateY(-2px);
-  box-shadow:0 6px 16px rgba(0,0,0,0.12);
-  border-color:var(--accent);
-}
-.tile-title{
-  font-size:14px;
-  font-weight:600;
-  margin-bottom:4px;
-}
-.tile-sub{
-  font-size:11px;
-  color:var(--muted);
-}
-.tile-tag{
-  margin-top:6px;
-  align-self:flex-start;
-  font-size:10px;
-  padding:2px 6px;
-  border-radius:999px;
-  background:#eaf5ff;
-  color:#3b7dd8;
-}
-.panel-title{
-  font-size:16px;
-  font-weight:600;
-  margin-bottom:6px;
-}
-.panel-sub{
-  font-size:12px;
-  color:var(--muted);
-  margin-bottom:10px;
-}
+.tile:hover, .tile.active{ border-color:var(--accent); background:#edf5fc; transform:translateY(-2px); }
+.tile-title{ font-size:15px; font-weight:bold; margin-bottom:4px; color:#2c3e50; }
+.tile-sub{ font-size:11px; color:var(--muted); }
+
+.panel-title{ font-size:18px; font-weight:bold; margin-bottom:4px; color:#2c3e50; }
 .task-box{
-  margin-top:8px;
-  padding:12px;
-  border-radius:14px;
-  background:#f9fbff;
-  border:1px solid #dce6f5;
+  margin-top:12px; padding:20px; border-radius:16px; background:#fdfdfd;
+  border:2px solid #e1e8f0; text-align:center; box-shadow:inset 0 2px 10px rgba(0,0,0,0.02);
 }
-.task-question{
-  font-size:18px;
-  text-align:center;
-  margin-bottom:10px;
+.task-question{ font-size:22px; font-weight:bold; margin-bottom:10px; color:#2c3e50; }
+.visual-container{ margin:15px 0; display:flex; justify-content:center; }
+.task-hint{ font-size:13px; color:var(--muted); margin-bottom:15px; }
+
+/* VISUELLE ELEMENTE (Mauer, Tausenderbuch, Inputs) */
+.mauer-row{ display:flex; justify-content:center; gap:8px; margin-bottom:8px; }
+.brick{
+  width:70px; height:50px; background:#e67e22; border-radius:8px;
+  border:2px solid #d35400; display:flex; align-items:center; justify-content:center;
+  font-size:20px; font-weight:bold; color:white; box-shadow:0 4px 0 #b33c00;
 }
-.task-extra{
-  font-size:13px;
-  color:var(--muted);
-  text-align:center;
-  margin-bottom:10px;
+.brick input{
+  width:100%; height:100%; border:none; background:white; border-radius:6px;
+  text-align:center; font-size:22px; font-weight:bold; color:#d35400;
 }
-.task-inputs{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  justify-content:center;
-  margin-bottom:12px;
+.brick input:focus{ outline:none; box-shadow:inset 0 0 0 3px #f1c40f; }
+
+.tausender-cross{ display:grid; grid-template-columns: 60px 60px 60px; gap:6px; justify-content:center; }
+.t-cell{ width:60px; height:60px; border-radius:8px; }
+.t-center{ background:#3498db; color:white; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:bold; box-shadow:0 4px 0 #2980b9;}
+.t-input{
+  width:100%; height:100%; text-align:center; font-size:20px; font-weight:bold;
+  border:2px solid #bdc3c7; border-radius:8px; background:#fff;
 }
-.input-field{
-  width:80px;
-  padding:8px 4px;
-  font-size:18px;
-  text-align:center;
-  border-radius:10px;
-  border:2px solid #ccd8e6;
-  background:white;
+.t-input:focus{ border-color:#3498db; outline:none; }
+
+.std-input{
+  width:90px; padding:10px; font-size:24px; font-weight:bold; text-align:center;
+  border:3px solid #ccd8e6; border-radius:12px; margin:0 5px;
 }
-.input-field:focus{
-  outline:none;
-  border-color:var(--accent);
-  box-shadow:0 0 0 2px rgba(52,152,219,0.25);
-}
-.small-label{
-  font-size:12px;
-  color:var(--muted);
-  text-align:center;
-}
-.feedback{
-  margin-top:4px;
-  font-size:13px;
-  text-align:center;
-  min-height:18px;
-}
-.feedback.ok{color:var(--success);}
-.feedback.bad{color:var(--danger);}
-.btn-row{
-  display:flex;
-  justify-content:center;
-  gap:8px;
-  margin-top:4px;
-}
-.stats-card{
-  background:#fdfdfd;
-  border-radius:16px;
-  padding:10px;
-  border:1px solid #e2e2e2;
-}
-.stats-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:12px;
-  margin-bottom:4px;
-}
-.stats-bar{
-  flex:1;
-  margin:0 8px;
-  height:8px;
-  border-radius:999px;
-  background:#ecf0f1;
-  overflow:hidden;
-}
-.stats-bar-fill{
-  height:100%;
-  background:linear-gradient(90deg,#27ae60,#2ecc71);
-}
-.stats-summary{
-  margin-top:6px;
-  font-size:12px;
-  color:var(--muted);
-}
-.stats-reset{
-  margin-top:6px;
-  text-align:right;
-}
-.badge{
-  display:inline-block;
-  font-size:10px;
-  padding:2px 6px;
-  border-radius:999px;
-  background:#f1f2f6;
-  color:var(--muted);
-}
-.chart-placeholder{
-  margin-top:8px;
-  font-size:11px;
-  color:var(--muted);
-}
-.hidden{display:none;}
+.std-input:focus{ border-color:#3498db; outline:none; }
+
+.feedback{ margin-top:15px; font-size:16px; font-weight:bold; min-height:24px; }
+.feedback.ok{ color:var(--success); }
+.feedback.bad{ color:var(--danger); }
+
+/* Statistik */
+.stats-card{ background:#fdfdfd; border-radius:16px; padding:12px; border:2px solid #e1e8f0; margin-top:10px;}
+.stats-row{ display:flex; align-items:center; font-size:13px; margin-bottom:6px; }
+.stats-bar{ flex:1; height:10px; background:#ecf0f1; border-radius:10px; margin:0 10px; overflow:hidden; }
+.stats-fill{ height:100%; background:var(--success); transition:width 0.5s; }
 </style>
 </head>
 <body>
 <div class="app">
   <div class="card">
     <div class="header">
-      <div class="app-icon">M</div>
+      <img src="icon.png" class="app-icon" alt="Mathe Icon" onerror="this.style.display='none'; document.getElementById('icon-fb').style.display='flex';">
+      <div id="icon-fb" class="icon-fallback">M</div>
       <div class="header-text">
         <h1>Mathe-Trainer 3. Klasse</h1>
-        <p>Bayern · Zahlenraum 1000 · Probenvorbereitung</p>
+        <p>LehrplanPLUS Bayern · Visuelles Lernen</p>
       </div>
     </div>
 
-    <!-- Profile -->
+    <!-- Profil & Stats -->
     <div class="profile-bar">
-      <div class="profile-select">
-        <label for="profileSelect">Profil:</label>
+      <div>
         <select id="profileSelect"></select>
       </div>
-      <div class="profile-buttons">
-        <button class="btn btn-secondary" id="addProfileBtn">Neues Kind</button>
-        <button class="btn btn-danger" id="deleteProfileBtn">Profil löschen</button>
+      <div>
+        <button class="btn btn-secondary" id="addBtn">Neues Kind</button>
+        <button class="btn btn-danger" id="delBtn">Profil löschen</button>
       </div>
     </div>
 
-    <!-- Score -->
-    <div class="score-bar" id="scoreBar">
-      <div><strong id="scoreText">Punkte: 0</strong> · <span id="levelText">Level: Anfänger</span></div>
+    <div class="score-bar">
+      <div><strong id="scoreText">Punkte: 0</strong></div>
       <div class="stars" id="starsText">☆ ☆ ☆ ☆ ☆</div>
     </div>
 
     <div class="main-layout">
-      <!-- Left: Task selection + current task -->
+      <!-- Links: Menü -->
       <div>
-        <div class="panel-title">Lernbereiche</div>
-        <div class="panel-sub">Tippe auf eine Karte, um loszulegen.</div>
-        <div class="tile-grid" id="taskTiles">
-          <!-- tiles created via JS -->
-        </div>
+        <div class="panel-title">Was üben wir heute?</div>
+        <div class="tile-grid" id="taskTiles"></div>
       </div>
 
-      <!-- Right: Active task + stats -->
+      <!-- Rechts: Aufgabe -->
       <div>
-        <div class="panel-title">Aktuelle Aufgabe</div>
-        <div class="panel-sub" id="taskNameSub">Wähle erst links einen Bereich aus.</div>
-        <div class="task-box" id="taskBox">
-          <div class="task-question" id="taskQuestion">Keine Aufgabe ausgewählt.</div>
-          <div class="task-extra" id="taskExtra"></div>
-          <div class="task-inputs" id="taskInputs"></div>
-          <div class="small-label" id="taskHint"></div>
-          <div class="btn-row">
-            <button class="btn btn-primary" id="checkBtn" disabled>Antwort prüfen</button>
-            <button class="btn btn-secondary" id="nextBtn" disabled>Nächste Aufgabe</button>
+        <div class="panel-title" id="taskTitle">Aktuelle Aufgabe</div>
+        <div class="task-box">
+          <div class="task-question" id="tQuestion">Wähle links ein Thema!</div>
+          <div class="visual-container" id="tVisual"></div>
+          <div class="task-hint" id="tHint"></div>
+          
+          <div style="margin-top:15px;">
+            <button class="btn btn-primary" id="checkBtn" style="padding:12px 24px; font-size:16px;" disabled>Antwort prüfen</button>
+            <button class="btn btn-secondary" id="nextBtn" style="padding:12px 24px; font-size:16px; display:none;">Weiter ➔</button>
           </div>
           <div class="feedback" id="feedback"></div>
         </div>
 
-        <div style="margin-top:10px;">
-          <div class="panel-title">Statistik</div>
-          <div class="panel-sub">Für Kind und Eltern – Stärken & Übe-Bereiche.</div>
-          <div class="stats-card" id="statsCard">
-            <div class="stats-row">
-              <span>Gesamt-Erfolg:</span>
-              <div class="stats-bar"><div class="stats-bar-fill" id="totalBar" style="width:0%"></div></div>
-              <span id="totalPercent">0%</span>
-            </div>
-            <div id="perAreaStats"></div>
-            <div class="stats-summary" id="statsSummary"></div>
-            <div class="stats-reset">
-              <button class="btn btn-secondary" id="resetStatsBtn">Statistik dieses Profils löschen</button>
-            </div>
-            <div class="chart-placeholder">
-              (Hinweis: Für detaillierte Diagramme kann man später z.B. Chart.js ergänzen – hier bewusst leicht gehalten.)
-            </div>
-          </div>
+        <div class="stats-card">
+          <div style="font-weight:bold; margin-bottom:8px; color:#2c3e50;">📊 Profil-Statistik</div>
+          <div id="statsList"></div>
+          <button class="btn btn-secondary" id="resetBtn" style="margin-top:10px; width:100%; font-size:12px;">Statistik leeren</button>
         </div>
       </div>
     </div>
@@ -377,546 +175,348 @@ body{
 </div>
 
 <script>
-/* ---------------- Daten & Profile ---------------- */
-
-const STORAGE_KEY = 'mathe_trainer_profiles_v1';
-
-let profiles = {};
-let currentProfileId = null;
-
-function loadProfiles() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if(raw){
-    try { profiles = JSON.parse(raw); }
-    catch(e){ profiles = {}; }
-  }
-  if(Object.keys(profiles).length === 0){
-    const id = 'profil_1';
-    profiles[id] = createEmptyProfile('Kind 1');
-    currentProfileId = id;
-  } else{
-    currentProfileId = Object.keys(profiles)[0];
-  }
-  saveProfiles();
-}
-
-function saveProfiles() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
-}
-
-function createEmptyProfile(name){
-  const tasks = {};
-  for(const key of Object.keys(taskDefinitions)){
-    tasks[key]={correct:0,total:0};
-  }
-  return {
-    name,
-    score:0,
-    tasks
-  };
-}
-
-/* ---------------- Aufgaben-Definitionen ---------------- */
-
-const taskDefinitions = {
-  hze:{
-    label:"Stellenwerte (H/Z/E)",
-    desc:"Zahlenraum 1000, Hunderter, Zehner, Einer.",
-    type:"Zahlen und Operationen",
-    generator(){
-      const n = Math.floor(Math.random()*900)+100;
-      return {
-        question:`Zerlege die Zahl ${n}.`,
-        extra:'',
-        hint:'Trage die Anzahl der Hunderter, Zehner und Einer ein.',
-        inputs:[
-          {id:'h',label:'H',type:'number'},
-          {id:'z',label:'Z',type:'number'},
-          {id:'e',label:'E',type:'number'},
-        ],
-        solution:{h:Math.floor(n/100),z:Math.floor((n%100)/10),e:n%10}
-      };
-    },
-    checker(user,sol){
-      return user.h==sol.h && user.z==sol.z && user.e==sol.e;
-    }
-  },
-  rechnen:{
-    label:"Rechnen (±,×,÷)",
-    desc:"Kopfrechnen, 1x1, Division ohne Rest.",
-    type:"Zahlen und Operationen",
-    generator(){
-      const ops=['+','-','*','/'];
-      const op=ops[Math.floor(Math.random()*ops.length)];
-      let a,b,solution,displayOp;
-      if(op==='+'){
-        a=randInt(50,500); b=randInt(20,400); solution=a+b; displayOp='+';
-      }else if(op==='-'){
-        a=randInt(200,900); b=randInt(20,a-50); solution=a-b; displayOp='−';
-      }else if(op==='*'){
-        a=randInt(2,10); b=randInt(2,10); solution=a*b; displayOp='×';
-      }else{
-        b=randInt(2,10); solution=randInt(2,10); a=b*solution; displayOp=':';
-      }
-      return {
-        question:`${a} ${displayOp} ${b} = ?`,
-        extra:'',
-        hint:'Rechne im Kopf oder schriftlich.',
-        inputs:[{id:'res',label:'Ergebnis',type:'number'}],
-        solution:{res:solution}
-      };
-    },
-    checker(user,sol){return user.res==sol.res;}
-  },
-  divrest:{
-    label:"Division mit Rest",
-    desc:"Quotient und Rest bestimmen.",
-    type:"Zahlen und Operationen",
-    generator(){
-      let a=randInt(15,99), b=randInt(3,9);
-      while(a % b===0){a=randInt(15,99);}
-      const q=Math.floor(a/b), r=a%b;
-      return {
-        question:`${a} : ${b} = ?`,
-        extra:'Gib Ergebnis und Rest an.',
-        hint:'Ergebnis = ganze Zahl, Rest = was übrig bleibt.',
-        inputs:[
-          {id:'q',label:'Ergebnis',type:'number'},
-          {id:'r',label:'Rest',type:'number'}
-        ],
-        solution:{q,r}
-      };
-    },
-    checker(user,sol){return user.q==sol.q && user.r==sol.r;}
-  },
-  groessen:{
-    label:"Größen & Geld",
-    desc:"m–cm, kg–g, Euro–Cent.",
-    type:"Größen und Messen",
-    generator(){
-      const variants=[
-        ()=>{const m=randInt(2,9);return{
-          question:`${m} m = ? cm`,
-          extra:'',
-          hint:'1 m = 100 cm.',
-          inputs:[{id:'x',label:'cm',type:'number'}],
-          solution:{x:m*100}
-        }},
-        ()=>{const mm=randInt(20,95)*10;return{
-          question:`${mm} mm = ? cm`,
-          extra:'',
-          hint:'10 mm = 1 cm.',
-          inputs:[{id:'x',label:'cm',type:'number'}],
-          solution:{x:mm/10}
-        }},
-        ()=>{const kg=randInt(2,8);return{
-          question:`${kg} kg = ? g`,
-          extra:'',
-          hint:'1 kg = 1000 g.',
-          inputs:[{id:'x',label:'g',type:'number'}],
-          solution:{x:kg*1000}
-        }},
-        ()=>{const euro=randInt(2,20);return{
-          question:`${euro} € = ? Cent`,
-          extra:'',
-          hint:'1 € = 100 Cent.',
-          inputs:[{id:'x',label:'Cent',type:'number'}],
-          solution:{x:euro*100}
-        }}
-      ];
-      return variants[randInt(0,variants.length-1)]();
-    },
-    checker(user,sol){return user.x==sol.x;}
-  },
-  zeit:{
-    label:"Uhrzeit & Dauer",
-    desc:"Endzeit nach Minuten-Dauer.",
-    type:"Größen und Messen",
-    generator(){
-      const h=randInt(7,18);
-      const m=[0,15,30,45][randInt(0,3)];
-      const d=[15,30,45,60,90][randInt(0,4)];
-      const total=h*60+m+d;
-      const nh=Math.floor((total/60)%24);
-      const nm=total%60;
-      return {
-        question:`Es ist ${pad2(h)}:${pad2(m)} Uhr.`,
-        extra:`Eine Aktivität dauert ${d} Minuten. Wann ist sie zu Ende?`,
-        hint:'Schreibe Stunde und Minuten (z.B. 14 und 30).',
-        inputs:[
-          {id:'h',label:'Stunden',type:'number'},
-          {id:'m',label:'Minuten',type:'number'}
-        ],
-        solution:{h:nh,m:nm}
-      };
-    },
-    checker(user,sol){return user.h==sol.h && user.m==sol.m;}
-  },
-  geometrie:{
-    label:"Geometrie & Kombinatorik",
-    desc:"Würfel, Quader, Möglichkeiten.",
-    type:"Raum und Form / Sachrechnen",
-    generator(){
-      const qs=[
-        {q:"Wie viele Ecken hat ein Würfel?",hint:'Ein Würfel ist wie ein Spielwürfel.',s:8},
-        {q:"Wie viele Kanten hat ein Quader?",hint:'Quader: wie ein Schuhkarton.',s:12},
-        {q:"Wie viele Flächen hat ein Würfel?",hint:'Oben, unten, vorne, hinten, links, rechts.',s:6},
-        {q:"Lisa hat 3 T-Shirts und 4 Hosen. Wie viele Outfits kann sie machen?",hint:'T-Shirts × Hosen.',s:12},
-        {q:"Tom hat 4 Eissorten und 2 Soßen. Wie viele Sorten+Soßen-Kombis gibt es?",hint:'Sorten × Soßen.',s:8}
-      ];
-      const c=qs[randInt(0,qs.length-1)];
-      return {
-        question:c.q,
-        extra:'',
-        hint:c.hint,
-        inputs:[{id:'x',label:'Antwort',type:'number'}],
-        solution:{x:c.s}
-      };
-    },
-    checker(user,sol){return user.x==sol.x;}
-  },
-  orientierung:{
-    label:"Zahlenraum / Nachbarn",
-    desc:"Nachbarhunderter bestimmen.",
-    type:"Zahlen und Operationen",
-    generator(){
-      const n=randInt(120,880);
-      const vh=Math.floor(n/100)*100;
-      const nh=vh+100;
-      return {
-        question:`Zahl: ${n}`,
-        extra:'Bestimme den Hunderter davor und danach.',
-        hint:'Z.B. bei 345 sind es 300 und 400.',
-        inputs:[
-          {id:'v',label:'Hunderter davor',type:'number'},
-          {id:'n',label:'Hunderter danach',type:'number'}
-        ],
-        solution:{v:vh,n:nh}
-      };
-    },
-    checker(user,sol){return user.v==sol.v && user.n==sol.n;}
-  },
-  mauer:{
-    label:"Zahlenmauer",
-    desc:"Steine addieren.",
-    type:"Zahlen und Operationen",
-    generator(){
-      const a=randInt(20,150), b=randInt(20,150), c=randInt(20,150);
-      const d=a+b, e=b+c, f=d+e;
-      return {
-        question:`Zahlenmauer mit Basis ${a}, ${b}, ${c}`,
-        extra:'Fülle die fehlenden Steine.',
-        hint:'Oben steht die Summe der beiden darunter.',
-        inputs:[
-          {id:'d',label:'links Mitte',type:'number'},
-          {id:'e',label:'rechts Mitte',type:'number'},
-          {id:'f',label:'Spitze',type:'number'}
-        ],
-        solution:{d,e,f}
-      };
-    },
-    checker(user,sol){return user.d==sol.d && user.e==sol.e && user.f==sol.f;}
-  }
-};
-
-/* ---------------- UI-Setup ---------------- */
-
-const profileSelect = document.getElementById('profileSelect');
-const addProfileBtn = document.getElementById('addProfileBtn');
-const deleteProfileBtn = document.getElementById('deleteProfileBtn');
-
-const scoreText = document.getElementById('scoreText');
-const levelText = document.getElementById('levelText');
-const starsText = document.getElementById('starsText');
-
-const taskTilesContainer = document.getElementById('taskTiles');
-const taskNameSub = document.getElementById('taskNameSub');
-const taskQuestion = document.getElementById('taskQuestion');
-const taskExtra = document.getElementById('taskExtra');
-const taskInputs = document.getElementById('taskInputs');
-const taskHint = document.getElementById('taskHint');
-const checkBtn = document.getElementById('checkBtn');
-const nextBtn = document.getElementById('nextBtn');
-const feedback = document.getElementById('feedback');
-
-const totalBar = document.getElementById('totalBar');
-const totalPercent = document.getElementById('totalPercent');
-const perAreaStats = document.getElementById('perAreaStats');
-const statsSummary = document.getElementById('statsSummary');
-const resetStatsBtn = document.getElementById('resetStatsBtn');
-
-let currentTaskKey = null;
-let currentTaskInstance = null;
-
-/* ----- Audio-Feedback (Web Speech API) ----- */
+/* ---------------- Audio ---------------- */
 function speak(text){
   try{
     if('speechSynthesis' in window){
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'de-DE';
-      u.rate = 1.0;
+      u.lang = 'de-DE'; u.rate = 1.0;
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(u);
     }
   }catch(e){}
 }
 
-/* ---------------- Helper ---------------- */
-
 function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
-function pad2(x){return x.toString().padStart(2,'0');}
 
-function updateProfileSelect(){
-  profileSelect.innerHTML = '';
-  for(const [id,prof] of Object.entries(profiles)){
-    const opt=document.createElement('option');
-    opt.value=id;
-    opt.textContent=prof.name;
-    profileSelect.appendChild(opt);
+/* ---------------- SVG Zeichner ---------------- */
+function drawClock(h, m) {
+  const hAngle = ((h % 12) + m/60) * 30 - 90;
+  const mAngle = m * 6 - 90;
+  const hx = 50 + 20 * Math.cos(hAngle*Math.PI/180);
+  const hy = 50 + 20 * Math.sin(hAngle*Math.PI/180);
+  const mx = 50 + 32 * Math.cos(mAngle*Math.PI/180);
+  const my = 50 + 32 * Math.sin(mAngle*Math.PI/180);
+  
+  let ticks = '';
+  for(let i=0; i<12; i++){
+    const a = (i*30-90)*Math.PI/180;
+    const x1 = 50 + 40*Math.cos(a), y1 = 50 + 40*Math.sin(a);
+    const x2 = 50 + 45*Math.cos(a), y2 = 50 + 45*Math.sin(a);
+    ticks += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#34495e" stroke-width="${i%3===0?3:1}"/>`;
   }
-  profileSelect.value=currentProfileId;
+
+  return `
+    <svg width="120" height="120" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="46" fill="white" stroke="#bdc3c7" stroke-width="4"/>
+      ${ticks}
+      <line x1="50" y1="50" x2="${hx}" y2="${hy}" stroke="#2c3e50" stroke-width="4" stroke-linecap="round"/>
+      <line x1="50" y1="50" x2="${mx}" y2="${my}" stroke="#e74c3c" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="50" cy="50" r="3" fill="#2c3e50"/>
+    </svg>`;
 }
 
-function currentProfile(){
-  return profiles[currentProfileId];
+function drawShape(type) {
+  let paths = '';
+  if (type === 'cube') { // Würfel
+    paths = `
+      <path d="M50 15 L85 30 L85 75 L50 90 L15 75 L15 30 Z" fill="#3498db" stroke="#1b6fab" stroke-width="2"/>
+      <path d="M50 15 L15 30 L50 45 L85 30 Z" fill="#85c1e9" stroke="#1b6fab" stroke-width="2"/>
+      <path d="M50 45 L50 90" stroke="#1b6fab" stroke-width="2"/>
+    `;
+  } else if (type === 'cylinder') { // Zylinder
+    paths = `
+      <path d="M25 30 L25 75 A 25 10 0 0 0 75 75 L75 30 Z" fill="#3498db" stroke="#1b6fab" stroke-width="2"/>
+      <ellipse cx="50" cy="30" rx="25" ry="10" fill="#85c1e9" stroke="#1b6fab" stroke-width="2"/>
+      <ellipse cx="50" cy="75" rx="25" ry="10" fill="none" stroke="#1b6fab" stroke-width="2" stroke-dasharray="4,4"/>
+    `;
+  }
+  return `<svg width="120" height="120" viewBox="0 0 100 100">${paths}</svg>`;
 }
 
-function updateScoreUI(){
-  const p=currentProfile();
-  scoreText.textContent=`Punkte: ${p.score}`;
-  const starsCount=Math.min(5,Math.floor(p.score/50));
-  let stars='';
-  for(let i=0;i<5;i++){stars += i<starsCount?'★':'☆';}
-  starsText.textContent=stars;
-  const level = p.score<50?'Anfänger':p.score<150?'Aufsteiger':p.score<300?'Mathe-Profi':'Mathe-Meister';
-  levelText.textContent=`Level: ${level}`;
+function drawNumberLine(num, isHundred) {
+  const step = isHundred ? 100 : 10;
+  const lower = Math.floor(num/step)*step;
+  const upper = lower + step;
+  const percent = ((num - lower) / step) * 100;
+  
+  return `
+    <svg width="280" height="60" viewBox="0 0 280 60">
+      <line x1="20" y1="30" x2="260" y2="30" stroke="#7f8c8d" stroke-width="4"/>
+      <line x1="20" y1="20" x2="20" y2="40" stroke="#2c3e50" stroke-width="4"/>
+      <line x1="260" y1="20" x2="260" y2="40" stroke="#2c3e50" stroke-width="4"/>
+      <text x="20" y="55" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#2c3e50">${lower}</text>
+      <text x="260" y="55" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#2c3e50">${upper}</text>
+      
+      <!-- Markierung für aktuelle Zahl -->
+      <circle cx="${20 + (percent*2.4)}" cy="30" r="8" fill="#e74c3c"/>
+      <text x="${20 + (percent*2.4)}" y="15" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#e74c3c">${num}</text>
+    </svg>`;
 }
 
-/* ---------------- Aufgaben-UI ---------------- */
+/* ---------------- Aufgaben-Module ---------------- */
+const tasks = {
+  hze: {
+    title: "Stellenwerte HZE", sub: "Zahlenraum zerlegen",
+    gen() {
+      const n = randInt(111, 999);
+      return {
+        q: `Zerlege die Zahl: ${n}`,
+        html: `
+          <div style="font-size:20px; font-weight:bold; margin-bottom:10px;">
+            <span style="color:#e74c3c">H</span><span style="color:#27ae60">Z</span><span style="color:#2980b9">E</span>
+          </div>
+          <div>
+            <input class="std-input" id="inp_h" placeholder="H" style="color:#e74c3c">
+            <input class="std-input" id="inp_z" placeholder="Z" style="color:#27ae60">
+            <input class="std-input" id="inp_e" placeholder="E" style="color:#2980b9">
+          </div>`,
+        ids: ['inp_h', 'inp_z', 'inp_e'],
+        sol: [Math.floor(n/100), Math.floor((n%100)/10), n%10]
+      };
+    }
+  },
+  
+  runden: {
+    title: "Runden", sub: "Auf Zehner/Hunderter",
+    gen() {
+      const isHundred = Math.random() > 0.5;
+      const n = randInt(111, 888);
+      let sol;
+      if(isHundred){
+        const r = n % 100; sol = n + (100-r >= 50 && r >=50 ? 100-r : (r>=50 ? 100-r : -r));
+      } else {
+        const r = n % 10; sol = n + (10-r >= 5 && r >=5 ? 10-r : (r>=5 ? 10-r : -r));
+      }
+      return {
+        q: `Runde auf den nächsten ${isHundred ? 'Hunderter' : 'Zehner'}!`,
+        hint: `Tipp: Bei 0-4 wird abgerundet, ab 5 aufgerundet.`,
+        html: `
+          ${drawNumberLine(n, isHundred)}
+          <br><input class="std-input" id="inp_1" placeholder="Runden">
+        `,
+        ids: ['inp_1'], sol: [sol]
+      };
+    }
+  },
 
-function buildTaskTiles(){
-  taskTilesContainer.innerHTML='';
-  for(const [key,def] of Object.entries(taskDefinitions)){
-    const div=document.createElement('div');
-    div.className='tile';
-    div.dataset.key=key;
-    div.innerHTML=`
-      <div>
-        <div class="tile-title">${def.label}</div>
-        <div class="tile-sub">${def.desc}</div>
+  mauer: {
+    title: "Zahlenmauer", sub: "Optische Pyramide",
+    gen() {
+      const a=randInt(20,90), b=randInt(20,90), c=randInt(20,90);
+      return {
+        q: `Baue die Zahlenmauer!`,
+        hint: "Addiere zwei nebeneinanderliegende Steine für den Stein darüber.",
+        html: `
+          <div class="mauer-row"><div class="brick"><input id="inp_1" type="number"></div></div>
+          <div class="mauer-row">
+            <div class="brick"><input id="inp_2" type="number"></div>
+            <div class="brick"><input id="inp_3" type="number"></div>
+          </div>
+          <div class="mauer-row">
+            <div class="brick">${a}</div><div class="brick">${b}</div><div class="brick">${c}</div>
+          </div>
+        `,
+        ids: ['inp_1', 'inp_2', 'inp_3'],
+        sol: [a+b+b+c, a+b, b+c]
+      };
+    }
+  },
+
+  tausender: {
+    title: "Tausenderbuch", sub: "Nachbarzahlen",
+    gen() {
+      let n = randInt(120, 880);
+      while(n%10===0 || n%10===9) n = randInt(120,880); // nicht am Rand
+      return {
+        q: "Finde die Nachbarn im Buch!",
+        hint: "Oben = -10, Unten = +10, Links = -1, Rechts = +1",
+        html: `
+          <div class="tausender-cross">
+            <div></div><div class="t-cell"><input id="inp_1" class="t-input"></div><div></div>
+            <div class="t-cell"><input id="inp_2" class="t-input"></div>
+            <div class="t-cell t-center">${n}</div>
+            <div class="t-cell"><input id="inp_3" class="t-input"></div>
+            <div></div><div class="t-cell"><input id="inp_4" class="t-input"></div><div></div>
+          </div>
+        `,
+        ids: ['inp_1', 'inp_2', 'inp_3', 'inp_4'],
+        sol: [n-10, n-1, n+1, n+10]
+      };
+    }
+  },
+
+  zeit: {
+    title: "Uhrzeit", sub: "Mit analoger Uhr",
+    gen() {
+      const h=randInt(7,16), m=[0,15,30,45][randInt(0,3)], d=[15,30,45,60][randInt(0,3)];
+      const total = h*60 + m + d;
+      return {
+        q: `Es ist ${h}:${m==0?'00':m} Uhr.`,
+        hint: `Das Kino dauert ${d} Minuten. Wann ist es aus?`,
+        html: `
+          ${drawClock(h, m)}
+          <br>
+          <input class="std-input" id="inp_h" placeholder="Std" style="width:70px"> : 
+          <input class="std-input" id="inp_m" placeholder="Min" style="width:70px">
+        `,
+        ids: ['inp_h', 'inp_m'],
+        sol: [Math.floor(total/60)%24, total%60]
+      };
+    }
+  },
+
+  geometrie: {
+    title: "Geometrie", sub: "Körper erkennen",
+    gen() {
+      const isCube = Math.random() > 0.5;
+      const t = isCube ? 'cube' : 'cylinder';
+      const q = isCube ? "Wie viele Ecken hat dieser Körper (Würfel)?" : "Wie viele Flächen hat dieser Körper (Zylinder)?";
+      const s = isCube ? 8 : 3;
+      return {
+        q: q,
+        hint: isCube ? "Zähle alle spitzen Ecken." : "Oben, unten und die Außenhülle.",
+        html: `
+          ${drawShape(t)}
+          <br><input class="std-input" id="inp_1">
+        `,
+        ids: ['inp_1'], sol: [s]
+      };
+    }
+  },
+
+  rechnen: {
+    title: "Kopfrechnen", sub: "Grundrechenarten",
+    gen() {
+      const op = ['+','-','*'][randInt(0,2)];
+      let a,b,s;
+      if(op==='+'){ a=randInt(50,500); b=randInt(20,400); s=a+b; }
+      else if(op==='-'){ a=randInt(200,900); b=randInt(20,a-50); s=a-b; }
+      else { a=randInt(2,10); b=randInt(2,10); s=a*b; }
+      return {
+        q: `${a} ${op==='*'?'×':op} ${b} = ?`,
+        html: `<input class="std-input" id="inp_1">`,
+        ids: ['inp_1'], sol: [s]
+      };
+    }
+  }
+};
+
+/* ---------------- System-Logik ---------------- */
+let profiles={}, curProfId=null, curTaskKey=null, curInstance=null;
+
+function loadStorage(){
+  try{ profiles = JSON.parse(localStorage.getItem('m_app_v2')) || {}; }catch(e){}
+  if(Object.keys(profiles).length===0) profiles['p1']={name:'Kind 1',score:0,stats:{}};
+  curProfId = Object.keys(profiles)[0];
+  saveStorage();
+}
+function saveStorage(){ localStorage.setItem('m_app_v2', JSON.stringify(profiles)); }
+
+function initUI(){
+  const s = document.getElementById('profileSelect');
+  s.innerHTML = '';
+  for(const [id, p] of Object.entries(profiles)) s.innerHTML+=`<option value="${id}">${p.name}</option>`;
+  s.value = curProfId;
+  
+  const g = document.getElementById('taskTiles');
+  g.innerHTML = '';
+  for(const [k, v] of Object.entries(tasks)){
+    g.innerHTML+=`<div class="tile" onclick="openTask('${k}')">
+      <div class="tile-title">${v.title}</div><div class="tile-sub">${v.sub}</div>
+    </div>`;
+  }
+  updateUI();
+}
+
+function updateUI(){
+  const p = profiles[curProfId];
+  document.getElementById('scoreText').textContent = `Punkte: ${p.score}`;
+  document.getElementById('starsText').textContent = '★'.repeat(Math.min(5,Math.floor(p.score/50))) + '☆'.repeat(5-Math.min(5,Math.floor(p.score/50)));
+  
+  const sl = document.getElementById('statsList');
+  sl.innerHTML = '';
+  for(const [k, v] of Object.entries(tasks)){
+    const st = p.stats[k] || {c:0,t:0};
+    const pct = st.t>0 ? Math.round((st.c/st.t)*100) : 0;
+    sl.innerHTML += `
+      <div class="stats-row">
+        <span style="width:90px">${v.title}</span>
+        <div class="stats-bar"><div class="stats-fill" style="width:${pct}%"></div></div>
+        <span style="width:30px; text-align:right">${pct}%</span>
       </div>
-      <div class="tile-tag">${def.type}</div>
     `;
-    div.addEventListener('click',()=>startTask(key));
-    taskTilesContainer.appendChild(div);
   }
 }
 
-function startTask(key){
-  currentTaskKey=key;
-  const def=taskDefinitions[key];
-  taskNameSub.textContent=def.label;
-  generateTask();
+function openTask(k){
+  curTaskKey = k;
+  document.getElementById('taskTitle').textContent = tasks[k].title;
+  genTask();
 }
 
-function generateTask(){
-  if(!currentTaskKey) return;
-  const def=taskDefinitions[currentTaskKey];
-  currentTaskInstance=def.generator();
-  taskQuestion.textContent=currentTaskInstance.question;
-  taskExtra.textContent=currentTaskInstance.extra || '';
-  taskHint.textContent=currentTaskInstance.hint || '';
-  feedback.textContent='';
-  feedback.className='feedback';
-  taskInputs.innerHTML='';
-  (currentTaskInstance.inputs||[]).forEach(inp=>{
-    const wrap=document.createElement('div');
-    wrap.style.display='flex';
-    wrap.style.flexDirection='column';
-    wrap.style.alignItems='center';
-    wrap.innerHTML = `
-      <input class="input-field" id="inp_${inp.id}" type="${inp.type}">
-      <div class="small-label">${inp.label}</div>
-    `;
-    taskInputs.appendChild(wrap);
+function genTask(){
+  curInstance = tasks[curTaskKey].gen();
+  document.getElementById('tQuestion').innerHTML = curInstance.q;
+  document.getElementById('tHint').innerHTML = curInstance.hint || '';
+  document.getElementById('tVisual').innerHTML = curInstance.html;
+  
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('checkBtn').style.display = 'inline-block';
+  document.getElementById('checkBtn').disabled = false;
+  document.getElementById('nextBtn').style.display = 'none';
+  
+  // Enter-Taste Support
+  curInstance.ids.forEach(id => {
+    document.getElementById(id).addEventListener('keypress', e => {
+      if(e.key === 'Enter') check();
+    });
   });
-  checkBtn.disabled=false;
-  nextBtn.disabled=true;
+  document.getElementById(curInstance.ids[0]).focus();
 }
 
-function collectUserInputs(){
-  const res={};
-  (currentTaskInstance.inputs||[]).forEach(inp=>{
-    const el=document.getElementById('inp_'+inp.id);
-    if(!el) return;
-    const v = el.value.trim();
-    if(v===''){res[inp.id]=null;}
-    else res[inp.id]=Number(v);
+function check(){
+  let allCorrect = true;
+  curInstance.ids.forEach((id, idx) => {
+    const val = parseInt(document.getElementById(id).value);
+    if(val !== curInstance.sol[idx]) allCorrect = false;
   });
-  return res;
-}
 
-/* ---------------- Statistik ---------------- */
+  const p = profiles[curProfId];
+  if(!p.stats[curTaskKey]) p.stats[curTaskKey]={c:0,t:0};
+  p.stats[curTaskKey].t++;
 
-function updateStats(taskKey,correct){
-  const p=currentProfile();
-  if(!p.tasks[taskKey]) p.tasks[taskKey]={correct:0,total:0};
-  p.tasks[taskKey].total += 1;
-  if(correct) p.tasks[taskKey].correct += 1;
-  profiles[currentProfileId]=p;
-  saveProfiles();
-  updateStatsUI();
-}
-
-function updateStatsUI(){
-  const p=currentProfile();
-  let totalCorrect=0,totalAttempts=0;
-  for(const {correct,total} of Object.values(p.tasks)){
-    totalCorrect+=correct;
-    totalAttempts+=total;
-  }
-  const totalPct = totalAttempts>0 ? Math.round((totalCorrect/totalAttempts)*100) : 0;
-  totalBar.style.width = totalPct+'%';
-  totalPercent.textContent = totalPct+'%';
-
-  perAreaStats.innerHTML='';
-  const strengths=[];
-  const needs=[];
-  for(const [key,def] of Object.entries(taskDefinitions)){
-    const data=p.tasks[key] || {correct:0,total:0};
-    if(data.total===0) continue;
-    const pct=Math.round((data.correct/data.total)*100);
-    const row=document.createElement('div');
-    row.className='stats-row';
-    const label=`${def.label}`;
-    row.innerHTML = `
-      <span>${label}</span>
-      <div class="stats-bar"><div class="stats-bar-fill" style="width:${pct}%;"></div></div>
-      <span>${pct}%</span>
-    `;
-    perAreaStats.appendChild(row);
-    if(pct>=80) strengths.push(def.label);
-    else if(pct<70) needs.push(def.label);
-  }
-
-  let summary='';
-  if(totalAttempts===0){
-    summary='Noch keine Übungen gemacht. Einfach eine Karte links auswählen und starten!';
-  }else{
-    summary=`Insgesamt wurden ${totalAttempts} Aufgaben gelöst. `;
-    summary+=`Davon waren ${totalCorrect} richtig (${totalPct}%). `;
-    if(strengths.length>0){
-      summary+='\nStärken: '+strengths.join(', ')+'. ';
-    }
-    if(needs.length>0){
-      summary+='\nHier lohnt sich noch Üben: '+needs.join(', ')+'.';
-    }
-  }
-  statsSummary.textContent=summary;
-}
-
-/* ---------------- Events ---------------- */
-
-checkBtn.addEventListener('click',()=>{
-  if(!currentTaskKey || !currentTaskInstance) return;
-  const def=taskDefinitions[currentTaskKey];
-  const user=collectUserInputs();
-  if(Object.values(user).some(v=>v===null)){
-    feedback.textContent='Bitte alle Felder ausfüllen.';
-    feedback.className='feedback bad';
-    speak('Bitte fülle alle Felder aus.');
-    return;
-  }
-  const ok=def.checker(user,currentTaskInstance.solution);
-  updateStats(currentTaskKey,ok);
-  if(ok){
-    feedback.textContent='Super gemacht! Richtig! 🎉';
-    feedback.className='feedback ok';
-    const p=currentProfile();
+  const fb = document.getElementById('feedback');
+  if(allCorrect){
+    fb.innerHTML = 'Richtig! Super! 🎉'; fb.className='feedback ok';
+    speak("Richtig, super gemacht!");
+    p.stats[curTaskKey].c++;
     p.score+=10;
-    profiles[currentProfileId]=p;
-    saveProfiles();
-    updateScoreUI();
-    speak('Super gemacht, weiter so!');
-  }else{
-    feedback.textContent='Noch nicht ganz richtig. Schau dir die Aufgabe nochmal an!';
-    feedback.className='feedback bad';
-    speak('Noch nicht ganz richtig, probiere es nochmal.');
+    document.getElementById('checkBtn').style.display = 'none';
+    document.getElementById('nextBtn').style.display = 'inline-block';
+    document.getElementById('nextBtn').focus();
+  } else {
+    fb.innerHTML = 'Nicht ganz. Versuch es nochmal! 💪'; fb.className='feedback bad';
+    speak("Noch nicht ganz richtig, probiere es nochmal.");
   }
-  checkBtn.disabled=true;
-  nextBtn.disabled=false;
-});
+  saveStorage(); updateUI();
+}
 
-nextBtn.addEventListener('click',()=>{
-  generateTask();
-});
+// Event Listeners
+document.getElementById('profileSelect').onchange = e => { curProfId = e.target.value; updateUI(); };
+document.getElementById('checkBtn').onclick = check;
+document.getElementById('nextBtn').onclick = genTask;
+document.getElementById('addBtn').onclick = () => {
+  const n = prompt('Name:'); if(n){ profiles['p'+Date.now()]={name:n,score:0,stats:{}}; initUI(); }
+};
+document.getElementById('delBtn').onclick = () => {
+  if(Object.keys(profiles).length>1 && confirm('Löschen?')){ delete profiles[curProfId]; curProfId=Object.keys(profiles)[0]; initUI(); }
+};
+document.getElementById('resetBtn').onclick = () => {
+  if(confirm('Statistik leeren?')){ profiles[curProfId].score=0; profiles[curProfId].stats={}; saveStorage(); updateUI(); }
+};
 
-addProfileBtn.addEventListener('click',()=>{
-  const name=prompt('Name des Kindes:');
-  if(!name) return;
-  const id='profil_'+Date.now();
-  profiles[id]=createEmptyProfile(name);
-  currentProfileId=id;
-  saveProfiles();
-  updateProfileSelect();
-  updateScoreUI();
-  updateStatsUI();
-  speak(`Neues Profil für ${name} erstellt.`);
-});
-
-deleteProfileBtn.addEventListener('click',()=>{
-  if(Object.keys(profiles).length<=1){
-    alert('Mindestens ein Profil muss erhalten bleiben.');
-    return;
-  }
-  const name=currentProfile().name;
-  if(confirm(`Profil "${name}" wirklich löschen?`)){
-    delete profiles[currentProfileId];
-    currentProfileId=Object.keys(profiles)[0];
-    saveProfiles();
-    updateProfileSelect();
-    updateScoreUI();
-    updateStatsUI();
-  }
-});
-
-profileSelect.addEventListener('change',()=>{
-  currentProfileId=profileSelect.value;
-  saveProfiles();
-  updateScoreUI();
-  updateStatsUI();
-  feedback.textContent='';
-  feedback.className='feedback';
-  taskQuestion.textContent='Keine Aufgabe ausgewählt.';
-  taskExtra.textContent='';
-  taskHint.textContent='';
-  taskInputs.innerHTML='';
-  checkBtn.disabled=true;
-  nextBtn.disabled=true;
-});
-
-resetStatsBtn.addEventListener('click',()=>{
-  if(confirm('Statistik für dieses Profil wirklich zurücksetzen?')){
-    const p=currentProfile();
-    p.score=0;
-    for(const key of Object.keys(p.tasks)){
-      p.tasks[key]={correct:0,total:0};
-    }
-    profiles[currentProfileId]=p;
-    saveProfiles();
-    updateScoreUI();
-    updateStatsUI();
-    speak('Statistik wurde zurückgesetzt.');
-  }
-});
-
-/* ---------------- Init ---------------- */
-
-loadProfiles();
-buildTaskTiles();
-updateProfileSelect();
-updateScoreUI();
-updateStatsUI();
+loadStorage(); initUI();
 </script>
 </body>
 </html>
