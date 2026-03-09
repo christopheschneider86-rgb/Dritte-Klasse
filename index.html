@@ -40,6 +40,13 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 .add-chip:hover{border-color:var(--accent);color:var(--accent);background:#f0f8ff;}
 .add-chip svg{width:16px;height:16px;}
 
+/* MÜNZ-ANZEIGE */
+.coin-wallet{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#fef9e7,#fdebd0);border:2px solid #f39c12;border-radius:16px;padding:10px 18px;margin-top:12px;}
+.coin-wallet-icon{font-size:28px;line-height:1;}
+.coin-wallet-label{font-size:12px;color:#a07030;font-weight:bold;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+.coin-wallet-value{font-size:26px;font-weight:bold;color:#7d5a00;line-height:1;}
+.coin-wallet-hint{font-size:12px;color:#b07830;margin-left:auto;text-align:right;line-height:1.4;}
+
 /* ─── FÄCHER-GRID ─── */
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;width:100%;max-width:900px;}
 .subject-card{background:white;border-radius:20px;padding:25px;box-shadow:0 6px 16px rgba(0,0,0,0.06);text-decoration:none;color:inherit;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden;}
@@ -79,6 +86,15 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
     Wer übt heute?
   </div>
   <div class="profile-list" id="profileList"></div>
+  <!-- MÜNZ-ANZEIGE -->
+  <div class="coin-wallet" id="coinWallet">
+    <div class="coin-wallet-icon">🪙</div>
+    <div>
+      <div class="coin-wallet-label">Münzen</div>
+      <div class="coin-wallet-value" id="walletCoins">0</div>
+    </div>
+    <div class="coin-wallet-hint">Richtige Aufgaben<br>→ Münzen verdienen</div>
+  </div>
 </div>
 
 <div class="grid">
@@ -172,10 +188,21 @@ function loadProfiles(){
 
 function saveProfiles(){localStorage.setItem(STORAGE_KEY,JSON.stringify(profiles));}
 
+function updateCoinDisplay(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const profs=JSON.parse(raw);
+    const coins=(profs[activeProfId]?.coins)||0;
+    document.getElementById('walletCoins').textContent=coins;
+  }catch(e){}
+}
+
 function setActive(id){
   activeProfId=id;
   localStorage.setItem(ACTIVE_KEY,id);
   render();
+  updateCoinDisplay();
 }
 
 function addProfile(){
@@ -231,6 +258,7 @@ function render(){
 
 loadProfiles();
 render();
+updateCoinDisplay();
 </script>
 </body>
 </html>
