@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -23,33 +22,41 @@ body{
 .app{width:100%;max-width:1100px;padding:12px;}
 @media(min-width:768px){.app{padding:24px;}.card{padding:24px;}}
 
-.card{background:var(–card);border-radius:var(–radius);box-shadow:0 8px 24px rgba(0,0,0,0.08);padding:16px;}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:0 8px 24px rgba(0,0,0,0.08);padding:16px;}
 .header{display:flex;align-items:center;gap:16px;margin-bottom:14px;position:relative;}
-.back-home{background:#ecf0f1;border:none;border-radius:12px;padding:10px 12px;cursor:pointer;color:var(–text);display:flex;align-items:center;justify-content:center;transition:background 0.2s;text-decoration:none;}
+.back-home{background:#ecf0f1;border:none;border-radius:12px;padding:10px 12px;cursor:pointer;color:var(--text);display:flex;align-items:center;justify-content:center;transition:background 0.2s;text-decoration:none;}
 .back-home svg{width:24px;height:24px;}
 .back-home:hover{background:#bdc3c7;}
 .app-icon{width:64px;height:64px;border-radius:16px;object-fit:cover;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
 .header-text h1{font-size:22px;margin-bottom:4px;color:#2c3e50;}
-.header-text p{font-size:14px;color:var(–muted);}
+.header-text p{font-size:14px;color:var(--muted);}
 
 .profile-bar,.score-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
-.score-bar{padding:12px 16px;border-radius:16px;background:var(–accent-soft);font-size:14px;}
+.score-bar{padding:12px 16px;border-radius:16px;background:var(--accent-soft);font-size:14px;}
 .score-bar strong{font-size:18px;color:#1b6fab;display:flex;align-items:center;gap:6px;}
 .stars{color:#f39c12;display:flex;gap:4px;}
 .star-icon{width:26px;height:26px;fill:currentColor;}
 .star-empty{fill:none;stroke:currentColor;stroke-width:2;}
 
-select,.btn{padding:12px 18px;border-radius:12px;font-size:15px;border:none;cursor:pointer;display:flex;align-items:center;gap:8px;justify-content:center;min-height:44px;}
-select{border:1px solid #ccd8e6;background:#f8fbff;font-weight:bold;font-size:16px;}
-.btn-primary{background:var(–accent);color:white;font-weight:bold;}
-.btn-secondary{background:#ecf0f1;color:var(–text);}
-.btn-outline{background:white;border:2px solid var(–accent);color:var(–accent);font-weight:bold;}
-.btn:active{transform:scale(0.96);}
+.btn{padding:12px 18px;border-radius:12px;font-size:15px;border:none;cursor:pointer;display:flex;align-items:center;gap:8px;justify-content:center;min-height:44px;}
+.btn-primary{background:var(--accent);color:white;font-weight:bold;transition:background .2s,box-shadow .2s,transform .1s;}
+.btn-primary:not(:disabled){box-shadow:0 4px 14px rgba(52,152,219,0.5);}
+.btn-primary:not(:disabled):hover{background:#2980b9;box-shadow:0 6px 18px rgba(52,152,219,0.6);}
+.btn-primary:not(:disabled):active{transform:scale(0.96);}
+.btn-primary:disabled{background:#c5dff0;color:#9bbdd4;cursor:not-allowed;box-shadow:none;}
+.btn-secondary{background:#ecf0f1;color:var(--text);}
+.btn-secondary:active{transform:scale(0.96);}
+.btn-outline{background:white;border:2px solid var(--accent);color:var(--accent);font-weight:bold;}
+.btn-outline:active{transform:scale(0.96);}
 .btn svg{width:20px;height:20px;}
 
-.speaker-btn{background:var(–accent-soft);color:var(–accent);border:none;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.2s;flex-shrink:0;}
+.speaker-btn{background:var(--accent-soft);color:var(--accent);border:none;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.2s;flex-shrink:0;}
 .speaker-btn svg{width:22px;height:22px;}
 .speaker-btn:active{transform:scale(0.9);}
+
+.child-badge{display:flex;align-items:center;gap:8px;background:#eaf4ff;border:2px solid #d6ecff;border-radius:12px;padding:8px 14px;}
+.child-badge svg{width:18px;height:18px;stroke:#3498db;flex-shrink:0;}
+.child-badge span{font-weight:bold;font-size:15px;color:#1b6fab;}
 
 /* LAYOUT */
 .main-layout{display:grid;grid-template-columns:1fr 1.2fr;gap:20px;align-items:start;}
@@ -58,30 +65,21 @@ select{border:1px solid #ccd8e6;background:#f8fbff;font-weight:bold;font-size:16
 /* THEMEN-KACHELN */
 .tile-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;}
 .tile{background:#f7fbff;border-radius:14px;padding:14px 10px;border:2px solid #d9e8f7;cursor:pointer;transition:all .2s;min-height:80px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
-.tile:hover,.tile.active{border-color:var(–accent);background:#edf5fc;transform:translateY(-2px);box-shadow:0 4px 10px rgba(52,152,219,0.15);}
+.tile:hover,.tile.active{border-color:var(--accent);background:#edf5fc;transform:translateY(-2px);box-shadow:0 4px 10px rgba(52,152,219,0.15);}
 .tile-title{font-size:14px;font-weight:bold;margin-bottom:3px;color:#2c3e50;}
-.tile-sub{font-size:11px;color:var(–muted);}
+.tile-sub{font-size:11px;color:var(--muted);}
 
 /* UNTERAUFGABEN-LEISTE */
-.subtype-bar{
-display:none;margin:10px 0 4px 0;
-background:#f0f8ff;border-radius:14px;padding:10px;
-border:2px solid var(–accent-soft);
-}
+.subtype-bar{display:none;margin:10px 0 4px 0;background:#f0f8ff;border-radius:14px;padding:10px;border:2px solid var(--accent-soft);}
 .subtype-bar.visible{display:block;}
-.subtype-label{font-size:12px;font-weight:bold;color:var(–muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;}
+.subtype-label{font-size:12px;font-weight:bold;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;}
 .subtype-chips{display:flex;flex-wrap:wrap;gap:7px;}
-.chip{
-padding:7px 13px;border-radius:20px;font-size:13px;font-weight:bold;
-cursor:pointer;border:2px solid #d9e8f7;background:white;color:#2c3e50;
-transition:all .15s;white-space:nowrap;
-}
-.chip:hover{border-color:var(–accent);color:var(–accent);}
+.chip{padding:7px 13px;border-radius:20px;font-size:13px;font-weight:bold;cursor:pointer;border:2px solid #d9e8f7;background:white;color:#2c3e50;transition:all .15s;white-space:nowrap;}
+.chip:hover{border-color:var(--accent);color:var(--accent);}
 .chip.active{background:#dbeeff;color:#1a5fa8;border-color:#2980b9;box-shadow:0 0 0 2px #2980b9;}
 
 .panel-title{font-size:20px;font-weight:bold;margin-bottom:12px;color:#2c3e50;display:flex;align-items:center;gap:8px;}
 
-/* VIEW TOGGLE */
 .view-container{display:none;}
 .view-container.active{display:block;}
 
@@ -90,9 +88,8 @@ transition:all .15s;white-space:nowrap;
 .question-wrapper{display:flex;align-items:center;justify-content:center;gap:15px;margin-bottom:12px;}
 .task-question{font-size:24px;font-weight:bold;color:#2c3e50;line-height:1.4;}
 .visual-container{margin:20px 0;display:flex;flex-direction:column;align-items:center;}
-.task-hint{font-size:15px;color:var(–muted);margin-bottom:20px;display:flex;justify-content:center;align-items:center;gap:6px;}
+.task-hint{font-size:15px;color:var(--muted);margin-bottom:20px;display:flex;justify-content:center;align-items:center;gap:6px;}
 
-/* AUFGABEN-VISUALS */
 .mauer-wrapper{display:flex;flex-direction:column;align-items:center;gap:6px;margin:10px 0;}
 .mauer-row{display:flex;justify-content:center;gap:8px;}
 .brick{width:80px;height:50px;background:#e67e22;border-radius:8px;border:2px solid #d35400;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;color:white;box-shadow:0 4px 0 #b33c00;}
@@ -107,25 +104,24 @@ transition:all .15s;white-space:nowrap;
 .std-input:focus{border-color:#3498db;outline:none;}
 
 .feedback{margin-top:20px;font-size:18px;font-weight:bold;min-height:28px;display:flex;justify-content:center;align-items:center;gap:8px;}
-.feedback.ok{color:var(–success);}
-.feedback.bad{color:var(–danger);}
+.feedback.ok{color:var(--success);}
+.feedback.bad{color:var(--danger);}
 
 /* DASHBOARD */
 .dashboard-box{background:#fdfdfd;border:2px solid #e1e8f0;border-radius:16px;padding:24px;margin-top:10px;}
 .filter-tabs{display:flex;gap:10px;margin-bottom:20px;background:#ecf0f1;padding:6px;border-radius:12px;}
-.filter-tab{flex:1;text-align:center;padding:10px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:14px;color:var(–muted);}
-.filter-tab.active{background:white;color:var(–accent);box-shadow:0 2px 6px rgba(0,0,0,0.05);}
+.filter-tab{flex:1;text-align:center;padding:10px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:14px;color:var(--muted);}
+.filter-tab.active{background:white;color:var(--accent);box-shadow:0 2px 6px rgba(0,0,0,0.05);}
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:25px;}
 .kpi-card{background:#f7fbff;border-radius:12px;padding:15px;text-align:center;border:1px solid #d9e8f7;}
 .kpi-value{font-size:32px;font-weight:bold;color:#2c3e50;margin:5px 0;}
-.kpi-label{font-size:13px;color:var(–muted);}
+.kpi-label{font-size:13px;color:var(--muted);}
 .analysis-section{margin-top:20px;text-align:left;}
 .analysis-section h3{font-size:16px;color:#2c3e50;margin-bottom:12px;padding-bottom:5px;border-bottom:2px solid #ecf0f1;}
 .topic-row{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#fff;border:1px solid #ecf0f1;border-radius:8px;margin-bottom:8px;}
 .topic-name{font-weight:bold;font-size:14px;color:#2c3e50;}
-.topic-stats{font-size:13px;color:var(–muted);}
+.topic-stats{font-size:13px;color:var(--muted);}
 </style>
-
 </head>
 <body>
 <div class="app">
@@ -141,93 +137,83 @@ transition:all .15s;white-space:nowrap;
       </div>
     </div>
 
-<div class="profile-bar">
-  <div style="display:flex;gap:6px;align-items:center;">
-    <select id="profileSelect" onchange="switchProfile()"></select>
-    <button class="btn" style="background:#ffe4e1;color:#c0392b;padding:10px 12px;" title="Profil löschen" onclick="deleteProfile()">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-    </button>
-  </div>
-  <div style="display:flex;gap:6px;">
-    <button class="btn btn-outline" onclick="toggleDashboard()">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-      <span id="dashBtnText">Eltern-Stats</span>
-    </button>
-    <button class="btn btn-secondary" onclick="addProfile()">Neues Kind</button>
-  </div>
-</div>
+    <!-- Nur Info: Wer übt gerade + Stats-Button -->
+    <div class="profile-bar">
+      <div class="child-badge">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        <span id="curChildName">…</span>
+      </div>
+      <button class="btn btn-outline" onclick="toggleDashboard()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        <span id="dashBtnText">Eltern-Stats</span>
+      </button>
+    </div>
 
-<!-- ÜBUNGS-MODUS -->
-<div id="view-practice" class="view-container active">
-  <div class="score-bar">
-    <div><strong><span id="scoreText">Punkte: 0</span></strong></div>
-    <div class="stars" id="starsText"></div>
-  </div>
-  <div class="main-layout">
-    <!-- LINKE SPALTE: Themen + Unteraufgaben -->
-    <div>
-      <div class="panel-title">Themengebiete</div>
-      <div class="tile-grid" id="taskTiles"></div>
-      <!-- Unteraufgaben-Leiste -->
-      <div class="subtype-bar" id="subtypeBar">
-        <div class="subtype-label" id="subtypeLabel">Aufgabenart wählen</div>
-        <div class="subtype-chips" id="subtypeChips"></div>
+    <!-- ÜBUNGS-MODUS -->
+    <div id="view-practice" class="view-container active">
+      <div class="score-bar">
+        <div><strong><span id="scoreText">Punkte: 0</span></strong></div>
+        <div class="stars" id="starsText"></div>
+      </div>
+      <div class="main-layout">
+        <div>
+          <div class="panel-title">Themengebiete</div>
+          <div class="tile-grid" id="taskTiles"></div>
+          <div class="subtype-bar" id="subtypeBar">
+            <div class="subtype-label" id="subtypeLabel">Aufgabenart wählen</div>
+            <div class="subtype-chips" id="subtypeChips"></div>
+          </div>
+        </div>
+        <div>
+          <div class="panel-title" id="taskTitle">Aktuelle Aufgabe</div>
+          <div class="task-box">
+            <div class="question-wrapper">
+              <div class="task-question" id="tQuestion">Wähle links ein Thema!</div>
+              <button class="speaker-btn" id="readBtn" style="display:none;" title="Vorlesen" onclick="speakCurrent()">
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="visual-container" id="tVisual"></div>
+            <div class="task-hint" id="tHint"></div>
+            <div style="margin-top:15px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+              <button class="btn btn-primary" id="checkBtn" disabled onclick="checkAnswer()">Antwort prüfen</button>
+              <button class="btn btn-secondary" id="nextBtn" style="display:none;" onclick="nextTask()">Nächste Aufgabe ➔</button>
+            </div>
+            <div class="feedback" id="feedback"></div>
+          </div>
+        </div>
       </div>
     </div>
-    <!-- RECHTE SPALTE: Aufgabe -->
-    <div>
-      <div class="panel-title" id="taskTitle">Aktuelle Aufgabe</div>
-      <div class="task-box">
-        <div class="question-wrapper">
-          <div class="task-question" id="tQuestion">Wähle links ein Thema!</div>
-          <button class="speaker-btn" id="readBtn" style="display:none;" title="Vorlesen" onclick="speakCurrent()">
-            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"/>
-            </svg>
-          </button>
+
+    <!-- ELTERN-DASHBOARD -->
+    <div id="view-dashboard" class="view-container">
+      <div class="panel-title" style="margin-top:10px;">Lernfortschritt &amp; Auswertung</div>
+      <div class="dashboard-box">
+        <div class="filter-tabs">
+          <div class="filter-tab active" onclick="updateDashboard('today',this)">Heute</div>
+          <div class="filter-tab" onclick="updateDashboard('week',this)">Letzte 7 Tage</div>
+          <div class="filter-tab" onclick="updateDashboard('all',this)">Gesamtzeit</div>
         </div>
-        <div class="visual-container" id="tVisual"></div>
-        <div class="task-hint" id="tHint"></div>
-        <div style="margin-top:15px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
-          <button class="btn btn-primary" id="checkBtn" disabled onclick="checkAnswer()">Antwort prüfen</button>
-          <button class="btn btn-secondary" id="nextBtn" style="display:none;" onclick="nextTask()">Nächste Aufgabe ➔</button>
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Gelöste Aufgaben</div><div class="kpi-value" id="dash-total">0</div></div>
+          <div class="kpi-card"><div class="kpi-label">Erfolgsquote</div><div class="kpi-value" id="dash-quote">0%</div></div>
         </div>
-        <div class="feedback" id="feedback"></div>
+        <div class="analysis-section"><h3>🟢 Stärken (Läuft super)</h3><div id="dash-good"></div></div>
+        <div class="analysis-section"><h3>🟡 Übungsbedarf (Geht so)</h3><div id="dash-medium"></div></div>
+        <div class="analysis-section"><h3>🔴 Problemzonen (Hier intensivieren)</h3><div id="dash-bad"></div></div>
+        <button class="btn btn-secondary" style="width:100%;margin-top:30px;font-size:13px;" onclick="resetStats()">Fortschritt für dieses Kind löschen</button>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- ELTERN-DASHBOARD -->
-<div id="view-dashboard" class="view-container">
-  <div class="panel-title" style="margin-top:10px;">Lernfortschritt &amp; Auswertung</div>
-  <div class="dashboard-box">
-    <div class="filter-tabs">
-      <div class="filter-tab active" onclick="updateDashboard('today',this)">Heute</div>
-      <div class="filter-tab" onclick="updateDashboard('week',this)">Letzte 7 Tage</div>
-      <div class="filter-tab" onclick="updateDashboard('all',this)">Gesamtzeit</div>
-    </div>
-    <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-label">Gelöste Aufgaben</div><div class="kpi-value" id="dash-total">0</div></div>
-      <div class="kpi-card"><div class="kpi-label">Erfolgsquote</div><div class="kpi-value" id="dash-quote">0%</div></div>
-    </div>
-    <div class="analysis-section"><h3>🟢 Stärken (Läuft super)</h3><div id="dash-good"></div></div>
-    <div class="analysis-section"><h3>🟡 Übungsbedarf (Geht so)</h3><div id="dash-medium"></div></div>
-    <div class="analysis-section"><h3>🔴 Problemzonen (Hier intensivieren)</h3><div id="dash-bad"></div></div>
-    <button class="btn btn-secondary" style="width:100%;margin-top:30px;font-size:13px;" onclick="resetStats()">Fortschritt für dieses Kind löschen</button>
-  </div>
-</div>
-
   </div>
 </div>
 
 <script>
-// ─── HELPERS ──────────────────────────────────────────────────────────────────
 function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 function speak(text){try{if('speechSynthesis' in window){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='de-DE';u.rate=0.9;window.speechSynthesis.speak(u);}}catch(e){}}
 function stripHTML(html){const d=document.createElement("DIV");d.innerHTML=html;return d.textContent||d.innerText||"";}
 
-// ─── SVG ──────────────────────────────────────────────────────────────────────
 function drawClock(h,m){
   const hA=((h%12)+m/60)*30-90,mA=m*6-90;
   const hx=50+20*Math.cos(hA*Math.PI/180),hy=50+20*Math.sin(hA*Math.PI/180);
@@ -250,324 +236,18 @@ function drawNumberLine(num,isHundred){
   return `<svg width="280" height="60" viewBox="0 0 280 60"><line x1="20" y1="30" x2="260" y2="30" stroke="#7f8c8d" stroke-width="4"/><line x1="20" y1="20" x2="20" y2="40" stroke="#2c3e50" stroke-width="4"/><line x1="260" y1="20" x2="260" y2="40" stroke="#2c3e50" stroke-width="4"/><text x="20" y="55" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#2c3e50">${lower}</text><text x="260" y="55" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#2c3e50">${upper}</text><circle cx="${20+pct*2.4}" cy="30" r="8" fill="#e74c3c"/><text x="${20+pct*2.4}" y="15" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#e74c3c">${num}</text></svg>`;
 }
 
-// ─── AUFGABEN ─────────────────────────────────────────────────────────────────
-// Jeder Task hat:
-//   subtypes: [{key, label}, ...] – wenn null/leer → kein Untermenü
-//   gen(subtype): erzeugt Aufgabe passend zum subtype (oder gemischt)
 const tasks = {
-
-  rechnen_gross:{
-    title:"Rechnen", sub:"+ − ×",
-    subtypes:[
-      {key:'mixed',  label:'🔀 Gemischt'},
-      {key:'add',    label:'➕ Addition'},
-      {key:'sub',    label:'➖ Subtraktion'},
-      {key:'mul',    label:'✖️ Multiplikation'},
-    ],
-    gen(st){
-      // Welche Operation?
-      let op;
-      if(st==='add') op='+';
-      else if(st==='sub') op='-';
-      else if(st==='mul') op='*';
-      else op=['+','-','*'][randInt(0,2)];
-
-      let a,b,s;
-      if(op==='+'){a=randInt(150,500);b=randInt(150,400);s=a+b;}
-      else if(op==='-'){a=randInt(400,900);b=randInt(110,a-50);s=a-b;}
-      else{a=randInt(12,30);b=randInt(3,9);s=a*b;}
-      return{q:`${a} ${op==='*'?'×':op} ${b} = ?`,hint:"Rechne halbschriftlich oder im Kopf.",
-        html:`<input type="number" class="std-input" id="inp_1">`,ids:['inp_1'],sol:[s],isFloat:false};
-    }
-  },
-
-  div_rest:{
-    title:"Division", sub:"mit Rest",
-    subtypes:null,
-    gen(){
-      let a=randInt(15,89),b=randInt(3,9);
-      while(a%b===0){a=randInt(15,89);}
-      return{q:`${a} : ${b} = ?`,hint:"Trage Ergebnis und Rest ein.",
-        html:`<div style="display:flex;align-items:center;gap:10px;justify-content:center;"><input type="number" class="std-input" id="inp_1" placeholder="Erg" style="width:90px;"><span style="font-size:24px;font-weight:bold;">R</span><input type="number" class="std-input" id="inp_2" placeholder="Rest" style="width:90px;"></div>`,
-        ids:['inp_1','inp_2'],sol:[Math.floor(a/b),a%b],isFloat:false};
-    }
-  },
-
-  geld_komma:{
-    title:"Geld", sub:"Rechnen & Umwandeln",
-    subtypes:[
-      {key:'mixed',    label:'🔀 Gemischt'},
-      {key:'rechnen',  label:'➕➖ Rechnen'},
-      {key:'ct2eur',   label:'ct → €'},
-      {key:'ec2eur',   label:'€+ct → €'},
-      {key:'eur2ct',   label:'€ → ct'},
-    ],
-    gen(st){
-      // Welchen Typ erzwingen?
-      let type;
-      if(st==='rechnen') type=0;
-      else if(st==='ct2eur') type=1;
-      else if(st==='ec2eur') type=2;
-      else if(st==='eur2ct') type=3;
-      else type=randInt(0,3);
-
-      if(type===0){
-        let a=randInt(1,10)+([10,20,25,50,75,80][randInt(0,5)])/100;
-        let b=randInt(1,5)+([10,20,25,50,75,80][randInt(0,5)])/100;
-        const op=['+','-'][randInt(0,1)];
-        if(op==='-'&&a<b){let t=a;a=b;b=t;}
-        const s=op==='+'?a+b:a-b;
-        return{q:`${a.toFixed(2).replace('.',',')} € ${op} ${b.toFixed(2).replace('.',',')} € = ?`,
-          hint:"Ergebnis mit Komma (z.B. 3,50).",
-          html:`<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><input type="text" class="std-input" id="inp_1" placeholder="0,00" style="width:130px;"><span style="font-size:24px;font-weight:bold;">€</span></div>`,
-          ids:['inp_1'],sol:[s],isFloat:true};
-      } else if(type===1){
-        const ct=randInt(1,9)*100+[0,5,10,20,50,75,90,99][randInt(0,7)];
-        return{q:`${ct} ct = ? €`,hint:"100 ct = 1,00 €",
-          html:`<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><input type="text" class="std-input" id="inp_1" placeholder="0,00" style="width:130px;"><span style="font-size:24px;font-weight:bold;">€</span></div>`,
-          ids:['inp_1'],sol:[ct/100],isFloat:true};
-      } else if(type===2){
-        const eur=randInt(1,15),ct=[5,10,25,50,80,95][randInt(0,5)];
-        return{q:`${eur} € ${ct} ct = ? €`,hint:"Schreibe als Kommazahl.",
-          html:`<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><input type="text" class="std-input" id="inp_1" placeholder="0,00" style="width:130px;"><span style="font-size:24px;font-weight:bold;">€</span></div>`,
-          ids:['inp_1'],sol:[eur+ct/100],isFloat:true};
-      } else {
-        const eur=randInt(1,12),ct=[0,5,10,25,50,75,90][randInt(0,6)];
-        const val=eur+ct/100;
-        return{q:`${val.toFixed(2).replace('.',',')} € = ? ct`,hint:"Wie viele Cent insgesamt?",
-          html:`<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><input type="number" class="std-input" id="inp_1" style="width:130px;"><span style="font-size:24px;font-weight:bold;">ct</span></div>`,
-          ids:['inp_1'],sol:[eur*100+ct],isFloat:false};
-      }
-    }
-  },
-
-  masse_laengen:{
-    title:"Größen", sub:"m, cm, kg, mm",
-    subtypes:[
-      {key:'mixed',  label:'🔀 Gemischt'},
-      {key:'m2cm',   label:'m → cm'},
-      {key:'cm2mm',  label:'cm → mm'},
-      {key:'mm2cm',  label:'mm → cm'},
-      {key:'kg2g',   label:'kg → g'},
-    ],
-    gen(st){
-      let v;
-      if(st==='m2cm') v=0;
-      else if(st==='cm2mm') v=1;
-      else if(st==='mm2cm') v=2;
-      else if(st==='kg2g') v=3;
-      else v=randInt(0,3);
-
-      let q,hint,s;
-      if(v===0){const m=randInt(2,9);q=`${m} m = ? cm`;hint="1 m = 100 cm";s=m*100;}
-      else if(v===1){const cm=randInt(20,90);q=`${cm} cm = ? mm`;hint="1 cm = 10 mm";s=cm*10;}
-      else if(v===2){const mm=randInt(2,9)*10;q=`${mm} mm = ? cm`;hint="10 mm = 1 cm";s=mm/10;}
-      else{const kg=randInt(2,8);q=`${kg} kg = ? g`;hint="1 kg = 1000 g";s=kg*1000;}
-      return{q,hint,html:`<input type="number" class="std-input" id="inp_1">`,ids:['inp_1'],sol:[s],isFloat:false};
-    }
-  },
-
-  sachaufgaben:{
-    title:"Textaufgaben", sub:"Lesen & Rechnen",
-    subtypes:[
-      {key:'mixed', label:'🔀 Gemischt'},
-      {key:'sub',   label:'➖ Abziehen'},
-      {key:'mul',   label:'✖️ Mal-Aufgaben'},
-      {key:'half',  label:'½ Halbieren'},
-    ],
-    gen(st){
-      let v;
-      if(st==='sub') v=0;
-      else if(st==='mul') v=1;
-      else if(st==='half') v=2;
-      else v=randInt(0,2);
-
-      let q,s;
-      if(v===0){const a=randInt(20,40),b=randInt(5,15);q=`Im Bus sind ${a} Leute. Es steigen ${b} aus. Wie viele sind es noch?`;s=a-b;}
-      else if(v===1){const a=randInt(4,8),b=randInt(3,6);q=`Tom kauft ${a} Eis für je ${b} Euro. Wie viel Euro zahlt er?`;s=a*b;}
-      else{const a=randInt(3,6)*10;q=`Ein Seil ist ${a} cm lang. Lisa schneidet die Hälfte ab. Rest in cm?`;s=a/2;}
-      return{q:`<div style="font-size:18px;line-height:1.4;">${q}</div>`,hint:"Überlege: Plus, Minus, Mal oder Geteilt?",
-        html:`<input type="number" class="std-input" id="inp_1">`,ids:['inp_1'],sol:[s],isFloat:false};
-    }
-  },
-
-  geometrie:{
-    title:"Geometrie", sub:"Körper & Figuren",
-    subtypes:[
-      {key:'mixed',  label:'🔀 Gemischt'},
-      {key:'ecken',  label:'📐 Ecken'},
-      {key:'kanten', label:'📏 Kanten'},
-      {key:'flachen',label:'🟦 Flächen'},
-    ],
-    gen(st){
-      // Alle möglichen Fragen
-      const pool={
-        ecken: [
-          {t:'cube',    q:"Wie viele Ecken hat ein Würfel?",    hint:"Spitze Punkte zählen.",s:8},
-          {t:'rect',    q:"Wie viele Ecken hat ein Rechteck?",  hint:"Flache Figur.",s:4},
-          {t:'cylinder',q:"Wie viele Ecken hat ein Zylinder?",  hint:"Keine spitzen Ecken.",s:0},
-        ],
-        kanten:[
-          {t:'cube',    q:"Wie viele Kanten hat ein Würfel?",   hint:"Alle Linien zählen.",s:12},
-          {t:'rect',    q:"Wie viele Seiten hat ein Rechteck?", hint:"Rundum zählen.",s:4},
-        ],
-        flachen:[
-          {t:'cube',    q:"Wie viele Flächen hat ein Würfel?",  hint:"Alle Seiten zählen.",s:6},
-          {t:'cylinder',q:"Wie viele Flächen hat ein Zylinder?",hint:"Oben, unten, Mantel.",s:3},
-          {t:'rect',    q:"Ist ein Rechteck eine ebene Figur?", hint:"0 = Nein, 1 = Ja",s:1},
-        ],
-      };
-      let list;
-      if(st==='ecken') list=pool.ecken;
-      else if(st==='kanten') list=pool.kanten;
-      else if(st==='flachen') list=pool.flachen;
-      else list=[...pool.ecken,...pool.kanten,...pool.flachen];
-
-      const pick=list[randInt(0,list.length-1)];
-      return{q:pick.q,hint:pick.hint,
-        html:`${drawShape(pick.t)}<br><input type="number" class="std-input" id="inp_1">`,
-        ids:['inp_1'],sol:[pick.s],isFloat:false};
-    }
-  },
-
-  mauer:{
-    title:"Zahlenmauer", sub:"Pyramide",
-    subtypes:null,
-    gen(){
-      const b1=randInt(10,40),b2=randInt(10,40),b3=randInt(10,40);
-      const m1=b1+b2,m2=b2+b3,top=m1+m2;
-      const vals=[top,m1,m2,b1,b2,b3];
-      const hidden=[];
-      while(hidden.length<3){const r=randInt(0,5);if(!hidden.includes(r))hidden.push(r);}
-      let htmls=['','','','','',''],inputIds=[],solutions=[];
-      for(let i=0;i<6;i++){
-        if(hidden.includes(i)){const id=`inp_m_${i}`;inputIds.push(id);solutions.push(vals[i]);htmls[i]=`<div class="brick"><input id="${id}" type="number"></div>`;}
-        else htmls[i]=`<div class="brick">${vals[i]}</div>`;
-      }
-      return{q:"Fülle die Lücken!",hint:"Zwei Steine ergeben den Stein darüber.",
-        html:`<div class="mauer-wrapper"><div class="mauer-row">${htmls[0]}</div><div class="mauer-row">${htmls[1]}${htmls[2]}</div><div class="mauer-row">${htmls[3]}${htmls[4]}${htmls[5]}</div></div>`,
-        ids:inputIds,sol:solutions,isFloat:false};
-    }
-  },
-
-  tausender:{
-    title:"Zahlenraum", sub:"Tausenderbuch",
-    subtypes:[
-      {key:'mixed',   label:'🔀 Gemischt'},
-      {key:'pm1',     label:'±1 Nachbarn'},
-      {key:'pm10',    label:'±10 Nachbarn'},
-      {key:'pm100',   label:'±100 Nachbarn'},
-    ],
-    gen(st){
-      let n=randInt(120,880);
-      while(n%10===0||n%10===9) n=randInt(120,880);
-
-      // Je nach Subtype nur bestimmte Felder
-      if(st==='pm1'){
-        return{q:`Nachbarn von ${n} (±1)?`,hint:"Links −1, Rechts +1",
-          html:`<div style="display:flex;align-items:center;gap:10px;justify-content:center;font-size:20px;font-weight:bold;">
-            <input type="number" class="std-input" id="inp_1" placeholder="−1" style="width:90px;">
-            <span style="background:#3498db;color:white;padding:10px 16px;border-radius:10px;">${n}</span>
-            <input type="number" class="std-input" id="inp_2" placeholder="+1" style="width:90px;">
-          </div>`,
-          ids:['inp_1','inp_2'],sol:[n-1,n+1],isFloat:false};
-      } else if(st==='pm10'){
-        return{q:`Nachbarn von ${n} (±10)?`,hint:"Oben −10, Unten +10",
-          html:`<div style="display:flex;flex-direction:column;align-items:center;gap:10px;font-size:20px;font-weight:bold;">
-            <input type="number" class="std-input" id="inp_1" placeholder="−10" style="width:100px;">
-            <span style="background:#3498db;color:white;padding:10px 16px;border-radius:10px;">${n}</span>
-            <input type="number" class="std-input" id="inp_2" placeholder="+10" style="width:100px;">
-          </div>`,
-          ids:['inp_1','inp_2'],sol:[n-10,n+10],isFloat:false};
-      } else if(st==='pm100'){
-        return{q:`Nachbarn von ${n} (±100)?`,hint:"−100 und +100",
-          html:`<div style="display:flex;align-items:center;gap:10px;justify-content:center;font-size:20px;font-weight:bold;">
-            <input type="number" class="std-input" id="inp_1" placeholder="−100" style="width:100px;">
-            <span style="background:#3498db;color:white;padding:10px 16px;border-radius:10px;">${n}</span>
-            <input type="number" class="std-input" id="inp_2" placeholder="+100" style="width:100px;">
-          </div>`,
-          ids:['inp_1','inp_2'],sol:[n-100,n+100],isFloat:false};
-      } else {
-        // Gemischt: komplettes Kreuz
-        return{q:"Alle Nachbarn im Buch?",hint:"−10, −1, +1, +10",
-          html:`<div class="tausender-cross"><div></div><div class="t-cell"><input type="number" id="inp_1" class="t-input" placeholder="−10"></div><div></div><div class="t-cell"><input type="number" id="inp_2" class="t-input" placeholder="−1"></div><div class="t-cell t-center">${n}</div><div class="t-cell"><input type="number" id="inp_3" class="t-input" placeholder="+1"></div><div></div><div class="t-cell"><input type="number" id="inp_4" class="t-input" placeholder="+10"></div><div></div></div>`,
-          ids:['inp_1','inp_2','inp_3','inp_4'],sol:[n-10,n-1,n+1,n+10],isFloat:false};
-      }
-    }
-  },
-
-  hze:{
-    title:"Stellenwerte", sub:"H, Z, E",
-    subtypes:[
-      {key:'mixed',    label:'🔀 Gemischt'},
-      {key:'zerlegen', label:'🔢 Zerlegen'},
-      {key:'zusammen', label:'🔧 Zusammensetzen'},
-    ],
-    gen(st){
-      const v=(st==='zusammen')?1:(st==='zerlegen'?0:randInt(0,1));
-      if(v===0){
-        const n=randInt(111,999);
-        return{q:`Zerlege: ${n}`,hint:"Hunderter, Zehner, Einer?",
-          html:`<div style="font-size:20px;font-weight:bold;margin-bottom:10px;"><span style="color:#e74c3c">H</span> <span style="color:#27ae60">Z</span> <span style="color:#2980b9">E</span></div><div style="display:flex;justify-content:center;"><input type="number" class="std-input" id="inp_h" placeholder="H" style="color:#e74c3c;width:80px;"><input type="number" class="std-input" id="inp_z" placeholder="Z" style="color:#27ae60;width:80px;"><input type="number" class="std-input" id="inp_e" placeholder="E" style="color:#2980b9;width:80px;"></div>`,
-          ids:['inp_h','inp_z','inp_e'],sol:[Math.floor(n/100),Math.floor((n%100)/10),n%10],isFloat:false};
-      } else {
-        const h=randInt(1,9),z=randInt(0,9),e=randInt(1,9);
-        const n=h*100+z*10+e;
-        return{q:`${h} Hunderter, ${z} Zehner, ${e} Einer = ?`,hint:"Zusammenrechnen.",
-          html:`<input type="number" class="std-input" id="inp_1">`,
-          ids:['inp_1'],sol:[n],isFloat:false};
-      }
-    }
-  },
-
-  runden:{
-    title:"Runden", sub:"Zehner / Hunderter",
-    subtypes:[
-      {key:'mixed',    label:'🔀 Gemischt'},
-      {key:'zehner',   label:'🔟 auf Zehner'},
-      {key:'hunderter',label:'💯 auf Hunderter'},
-    ],
-    gen(st){
-      const isHundred = st==='hunderter' ? true : st==='zehner' ? false : Math.random()>0.5;
-      const n=randInt(111,888);
-      const r=isHundred?n%100:n%10;
-      const step=isHundred?100:10;
-      const sol=r<step/2?n-r:n+(step-r);
-      return{q:`Runde ${n} auf den nächsten ${isHundred?'Hunderter':'Zehner'}!`,
-        hint:"0–4 abrunden, ab 5 aufrunden.",
-        html:`${drawNumberLine(n,isHundred)}<br><input type="number" class="std-input" id="inp_1" placeholder="Ergebnis">`,
-        ids:['inp_1'],sol:[sol],isFloat:false};
-    }
-  },
-
-  zeit:{
-    title:"Uhrzeit", sub:"Analog & Zeitspannen",
-    subtypes:[
-      {key:'mixed',   label:'🔀 Gemischt'},
-      {key:'lesen',   label:'🕐 Uhr ablesen'},
-      {key:'spannen', label:'⏱ Zeitspannen'},
-    ],
-    gen(st){
-      const v = st==='lesen' ? 0 : st==='spannen' ? 1 : randInt(0,1);
-      if(v===0){
-        // Uhr ablesen
-        const h=randInt(1,12),m=[0,5,10,15,20,25,30,35,40,45,50,55][randInt(0,11)];
-        const mStr=m.toString().padStart(2,'0');
-        return{q:"Welche Uhrzeit zeigt die Uhr?",hint:"Stunden : Minuten",
-          html:`${drawClock(h,m)}<br><div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:22px;font-weight:bold;"><input type="number" class="std-input" id="inp_h" placeholder="Std" style="width:80px;min-width:0;"> : <input type="number" class="std-input" id="inp_m" placeholder="Min" style="width:80px;min-width:0;"></div>`,
-          ids:['inp_h','inp_m'],sol:[h,m],isFloat:false};
-      } else {
-        // Zeitspanne rechnen
-        const h=randInt(7,16),m=[0,15,30,45][randInt(0,3)],d=[15,30,45,60][randInt(0,3)];
-        const total=h*60+m+d;
-        const endH=Math.floor(total/60)%24,endM=total%60;
-        return{q:`Es ist ${h}:${m===0?'00':m} Uhr.`,
-          hint:`Das Kino dauert ${d} Minuten. Wann ist es aus?`,
-          html:`${drawClock(h,m)}<br><div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:22px;font-weight:bold;"><input type="number" class="std-input" id="inp_h" placeholder="Std" style="width:80px;min-width:0;"> : <input type="number" class="std-input" id="inp_m" placeholder="Min" style="width:80px;min-width:0;"></div>`,
-          ids:['inp_h','inp_m'],sol:[endH,endM],isFloat:false};
-      }
-    }
-  },
+  rechnen_gross:{title:"Rechnen",sub:"+ − ×",subtypes:[{key:'mixed',label:'🔀 Gemischt'},{key:'add',label:'➕ Addition'},{key:'sub',label:'➖ Subtraktion'},{key:'mul',label:'✖️ Multiplikation'}],gen(st){let op;if(st==='add')op='+';else if(st==='sub')op='-';else if(st==='mul')op='*';else op=['+','-','*'][randInt(0,2)];let a,b,s;if(op==='+'){a=randInt(150,500);b=randInt(150,400);s=a+b;}else if(op==='-'){a=randInt(400,900);b=randInt(110,a-50);s=a-b;}else{a=randInt(12,30);b=randInt(3,9);s=a*b;}return{q:`${a} ${op==='*'?'×':op} ${b} = ?`,hint:"Rechne halbschriftlich oder im Kopf.",html:`<input type="number" class="std-input" id="inp_1">`,ids:['inp_1'],sol:[s],isFloat:false};}},
+  div_rest:{title:"Division",sub:"mit Rest",subtypes:null,gen(){let a=randInt(15,89),b=randInt(3,9);while(a%b===0){a=randInt(15,89);}return{q:`${a} : ${b} = ?`,hint:"Trage Ergebnis und Rest ein.",html:`<div style="display:flex;align-items:center;gap:10px;justify-content:center;"><input type="number" class="std-input" id="inp_1" placeholder="Erg" style="width:90px;"><span style="font-size:24px;font-weight:bold;">R</span><input type="number" class="std-input" id="inp_2" placeholder="Rest" style="width:90px;"></div>`,ids:['inp_1','inp_2'],sol:[Math.floor(a/b),a%b],isFloat:false};}},
+  geld_komma:{title:"Geld",sub:"Rechnen & Umwandeln",subtypes:[{key:'mixed',label:'🔀 Gemischt'},{key:'rechnen',label:'➕➖ Rechnen'},{key:'ct2eur',label:'ct → €'},{key:'ec2eur',label:'€+ct → €'},{key:'eur2ct',label:'€ → ct'}],gen(st){let type;if(st==='rechnen')type=0;else if(st==='ct2eur')type=1;else if(st==='ec2eur')type=2;else if(st==='eur2ct')type=3;else type=randInt(0,3);if(type===0){let a=randInt(1,10)+([10,20,25,50,75,80][randInt(0,5)])/100;let b=randInt(1,5)+([10,20,25,50,75,80][randInt(0,5)])/100;const op=['+','-'][randInt(0,1)];if(op==='-'&&a<b){let t=a;a=b;b=t;}const s=op==='+'?a+b:a-b;return{q:`${a.toFixed(2).replace('.',',')} € ${op} ${b.toFixed(2).replace('.',',')} € = ?`,hint:"Ergebnis mit Komma (z.B. 3,50).",html:`<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><input type="text" class="std-input" id="inp_1" placeholder="0,00" style="width:130px;"><span style="font-size:24px;font-weight:bold;">€</span></div>`,ids:['inp_1'],sol:[s],isFloat:true};}else if(type===1){const ct=randInt(1,9)*100+[0,5,10,20,50,75,90,99][randInt(0,7)];return{q:`${ct} ct = ? €`,hint:"100 ct = 1,00 €",html:`<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><input type="text" class="std-input" id="inp_1" placeholder="0,00" style="width:130px;"><span style="font-size:24px;font-weight:bold;">€</span></div>`,ids:['inp_1'],sol:[ct/100],isFloat:true};}else if(type===2){const eur=randInt(1,15),ct=[5,10,25,50,80,95][randInt(0,5)];return{q:`${eur} € ${ct} ct = ? €`,hint:"Schreibe als Kommazahl.",html:`<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><input type="text" class="std-input" id="inp_1" placeholder="0,00" style="width:130px;"><span style="font-size:24px;font-weight:bold;">€</span></div>`,ids:['inp_1'],sol:[eur+ct/100],isFloat:true};}else{const eur=randInt(1,12),ct=[0,5,10,25,50,75,90][randInt(0,6)];const val=eur+ct/100;return{q:`${val.toFixed(2).replace('.',',')} € = ? ct`,hint:"Wie viele Cent insgesamt?",html:`<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><input type="number" class="std-input" id="inp_1" style="width:130px;"><span style="font-size:24px;font-weight:bold;">ct</span></div>`,ids:['inp_1'],sol:[eur*100+ct],isFloat:false};}}},
+  masse_laengen:{title:"Größen",sub:"m, cm, kg, mm",subtypes:[{key:'mixed',label:'🔀 Gemischt'},{key:'m2cm',label:'m → cm'},{key:'cm2mm',label:'cm → mm'},{key:'mm2cm',label:'mm → cm'},{key:'kg2g',label:'kg → g'}],gen(st){let v;if(st==='m2cm')v=0;else if(st==='cm2mm')v=1;else if(st==='mm2cm')v=2;else if(st==='kg2g')v=3;else v=randInt(0,3);let q,hint,s;if(v===0){const m=randInt(2,9);q=`${m} m = ? cm`;hint="1 m = 100 cm";s=m*100;}else if(v===1){const cm=randInt(20,90);q=`${cm} cm = ? mm`;hint="1 cm = 10 mm";s=cm*10;}else if(v===2){const mm=randInt(2,9)*10;q=`${mm} mm = ? cm`;hint="10 mm = 1 cm";s=mm/10;}else{const kg=randInt(2,8);q=`${kg} kg = ? g`;hint="1 kg = 1000 g";s=kg*1000;}return{q,hint,html:`<input type="number" class="std-input" id="inp_1">`,ids:['inp_1'],sol:[s],isFloat:false};}},
+  sachaufgaben:{title:"Textaufgaben",sub:"Lesen & Rechnen",subtypes:[{key:'mixed',label:'🔀 Gemischt'},{key:'sub',label:'➖ Abziehen'},{key:'mul',label:'✖️ Mal-Aufgaben'},{key:'half',label:'½ Halbieren'}],gen(st){let v;if(st==='sub')v=0;else if(st==='mul')v=1;else if(st==='half')v=2;else v=randInt(0,2);let q,s;if(v===0){const a=randInt(20,40),b=randInt(5,15);q=`Im Bus sind ${a} Leute. Es steigen ${b} aus. Wie viele sind es noch?`;s=a-b;}else if(v===1){const a=randInt(4,8),b=randInt(3,6);q=`Tom kauft ${a} Eis für je ${b} Euro. Wie viel Euro zahlt er?`;s=a*b;}else{const a=randInt(3,6)*10;q=`Ein Seil ist ${a} cm lang. Lisa schneidet die Hälfte ab. Rest in cm?`;s=a/2;}return{q:`<div style="font-size:18px;line-height:1.4;">${q}</div>`,hint:"Überlege: Plus, Minus, Mal oder Geteilt?",html:`<input type="number" class="std-input" id="inp_1">`,ids:['inp_1'],sol:[s],isFloat:false};}},
+  geometrie:{title:"Geometrie",sub:"Körper & Figuren",subtypes:[{key:'mixed',label:'🔀 Gemischt'},{key:'ecken',label:'📐 Ecken'},{key:'kanten',label:'📏 Kanten'},{key:'flachen',label:'🟦 Flächen'}],gen(st){const pool={ecken:[{t:'cube',q:"Wie viele Ecken hat ein Würfel?",hint:"Spitze Punkte zählen.",s:8},{t:'rect',q:"Wie viele Ecken hat ein Rechteck?",hint:"Flache Figur.",s:4},{t:'cylinder',q:"Wie viele Ecken hat ein Zylinder?",hint:"Keine spitzen Ecken.",s:0}],kanten:[{t:'cube',q:"Wie viele Kanten hat ein Würfel?",hint:"Alle Linien zählen.",s:12},{t:'rect',q:"Wie viele Seiten hat ein Rechteck?",hint:"Rundum zählen.",s:4}],flachen:[{t:'cube',q:"Wie viele Flächen hat ein Würfel?",hint:"Alle Seiten zählen.",s:6},{t:'cylinder',q:"Wie viele Flächen hat ein Zylinder?",hint:"Oben, unten, Mantel.",s:3},{t:'rect',q:"Ist ein Rechteck eine ebene Figur?",hint:"0 = Nein, 1 = Ja",s:1}]};let list;if(st==='ecken')list=pool.ecken;else if(st==='kanten')list=pool.kanten;else if(st==='flachen')list=pool.flachen;else list=[...pool.ecken,...pool.kanten,...pool.flachen];const pick=list[randInt(0,list.length-1)];return{q:pick.q,hint:pick.hint,html:`${drawShape(pick.t)}<br><input type="number" class="std-input" id="inp_1">`,ids:['inp_1'],sol:[pick.s],isFloat:false};}},
+  mauer:{title:"Zahlenmauer",sub:"Pyramide",subtypes:null,gen(){const b1=randInt(10,40),b2=randInt(10,40),b3=randInt(10,40);const m1=b1+b2,m2=b2+b3,top=m1+m2;const vals=[top,m1,m2,b1,b2,b3];const hidden=[];while(hidden.length<3){const r=randInt(0,5);if(!hidden.includes(r))hidden.push(r);}let htmls=['','','','','',''],inputIds=[],solutions=[];for(let i=0;i<6;i++){if(hidden.includes(i)){const id=`inp_m_${i}`;inputIds.push(id);solutions.push(vals[i]);htmls[i]=`<div class="brick"><input id="${id}" type="number"></div>`;}else htmls[i]=`<div class="brick">${vals[i]}</div>`;}return{q:"Fülle die Lücken!",hint:"Zwei Steine ergeben den Stein darüber.",html:`<div class="mauer-wrapper"><div class="mauer-row">${htmls[0]}</div><div class="mauer-row">${htmls[1]}${htmls[2]}</div><div class="mauer-row">${htmls[3]}${htmls[4]}${htmls[5]}</div></div>`,ids:inputIds,sol:solutions,isFloat:false};}},
+  tausender:{title:"Zahlenraum",sub:"Tausenderbuch",subtypes:[{key:'mixed',label:'🔀 Gemischt'},{key:'pm1',label:'±1 Nachbarn'},{key:'pm10',label:'±10 Nachbarn'},{key:'pm100',label:'±100 Nachbarn'}],gen(st){let n=randInt(120,880);while(n%10===0||n%10===9)n=randInt(120,880);if(st==='pm1'){return{q:`Nachbarn von ${n} (±1)?`,hint:"Links −1, Rechts +1",html:`<div style="display:flex;align-items:center;gap:10px;justify-content:center;font-size:20px;font-weight:bold;"><input type="number" class="std-input" id="inp_1" placeholder="−1" style="width:90px;"><span style="background:#3498db;color:white;padding:10px 16px;border-radius:10px;">${n}</span><input type="number" class="std-input" id="inp_2" placeholder="+1" style="width:90px;"></div>`,ids:['inp_1','inp_2'],sol:[n-1,n+1],isFloat:false};}else if(st==='pm10'){return{q:`Nachbarn von ${n} (±10)?`,hint:"Oben −10, Unten +10",html:`<div style="display:flex;flex-direction:column;align-items:center;gap:10px;font-size:20px;font-weight:bold;"><input type="number" class="std-input" id="inp_1" placeholder="−10" style="width:100px;"><span style="background:#3498db;color:white;padding:10px 16px;border-radius:10px;">${n}</span><input type="number" class="std-input" id="inp_2" placeholder="+10" style="width:100px;"></div>`,ids:['inp_1','inp_2'],sol:[n-10,n+10],isFloat:false};}else if(st==='pm100'){return{q:`Nachbarn von ${n} (±100)?`,hint:"−100 und +100",html:`<div style="display:flex;align-items:center;gap:10px;justify-content:center;font-size:20px;font-weight:bold;"><input type="number" class="std-input" id="inp_1" placeholder="−100" style="width:100px;"><span style="background:#3498db;color:white;padding:10px 16px;border-radius:10px;">${n}</span><input type="number" class="std-input" id="inp_2" placeholder="+100" style="width:100px;"></div>`,ids:['inp_1','inp_2'],sol:[n-100,n+100],isFloat:false};}else{return{q:"Alle Nachbarn im Buch?",hint:"−10, −1, +1, +10",html:`<div class="tausender-cross"><div></div><div class="t-cell"><input type="number" id="inp_1" class="t-input" placeholder="−10"></div><div></div><div class="t-cell"><input type="number" id="inp_2" class="t-input" placeholder="−1"></div><div class="t-cell t-center">${n}</div><div class="t-cell"><input type="number" id="inp_3" class="t-input" placeholder="+1"></div><div></div><div class="t-cell"><input type="number" id="inp_4" class="t-input" placeholder="+10"></div><div></div></div>`,ids:['inp_1','inp_2','inp_3','inp_4'],sol:[n-10,n-1,n+1,n+10],isFloat:false};}}},
+  hze:{title:"Stellenwerte",sub:"H, Z, E",subtypes:[{key:'mixed',label:'🔀 Gemischt'},{key:'zerlegen',label:'🔢 Zerlegen'},{key:'zusammen',label:'🔧 Zusammensetzen'}],gen(st){const v=(st==='zusammen')?1:(st==='zerlegen'?0:randInt(0,1));if(v===0){const n=randInt(111,999);return{q:`Zerlege: ${n}`,hint:"Hunderter, Zehner, Einer?",html:`<div style="font-size:20px;font-weight:bold;margin-bottom:10px;"><span style="color:#e74c3c">H</span> <span style="color:#27ae60">Z</span> <span style="color:#2980b9">E</span></div><div style="display:flex;justify-content:center;"><input type="number" class="std-input" id="inp_h" placeholder="H" style="color:#e74c3c;width:80px;"><input type="number" class="std-input" id="inp_z" placeholder="Z" style="color:#27ae60;width:80px;"><input type="number" class="std-input" id="inp_e" placeholder="E" style="color:#2980b9;width:80px;"></div>`,ids:['inp_h','inp_z','inp_e'],sol:[Math.floor(n/100),Math.floor((n%100)/10),n%10],isFloat:false};}else{const h=randInt(1,9),z=randInt(0,9),e=randInt(1,9);const n=h*100+z*10+e;return{q:`${h} Hunderter, ${z} Zehner, ${e} Einer = ?`,hint:"Zusammenrechnen.",html:`<input type="number" class="std-input" id="inp_1">`,ids:['inp_1'],sol:[n],isFloat:false};}}},
+  runden:{title:"Runden",sub:"Zehner / Hunderter",subtypes:[{key:'mixed',label:'🔀 Gemischt'},{key:'zehner',label:'🔟 auf Zehner'},{key:'hunderter',label:'💯 auf Hunderter'}],gen(st){const isHundred=st==='hunderter'?true:st==='zehner'?false:Math.random()>0.5;const n=randInt(111,888);const r=isHundred?n%100:n%10;const step=isHundred?100:10;const sol=r<step/2?n-r:n+(step-r);return{q:`Runde ${n} auf den nächsten ${isHundred?'Hunderter':'Zehner'}!`,hint:"0–4 abrunden, ab 5 aufrunden.",html:`${drawNumberLine(n,isHundred)}<br><input type="number" class="std-input" id="inp_1" placeholder="Ergebnis">`,ids:['inp_1'],sol:[sol],isFloat:false};}},
+  zeit:{title:"Uhrzeit",sub:"Analog & Zeitspannen",subtypes:[{key:'mixed',label:'🔀 Gemischt'},{key:'lesen',label:'🕐 Uhr ablesen'},{key:'spannen',label:'⏱ Zeitspannen'}],gen(st){const v=st==='lesen'?0:st==='spannen'?1:randInt(0,1);if(v===0){const h=randInt(1,12),m=[0,5,10,15,20,25,30,35,40,45,50,55][randInt(0,11)];return{q:"Welche Uhrzeit zeigt die Uhr?",hint:"Stunden : Minuten",html:`${drawClock(h,m)}<br><div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:22px;font-weight:bold;"><input type="number" class="std-input" id="inp_h" placeholder="Std" style="width:80px;min-width:0;"> : <input type="number" class="std-input" id="inp_m" placeholder="Min" style="width:80px;min-width:0;"></div>`,ids:['inp_h','inp_m'],sol:[h,m],isFloat:false};}else{const h=randInt(7,16),m=[0,15,30,45][randInt(0,3)],d=[15,30,45,60][randInt(0,3)];const total=h*60+m+d;const endH=Math.floor(total/60)%24,endM=total%60;return{q:`Es ist ${h}:${m===0?'00':m} Uhr.`,hint:`Das Kino dauert ${d} Minuten. Wann ist es aus?`,html:`${drawClock(h,m)}<br><div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:22px;font-weight:bold;"><input type="number" class="std-input" id="inp_h" placeholder="Std" style="width:80px;min-width:0;"> : <input type="number" class="std-input" id="inp_m" placeholder="Min" style="width:80px;min-width:0;"></div>`,ids:['inp_h','inp_m'],sol:[endH,endM],isFloat:false};}}},
 };
 
 // ─── STORAGE ──────────────────────────────────────────────────────────────────
@@ -578,52 +258,37 @@ function loadStorage(){
     const raw=localStorage.getItem('m_app_v9');
     if(raw){
       const parsed=JSON.parse(raw);
-      // Validieren: muss ein Objekt mit mindestens einem Eintrag sein
       if(parsed && typeof parsed==='object' && Object.keys(parsed).length>0){
-        // Sicherstellen dass jedes Profil ein history-Array hat
         for(const id of Object.keys(parsed)){
           if(!parsed[id].history) parsed[id].history=[];
-          if(!parsed[id].score) parsed[id].score=0;
+          if(parsed[id].score===undefined) parsed[id].score=0;
         }
         profiles=parsed;
       }
     }
   }catch(e){ console.warn('Ladefehler:',e); }
-
-  // Nur initialisieren wenn wirklich leer
   if(Object.keys(profiles).length===0){
     profiles={'p1':{name:'Kind 1',score:0,history:[]}};
     localStorage.setItem('m_app_v9',JSON.stringify(profiles));
   }
-  curProfId=Object.keys(profiles)[0];
+  // Aktives Kind aus Startseite lesen
+  const saved=localStorage.getItem('m_app_active_prof');
+  curProfId=(saved && profiles[saved]) ? saved : Object.keys(profiles)[0];
 }
 function saveStorage(){try{localStorage.setItem('m_app_v9',JSON.stringify(profiles));}catch(e){}}
 
-function switchProfile(){curProfId=document.getElementById('profileSelect').value;updateUI();}
-function addProfile(){
-  const name=prompt("Name des Kindes:");
-  if(!name||!name.trim()) return;
-  const id='p_'+Date.now();
-  profiles[id]={name:name.trim(),score:0,history:[]};
-  saveStorage();initUI();
-  document.getElementById('profileSelect').value=id;
-  curProfId=id;updateUI();
-}
-
 // ─── UI ───────────────────────────────────────────────────────────────────────
 function initUI(){
-  const s=document.getElementById('profileSelect');s.innerHTML='';
-  for(const [id,p] of Object.entries(profiles)) s.innerHTML+=`<option value="${id}">${p.name}</option>`;
-  s.value=curProfId;
+  document.getElementById('curChildName').textContent=profiles[curProfId]?.name||'—';
   const g=document.getElementById('taskTiles');g.innerHTML='';
   for(const [k,v] of Object.entries(tasks))
     g.innerHTML+=`<div class="tile" id="tile_${k}" onclick="openTask('${k}')"><div class="tile-title">${v.title}</div><div class="tile-sub">${v.sub}</div></div>`;
   updateUI();
 }
-
 function updateUI(){
   const p=profiles[curProfId];
   document.getElementById('scoreText').textContent=`Punkte: ${p.score||0}`;
+  document.getElementById('curChildName').textContent=p.name||'—';
   const n=Math.min(5,Math.floor((p.score||0)/50));
   let h='';
   for(let i=0;i<5;i++) h+=i<n
@@ -632,18 +297,10 @@ function updateUI(){
   document.getElementById('starsText').innerHTML=h;
 }
 
-// ─── UNTERAUFGABEN-LEISTE ─────────────────────────────────────────────────────
+// ─── UNTERAUFGABEN ────────────────────────────────────────────────────────────
 function showSubtypeBar(taskKey){
-  const bar=document.getElementById('subtypeBar');
-  const chips=document.getElementById('subtypeChips');
-  const label=document.getElementById('subtypeLabel');
-  const t=tasks[taskKey];
-
-  if(!t.subtypes||t.subtypes.length===0){
-    bar.classList.remove('visible');
-    return;
-  }
-
+  const bar=document.getElementById('subtypeBar'),chips=document.getElementById('subtypeChips'),label=document.getElementById('subtypeLabel'),t=tasks[taskKey];
+  if(!t.subtypes||!t.subtypes.length){bar.classList.remove('visible');return;}
   label.textContent=`${t.title}: Aufgabenart wählen`;
   chips.innerHTML='';
   t.subtypes.forEach(st=>{
@@ -655,28 +312,21 @@ function showSubtypeBar(taskKey){
   });
   bar.classList.add('visible');
 }
-
 function selectSubtype(taskKey,stKey){
   curSubtype=stKey;
-  // Chips aktualisieren
-  document.querySelectorAll('.subtype-chips .chip').forEach((c,i)=>{
-    c.classList.toggle('active', tasks[taskKey].subtypes[i].key===stKey);
-  });
+  document.querySelectorAll('.subtype-chips .chip').forEach((c,i)=>{c.classList.toggle('active',tasks[taskKey].subtypes[i].key===stKey);});
   loadTask();
 }
 
-// ─── AUFGABEN-LOGIK ───────────────────────────────────────────────────────────
+// ─── AUFGABEN ─────────────────────────────────────────────────────────────────
 function openTask(key){
   curTaskKey=key;
-  // Wenn Thema wechselt → Subtype zurücksetzen auf 'mixed' (oder erster)
   const t=tasks[key];
   curSubtype=t.subtypes?t.subtypes[0].key:'mixed';
-
   document.querySelectorAll('.tile').forEach(t=>t.classList.remove('active'));
   const tile=document.getElementById('tile_'+key);
   if(tile) tile.classList.add('active');
   document.getElementById('taskTitle').textContent=t.title;
-
   showSubtypeBar(key);
   loadTask();
 }
@@ -689,23 +339,34 @@ function loadTask(){
   document.getElementById('tHint').textContent=t.hint||'';
   document.getElementById('feedback').textContent='';
   document.getElementById('feedback').className='feedback';
-  document.getElementById('checkBtn').disabled=false;
+  // Button startet DEAKTIVIERT – wird erst aktiv wenn alle Felder gefüllt
+  document.getElementById('checkBtn').disabled=true;
   document.getElementById('checkBtn').style.display='';
   document.getElementById('nextBtn').style.display='none';
   document.getElementById('readBtn').style.display='';
   setTimeout(()=>{
     t.ids.forEach(id=>{
       const el=document.getElementById(id);
-      if(el) el.addEventListener('keydown',e=>{if(e.key==='Enter'&&!document.getElementById('checkBtn').disabled) checkAnswer();});
+      if(!el) return;
+      el.addEventListener('keydown',e=>{if(e.key==='Enter'&&!document.getElementById('checkBtn').disabled) checkAnswer();});
+      el.addEventListener('input', updateCheckBtn);
     });
     const first=document.getElementById(t.ids[0]);
     if(first) first.focus();
   },80);
 }
 
-function speakCurrent(){
-  if(curInstance) speak(stripHTML(curInstance.q)+'. '+(curInstance.hint||''));
+// Prüft ob alle Felder ausgefüllt sind → Button aktivieren
+function updateCheckBtn(){
+  if(!curInstance) return;
+  const allFilled=curInstance.ids.every(id=>{
+    const el=document.getElementById(id);
+    return el && el.value.trim()!=='';
+  });
+  document.getElementById('checkBtn').disabled=!allFilled;
 }
+
+function speakCurrent(){if(curInstance) speak(stripHTML(curInstance.q)+'. '+(curInstance.hint||''));}
 
 function checkAnswer(){
   if(!curInstance) return;
@@ -743,7 +404,6 @@ function toggleDashboard(){
   document.getElementById('dashBtnText').textContent=isDashOpen?'Üben':'Eltern-Stats';
   if(isDashOpen) updateDashboard(dashPeriod);
 }
-
 function updateDashboard(period,el){
   dashPeriod=period;
   document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
@@ -755,94 +415,43 @@ function updateDashboard(period,el){
   const total=hist.length,correct=hist.filter(h=>h.ok).length;
   document.getElementById('dash-total').textContent=total;
   document.getElementById('dash-quote').textContent=total>0?Math.round(correct/total*100)+'%':'—';
-
-  // Gruppieren nach Thema + Unteraufgabe
   const byTopic={};
   hist.forEach(h=>{
     if(!byTopic[h.key]) byTopic[h.key]={right:0,wrong:0,subs:{}};
     if(h.ok) byTopic[h.key].right++; else byTopic[h.key].wrong++;
-    // Unteraufgaben-Statistik
     const stKey=h.subtype||'mixed';
     if(!byTopic[h.key].subs[stKey]) byTopic[h.key].subs[stKey]={right:0,wrong:0};
     if(h.ok) byTopic[h.key].subs[stKey].right++; else byTopic[h.key].subs[stKey].wrong++;
   });
-
-  // Unteraufgaben-Label nachschlagen
-  function getSubLabel(taskKey, stKey){
-    const t=tasks[taskKey];
-    if(!t||!t.subtypes) return stKey;
-    const found=t.subtypes.find(s=>s.key===stKey);
-    return found?found.label:stKey;
-  }
-
-  // Zeile mit optionaler Unteraufgaben-Aufschlüsselung bauen
-  function buildRow(key, stat){
-    const tot=stat.right+stat.wrong;
-    const rate=stat.right/tot;
-    const pct=Math.round(rate*100);
-    const barColor=rate>=0.75?'var(--success)':rate>=0.4?'var(--warning)':'var(--danger)';
+  function getSubLabel(taskKey,stKey){const t=tasks[taskKey];if(!t||!t.subtypes)return stKey;const f=t.subtypes.find(s=>s.key===stKey);return f?f.label:stKey;}
+  function buildRow(key,stat){
+    const tot=stat.right+stat.wrong,rate=stat.right/tot,pct=Math.round(rate*100);
+    const bc=rate>=0.75?'var(--success)':rate>=0.4?'var(--warning)':'var(--danger)';
     const name=(tasks[key]||{title:key}).title;
-
-    // Unteraufgaben nur zeigen wenn mehr als eine vorhanden
     const subKeys=Object.keys(stat.subs);
     let subHtml='';
     if(subKeys.length>1){
       subHtml='<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;">';
-      subKeys.forEach(sk=>{
-        const s=stat.subs[sk];
-        const stot=s.right+s.wrong;
-        const sr=Math.round(s.right/stot*100);
-        const sc=s.right/stot>=0.75?'#27ae60':s.right/stot>=0.4?'#e67e22':'#e74c3c';
-        subHtml+=`<span style="font-size:12px;padding:3px 9px;border-radius:10px;background:#f0f8ff;border:1px solid #d9e8f7;color:${sc};font-weight:bold;">${getSubLabel(key,sk)}: ${s.right}/${stot} (${sr}%)</span>`;
-      });
+      subKeys.forEach(sk=>{const s=stat.subs[sk];const stot=s.right+s.wrong;const sr=Math.round(s.right/stot*100);const sc=s.right/stot>=0.75?'#27ae60':s.right/stot>=0.4?'#e67e22':'#e74c3c';subHtml+=`<span style="font-size:12px;padding:3px 9px;border-radius:10px;background:#f0f8ff;border:1px solid #d9e8f7;color:${sc};font-weight:bold;">${getSubLabel(key,sk)}: ${s.right}/${stot} (${sr}%)</span>`;});
       subHtml+='</div>';
     }
-
-    return `<div class="topic-row" style="flex-direction:column;align-items:stretch;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span class="topic-name">${name}</span>
-        <span class="topic-stats">${stat.right}/${tot} richtig &nbsp;<strong style="color:${barColor};">${pct}%</strong></span>
-      </div>
-      <div style="margin-top:6px;height:6px;border-radius:4px;background:#ecf0f1;overflow:hidden;">
-        <div style="height:100%;width:${pct}%;background:${barColor};border-radius:4px;transition:width 0.4s;"></div>
-      </div>
-      ${subHtml}
-    </div>`;
+    return `<div class="topic-row" style="flex-direction:column;align-items:stretch;"><div style="display:flex;justify-content:space-between;align-items:center;"><span class="topic-name">${name}</span><span class="topic-stats">${stat.right}/${tot} richtig &nbsp;<strong style="color:${bc};">${pct}%</strong></span></div><div style="margin-top:6px;height:6px;border-radius:4px;background:#ecf0f1;overflow:hidden;"><div style="height:100%;width:${pct}%;background:${bc};border-radius:4px;transition:width 0.4s;"></div></div>${subHtml}</div>`;
   }
-
   const good=[],medium=[],bad=[];
-  for(const [key,stat] of Object.entries(byTopic)){
-    const rate=stat.right/(stat.right+stat.wrong);
-    if(rate>=0.75) good.push(buildRow(key,stat));
-    else if(rate>=0.4) medium.push(buildRow(key,stat));
-    else bad.push(buildRow(key,stat));
-  }
+  for(const [key,stat] of Object.entries(byTopic)){const rate=stat.right/(stat.right+stat.wrong);if(rate>=0.75)good.push(buildRow(key,stat));else if(rate>=0.4)medium.push(buildRow(key,stat));else bad.push(buildRow(key,stat));}
   const empty='<p style="color:var(--muted);font-size:14px;">Keine Daten im gewählten Zeitraum.</p>';
   document.getElementById('dash-good').innerHTML=good.length?good.join(''):empty;
   document.getElementById('dash-medium').innerHTML=medium.length?medium.join(''):'<p style="color:var(--muted);font-size:14px;">—</p>';
   document.getElementById('dash-bad').innerHTML=bad.length?bad.join(''):'<p style="color:var(--muted);font-size:14px;">—</p>';
 }
-
 function resetStats(){
   if(!confirm(`Wirklich alle Daten für "${profiles[curProfId].name}" löschen?`)) return;
   profiles[curProfId].score=0;profiles[curProfId].history=[];
   saveStorage();updateUI();updateDashboard(dashPeriod);
 }
 
-function deleteProfile(){
-  const keys=Object.keys(profiles);
-  if(keys.length<=1){ alert("Es muss mindestens ein Kind geben. Lege zuerst ein neues Kind an."); return; }
-  if(!confirm(`Profil "${profiles[curProfId].name}" und alle Daten wirklich löschen?`)) return;
-  delete profiles[curProfId];
-  saveStorage();
-  curProfId=Object.keys(profiles)[0];
-  initUI();
-}
-
-// ─── START ────────────────────────────────────────────────────────────────────
 loadStorage();
 initUI();
 </script>
-
 </body>
 </html>
