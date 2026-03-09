@@ -3,15 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mathe-Hüpfer - Flüssige Steuerung</title>
+    <title>Mathe-Hüpfer - Levelauswahl</title>
     <style>
         body { margin: 0; background: #2c3e50; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Comic Sans MS', sans-serif; overflow: hidden; touch-action: none; }
         #gameContainer { position: relative; width: 400px; height: 600px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 15px; overflow: hidden; }
         canvas { background: linear-gradient(to bottom, #74ebd5 0%, #9face6 100%); display: block; }
-        #ui { position: absolute; top: 10px; left: 15px; right: 15px; display: flex; justify-content: space-between; color: white; font-size: 22px; font-weight: bold; text-shadow: 2px 2px 0 rgba(0,0,0,0.5); pointer-events: none; }
-        #gameOver { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center;}
-        button { padding: 12px 25px; font-size: 22px; font-family: inherit; font-weight: bold; background: #ff9f43; color: white; border: 3px solid #fff; border-radius: 10px; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        #ui { position: absolute; top: 10px; left: 15px; right: 15px; display: flex; justify-content: space-between; color: white; font-size: 22px; font-weight: bold; text-shadow: 2px 2px 0 rgba(0,0,0,0.5); pointer-events: none; display: none; }
+        
+        /* Menü und Game Over Screens */
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; }
+        .overlay h2 { font-size: 36px; margin-bottom: 20px; color: #f1c40f; text-shadow: 2px 2px 0 #000; }
+        
+        button { padding: 12px 25px; font-size: 22px; font-family: inherit; font-weight: bold; color: white; border: 3px solid #fff; border-radius: 10px; cursor: pointer; margin: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: transform 0.1s; }
         button:active { transform: scale(0.95); }
+        
+        .btn-addsub { background: #2ecc71; }
+        .btn-muldiv { background: #3498db; }
+        .btn-mixed { background: #9b59b6; }
+        .btn-retry { background: #e67e22; }
+        .btn-menu { background: #7f8c8d; font-size: 18px; padding: 10px 20px; }
     </style>
 </head>
 <body>
@@ -21,11 +31,22 @@
             <span id="highText">Highscore: 0</span>
         </div>
         <canvas id="gameCanvas" width="400" height="600"></canvas>
-        <div id="gameOver">
-            <h2 style="font-size: 36px; margin-bottom: 5px; color: #ff9f43;">Oh nein!</h2>
+        
+        <!-- Startmenü -->
+        <div id="startScreen" class="overlay">
+            <h2>Was möchtest<br>du üben?</h2>
+            <button class="btn-addsub" onclick="startGame('addsub')">➕ und ➖</button>
+            <button class="btn-muldiv" onclick="startGame('muldiv')">✖️ und ➗</button>
+            <button class="btn-mixed" onclick="startGame('mixed')">Gemischt 🎲</button>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOver" class="overlay" style="display: none;">
+            <h2 style="color: #e74c3c;">Oh nein!</h2>
             <p>Die Plattform ist zerbrochen.</p>
             <p id="finalScore" style="font-size: 28px; font-weight: bold;">Höhe: 0</p>
-            <button onclick="resetGame()">Nochmal hüpfen</button>
+            <button class="btn-retry" onclick="resetGame()">Nochmal hüpfen</button>
+            <button class="btn-menu" onclick="showMenu()">Zurück zum Menü</button>
         </div>
     </div>
 
@@ -34,9 +55,10 @@
         const ctx = canvas.getContext('2d');
         const scoreText = document.getElementById('scoreText');
         const highText = document.getElementById('highText');
+        const startScreen = document.getElementById('startScreen');
         const gameOverScreen = document.getElementById('gameOver');
+        const ui = document.getElementById('ui');
 
-        // Audio-Feedback für die Motivation
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound(type) {
             if(audioCtx.state === 'suspended') audioCtx.resume();
@@ -48,16 +70,15 @@
             else if (type === 'spring') { osc.type = 'square'; osc.frequency.setValueAtTime(300, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(900, audioCtx.currentTime + 0.3); gain.gain.setValueAtTime(0.2, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3); osc.start(); osc.stop(audioCtx.currentTime + 0.3); }
         }
 
-        // Physik
         const gravity = 0.25;         
         const jumpForce = -9;         
         const springForce = -15;      
         const rocketSpeed = -18;
         
-        let gameRunning = true;
+        let gameRunning = false;
+        let currentMode = 'mixed';
         let score = 0;
-        let highScore = localStorage.getItem('doodleMathHigh2') || 0;
-        highText.innerText = "Highscore: " + highScore;
+        let highScore = 0;
         
         let player = { x: 200, y: 300, radius: 15, vx: 0, vy: 0, state: 'normal', timer: 0 };
         let targetX = player.x; 
@@ -68,17 +89,50 @@
 
         function rnd(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
+        // --- MATHE-GENERATOR ---
+        function generateMathProblem() {
+            let a, b, ans, equation;
+            let ops = [];
+            
+            if (currentMode === 'addsub') ops = ['+', '-'];
+            else if (currentMode === 'muldiv') ops = ['*', '÷'];
+            else ops = ['+', '-', '*', '÷'];
+
+            let op = ops[Math.floor(Math.random() * ops.length)];
+
+            if (op === '+') {
+                a = rnd(10, 50); b = rnd(10, 50);
+                ans = a + b; equation = `${a} + ${b}`;
+            } else if (op === '-') {
+                a = rnd(20, 100); b = rnd(5, a - 1); // Garantiert positives Ergebnis
+                ans = a - b; equation = `${a} - ${b}`;
+            } else if (op === '*') {
+                a = rnd(2, 10); b = rnd(2, 10);
+                ans = a * b; equation = `${a} × ${b}`;
+            } else if (op === '÷') {
+                b = rnd(2, 10); ans = rnd(2, 10); // Generiere über Umkehrung, damit es glatt aufgeht
+                a = b * ans; 
+                equation = `${a} ÷ ${b}`;
+            }
+
+            // Plausible falsche Antwort generieren
+            let wrongAns;
+            do {
+                let offset = rnd(1, 5) * (Math.random() > 0.5 ? 1 : -1);
+                wrongAns = ans + offset;
+            } while (wrongAns < 0 || wrongAns === ans); // Keine negativen Antworten oder doppelte
+
+            return { equation, ans, wrongAns };
+        }
+
         function createFloor(yOffset) {
             let type = Math.random();
             if (type < 0.15) { 
                 platforms.push({ x: rnd(50, 240), y: yOffset, width: platformWidth, type: 'cloud', item: null });
             } else {
-                let a = rnd(2, 10), b = rnd(2, 10);
-                let ans = a * b;
-                let equation = `${a} × ${b}`;
-                
-                let opts = [ans, ans + rnd(1,5) * (Math.random()>0.5?1:-1)];
-                opts.sort(() => Math.random() - 0.5);
+                let prob = generateMathProblem();
+                let opts = [prob.ans, prob.wrongAns];
+                opts.sort(() => Math.random() - 0.5); // Mischen
 
                 let xPos1 = rnd(10, 100);
                 let xPos2 = rnd(180, 280);
@@ -86,8 +140,8 @@
                 let rndItem = Math.random();
                 let itemType = rndItem < 0.1 ? 'rocket' : (rndItem < 0.25 ? 'spring' : null);
 
-                platforms.push({ x: xPos1, y: yOffset, width: platformWidth, type: 'math', correct: opts[0] === ans, equation: equation, ansText: opts[0], broken: false, item: opts[0] === ans ? itemType : null });
-                platforms.push({ x: xPos2, y: yOffset, width: platformWidth, type: 'math', correct: opts[1] === ans, equation: equation, ansText: opts[1], broken: false, item: opts[1] === ans ? itemType : null });
+                platforms.push({ x: xPos1, y: yOffset, width: platformWidth, type: 'math', correct: opts[0] === prob.ans, equation: prob.equation, ansText: opts[0], broken: false, item: opts[0] === prob.ans ? itemType : null });
+                platforms.push({ x: xPos2, y: yOffset, width: platformWidth, type: 'math', correct: opts[1] === prob.ans, equation: prob.equation, ansText: opts[1], broken: false, item: opts[1] === prob.ans ? itemType : null });
             }
         }
 
@@ -97,8 +151,7 @@
             for(let i=1; i<7; i++) { createFloor(550 - i * 110); } 
         }
 
-        // --- NEUE, FLÜSSIGE STEUERUNG ---
-        const keys = {}; // Speichert, ob eine Taste aktuell gedrückt ist
+        const keys = {}; 
         window.addEventListener('keydown', e => { keys[e.key] = true; });
         window.addEventListener('keyup', e => { keys[e.key] = false; });
         
@@ -108,7 +161,6 @@
         function update() {
             if(!gameRunning) return;
 
-            // Tastatur auswerten (passiert jetzt 60 Mal pro Sekunde, nicht nur beim Tastendruck!)
             if (keys['ArrowLeft'] || keys['a']) { targetX -= 8; }
             if (keys['ArrowRight'] || keys['d']) { targetX += 8; }
 
@@ -119,16 +171,13 @@
                 player.vy += gravity;
             }
 
-            // Weiche Folgebewegung (Spieler wandert sanft zum targetX)
             player.x += (targetX - player.x) * 0.2;
 
-            // Links/Rechts aus dem Bildschirm fliegen (Pac-Man-Effekt)
             if(player.x > canvas.width + player.radius) { player.x = -player.radius; targetX = player.x; }
             if(player.x < -player.radius) { player.x = canvas.width + player.radius; targetX = player.x; }
 
             player.y += player.vy;
 
-            // Kollision (nur beim Fallen)
             if (player.vy > 0 && player.state !== 'rocket') {
                 for (let p of platforms) {
                     if (p.broken) continue;
@@ -147,7 +196,6 @@
                 }
             }
 
-            // Kamera-Scrolling
             let halfScreen = canvas.height / 2;
             if (player.y < halfScreen) {
                 let diff = halfScreen - player.y;
@@ -162,9 +210,13 @@
 
             if (player.y > canvas.height) {
                 gameRunning = false;
-                if(score > highScore) { highScore = score; localStorage.setItem('doodleMathHigh2', highScore); }
+                if(score > highScore) { 
+                    highScore = score; 
+                    localStorage.setItem('doodleMathHigh_' + currentMode, highScore); 
+                }
                 document.getElementById('finalScore').innerText = "Erreichte Höhe: " + score;
                 gameOverScreen.style.display = 'flex';
+                ui.style.display = 'none';
             }
         }
 
@@ -183,21 +235,18 @@
                     ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
                     ctx.beginPath(); ctx.arc(p.x + 20, p.y + 20, 20, 0, Math.PI*2); ctx.arc(p.x + 55, p.y + 10, 25, 0, Math.PI*2); ctx.arc(p.x + 90, p.y + 20, 20, 0, Math.PI*2); ctx.fill();
                 } else {
-                    // Plattform zeichnen
                     ctx.fillStyle = '#f8c291'; 
                     ctx.beginPath(); 
                     if(ctx.roundRect) { ctx.roundRect(p.x, p.y, p.width, platformHeight, 8); } 
-                    else { ctx.rect(p.x, p.y, p.width, platformHeight); } // Fallback für ältere Browser
+                    else { ctx.rect(p.x, p.y, p.width, platformHeight); }
                     ctx.fill();
                     ctx.lineWidth = 3; ctx.strokeStyle = '#e55039'; ctx.stroke();
 
-                    // Text Zeile 1: Aufgabe
                     ctx.fillStyle = '#2c3e50';
                     ctx.font = 'bold 18px Comic Sans MS';
                     ctx.textAlign = 'center';
                     ctx.fillText(p.equation, p.x + p.width/2, p.y + 22);
                     
-                    // Text Zeile 2: Ergebnis
                     ctx.font = 'bold 22px Comic Sans MS';
                     ctx.fillStyle = '#c0392b';
                     ctx.fillText("= " + p.ansText, p.x + p.width/2, p.y + 46);
@@ -211,29 +260,51 @@
                 }
             }
 
-            ctx.fillStyle = player.state === 'rocket' ? '#f1c40f' : '#38ada9';
-            ctx.beginPath(); ctx.arc(player.x, player.y, player.radius, 0, Math.PI*2); ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.stroke();
+            // Spieler zeichnen nur wenn Spiel läuft
+            if(gameRunning) {
+                ctx.fillStyle = player.state === 'rocket' ? '#f1c40f' : '#38ada9';
+                ctx.beginPath(); ctx.arc(player.x, player.y, player.radius, 0, Math.PI*2); ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.stroke();
 
-            if (player.state === 'rocket') {
-                ctx.fillStyle = '#e55039'; ctx.beginPath(); ctx.moveTo(player.x - 6, player.y + player.radius); ctx.lineTo(player.x, player.y + player.radius + rnd(15,25)); ctx.lineTo(player.x + 6, player.y + player.radius); ctx.fill();
+                if (player.state === 'rocket') {
+                    ctx.fillStyle = '#e55039'; ctx.beginPath(); ctx.moveTo(player.x - 6, player.y + player.radius); ctx.lineTo(player.x, player.y + player.radius + rnd(15,25)); ctx.lineTo(player.x + 6, player.y + player.radius); ctx.fill();
+                }
             }
 
-            if(gameRunning) requestAnimationFrame(() => { update(); draw(); });
+            requestAnimationFrame(() => { update(); draw(); });
+        }
+
+        // --- SPIELSTEUERUNG (Menüs) ---
+        function startGame(mode) {
+            if(audioCtx.state === 'suspended') audioCtx.resume(); // Wichtig für Autoplay-Policy
+            currentMode = mode;
+            highScore = localStorage.getItem('doodleMathHigh_' + currentMode) || 0;
+            
+            startScreen.style.display = 'none';
+            ui.style.display = 'flex';
+            resetGame();
+        }
+
+        function showMenu() {
+            gameOverScreen.style.display = 'none';
+            startScreen.style.display = 'flex';
+            gameRunning = false;
         }
 
         function resetGame() {
             player = { x: 200, y: 300, radius: 15, vx: 0, vy: 0, state: 'normal', timer: 0 };
-            targetX = 200; score = 0; scoreText.innerText = "Höhe: 0"; highText.innerText = "Highscore: " + highScore;
+            targetX = 200; score = 0; 
+            scoreText.innerText = "Höhe: 0"; 
+            highText.innerText = "Highscore: " + highScore;
             gameOverScreen.style.display = 'none';
-            // Setze gedrückte Tasten beim Neustart zurück, um Bugs zu vermeiden
+            ui.style.display = 'flex';
+            
             for (let key in keys) keys[key] = false; 
-            initPlatforms(); gameRunning = true; update(); draw();
+            initPlatforms(); 
+            gameRunning = true; 
         }
 
-        document.body.addEventListener('click', () => { if(audioCtx.state === 'suspended') audioCtx.resume(); }, {once:true});
-        document.body.addEventListener('touchstart', () => { if(audioCtx.state === 'suspended') audioCtx.resume(); }, {once:true});
-
-        initPlatforms(); update(); draw();
+        // Initiale Schleife starten (zeichnet vorerst nur Hintergrund)
+        draw();
     </script>
 </body>
 </html>
