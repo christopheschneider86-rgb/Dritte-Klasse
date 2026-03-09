@@ -34,8 +34,10 @@ Die App deckt den Lehrplan für die 3. Klasse ab. Ohne Anmeldung, direkt im Brow
 <br>
 
 ### 💡 Tipps für Eltern
-- **Als App speichern:** Du kannst die Lern-Apps auf einem Android-Tablet (Chrome) oder iPad (Safari) einfach über *„Zum Startbildschirm hinzufügen“* abspeichern. Sie verhalten sich dann wie echte Apps!
-- **Statistiken:** Jede App speichert die Punkte und Sterne lokal auf dem Gerät.
-- **Audio:** Schalte den Ton am Tablet an, damit die Kinder das gesprochene Feedback hören können.
+**Als App speichern:** Du kannst die Lern-Apps auf einem Android-Tablet (Chrome) oder iPad (Safari) einfach über *„Zum Startbildschirm hinzufügen“* abspeichern. Sie verhalten sich dann wie echte Apps!
+
+**Statistiken:** Jede App speichert die Punkte und Sterne lokal auf dem Gerät.
+
+**Audio:** Schalte den Ton am Tablet an, damit die Kinder das gesprochene Feedback hören können.
 
 </div>
