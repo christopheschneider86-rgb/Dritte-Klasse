@@ -3,13 +3,13 @@
 # 🌟 Lern-Abenteuer für die Grundschule 🌟
 Willkommen auf unserer Lernplattform! Hier findest du kleine, kindgerechte Web-Apps zum spielerischen Üben für Proben und Schulaufgaben.
 
-[![Main Starten](https://img.shields.io/badge/🔆_Main starten-3498db?style=for-the-badge&logoColor=white)](https://christopheschneider86-rgb.github.io/Dritte-Klasse/index.html)
+[![Main Starten](https://img.shields.io/badge/🔆_Main_starten-3498db?style=for-the-badge&logoColor=white)](https://christopheschneider86-rgb.github.io/Dritte-Klasse/index.html)
 
 ---
 
 ### 🔢 Mathematik
 
-Die App deckt den kompletten LehrplanPLUS für die 3. Klasse ab. Ohne Anmeldung, direkt im Browser spielbar!
+Die App deckt den Lehrplan für die 3. Klasse ab. Ohne Anmeldung, direkt im Browser spielbar!
 
 [![Mathe Trainer Starten](https://img.shields.io/badge/🚀_Mathe_Trainer_starten-3498db?style=for-the-badge&logoColor=white)](https://christopheschneider86-rgb.github.io/Dritte-Klasse/mathe_trainer_3_klasse.html)
 
@@ -18,7 +18,7 @@ Die App deckt den kompletten LehrplanPLUS für die 3. Klasse ab. Ohne Anmeldung,
 ---
 
 ### 📚 Deutsch (Demnächst)
-*Hier entsteht bald ein Rechtschreib- und Grammatik-Trainer...*
+*Kommt bald...*
 
 [![Deutsch Trainer](https://img.shields.io/badge/⏳_In_Planung-95a5a6?style=for-the-badge&logoColor=white)](#)
 
