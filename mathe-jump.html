@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mathe-Hüpfer - Flüssige Steuerung</title>
+    <style>
+        body { margin: 0; background: #2c3e50; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Comic Sans MS', sans-serif; overflow: hidden; touch-action: none; }
+        #gameContainer { position: relative; width: 400px; height: 600px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 15px; overflow: hidden; }
+        canvas { background: linear-gradient(to bottom, #74ebd5 0%, #9face6 100%); display: block; }
+        #ui { position: absolute; top: 10px; left: 15px; right: 15px; display: flex; justify-content: space-between; color: white; font-size: 22px; font-weight: bold; text-shadow: 2px 2px 0 rgba(0,0,0,0.5); pointer-events: none; }
+        #gameOver { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center;}
+        button { padding: 12px 25px; font-size: 22px; font-family: inherit; font-weight: bold; background: #ff9f43; color: white; border: 3px solid #fff; border-radius: 10px; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        button:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="ui">
+            <span id="scoreText">Höhe: 0</span>
+            <span id="highText">Highscore: 0</span>
+        </div>
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+        <div id="gameOver">
+            <h2 style="font-size: 36px; margin-bottom: 5px; color: #ff9f43;">Oh nein!</h2>
+            <p>Die Plattform ist zerbrochen.</p>
+            <p id="finalScore" style="font-size: 28px; font-weight: bold;">Höhe: 0</p>
+            <button onclick="resetGame()">Nochmal hüpfen</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreText = document.getElementById('scoreText');
+        const highText = document.getElementById('highText');
+        const gameOverScreen = document.getElementById('gameOver');
+
+        // Audio-Feedback für die Motivation
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            if (type === 'jump') { osc.type = 'sine'; osc.frequency.setValueAtTime(400, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.2, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); osc.start(); osc.stop(audioCtx.currentTime + 0.1); }
+            else if (type === 'break') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.2); gain.gain.setValueAtTime(0.3, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2); osc.start(); osc.stop(audioCtx.currentTime + 0.2); }
+            else if (type === 'spring') { osc.type = 'square'; osc.frequency.setValueAtTime(300, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(900, audioCtx.currentTime + 0.3); gain.gain.setValueAtTime(0.2, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3); osc.start(); osc.stop(audioCtx.currentTime + 0.3); }
+        }
+
+        // Physik
+        const gravity = 0.25;         
+        const jumpForce = -9;         
+        const springForce = -15;      
+        const rocketSpeed = -18;
+        
+        let gameRunning = true;
+        let score = 0;
+        let highScore = localStorage.getItem('doodleMathHigh2') || 0;
+        highText.innerText = "Highscore: " + highScore;
+        
+        let player = { x: 200, y: 300, radius: 15, vx: 0, vy: 0, state: 'normal', timer: 0 };
+        let targetX = player.x; 
+        
+        let platforms = [];
+        const platformWidth = 110;  
+        const platformHeight = 55;  
+
+        function rnd(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+        function createFloor(yOffset) {
+            let type = Math.random();
+            if (type < 0.15) { 
+                platforms.push({ x: rnd(50, 240), y: yOffset, width: platformWidth, type: 'cloud', item: null });
+            } else {
+                let a = rnd(2, 10), b = rnd(2, 10);
+                let ans = a * b;
+                let equation = `${a} × ${b}`;
+                
+                let opts = [ans, ans + rnd(1,5) * (Math.random()>0.5?1:-1)];
+                opts.sort(() => Math.random() - 0.5);
+
+                let xPos1 = rnd(10, 100);
+                let xPos2 = rnd(180, 280);
+
+                let rndItem = Math.random();
+                let itemType = rndItem < 0.1 ? 'rocket' : (rndItem < 0.25 ? 'spring' : null);
+
+                platforms.push({ x: xPos1, y: yOffset, width: platformWidth, type: 'math', correct: opts[0] === ans, equation: equation, ansText: opts[0], broken: false, item: opts[0] === ans ? itemType : null });
+                platforms.push({ x: xPos2, y: yOffset, width: platformWidth, type: 'math', correct: opts[1] === ans, equation: equation, ansText: opts[1], broken: false, item: opts[1] === ans ? itemType : null });
+            }
+        }
+
+        function initPlatforms() {
+            platforms = [];
+            platforms.push({ x: 145, y: 550, width: platformWidth, type: 'cloud', item: null });
+            for(let i=1; i<7; i++) { createFloor(550 - i * 110); } 
+        }
+
+        // --- NEUE, FLÜSSIGE STEUERUNG ---
+        const keys = {}; // Speichert, ob eine Taste aktuell gedrückt ist
+        window.addEventListener('keydown', e => { keys[e.key] = true; });
+        window.addEventListener('keyup', e => { keys[e.key] = false; });
+        
+        canvas.addEventListener('mousemove', e => { targetX = e.clientX - canvas.getBoundingClientRect().left; });
+        canvas.addEventListener('touchmove', e => { targetX = e.touches[0].clientX - canvas.getBoundingClientRect().left; e.preventDefault(); }, {passive: false});
+
+        function update() {
+            if(!gameRunning) return;
+
+            // Tastatur auswerten (passiert jetzt 60 Mal pro Sekunde, nicht nur beim Tastendruck!)
+            if (keys['ArrowLeft'] || keys['a']) { targetX -= 8; }
+            if (keys['ArrowRight'] || keys['d']) { targetX += 8; }
+
+            if (player.state === 'rocket') {
+                player.vy = rocketSpeed; player.timer--;
+                if(player.timer <= 0) { player.state = 'normal'; player.vy = jumpForce; }
+            } else {
+                player.vy += gravity;
+            }
+
+            // Weiche Folgebewegung (Spieler wandert sanft zum targetX)
+            player.x += (targetX - player.x) * 0.2;
+
+            // Links/Rechts aus dem Bildschirm fliegen (Pac-Man-Effekt)
+            if(player.x > canvas.width + player.radius) { player.x = -player.radius; targetX = player.x; }
+            if(player.x < -player.radius) { player.x = canvas.width + player.radius; targetX = player.x; }
+
+            player.y += player.vy;
+
+            // Kollision (nur beim Fallen)
+            if (player.vy > 0 && player.state !== 'rocket') {
+                for (let p of platforms) {
+                    if (p.broken) continue;
+                    if (player.x > p.x - player.radius && player.x < p.x + p.width + player.radius && 
+                        player.y + player.radius >= p.y && player.y + player.radius <= p.y + 15) {
+                        
+                        if (p.type === 'cloud' || p.correct) {
+                            if (p.item === 'rocket') { playSound('spring'); player.state = 'rocket'; player.timer = 80; p.item = null; } 
+                            else if (p.item === 'spring') { playSound('spring'); player.vy = springForce; p.item = null; } 
+                            else { playSound('jump'); player.vy = jumpForce; }
+                            player.y = p.y - player.radius;
+                        } else {
+                            playSound('break'); p.broken = true;
+                        }
+                    }
+                }
+            }
+
+            // Kamera-Scrolling
+            let halfScreen = canvas.height / 2;
+            if (player.y < halfScreen) {
+                let diff = halfScreen - player.y;
+                player.y = halfScreen;
+                score += Math.floor(diff/5);
+                scoreText.innerText = "Höhe: " + score;
+                platforms.forEach(p => p.y += diff);
+            }
+
+            platforms = platforms.filter(p => p.y < canvas.height + 50);
+            if (platforms[platforms.length-1].y > 100) { createFloor(platforms[platforms.length-1].y - 110); }
+
+            if (player.y > canvas.height) {
+                gameRunning = false;
+                if(score > highScore) { highScore = score; localStorage.setItem('doodleMathHigh2', highScore); }
+                document.getElementById('finalScore').innerText = "Erreichte Höhe: " + score;
+                gameOverScreen.style.display = 'flex';
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let p of platforms) {
+                if (p.broken) {
+                    ctx.fillStyle = 'rgba(231, 76, 60, 0.5)';
+                    ctx.fillRect(p.x, p.y + 10, p.width/2 - 2, platformHeight);
+                    ctx.fillRect(p.x + p.width/2 + 2, p.y + 20, p.width/2 - 2, platformHeight);
+                    continue;
+                }
+
+                if (p.type === 'cloud') {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                    ctx.beginPath(); ctx.arc(p.x + 20, p.y + 20, 20, 0, Math.PI*2); ctx.arc(p.x + 55, p.y + 10, 25, 0, Math.PI*2); ctx.arc(p.x + 90, p.y + 20, 20, 0, Math.PI*2); ctx.fill();
+                } else {
+                    // Plattform zeichnen
+                    ctx.fillStyle = '#f8c291'; 
+                    ctx.beginPath(); 
+                    if(ctx.roundRect) { ctx.roundRect(p.x, p.y, p.width, platformHeight, 8); } 
+                    else { ctx.rect(p.x, p.y, p.width, platformHeight); } // Fallback für ältere Browser
+                    ctx.fill();
+                    ctx.lineWidth = 3; ctx.strokeStyle = '#e55039'; ctx.stroke();
+
+                    // Text Zeile 1: Aufgabe
+                    ctx.fillStyle = '#2c3e50';
+                    ctx.font = 'bold 18px Comic Sans MS';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(p.equation, p.x + p.width/2, p.y + 22);
+                    
+                    // Text Zeile 2: Ergebnis
+                    ctx.font = 'bold 22px Comic Sans MS';
+                    ctx.fillStyle = '#c0392b';
+                    ctx.fillText("= " + p.ansText, p.x + p.width/2, p.y + 46);
+                }
+
+                if (p.item === 'spring') {
+                    ctx.fillStyle = '#7f8fa6'; ctx.fillRect(p.x + p.width/2 - 10, p.y - 15, 20, 15);
+                    ctx.fillStyle = '#e1b12c'; ctx.fillRect(p.x + p.width/2 - 10, p.y - 15, 20, 4);
+                } else if (p.item === 'rocket') {
+                    ctx.fillStyle = '#eb2f06'; ctx.beginPath(); ctx.moveTo(p.x + p.width/2, p.y - 30); ctx.lineTo(p.x + p.width/2 - 12, p.y); ctx.lineTo(p.x + p.width/2 + 12, p.y); ctx.fill();
+                }
+            }
+
+            ctx.fillStyle = player.state === 'rocket' ? '#f1c40f' : '#38ada9';
+            ctx.beginPath(); ctx.arc(player.x, player.y, player.radius, 0, Math.PI*2); ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.stroke();
+
+            if (player.state === 'rocket') {
+                ctx.fillStyle = '#e55039'; ctx.beginPath(); ctx.moveTo(player.x - 6, player.y + player.radius); ctx.lineTo(player.x, player.y + player.radius + rnd(15,25)); ctx.lineTo(player.x + 6, player.y + player.radius); ctx.fill();
+            }
+
+            if(gameRunning) requestAnimationFrame(() => { update(); draw(); });
+        }
+
+        function resetGame() {
+            player = { x: 200, y: 300, radius: 15, vx: 0, vy: 0, state: 'normal', timer: 0 };
+            targetX = 200; score = 0; scoreText.innerText = "Höhe: 0"; highText.innerText = "Highscore: " + highScore;
+            gameOverScreen.style.display = 'none';
+            // Setze gedrückte Tasten beim Neustart zurück, um Bugs zu vermeiden
+            for (let key in keys) keys[key] = false; 
+            initPlatforms(); gameRunning = true; update(); draw();
+        }
+
+        document.body.addEventListener('click', () => { if(audioCtx.state === 'suspended') audioCtx.resume(); }, {once:true});
+        document.body.addEventListener('touchstart', () => { if(audioCtx.state === 'suspended') audioCtx.resume(); }, {once:true});
+
+        initPlatforms(); update(); draw();
+    </script>
+</body>
+</html>
