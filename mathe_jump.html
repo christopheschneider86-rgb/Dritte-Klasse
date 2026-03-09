@@ -5,60 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mathe-Hüpfer</title>
     <style>
+        * { box-sizing: border-box; }
         body { margin: 0; background: #2c3e50; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Comic Sans MS', sans-serif; overflow: hidden; touch-action: none; }
         #gameContainer { position: relative; width: 400px; height: 600px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-radius: 15px; overflow: hidden; }
         canvas { background: linear-gradient(to bottom, #74ebd5 0%, #9face6 100%); display: block; }
-        #ui { position: absolute; top: 10px; left: 15px; right: 15px; display: flex; justify-content: space-between; color: white; font-size: 20px; font-weight: bold; text-shadow: 2px 2px 0 rgba(0,0,0,0.5); pointer-events: none; display: none; }
-        #activeGadget { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); font-size: 28px; background: rgba(0,0,0,0.4); padding: 6px 16px; border-radius: 20px; color: white; pointer-events: none; display: none; white-space: nowrap; }
-        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.88); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 20px; box-sizing: border-box; }
-        .overlay h2 { font-size: 34px; margin: 0 0 10px 0; color: #f1c40f; text-shadow: 2px 2px 0 #000; }
-        button { padding: 12px 25px; font-size: 20px; font-family: inherit; font-weight: bold; color: white; border: 3px solid #fff; border-radius: 10px; cursor: pointer; margin: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: transform 0.1s; }
+
+        #ui { position: absolute; top: 10px; left: 15px; right: 15px; display: none; justify-content: space-between; align-items: center; color: white; font-size: 18px; font-weight: bold; text-shadow: 2px 2px 0 rgba(0,0,0,0.5); pointer-events: none; z-index: 10; }
+        #btnBackGame { pointer-events: all; background: rgba(0,0,0,0.35); border: 2px solid white; color: white; font-size: 13px; font-family: inherit; border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+
+        #activeGadget { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); font-size: 24px; background: rgba(0,0,0,0.4); padding: 5px 14px; border-radius: 20px; color: white; pointer-events: none; display: none; white-space: nowrap; z-index: 10; }
+
+        /* Alle Overlays */
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.88); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 18px; z-index: 20; }
+        .overlay h2 { font-size: 30px; margin: 0 0 8px 0; color: #f1c40f; text-shadow: 2px 2px 0 #000; }
+
+        button { padding: 10px 22px; font-size: 18px; font-family: inherit; font-weight: bold; color: white; border: 3px solid #fff; border-radius: 10px; cursor: pointer; margin: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: transform 0.1s; }
         button:active { transform: scale(0.95); }
         .btn-addsub { background: #2ecc71; }
         .btn-muldiv { background: #3498db; }
         .btn-mixed  { background: #9b59b6; }
-        .btn-start  { background: #e67e22; font-size: 22px; padding: 14px 35px; margin-top: 15px; }
+        .btn-start  { background: #e67e22; font-size: 20px; padding: 12px 30px; margin-top: 10px; }
         .btn-retry  { background: #e67e22; }
-        .btn-menu   { background: #7f8c8d; font-size: 16px; padding: 10px 20px; }
+        .btn-back   { background: #7f8c8d; font-size: 14px; padding: 8px 16px; }
 
-        /* Gadget-Liste im Intro */
-        .gadget-list { list-style: none; padding: 0; margin: 10px 0; text-align: left; font-size: 17px; line-height: 1.9; }
-        .gadget-list li span.tag { display: inline-block; width: 32px; text-align: center; }
-        .rule-box { background: rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 18px; margin: 8px 0; font-size: 17px; line-height: 1.8; text-align: left; width: 100%; box-sizing: border-box; }
+        .rule-box { background: rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 14px; margin: 6px 0; font-size: 15px; line-height: 1.7; text-align: left; width: 100%; }
         .rule-box b { color: #f1c40f; }
+        .gadget-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font-size: 14px; margin-top: 4px; }
     </style>
 </head>
 <body>
 <div id="gameContainer">
+
+    <!-- HUD (im Spiel) -->
     <div id="ui">
+        <button id="btnBackGame" onclick="showMenu()">⬅ Menü</button>
         <span id="scoreText">Höhe: 0</span>
-        <span id="highText">Highscore: 0</span>
+        <span id="highText">⭐ 0</span>
     </div>
     <div id="activeGadget"></div>
+
     <canvas id="gameCanvas" width="400" height="600"></canvas>
 
-    <!-- ① INTRO / SPIELBESCHREIBUNG -->
+    <!-- ① INTRO -->
     <div id="introScreen" class="overlay">
         <h2>🏆 Mathe-Hüpfer</h2>
-
         <div class="rule-box">
             <b>So geht's:</b><br>
             Hüpfe auf die Plattform mit der <b>richtigen Antwort</b>!<br>
-            Falsche Plattformen <b>brechen weg</b>. ⬅️➡️ zum Steuern.
+            Falsche Plattformen <b>brechen weg</b>.<br>
+            ⬅️ ➡️ Pfeiltasten oder Finger zum Steuern.
         </div>
-
         <div class="rule-box">
-            <b>Gadgets – Bonusse zum Sammeln:</b>
-            <ul class="gadget-list">
-                <li><span class="tag">🚀</span> <b>Rakete</b> – fliege hoch!</li>
-                <li><span class="tag">🌀</span> <b>Superfeder</b> – extra großer Sprung</li>
-                <li><span class="tag">🛡️</span> <b>Schutzschild</b> – ein Fehler erlaubt</li>
-                <li><span class="tag">⭐</span> <b>Stern</b> – doppelte Punkte</li>
-                <li><span class="tag">❄️</span> <b>Zeitlupe</b> – mehr Zeit zum Denken</li>
-            </ul>
-            ⚠️ Gadgets auf <b>falschen</b> Plattformen gehen verloren!
+            <b>Gadgets sammeln:</b>
+            <div class="gadget-grid">
+                <div>🚀 Rakete – hoch fliegen</div>
+                <div>🌀 Feder – Riesensprung</div>
+                <div>🛡️ Schild – ein Fehler ok</div>
+                <div>⭐ Stern – 2× Punkte</div>
+                <div>❄️ Zeitlupe – mehr Zeit</div>
+                <div>⚠️ Auf falschen Plattformen<br>gehen Gadgets verloren!</div>
+            </div>
         </div>
-
         <button class="btn-start" onclick="showMenu()">Los geht's! 🎮</button>
     </div>
 
@@ -68,29 +75,31 @@
         <button class="btn-addsub" onclick="startGame('addsub')">➕ und ➖</button>
         <button class="btn-muldiv" onclick="startGame('muldiv')">✖️ und ➗</button>
         <button class="btn-mixed"  onclick="startGame('mixed')">Gemischt 🎲</button>
+        <button class="btn-back"   onclick="showIntro()">⬅ Zurück zur Anleitung</button>
     </div>
 
     <!-- ③ GAME OVER -->
-    <div id="gameOver" class="overlay" style="display: none;">
-        <h2 style="color:#e74c3c;">Oh nein!</h2>
-        <p>Die Plattform ist zerbrochen.</p>
-        <p id="finalScore" style="font-size:28px;font-weight:bold;">Höhe: 0</p>
-        <button class="btn-retry" onclick="resetGame()">Nochmal hüpfen</button>
-        <button class="btn-menu"  onclick="showMenu()">Zurück zum Menü</button>
+    <div id="gameOver" class="overlay" style="display:none;">
+        <h2 style="color:#e74c3c;">Oh nein! 😢</h2>
+        <p style="font-size:16px;">Die Plattform ist zerbrochen.</p>
+        <p id="finalScore" style="font-size:26px;font-weight:bold;margin:5px 0;">Höhe: 0</p>
+        <button class="btn-retry" onclick="resetGame()">Nochmal hüpfen 🔄</button>
+        <button class="btn-back"  onclick="showMenu()">⬅ Zurück zum Menü</button>
     </div>
-</div>
 
+</div>
 <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const scoreText = document.getElementById('scoreText');
     const highText = document.getElementById('highText');
-    const startScreen = document.getElementById('startScreen');
     const introScreen = document.getElementById('introScreen');
+    const startScreen = document.getElementById('startScreen');
     const gameOverScreen = document.getElementById('gameOver');
     const ui = document.getElementById('ui');
     const activeGadgetEl = document.getElementById('activeGadget');
 
+    // Audio
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playSound(type) {
         if(audioCtx.state==='suspended') audioCtx.resume();
@@ -101,7 +110,7 @@
         else if(type==='break'){osc.type='sawtooth';osc.frequency.setValueAtTime(150,t);osc.frequency.exponentialRampToValueAtTime(30,t+0.2);gain.gain.setValueAtTime(0.3,t);gain.gain.exponentialRampToValueAtTime(0.01,t+0.2);osc.start();osc.stop(t+0.2);}
         else if(type==='spring'){osc.type='square';osc.frequency.setValueAtTime(300,t);osc.frequency.exponentialRampToValueAtTime(900,t+0.3);gain.gain.setValueAtTime(0.2,t);gain.gain.exponentialRampToValueAtTime(0.01,t+0.3);osc.start();osc.stop(t+0.3);}
         else if(type==='rocket'){osc.type='sawtooth';osc.frequency.setValueAtTime(100,t);osc.frequency.linearRampToValueAtTime(600,t+1.2);gain.gain.setValueAtTime(0.4,t);gain.gain.exponentialRampToValueAtTime(0.01,t+1.2);osc.start();osc.stop(t+1.2);}
-        else if(type==='shield'){osc.type='sine';osc.frequency.setValueAtTime(500,t);osc.frequency.setValueAtTime(700,t+0.1);osc.frequency.setValueAtTime(900,t+0.2);gain.gain.setValueAtTime(0.2,t);gain.gain.exponentialRampToValueAtTime(0.01,t+0.3);osc.start();osc.stop(t+0.3);}
+        else if(type==='shield'){osc.type='sine';osc.frequency.setValueAtTime(500,t);osc.frequency.setValueAtTime(900,t+0.2);gain.gain.setValueAtTime(0.2,t);gain.gain.exponentialRampToValueAtTime(0.01,t+0.3);osc.start();osc.stop(t+0.3);}
         else if(type==='star'){osc.type='sine';osc.frequency.setValueAtTime(800,t);osc.frequency.exponentialRampToValueAtTime(1200,t+0.15);gain.gain.setValueAtTime(0.2,t);gain.gain.exponentialRampToValueAtTime(0.01,t+0.15);osc.start();osc.stop(t+0.15);}
         else if(type==='slow'){osc.type='sine';osc.frequency.setValueAtTime(300,t);osc.frequency.linearRampToValueAtTime(100,t+0.5);gain.gain.setValueAtTime(0.2,t);gain.gain.exponentialRampToValueAtTime(0.01,t+0.5);osc.start();osc.stop(t+0.5);}
     }
@@ -110,22 +119,207 @@
     let gameRunning=false, currentMode='mixed', score=0, highScore=0;
     let scoreMultiplier=1, shieldActive=false, slowActive=false, slowTimer=0, starTimer=0;
     let player={x:200,y:300,radius:12,vy:0,state:'normal',timer:0};
-    let targetX=player.x, platforms=[];
+    let targetX=200, platforms=[];
     const platformWidth=90, platformHeight=50;
 
     const GADGETS=[
-        {id:'rocket', emoji:'🚀', chance:0.06},
-        {id:'spring', emoji:'🌀', chance:0.12},
-        {id:'shield', emoji:'🛡️', chance:0.10},
-        {id:'star',   emoji:'⭐', chance:0.08},
-        {id:'slow',   emoji:'❄️', chance:0.08},
+        {id:'rocket',emoji:'🚀',chance:0.06},
+        {id:'spring',emoji:'🌀',chance:0.12},
+        {id:'shield',emoji:'🛡️',chance:0.10},
+        {id:'star',  emoji:'⭐',chance:0.08},
+        {id:'slow',  emoji:'❄️',chance:0.08},
     ];
     function pickGadget(){let r=Math.random(),t=0;for(let g of GADGETS){t+=g.chance;if(r<t)return g.id;}return null;}
-    function rnd(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+    function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 
     function generateMathProblem(){
-        let a,b,ans,equation,op;
+        let a,b,ans,eq,op;
         let ops=currentMode==='addsub'?['+','-']:currentMode==='muldiv'?['*','÷']:['+','-','*','÷'];
         op=ops[Math.floor(Math.random()*ops.length)];
-        if(op==='+'){a=rnd(10,50);b=rnd(10,50);ans=a+b;equation=`${a} + ${b}`;}
-        else if(op==='-'){a=rnd(20,100);b=rnd(5,a-1);ans=a-b;equa
+        if(op==='+'){a=rnd(10,50);b=rnd(10,50);ans=a+b;eq=`${a} + ${b}`;}
+        else if(op==='-'){a=rnd(20,100);b=rnd(5,a-1);ans=a-b;eq=`${a} - ${b}`;}
+        else if(op==='*'){a=rnd(2,10);b=rnd(2,10);ans=a*b;eq=`${a} × ${b}`;}
+        else{b=rnd(2,10);ans=rnd(2,10);a=b*ans;eq=`${a} ÷ ${b}`;}
+        let w;do{w=ans+rnd(1,5)*(Math.random()>0.5?1:-1);}while(w<0||w===ans);
+        return{eq,ans,wrong:w};
+    }
+
+    function createFloor(yOffset){
+        if(Math.random()<0.15){
+            platforms.push({x:rnd(80,230),y:yOffset,width:platformWidth,type:'cloud',item:null});
+        } else {
+            let p=generateMathProblem();
+            let opts=[p.ans,p.wrong].sort(()=>Math.random()-0.5);
+            let x1=rnd(10,110), x2=rnd(200,300);
+            platforms.push({x:x1,y:yOffset,width:platformWidth,type:'math',correct:opts[0]===p.ans,eq:p.eq,ansText:opts[0],broken:false,item:pickGadget()});
+            platforms.push({x:x2,y:yOffset,width:platformWidth,type:'math',correct:opts[1]===p.ans,eq:p.eq,ansText:opts[1],broken:false,item:pickGadget()});
+        }
+    }
+
+    function initPlatforms(){
+        platforms=[];
+        platforms.push({x:155,y:550,width:platformWidth,type:'cloud',item:null});
+        for(let i=1;i<7;i++) createFloor(550-i*115);
+    }
+
+    function showGadgetLabel(label){
+        activeGadgetEl.innerText=label;
+        activeGadgetEl.style.display='block';
+        clearTimeout(activeGadgetEl._t);
+        activeGadgetEl._t=setTimeout(()=>activeGadgetEl.style.display='none',2000);
+    }
+
+    function activateGadget(type){
+        if(type==='rocket'){playSound('rocket');player.state='rocket';player.timer=80;showGadgetLabel('🚀 Rakete!');}
+        else if(type==='spring'){playSound('spring');player.vy=springForce;showGadgetLabel('🌀 Superfeder!');}
+        else if(type==='shield'){playSound('shield');shieldActive=true;showGadgetLabel('🛡️ Schutzschild!');}
+        else if(type==='star'){playSound('star');scoreMultiplier=2;starTimer=300;showGadgetLabel('⭐ Doppelpunkte!');}
+        else if(type==='slow'){playSound('slow');slowActive=true;slowTimer=180;showGadgetLabel('❄️ Zeitlupe!');}
+    }
+
+    const keys={};
+    window.addEventListener('keydown',e=>keys[e.key]=true);
+    window.addEventListener('keyup',e=>keys[e.key]=false);
+    canvas.addEventListener('mousemove',e=>{targetX=e.clientX-canvas.getBoundingClientRect().left;});
+    canvas.addEventListener('touchmove',e=>{targetX=e.touches[0].clientX-canvas.getBoundingClientRect().left;e.preventDefault();},{passive:false});
+
+    function update(){
+        if(!gameRunning) return;
+        let cg=slowActive?BASE_GRAVITY*0.45:BASE_GRAVITY;
+        let ms=slowActive?5:8;
+        if(keys['ArrowLeft']||keys['a']) targetX-=ms;
+        if(keys['ArrowRight']||keys['d']) targetX+=ms;
+        if(slowTimer>0){slowTimer--;if(slowTimer<=0)slowActive=false;}
+        if(starTimer>0){starTimer--;if(starTimer<=0)scoreMultiplier=1;}
+        if(player.state==='rocket'){player.vy=rocketSpeed;player.timer--;if(player.timer<=0){player.state='normal';player.vy=jumpForce;}}
+        else player.vy+=cg;
+        player.x+=(targetX-player.x)*0.2;
+        if(player.x>canvas.width+player.radius){player.x=-player.radius;targetX=player.x;}
+        if(player.x<-player.radius){player.x=canvas.width+player.radius;targetX=player.x;}
+        player.y+=player.vy;
+
+        if(player.vy>0&&player.state!=='rocket'){
+            let landed=null;
+            for(let p of platforms){
+                if(p.broken) continue;
+                if(player.x>p.x-(player.radius/2)&&player.x<p.x+p.width+(player.radius/2)&&player.y+player.radius>=p.y&&player.y+player.radius<=p.y+18){landed=p;break;}
+            }
+            if(landed){
+                if(landed.type==='cloud'||landed.correct){
+                    if(landed.item){activateGadget(landed.item);landed.item=null;}
+                    else{playSound('jump');player.vy=jumpForce;}
+                    player.y=landed.y-player.radius;
+                } else {
+                    if(shieldActive){shieldActive=false;playSound('shield');player.vy=jumpForce;player.y=landed.y-player.radius;landed.broken=true;showGadgetLabel('🛡️ Schutzschild benutzt!');}
+                    else{playSound('break');landed.broken=true;}
+                }
+            }
+        }
+
+        let hs=canvas.height/2;
+        if(player.y<hs){
+            let d=hs-player.y;
+            player.y=hs;
+            // ↓ Höhenzähler stark verlangsamt: /20 statt /5
+            score+=Math.floor(d/20)*scoreMultiplier;
+            scoreText.innerText="Höhe: "+score;
+            platforms.forEach(p=>p.y+=d);
+        }
+        platforms=platforms.filter(p=>p.y<canvas.height+50);
+        if(platforms[platforms.length-1].y>100) createFloor(platforms[platforms.length-1].y-115);
+
+        if(player.y>canvas.height){
+            gameRunning=false;
+            if(score>highScore){highScore=score;localStorage.setItem('doodleMathHigh_'+currentMode,highScore);}
+            document.getElementById('finalScore').innerText="Erreichte Höhe: "+score;
+            gameOverScreen.style.display='flex';
+            ui.style.display='none';
+            activeGadgetEl.style.display='none';
+        }
+    }
+
+    function drawGadgetIcon(p){
+        if(!p.item) return;
+        let g=GADGETS.find(g=>g.id===p.item);
+        if(!g) return;
+        ctx.font='18px serif';ctx.textAlign='center';
+        ctx.fillText(g.emoji,p.x+p.width/2,p.y-6);
+    }
+
+    function draw(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        if(slowActive){ctx.fillStyle='rgba(100,180,255,0.07)';ctx.fillRect(0,0,canvas.width,canvas.height);}
+        if(shieldActive){ctx.strokeStyle='rgba(255,215,0,0.5)';ctx.lineWidth=8;ctx.strokeRect(4,4,canvas.width-8,canvas.height-8);}
+        if(scoreMultiplier>1){ctx.strokeStyle='rgba(255,140,0,0.5)';ctx.lineWidth=8;ctx.strokeRect(4,4,canvas.width-8,canvas.height-8);}
+
+        for(let p of platforms){
+            if(p.broken){
+                ctx.fillStyle='rgba(231,76,60,0.5)';
+                ctx.fillRect(p.x,p.y+10,p.width/2-2,platformHeight);
+                ctx.fillRect(p.x+p.width/2+2,p.y+20,p.width/2-2,platformHeight);
+                continue;
+            }
+            if(p.type==='cloud'){
+                ctx.fillStyle='rgba(255,255,255,0.9)';
+                ctx.beginPath();ctx.arc(p.x+15,p.y+20,18,0,Math.PI*2);ctx.arc(p.x+45,p.y+10,22,0,Math.PI*2);ctx.arc(p.x+75,p.y+20,18,0,Math.PI*2);ctx.fill();
+            } else {
+                ctx.fillStyle='#f8c291';
+                ctx.beginPath();
+                if(ctx.roundRect)ctx.roundRect(p.x,p.y,p.width,platformHeight,8);
+                else ctx.rect(p.x,p.y,p.width,platformHeight);
+                ctx.fill();
+                ctx.lineWidth=3;ctx.strokeStyle='#e55039';ctx.stroke();
+                ctx.fillStyle='#2c3e50';ctx.font='bold 16px Comic Sans MS';ctx.textAlign='center';
+                ctx.fillText(p.eq,p.x+p.width/2,p.y+20);
+                ctx.fillStyle='#c0392b';ctx.font='bold 20px Comic Sans MS';
+                ctx.fillText("= "+p.ansText,p.x+p.width/2,p.y+42);
+            }
+            drawGadgetIcon(p);
+        }
+
+        if(gameRunning){
+            if(shieldActive){ctx.beginPath();ctx.arc(player.x,player.y,player.radius+8,0,Math.PI*2);ctx.fillStyle='rgba(255,215,0,0.25)';ctx.fill();ctx.strokeStyle='gold';ctx.lineWidth=2;ctx.stroke();}
+            if(scoreMultiplier>1){ctx.beginPath();ctx.arc(player.x,player.y,player.radius+8,0,Math.PI*2);ctx.fillStyle='rgba(255,140,0,0.25)';ctx.fill();}
+            ctx.fillStyle=player.state==='rocket'?'#f1c40f':'#38ada9';
+            ctx.beginPath();ctx.arc(player.x,player.y,player.radius,0,Math.PI*2);ctx.fill();
+            ctx.lineWidth=2;ctx.strokeStyle='#fff';ctx.stroke();
+            if(player.state==='rocket'){
+                ctx.fillStyle='#e55039';ctx.beginPath();
+                ctx.moveTo(player.x-6,player.y+player.radius);
+                ctx.lineTo(player.x,player.y+player.radius+rnd(15,25));
+                ctx.lineTo(player.x+6,player.y+player.radius);ctx.fill();
+            }
+        }
+        requestAnimationFrame(()=>{update();draw();});
+    }
+
+    // Navigation
+    function showIntro(){ introScreen.style.display='flex'; startScreen.style.display='none'; gameOverScreen.style.display='none'; gameRunning=false; ui.style.display='none'; }
+    function showMenu(){ gameRunning=false; introScreen.style.display='none'; gameOverScreen.style.display='none'; startScreen.style.display='flex'; ui.style.display='none'; activeGadgetEl.style.display='none'; }
+    function startGame(mode){
+        if(audioCtx.state==='suspended') audioCtx.resume();
+        currentMode=mode;
+        highScore=localStorage.getItem('doodleMathHigh_'+currentMode)||0;
+        startScreen.style.display='none';
+        ui.style.display='flex';
+        resetGame();
+    }
+    function resetGame(){
+        player={x:200,y:300,radius:12,vy:0,state:'normal',timer:0};
+        targetX=200;score=0;scoreMultiplier=1;shieldActive=false;slowActive=false;slowTimer=0;starTimer=0;
+        scoreText.innerText="Höhe: 0";
+        highText.innerText="⭐ "+highScore;
+        gameOverScreen.style.display='none';
+        ui.style.display='flex';
+        activeGadgetEl.style.display='none';
+        for(let k in keys)keys[k]=false;
+        initPlatforms();gameRunning=true;
+    }
+
+    document.body.addEventListener('click',()=>{if(audioCtx.state==='suspended')audioCtx.resume();},{once:true});
+    document.body.addEventListener('touchstart',()=>{if(audioCtx.state==='suspended')audioCtx.resume();},{once:true});
+
+    draw();
+</script>
+</body>
+</html>
