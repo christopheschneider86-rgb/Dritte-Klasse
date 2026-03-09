@@ -12,6 +12,7 @@
 
         #ui { position: absolute; top: 10px; left: 15px; right: 15px; display: none; justify-content: space-between; align-items: center; color: white; font-size: 18px; font-weight: bold; text-shadow: 2px 2px 0 rgba(0,0,0,0.5); pointer-events: none; z-index: 10; }
         #btnBackGame { pointer-events: all; background: rgba(0,0,0,0.35); border: 2px solid white; color: white; font-size: 13px; font-family: inherit; border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+        #coinHud { pointer-events: none; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,200,0,0.5); border-radius: 16px; padding: 3px 12px; font-size: 14px; color: #f1c40f; font-weight: bold; white-space: nowrap; }
 
         #activeGadget { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); font-size: 24px; background: rgba(0,0,0,0.4); padding: 5px 14px; border-radius: 20px; color: white; pointer-events: none; display: none; white-space: nowrap; z-index: 10; }
 
@@ -40,7 +41,7 @@
     <div id="ui">
         <button id="btnBackGame" onclick="showMenu()">⬅ Menü</button>
         <span id="scoreText">Höhe: 0</span>
-        <span id="highText">⭐ 0</span>
+        <span id="coinHud">🪙 0</span>
     </div>
     <div id="activeGadget"></div>
 
@@ -72,10 +73,14 @@
     <!-- ② MODUS-AUSWAHL -->
     <div id="startScreen" class="overlay" style="display:none;">
         <h2>Was möchtest<br>du üben?</h2>
-        <button class="btn-addsub" onclick="startGame('addsub')">➕ und ➖</button>
-        <button class="btn-muldiv" onclick="startGame('muldiv')">✖️ und ➗</button>
-        <button class="btn-mixed"  onclick="startGame('mixed')">Gemischt 🎲</button>
+        <div style="background:rgba(255,200,0,0.15);border:1px solid rgba(255,200,0,0.4);border-radius:14px;padding:8px 20px;margin-bottom:8px;font-size:16px;font-weight:bold;color:#f1c40f;">
+            🪙 <span id="coinCountMenu">0</span> Münzen verfügbar
+        </div>
+        <button class="btn-addsub" onclick="tryStartGame('addsub')">➕ und ➖</button>
+        <button class="btn-muldiv" onclick="tryStartGame('muldiv')">✖️ und ➗</button>
+        <button class="btn-mixed"  onclick="tryStartGame('mixed')">Gemischt 🎲</button>
         <button class="btn-back"   onclick="showIntro()">⬅ Zurück zur Anleitung</button>
+        <button class="btn-back" style="background:#2c3e50;margin-top:4px;" onclick="window.location.href='mathe_trainer_3_klasse.html'">🏠 Zurück zu Mathe</button>
     </div>
 
     <!-- ③ GAME OVER -->
@@ -83,7 +88,10 @@
         <h2 style="color:#e74c3c;">Oh nein! 😢</h2>
         <p style="font-size:16px;">Die Plattform ist zerbrochen.</p>
         <p id="finalScore" style="font-size:26px;font-weight:bold;margin:5px 0;">Höhe: 0</p>
-        <button class="btn-retry" onclick="resetGame()">Nochmal hüpfen 🔄</button>
+        <div style="background:rgba(255,200,0,0.15);border:1px solid rgba(255,200,0,0.4);border-radius:12px;padding:8px 18px;margin:6px 0;font-size:15px;color:#f1c40f;font-weight:bold;">
+            🪙 <span id="coinCountOver">0</span> Münzen
+        </div>
+        <button class="btn-retry" onclick="tryRetry()">Nochmal hüpfen 🔄 (–10 🪙)</button>
         <button class="btn-back"  onclick="showMenu()">⬅ Zurück zum Menü</button>
     </div>
 
@@ -92,12 +100,97 @@
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const scoreText = document.getElementById('scoreText');
-    const highText = document.getElementById('highText');
     const introScreen = document.getElementById('introScreen');
     const startScreen = document.getElementById('startScreen');
     const gameOverScreen = document.getElementById('gameOver');
     const ui = document.getElementById('ui');
     const activeGadgetEl = document.getElementById('activeGadget');
+
+    // ── MÜNZ-SYSTEM ──────────────────────────────────────────────────────────
+    const COIN_COST = 10;
+
+    function getActiveProfile(){
+      try{
+        const profId = localStorage.getItem('m_app_active_prof');
+        const raw = localStorage.getItem('m_app_v9');
+        if(!profId || !raw) return null;
+        const profiles = JSON.parse(raw);
+        return profiles[profId] ? {id: profId, data: profiles[profId], profiles} : null;
+      }catch(e){ return null; }
+    }
+
+    function getCoins(){
+      const p = getActiveProfile();
+      return p ? (p.data.coins || 0) : 0;
+    }
+
+    function spendCoins(){
+      try{
+        const p = getActiveProfile();
+        if(!p || (p.data.coins||0) < COIN_COST) return false;
+        p.data.coins = (p.data.coins||0) - COIN_COST;
+        localStorage.setItem('m_app_v9', JSON.stringify(p.profiles));
+        return true;
+      }catch(e){ return false; }
+    }
+
+    function refreshCoinDisplays(){
+      const c = getCoins();
+      document.getElementById('coinHud').textContent = '🪙 '+c;
+      const cm = document.getElementById('coinCountMenu');
+      if(cm) cm.textContent = c;
+      const co = document.getElementById('coinCountOver');
+      if(co) co.textContent = c;
+    }
+
+    // ── HIGHSCORE ────────────────────────────────────────────────────────────
+    function saveHighscore(mode, newScore){
+      const p = getActiveProfile();
+      const playerName = p ? p.data.name : 'Unbekannt';
+      const key = 'm_jump_hs_' + mode;
+      let hs = [];
+      try{ hs = JSON.parse(localStorage.getItem(key) || '[]'); }catch(e){}
+      hs.push({name: playerName, score: newScore});
+      hs.sort((a,b)=>b.score-a.score);
+      hs = hs.slice(0, 10);
+      localStorage.setItem(key, JSON.stringify(hs));
+    }
+
+    function tryStartGame(mode){
+      if(getCoins() < COIN_COST){
+        showNoCoinMessage();
+        return;
+      }
+      if(!spendCoins()) return;
+      startGame(mode);
+    }
+
+    function tryRetry(){
+      if(getCoins() < COIN_COST){
+        showNoCoinMessage();
+        return;
+      }
+      if(!spendCoins()) return;
+      refreshCoinDisplays();
+      resetGame();
+    }
+
+    function showNoCoinMessage(){
+      gameOverScreen.style.display='none';
+      startScreen.style.display='none';
+      // Kurze Overlay-Meldung über No-Coins
+      const el = document.createElement('div');
+      el.className='overlay';
+      el.id='noCoinOverlay';
+      el.innerHTML=`
+        <h2 style="color:#f1c40f;">Keine Münzen! 🪙</h2>
+        <p style="font-size:16px;margin:10px 0;">Du hast nicht genug Münzen.<br>Du brauchst <b>10 🪙</b> zum Spielen.</p>
+        <p style="font-size:14px;color:rgba(255,255,255,0.7);margin-bottom:14px;">Löse Mathe-Aufgaben um Münzen zu sammeln!</p>
+        <button class="btn-start" onclick="window.location.href='mathe_trainer_3_klasse.html'" style="background:#3498db;">📚 Zurück zu Mathe</button>
+        <button class="btn-back" onclick="document.getElementById('noCoinOverlay').remove();showMenu();">⬅ Menü</button>`;
+      document.getElementById('gameContainer').appendChild(el);
+    }
+
 
     // Audio
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -116,7 +209,7 @@
     }
 
     const BASE_GRAVITY=0.25, jumpForce=-9, springForce=-15, rocketSpeed=-18;
-    let gameRunning=false, currentMode='mixed', score=0, highScore=0;
+    let gameRunning=false, currentMode='mixed', score=0;
     let scoreMultiplier=1, shieldActive=false, slowActive=false, slowTimer=0, starTimer=0;
     let player={x:200,y:300,radius:12,vy:0,state:'normal',timer:0};
     let targetX=200, platforms=[];
@@ -220,9 +313,9 @@
         if(player.y<hs){
             let d=hs-player.y;
             player.y=hs;
-            // ↓ Höhenzähler stark verlangsamt: /20 statt /5
-            score+=Math.floor(d/20)*scoreMultiplier;
-            scoreText.innerText="Höhe: "+score;
+            // Score als Float akkumulieren, damit Math.floor(d/20) nicht immer 0 ergibt
+            score += (d / 20) * scoreMultiplier;
+            scoreText.innerText = "Höhe: " + Math.floor(score);
             platforms.forEach(p=>p.y+=d);
         }
         platforms=platforms.filter(p=>p.y<canvas.height+50);
@@ -230,8 +323,9 @@
 
         if(player.y>canvas.height){
             gameRunning=false;
-            if(score>highScore){highScore=score;localStorage.setItem('doodleMathHigh_'+currentMode,highScore);}
-            document.getElementById('finalScore').innerText="Erreichte Höhe: "+score;
+            saveHighscore(currentMode, Math.floor(score));
+            document.getElementById('finalScore').innerText="Erreichte Höhe: "+Math.floor(score);
+            refreshCoinDisplays();
             gameOverScreen.style.display='flex';
             ui.style.display='none';
             activeGadgetEl.style.display='none';
@@ -295,20 +389,19 @@
 
     // Navigation
     function showIntro(){ introScreen.style.display='flex'; startScreen.style.display='none'; gameOverScreen.style.display='none'; gameRunning=false; ui.style.display='none'; }
-    function showMenu(){ gameRunning=false; introScreen.style.display='none'; gameOverScreen.style.display='none'; startScreen.style.display='flex'; ui.style.display='none'; activeGadgetEl.style.display='none'; }
+    function showMenu(){ gameRunning=false; introScreen.style.display='none'; gameOverScreen.style.display='none'; startScreen.style.display='flex'; ui.style.display='none'; activeGadgetEl.style.display='none'; refreshCoinDisplays(); }
     function startGame(mode){
         if(audioCtx.state==='suspended') audioCtx.resume();
         currentMode=mode;
-        highScore=localStorage.getItem('doodleMathHigh_'+currentMode)||0;
         startScreen.style.display='none';
         ui.style.display='flex';
+        refreshCoinDisplays();
         resetGame();
     }
     function resetGame(){
         player={x:200,y:300,radius:12,vy:0,state:'normal',timer:0};
         targetX=200;score=0;scoreMultiplier=1;shieldActive=false;slowActive=false;slowTimer=0;starTimer=0;
         scoreText.innerText="Höhe: 0";
-        highText.innerText="⭐ "+highScore;
         gameOverScreen.style.display='none';
         ui.style.display='flex';
         activeGadgetEl.style.display='none';
