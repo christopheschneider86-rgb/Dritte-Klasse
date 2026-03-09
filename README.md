@@ -2,6 +2,7 @@
 
 # 🌟 Lern-Abenteuer für die Grundschule 🌟
 Willkommen auf unserer Lernplattform! Hier findest du kleine, kindgerechte Web-Apps zum spielerischen Üben für Proben und Schulaufgaben.
+
 [![Main Starten](https://img.shields.io/badge/🔆_Main starten-3498db?style=for-the-badge&logoColor=white)](https://christopheschneider86-rgb.github.io/Dritte-Klasse/index.html)
 
 ---
