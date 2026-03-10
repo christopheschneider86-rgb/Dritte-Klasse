@@ -198,10 +198,10 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
         <!-- SPIEL-BANNER -->
         <div class="game-banner">
           <div class="game-banner-left">
-            <img src="mathejump.png" class="game-banner-icon" alt="" onerror="this.style.display='none'">
+            <img src="mathe_jump.png" class="game-banner-icon" alt="" onerror="this.style.display='none'">
             <div>
               <div class="game-banner-title">🎮 Mathe-Hüpfer</div>
-              <div class="game-banner-sub">Münzen aus dem HSU-Trainer einlösen!</div>
+              <div class="game-banner-sub">Richtige Antwort = 1 Münze. Bonusfragen = 3 Münzen. 10 Münzen = eine Runde!</div>
             </div>
           </div>
           <div class="game-banner-right">
@@ -522,7 +522,7 @@ function switchView(v) {
   if (v === 'dashboard') updateDashboard(dashPeriod);
   if (v === 'highscore') updateHighscores();
 }
-function openGame() { window.location.href = 'mathejump.html'; }
+function openGame() { window.location.href = 'mathe_jump.html'; }
 
 // ── DASHBOARD ──────────────────────────────────────────
 function updateDashboard(period, el) {
