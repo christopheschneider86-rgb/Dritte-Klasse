@@ -31,6 +31,13 @@ Die App deckt den Lehrplan für die 3. Klasse ab. Ohne Anmeldung, direkt im Brow
 
 ---
 
+### 💂‍♂️ ENGLISCH (Demnächst)
+*Kommt bald...*
+
+[![ENGLISCH Trainer](https://img.shields.io/badge/⏳_In_Planung-95a5a6?style=for-the-badge&logoColor=white)](#)
+
+---
+
 <br>
 
 ### 💡 Tipps für Eltern
