@@ -255,8 +255,17 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 <script>
 // ── STATE ──────────────────────────────────────────────
 let profiles = {}, curProfId = null, curTopicKey = null;
-let curQuestionPool = [], curQuestion = null, isBonusActive = false;
+let curQuestionPool = [], curShuffled = [], curShuffleIdx = 0, curQuestion = null, isBonusActive = false;
 let selectedAnswer = null, currentView = 'practice', dashPeriod = 'today';
+
+// Fisher-Yates Shuffle
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
 // ── STORAGE ────────────────────────────────────────────
 function loadStorage() {
@@ -342,6 +351,8 @@ function openTopic(key) {
   // Nur normale Fragen (kein bonus) für den normalen Pool
   curQuestionPool = topic.questions.filter(q => !q.bonus);
   if (!profiles[curProfId].hsu_history) profiles[curProfId].hsu_history = [];
+  curShuffled = shuffleArray([...curQuestionPool]);
+  curShuffleIdx = 0;
   isBonusActive = false;
   loadQuestion();
 }
@@ -353,8 +364,12 @@ function loadQuestion() {
   document.getElementById('bonusArea').innerHTML = '';
   document.getElementById('feedbackArea').innerHTML = '';
 
-  // Zufällige Frage
-  curQuestion = curQuestionPool[Math.floor(Math.random() * curQuestionPool.length)];
+  // Nächste Frage aus gemischter Warteschlange – kein direktes Wiederholen
+  if (curShuffleIdx >= curShuffled.length) {
+    curShuffled = shuffleArray([...curQuestionPool]);
+    curShuffleIdx = 0;
+  }
+  curQuestion = curShuffled[curShuffleIdx++];
 
   document.getElementById('tQuestion').textContent = curQuestion.q;
   document.getElementById('tHint').textContent = curQuestion.hint ? ('💡 ' + curQuestion.hint) : '';
@@ -442,9 +457,7 @@ function checkAnswer() {
         const bq = bonusPool[Math.floor(Math.random() * bonusPool.length)];
         showBonusQuestion(bq);
         saveStorage(); updateUI();
-        document.getElementById('checkBtn').style.display = 'none';
-        document.getElementById('nextBtn').style.display = '';
-        return;
+        return;  // showBonusQuestion setzt Buttons selbst
       }
     }
   } else {
