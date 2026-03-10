@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>HSU-Trainer 3. Klasse Bayern</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<link rel="icon" type="image/png" href="icon_hsu.png">
+<link rel="apple-touch-icon" href="icon_hsu.png">
+<style>
+:root {
+  --bg: #f0f7e9;
+  --card: #ffffff;
+  --accent: #27ae60;
+  --accent-soft: #d4efdf;
+  --danger: #e74c3c;
+  --success: #27ae60;
+  --warning: #f1c40f;
+  --text: #222222;
+  --muted: #666666;
+  --radius: 18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;justify-content:center;touch-action:manipulation}
+.app{width:100%;max-width:1100px;padding:12px}
+@media(min-width:768px){.app{padding:24px}.card{padding:24px}}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:0 8px 24px rgba(0,0,0,0.08);padding:16px}
+.header{display:flex;align-items:center;gap:16px;margin-bottom:14px;position:relative}
+.back-home{background:#ecf0f1;border:none;border-radius:12px;padding:10px 12px;cursor:pointer;color:var(--text);display:flex;align-items:center;justify-content:center;transition:background .2s;text-decoration:none}
+.back-home svg{width:24px;height:24px}
+.back-home:hover{background:#bdc3c7}
+.app-icon{width:64px;height:64px;border-radius:16px;object-fit:cover;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
+.header-text h1{font-size:22px;margin-bottom:4px;color:#2c3e50}
+.header-text p{font-size:14px;color:var(--muted)}
+.profile-bar,.score-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.score-bar{padding:12px 16px;border-radius:16px;background:var(--accent-soft);font-size:14px}
+.score-bar strong{font-size:18px;color:#1a6e40;display:flex;align-items:center;gap:6px}
+.stars{color:#f39c12;display:flex;gap:4px}
+.star-icon{width:26px;height:26px;fill:currentColor}
+.star-empty{fill:none;stroke:currentColor;stroke-width:2}
+.btn{padding:12px 18px;border-radius:12px;font-size:15px;border:none;cursor:pointer;display:flex;align-items:center;gap:8px;justify-content:center;min-height:44px}
+.btn-primary{background:var(--accent);color:white;font-weight:bold;transition:background .2s,box-shadow .2s,transform .1s}
+.btn-primary:not(:disabled){box-shadow:0 4px 14px rgba(39,174,96,0.5)}
+.btn-primary:not(:disabled):hover{background:#219a52;box-shadow:0 6px 18px rgba(39,174,96,0.6)}
+.btn-primary:not(:disabled):active{transform:scale(0.96)}
+.btn-primary:disabled{background:#a9d4bc;color:#7aaa8e;cursor:not-allowed;box-shadow:none}
+.btn-secondary{background:#ecf0f1;color:var(--text)}
+.btn-secondary:active{transform:scale(0.96)}
+.btn-outline{background:white;border:2px solid var(--accent);color:var(--accent);font-weight:bold}
+.btn-outline:active{transform:scale(0.96)}
+.btn svg{width:20px;height:20px}
+.speaker-btn{background:var(--accent-soft);color:var(--accent);border:none;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s;flex-shrink:0}
+.speaker-btn svg{width:22px;height:22px}
+.speaker-btn:active{transform:scale(0.9)}
+.child-badge{display:flex;align-items:center;gap:8px;background:#eaf4ff;border:2px solid #d6ecff;border-radius:12px;padding:8px 14px}
+.child-badge svg{width:18px;height:18px;stroke:#3498db;flex-shrink:0}
+.child-badge span{font-weight:bold;font-size:15px;color:#1b6fab}
+/* LAYOUT */
+.main-layout{display:grid;grid-template-columns:1fr 1.2fr;gap:20px;align-items:start}
+@media(max-width:900px){.main-layout{grid-template-columns:1fr}.header-text h1{font-size:18px}.app-icon{width:48px;height:48px}}
+/* THEMEN-KACHELN */
+.tile-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.tile{background:#f7fbf4;border-radius:14px;padding:14px 10px;border:2px solid #c8e6c4;cursor:pointer;transition:all .2s;min-height:80px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.tile:hover,.tile.active{border-color:var(--accent);background:#eaf6ea;transform:translateY(-2px);box-shadow:0 4px 10px rgba(39,174,96,0.15)}
+.tile-icon{font-size:28px;margin-bottom:4px}
+.tile-title{font-size:13px;font-weight:bold;margin-bottom:2px;color:#2c3e50}
+.tile-sub{font-size:11px;color:var(--muted)}
+/* PANEL */
+.panel-title{font-size:20px;font-weight:bold;margin-bottom:12px;color:#2c3e50;display:flex;align-items:center;gap:8px}
+.view-container{display:none}
+.view-container.active{display:block}
+/* AUFGABEN-BOX */
+.task-box{padding:24px;border-radius:16px;background:#fdfdf8;border:2px solid #e1e8d0;text-align:center;box-shadow:inset 0 2px 10px rgba(0,0,0,0.02)}
+.question-wrapper{display:flex;align-items:center;justify-content:center;gap:15px;margin-bottom:12px}
+.task-question{font-size:22px;font-weight:bold;color:#2c3e50;line-height:1.4}
+.task-hint{font-size:15px;color:var(--muted);margin-bottom:20px;display:flex;justify-content:center;align-items:center;gap:6px}
+/* MULTIPLE CHOICE */
+.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+@media(max-width:600px){.mc-grid{grid-template-columns:1fr}}
+.mc-btn{padding:14px 12px;border-radius:14px;border:2px solid #c8e6c4;background:white;color:#2c3e50;font-size:15px;font-weight:bold;cursor:pointer;transition:all .15s;text-align:left}
+.mc-btn:hover:not(:disabled){border-color:var(--accent);background:#eaf6ea;transform:translateY(-1px)}
+.mc-btn.selected{background:#d4efdf;border-color:var(--accent);color:#1a6e40}
+.mc-btn.correct{background:#d4efdf;border-color:#27ae60;color:#1a6e40}
+.mc-btn.wrong{background:#fde8e8;border-color:#e74c3c;color:#922b21}
+.mc-btn:disabled{cursor:default}
+/* JA/NEIN */
+.yesno-wrap{display:flex;gap:14px;justify-content:center;margin:8px 0}
+.yesno-btn{width:110px;padding:14px 0;font-size:20px;font-weight:bold;border-radius:14px;border:3px solid #c8e6c4;background:white;color:#2c3e50;cursor:pointer;transition:all .15s}
+.yesno-btn:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(0,0,0,0.1)}
+.yesno-btn.selected-ja{background:#27ae60;border-color:#27ae60;color:white;box-shadow:0 4px 12px rgba(39,174,96,0.4)}
+.yesno-btn.selected-nein{background:#e74c3c;border-color:#e74c3c;color:white;box-shadow:0 4px 12px rgba(231,76,60,0.4)}
+.feedback{margin-top:20px;font-size:18px;font-weight:bold;min-height:28px;display:flex;justify-content:center;align-items:center;gap:8px}
+.feedback.ok{color:var(--success)}
+.feedback.bad{color:var(--danger)}
+/* BONUS */
+.bonus-box{margin-top:18px;background:linear-gradient(135deg,#fff9e6,#fff3cd);border:2px solid #f1c40f;border-radius:16px;padding:18px;text-align:center;animation:bonusPop .4s ease}
+@keyframes bonusPop{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
+.bonus-title{font-size:16px;font-weight:bold;color:#856404;margin-bottom:6px}
+.bonus-subtitle{font-size:13px;color:#a07800;margin-bottom:12px}
+.coin-display{display:flex;align-items:center;gap:6px;font-size:20px;font-weight:bold;color:#7d5a00}
+.coin-emoji{font-size:22px;line-height:1}
+/* DASHBOARD */
+.dashboard-box{background:#fdfdf8;border:2px solid #e1e8d0;border-radius:16px;padding:24px;margin-top:10px}
+.filter-tabs{display:flex;gap:10px;margin-bottom:20px;background:#ecf0f1;padding:6px;border-radius:12px}
+.filter-tab{flex:1;text-align:center;padding:10px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:14px;color:var(--muted)}
+.filter-tab.active{background:white;color:var(--accent);box-shadow:0 2px 6px rgba(0,0,0,0.05)}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:25px}
+.kpi-card{background:#f7fbf4;border-radius:12px;padding:15px;text-align:center;border:1px solid #c8e6c4}
+.kpi-value{font-size:32px;font-weight:bold;color:#2c3e50;margin:5px 0}
+.kpi-label{font-size:13px;color:var(--muted)}
+.analysis-section{margin-top:20px;text-align:left}
+.analysis-section h3{font-size:16px;color:#2c3e50;margin-bottom:12px;padding-bottom:5px;border-bottom:2px solid #ecf0f1}
+.topic-row{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#fff;border:1px solid #ecf0f1;border-radius:8px;margin-bottom:8px}
+.topic-name{font-weight:bold;font-size:14px;color:#2c3e50}
+.topic-stats{font-size:13px;color:var(--muted)}
+/* SPIEL-BANNER */
+.game-banner{display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding:14px 18px;border-radius:16px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:white;gap:12px;flex-wrap:wrap}
+.game-banner-left{display:flex;align-items:center;gap:12px}
+.game-banner-icon{width:52px;height:52px;border-radius:12px;object-fit:cover;box-shadow:0 4px 10px rgba(0,0,0,0.4);flex-shrink:0}
+.game-banner-title{font-size:16px;font-weight:bold;margin-bottom:3px}
+.game-banner-sub{font-size:13px;color:rgba(255,255,255,0.65)}
+.game-banner-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.coin-badge-big{background:rgba(255,255,255,0.12);border:1px solid rgba(255,200,0,0.4);border-radius:20px;padding:6px 14px;font-size:15px;font-weight:bold;color:#f1c40f;white-space:nowrap}
+.btn-play{background:linear-gradient(135deg,#f1c40f,#e67e22);color:#2c3e50;font-weight:bold;border:none;border-radius:12px;padding:10px 18px;cursor:pointer;font-size:15px;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 12px rgba(241,196,15,0.4);white-space:nowrap}
+.btn-play:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(241,196,15,0.55)}
+.btn-play:active{transform:scale(0.96)}
+/* HIGHSCORE */
+.hs-entry{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;margin-bottom:7px;border:2px solid #ecf0f1;background:#fff;transition:transform .1s}
+.hs-rank{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;flex-shrink:0;color:white}
+.hs-name{flex:1;font-weight:bold;font-size:15px;color:#2c3e50}
+.hs-score{font-size:16px;font-weight:bold;color:#2c3e50}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="card">
+  <div class="header">
+    <a href="index.html" class="back-home" title="Zurück">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    </a>
+    <img src="icon_hsu.png" class="app-icon" alt="HSU" onerror="this.style.display='none'">
+    <div class="header-text">
+      <h1>HSU-Trainer 3. Klasse</h1>
+      <p>by ZaboChris</p>
+    </div>
+  </div>
+
+  <div class="profile-bar">
+    <div class="child-badge">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      <span id="curChildName"></span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-outline" id="hsBtn" onclick="switchView(currentView==='highscore'?'practice':'highscore')" style="padding:10px 14px;font-size:14px">
+        <span id="hsBtnText">Bestenliste</span>
+      </button>
+      <button class="btn btn-outline" onclick="switchView(currentView==='dashboard'?'practice':'dashboard')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        <span id="dashBtnText">Eltern-Stats</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ÜBUNGS-MODUS -->
+  <div id="view-practice" class="view-container active">
+    <div class="score-bar">
+      <div class="coin-display">
+        <span class="coin-emoji">🪙</span>
+        <span id="coinText">0</span>
+        <span style="font-size:14px;font-weight:normal;color:#a07030;margin-left:2px">Münzen</span>
+      </div>
+      <div class="stars" id="starsText"></div>
+    </div>
+
+    <div class="main-layout">
+      <div>
+        <div class="panel-title">🌍 Themengebiete</div>
+        <div class="tile-grid" id="taskTiles"></div>
+      </div>
+      <div>
+        <div class="panel-title" id="taskTitle">Aktuelle Aufgabe</div>
+        <div class="task-box">
+          <div class="question-wrapper">
+            <div class="task-question" id="tQuestion">Wähle links ein Thema!</div>
+            <button class="speaker-btn" id="readBtn" style="display:none" title="Vorlesen" onclick="speakCurrent()">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"/></svg>
+            </button>
+          </div>
+          <div class="task-hint" id="tHint"></div>
+          <div id="tVisual"></div>
+          <div id="feedbackArea"></div>
+          <div id="bonusArea"></div>
+          <div style="margin-top:15px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary" id="checkBtn" disabled onclick="checkAnswer()">Antwort prüfen</button>
+            <button class="btn btn-secondary" id="nextBtn" style="display:none" onclick="nextTask()">Nächste Aufgabe ➔</button>
+          </div>
+        </div>
+
+        <!-- SPIEL-BANNER -->
+        <div class="game-banner">
+          <div class="game-banner-left">
+            <img src="mathejump.png" class="game-banner-icon" alt="" onerror="this.style.display='none'">
+            <div>
+              <div class="game-banner-title">🎮 Mathe-Hüpfer</div>
+              <div class="game-banner-sub">Münzen aus dem HSU-Trainer einlösen!</div>
+            </div>
+          </div>
+          <div class="game-banner-right">
+            <div class="coin-badge-big">🪙 <span id="coinBannerText">0</span></div>
+            <button class="btn-play" onclick="openGame()">Spielen →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ELTERN-DASHBOARD -->
+  <div id="view-dashboard" class="view-container">
+    <div class="panel-title" style="margin-top:10px">Lernfortschritt &amp; Auswertung</div>
+    <div class="dashboard-box">
+      <div class="filter-tabs">
+        <div class="filter-tab active" onclick="updateDashboard('today',this)">Heute</div>
+        <div class="filter-tab" onclick="updateDashboard('week',this)">Letzte 7 Tage</div>
+        <div class="filter-tab" onclick="updateDashboard('all',this)">Gesamtzeit</div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-label">Gelöste Aufgaben</div><div class="kpi-value" id="dash-total">0</div></div>
+        <div class="kpi-card"><div class="kpi-label">Erfolgsquote</div><div class="kpi-value" id="dash-quote">0%</div></div>
+      </div>
+      <div class="analysis-section"><h3>🟢 Stärken (Läuft super)</h3><div id="dash-good"></div></div>
+      <div class="analysis-section"><h3>🟡 Übungsbedarf (Geht so)</h3><div id="dash-medium"></div></div>
+      <div class="analysis-section"><h3>🔴 Problemzonen (Hier intensivieren)</h3><div id="dash-bad"></div></div>
+      <button class="btn btn-secondary" style="width:100%;margin-top:30px;font-size:13px" onclick="resetStats()">Fortschritt für dieses Kind löschen</button>
+    </div>
+  </div>
+
+  <!-- HIGHSCORE-VIEW -->
+  <div id="view-highscore" class="view-container">
+    <div class="panel-title" style="margin-top:10px">🏆 Mathe-Hüpfer – Bestenliste</div>
+    <div class="dashboard-box">
+      <div id="hs-list" style="min-height:100px"></div>
+      <div style="text-align:center;margin-top:20px">
+        <button class="btn-play" onclick="openGame()" style="display:inline-flex;align-items:center;gap:8px">
+          <img src="mathejump.png" style="width:22px;height:22px;border-radius:5px" onerror="this.style.display='none'">
+          Jetzt spielen
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- .card -->
+</div><!-- .app -->
+
+<!-- Fragen laden -->
+<script src="hsu_fragen.js"></script>
+<script>
+// ── STATE ──────────────────────────────────────────────
+let profiles = {}, curProfId = null, curTopicKey = null;
+let curQuestionPool = [], curQuestion = null, isBonusActive = false;
+let selectedAnswer = null, currentView = 'practice', dashPeriod = 'today';
+
+// ── STORAGE ────────────────────────────────────────────
+function loadStorage() {
+  try {
+    const raw = localStorage.getItem('m_app_v9');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+        for (const id of Object.keys(parsed)) {
+          if (!parsed[id].hsu_history) parsed[id].hsu_history = [];
+          if (!parsed[id].history) parsed[id].history = [];
+          if (parsed[id].score === undefined) parsed[id].score = 0;
+          if (parsed[id].coins === undefined) parsed[id].coins = 0;
+        }
+        profiles = parsed;
+      }
+    }
+  } catch(e) { console.warn('Ladefehler', e); }
+  if (Object.keys(profiles).length === 0) {
+    profiles = { p1: { name: 'Kind 1', score: 0, coins: 0, history: [], hsu_history: [] } };
+  }
+  const saved = localStorage.getItem('m_app_active_prof');
+  curProfId = (saved && profiles[saved]) ? saved : Object.keys(profiles)[0];
+}
+function saveStorage() {
+  try { localStorage.setItem('m_app_v9', JSON.stringify(profiles)); } catch(e) {}
+}
+
+// ── TTS ────────────────────────────────────────────────
+function speak(text) {
+  try {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'de-DE'; u.rate = 0.9;
+      window.speechSynthesis.speak(u);
+    }
+  } catch(e) {}
+}
+function speakCurrent() {
+  if (curQuestion) speak(curQuestion.q + '. ' + (curQuestion.hint || ''));
+}
+
+// ── UI INIT ────────────────────────────────────────────
+function initUI() {
+  document.getElementById('curChildName').textContent = profiles[curProfId]?.name;
+  const g = document.getElementById('taskTiles');
+  g.innerHTML = '';
+  for (const [k, v] of Object.entries(HSU_TOPICS)) {
+    g.innerHTML += `<div class="tile" id="tile_${k}" onclick="openTopic('${k}')">
+      <div class="tile-icon">${v.icon}</div>
+      <div class="tile-title">${v.title}</div>
+      <div class="tile-sub">${v.sub}</div>
+    </div>`;
+  }
+  updateUI();
+}
+
+function updateUI() {
+  const p = profiles[curProfId];
+  const coins = p.coins || 0;
+  document.getElementById('coinText').textContent = coins;
+  document.getElementById('coinBannerText').textContent = coins;
+  document.getElementById('curChildName').textContent = p.name;
+  const n = Math.min(5, Math.floor((p.score || 0) / 50));
+  let h = '';
+  for (let i = 0; i < 5; i++) {
+    h += i < n
+      ? '<svg class="star-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>'
+      : '<svg class="star-icon star-empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+  }
+  document.getElementById('starsText').innerHTML = h;
+}
+
+// ── THEMA ÖFFNEN ───────────────────────────────────────
+function openTopic(key) {
+  curTopicKey = key;
+  document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
+  const tile = document.getElementById('tile_' + key);
+  if (tile) tile.classList.add('active');
+  const topic = HSU_TOPICS[key];
+  document.getElementById('taskTitle').textContent = topic.icon + ' ' + topic.title;
+  // Nur normale Fragen (kein bonus) für den normalen Pool
+  curQuestionPool = topic.questions.filter(q => !q.bonus);
+  if (!profiles[curProfId].hsu_history) profiles[curProfId].hsu_history = [];
+  isBonusActive = false;
+  loadQuestion();
+}
+
+// ── FRAGE LADEN ────────────────────────────────────────
+function loadQuestion() {
+  if (!curTopicKey || curQuestionPool.length === 0) return;
+  selectedAnswer = null;
+  document.getElementById('bonusArea').innerHTML = '';
+  document.getElementById('feedbackArea').innerHTML = '';
+
+  // Zufällige Frage
+  curQuestion = curQuestionPool[Math.floor(Math.random() * curQuestionPool.length)];
+
+  document.getElementById('tQuestion').textContent = curQuestion.q;
+  document.getElementById('tHint').textContent = curQuestion.hint ? ('💡 ' + curQuestion.hint) : '';
+  document.getElementById('readBtn').style.display = '';
+
+  const vis = document.getElementById('tVisual');
+  if (curQuestion.isYesNo) {
+    vis.innerHTML = `<div class="yesno-wrap">
+      <button class="yesno-btn" id="yesno-nein" onclick="selectYesNo(0)">❌ Nein</button>
+      <button class="yesno-btn" id="yesno-ja" onclick="selectYesNo(1)">✅ Ja</button>
+    </div>`;
+  } else if (curQuestion.choices) {
+    vis.innerHTML = '<div class="mc-grid">' +
+      curQuestion.choices.map((c, i) =>
+        `<button class="mc-btn" id="mc_${i}" onclick="selectMC(${i})">${['🅐','🅑','🅒','🅓'][i]} ${c}</button>`
+      ).join('') + '</div>';
+  } else {
+    vis.innerHTML = '';
+  }
+
+  document.getElementById('checkBtn').disabled = true;
+  document.getElementById('checkBtn').style.display = '';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+// ── ANTWORT AUSWÄHLEN ──────────────────────────────────
+function selectMC(idx) {
+  if (document.getElementById('checkBtn').style.display === 'none') return;
+  selectedAnswer = idx;
+  curQuestion.choices.forEach((_, i) => {
+    const b = document.getElementById('mc_' + i);
+    if (b) b.classList.toggle('selected', i === idx);
+  });
+  document.getElementById('checkBtn').disabled = false;
+}
+
+function selectYesNo(val) {
+  if (document.getElementById('checkBtn').style.display === 'none') return;
+  selectedAnswer = val;
+  document.getElementById('yesno-nein')?.classList.toggle('selected-nein', val === 0);
+  document.getElementById('yesno-ja')?.classList.toggle('selected-ja', val === 1);
+  document.getElementById('checkBtn').disabled = false;
+}
+
+// ── ANTWORT PRÜFEN ─────────────────────────────────────
+function checkAnswer() {
+  if (selectedAnswer === null) return;
+  const correct = selectedAnswer === curQuestion.sol;
+  const fb = document.getElementById('feedbackArea');
+  const p = profiles[curProfId];
+
+  // Visuelle Markierung
+  if (curQuestion.isYesNo) {
+    if (correct) {
+      document.getElementById('yesno-ja')?.classList.add(curQuestion.sol === 1 ? 'selected-ja' : '');
+      document.getElementById('yesno-nein')?.classList.add(curQuestion.sol === 0 ? 'selected-nein' : '');
+    }
+  } else if (curQuestion.choices) {
+    curQuestion.choices.forEach((_, i) => {
+      const b = document.getElementById('mc_' + i);
+      if (!b) return;
+      b.disabled = true;
+      if (i === curQuestion.sol) b.classList.add('correct');
+      else if (i === selectedAnswer && !correct) b.classList.add('wrong');
+    });
+  }
+  if (document.getElementById('yesno-ja')) {
+    document.getElementById('yesno-ja').disabled = true;
+    document.getElementById('yesno-nein').disabled = true;
+  }
+
+  // Statistik
+  p.hsu_history.push({ key: curTopicKey, ok: correct, ts: Date.now(), bonus: isBonusActive });
+  if (correct) {
+    const coinGain = isBonusActive ? 3 : 1;
+    p.coins = (p.coins || 0) + coinGain;
+    p.score = (p.score || 0) + 10;
+    fb.innerHTML = `<div class="feedback ok">🎉 Super! Richtig! +${coinGain} 🪙</div>`;
+    speak('Super! Richtig!');
+
+    // Bonusfrage anzeigen (nur bei normaler Frage, zufällig ~60%)
+    if (!isBonusActive && Math.random() < 0.6) {
+      const bonusPool = HSU_TOPICS[curTopicKey].questions.filter(q => q.bonus);
+      if (bonusPool.length > 0) {
+        const bq = bonusPool[Math.floor(Math.random() * bonusPool.length)];
+        showBonusQuestion(bq);
+        saveStorage(); updateUI();
+        document.getElementById('checkBtn').style.display = 'none';
+        document.getElementById('nextBtn').style.display = '';
+        return;
+      }
+    }
+  } else {
+    const richtig = curQuestion.choices ? curQuestion.choices[curQuestion.sol] : (curQuestion.sol === 1 ? 'Ja' : 'Nein');
+    fb.innerHTML = `<div class="feedback bad">❌ Nicht ganz. Richtig wäre: <strong>${richtig}</strong></div>`;
+    speak('Nicht ganz. Die Antwort ist ' + richtig);
+  }
+
+  saveStorage(); updateUI();
+  document.getElementById('checkBtn').style.display = 'none';
+  document.getElementById('nextBtn').style.display = '';
+}
+
+// ── BONUSFRAGE ─────────────────────────────────────────
+function showBonusQuestion(bq) {
+  isBonusActive = true;
+  curQuestion = bq;
+  selectedAnswer = null;
+
+  let answerHtml = '';
+  if (bq.isYesNo) {
+    answerHtml = `<div class="yesno-wrap">
+      <button class="yesno-btn" id="yesno-nein" onclick="selectYesNo(0)">❌ Nein</button>
+      <button class="yesno-btn" id="yesno-ja" onclick="selectYesNo(1)">✅ Ja</button>
+    </div>`;
+  } else if (bq.choices) {
+    answerHtml = '<div class="mc-grid">' +
+      bq.choices.map((c, i) =>
+        `<button class="mc-btn" id="mc_${i}" onclick="selectMC(${i})">${['🅐','🅑','🅒','🅓'][i]} ${c}</button>`
+      ).join('') + '</div>';
+  }
+
+  document.getElementById('bonusArea').innerHTML = `
+    <div class="bonus-box">
+      <div class="bonus-title">⭐ Bonusfrage! +3 🪙</div>
+      <div class="bonus-subtitle">${bq.q}</div>
+      ${answerHtml}
+    </div>`;
+
+  document.getElementById('checkBtn').style.display = '';
+  document.getElementById('checkBtn').disabled = true;
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('tQuestion').textContent = '';
+  document.getElementById('tHint').textContent = '';
+  document.getElementById('tVisual').innerHTML = '';
+  document.getElementById('feedbackArea').innerHTML = '';
+}
+
+function nextTask() {
+  isBonusActive = false;
+  loadQuestion();
+}
+
+// ── VIEW-NAVIGATION ────────────────────────────────────
+function switchView(v) {
+  currentView = v;
+  ['practice', 'dashboard', 'highscore'].forEach(name => {
+    document.getElementById('view-' + name).className = 'view-container' + (name === v ? ' active' : '');
+  });
+  document.getElementById('dashBtnText').textContent = v === 'dashboard' ? 'üben' : 'Eltern-Stats';
+  document.getElementById('hsBtnText').textContent = v === 'highscore' ? 'üben' : 'Bestenliste';
+  if (v === 'dashboard') updateDashboard(dashPeriod);
+  if (v === 'highscore') updateHighscores();
+}
+function openGame() { window.location.href = 'mathejump.html'; }
+
+// ── DASHBOARD ──────────────────────────────────────────
+function updateDashboard(period, el) {
+  dashPeriod = period;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const p = profiles[curProfId];
+  const now = Date.now();
+  const cutoff = period === 'today' ? now - 86400000 : period === 'week' ? now - 7 * 86400000 : 0;
+  const hist = p.hsu_history.filter(h => h.ts >= cutoff);
+  const total = hist.length, correct = hist.filter(h => h.ok).length;
+  document.getElementById('dash-total').textContent = total;
+  document.getElementById('dash-quote').textContent = (total > 0 ? Math.round(correct / total * 100) : 0) + '%';
+
+  const byTopic = {};
+  hist.forEach(h => {
+    if (!byTopic[h.key]) byTopic[h.key] = { right: 0, wrong: 0 };
+    if (h.ok) byTopic[h.key].right++; else byTopic[h.key].wrong++;
+  });
+
+  function buildRow(key, stat) {
+    const tot = stat.right + stat.wrong, rate = stat.right / tot, pct = Math.round(rate * 100);
+    const bc = rate > 0.75 ? 'var(--success)' : rate > 0.4 ? 'var(--warning)' : 'var(--danger)';
+    const topic = HSU_TOPICS[key];
+    const name = topic ? (topic.icon + ' ' + topic.title) : key;
+    return `<div class="topic-row">
+      <span class="topic-name">${name}</span>
+      <span class="topic-stats">${stat.right}/${tot} richtig &nbsp;<strong style="color:${bc}">${pct}%</strong></span>
+    </div>`;
+  }
+
+  const good = [], medium = [], bad = [];
+  for (const [key, stat] of Object.entries(byTopic)) {
+    const rate = stat.right / (stat.right + stat.wrong);
+    if (rate > 0.75) good.push(buildRow(key, stat));
+    else if (rate > 0.4) medium.push(buildRow(key, stat));
+    else bad.push(buildRow(key, stat));
+  }
+  const empty = '<p style="color:var(--muted);font-size:14px">Keine Daten im gewählten Zeitraum.</p>';
+  document.getElementById('dash-good').innerHTML = good.length ? good.join('') : empty;
+  document.getElementById('dash-medium').innerHTML = medium.length ? medium.join('') : '<p style="color:var(--muted);font-size:14px"></p>';
+  document.getElementById('dash-bad').innerHTML = bad.length ? bad.join('') : '<p style="color:var(--muted);font-size:14px"></p>';
+}
+
+function resetStats() {
+  if (!confirm('Wirklich alle Daten für ' + profiles[curProfId].name + ' löschen?')) return;
+  profiles[curProfId].score = 0;
+  profiles[curProfId].hsu_history = [];
+  profiles[curProfId].coins = 0;
+  saveStorage(); updateUI(); updateDashboard(dashPeriod);
+}
+
+// ── HIGHSCORE ──────────────────────────────────────────
+function updateHighscores() {
+  let hs = [];
+  try { hs = JSON.parse(localStorage.getItem('mjumphsmixed')) || []; } catch(e) {}
+  const list = document.getElementById('hs-list');
+  if (!hs.length) {
+    list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:30px 0;font-size:15px">Noch keine Einträge.<br>Los spielen!</p>';
+    return;
+  }
+  const medals = ['🥇','🥈','🥉'];
+  const rankBg = ['#f39c12','#95a5a6','#e67e22'];
+  list.innerHTML = hs.map((e, i) => `
+    <div class="hs-entry" style="background:${i===0?'#fef9e7':i===1?'#f8f9fa':i===2?'#fff8f0':'#fff'};border-color:${rankBg[i]||'#ecf0f1'}">
+      <div class="hs-rank" style="background:${rankBg[i]||'#bdc3c7'}">${i < 3 ? medals[i] : i+1}</div>
+      <div class="hs-name">${e.name}</div>
+      <div class="hs-score">Höhe&nbsp;<strong style="color:${i===0?'#e67e22':'#2c3e50'}">${e.score}</strong></div>
+    </div>`).join('');
+}
+
+// ── START ──────────────────────────────────────────────
+loadStorage();
+initUI();
+</script>
+</body>
+</html>
