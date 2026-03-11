@@ -195,20 +195,21 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
           </div>
         </div>
 
-        <!-- SPIEL-BANNER -->
-        <div class="game-banner">
-          <div class="game-banner-left">
-            <img src="mathe_jump.png" class="game-banner-icon" alt="" onerror="this.style.display='none'">
-            <div>
-              <div class="game-banner-title">🎮 Mathe-Hüpfer</div>
-              <div class="game-banner-sub">Richtige Antwort = 1 Münze. Bonusfragen = 3 Münzen. 10 Münzen = eine Runde!</div>
-            </div>
-          </div>
-          <div class="game-banner-right">
-            <div class="coin-badge-big">🪙 <span id="coinBannerText">0</span></div>
-            <button class="btn-play" onclick="openGame()">Spielen →</button>
-          </div>
+      </div>
+    </div>
+
+    <!-- SPIEL-BANNER -->
+    <div class="game-banner">
+      <div class="game-banner-left">
+        <img src="hsu_finder.png" class="game-banner-icon" alt="🐾" onerror="this.style.display='none'">
+        <div>
+          <div class="game-banner-title">🐾 Tier-Entdecker</div>
+          <div class="game-banner-sub">Richtige Antwort = 1 Münze · 10 Münzen = eine Runde!</div>
         </div>
+      </div>
+      <div class="game-banner-right">
+        <div class="coin-badge-big">🪙 <span id="coinBannerText">0</span></div>
+        <button class="btn-play" onclick="openGame()">Spielen →</button>
       </div>
     </div>
   </div>
@@ -235,12 +236,12 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 
   <!-- HIGHSCORE-VIEW -->
   <div id="view-highscore" class="view-container">
-    <div class="panel-title" style="margin-top:10px">🏆 Mathe-Hüpfer – Bestenliste</div>
+    <div class="panel-title" style="margin-top:10px">🏆 Tier-Entdecker – Bestenliste</div>
     <div class="dashboard-box">
       <div id="hs-list" style="min-height:100px"></div>
       <div style="text-align:center;margin-top:20px">
         <button class="btn-play" onclick="openGame()" style="display:inline-flex;align-items:center;gap:8px">
-          <img src="mathejump.png" style="width:22px;height:22px;border-radius:5px" onerror="this.style.display='none'">
+          <img src="hsu_finder.png" style="width:22px;height:22px;border-radius:5px" onerror="this.style.display='none'">
           Jetzt spielen
         </button>
       </div>
@@ -444,7 +445,7 @@ function checkAnswer() {
   // Statistik
   p.hsu_history.push({ key: curTopicKey, ok: correct, ts: Date.now(), bonus: isBonusActive });
   if (correct) {
-    const coinGain = isBonusActive ? 3 : 1;
+    const coinGain = isBonusActive ? 2 : 1;
     p.coins = (p.coins || 0) + coinGain;
     p.score = (p.score || 0) + 10;
     fb.innerHTML = `<div class="feedback ok">🎉 Super! Richtig! +${coinGain} 🪙</div>`;
@@ -522,9 +523,26 @@ function switchView(v) {
   if (v === 'dashboard') updateDashboard(dashPeriod);
   if (v === 'highscore') updateHighscores();
 }
-function openGame() { window.location.href = 'mathe_jump.html'; }
+function openGame() { window.location.href = 'tier_entdecker.html'; }
 
-// ── DASHBOARD ──────────────────────────────────────────
+// ── HIGHSCORE ──────────────────────────────────────────
+function updateHighscores() {
+  let hs = [];
+  try { hs = JSON.parse(localStorage.getItem('m_tier_hs') || '[]'); } catch(e) {}
+  const list = document.getElementById('hs-list');
+  if (!hs.length) {
+    list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:30px 0;font-size:15px">Noch keine Einträge.<br>Los spielen! 🐾</p>';
+    return;
+  }
+  const medals = ['🥇','🥈','🥉'];
+  const rankBg = ['#f39c12','#95a5a6','#e67e22'];
+  list.innerHTML = hs.map((e, i) => `
+    <div class="hs-entry" style="background:${i===0?'#fef9e7':i===1?'#f8f9fa':i===2?'#fff8f0':'#fff'};border-color:${rankBg[i]||'#ecf0f1'}">
+      <div class="hs-rank" style="background:${rankBg[i]||'#bdc3c7'}">${i < 3 ? medals[i] : i+1}</div>
+      <div class="hs-name">${e.name}</div>
+      <div class="hs-score" style="color:${i===0?'#27ae60':'#2c3e50'}">Level&nbsp;<strong>${e.score}</strong></div>
+    </div>`).join('');
+}
 function updateDashboard(period, el) {
   dashPeriod = period;
   document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
@@ -573,25 +591,6 @@ function resetStats() {
   profiles[curProfId].hsu_history = [];
   profiles[curProfId].coins = 0;
   saveStorage(); updateUI(); updateDashboard(dashPeriod);
-}
-
-// ── HIGHSCORE ──────────────────────────────────────────
-function updateHighscores() {
-  let hs = [];
-  try { hs = JSON.parse(localStorage.getItem('mjumphsmixed')) || []; } catch(e) {}
-  const list = document.getElementById('hs-list');
-  if (!hs.length) {
-    list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:30px 0;font-size:15px">Noch keine Einträge.<br>Los spielen!</p>';
-    return;
-  }
-  const medals = ['🥇','🥈','🥉'];
-  const rankBg = ['#f39c12','#95a5a6','#e67e22'];
-  list.innerHTML = hs.map((e, i) => `
-    <div class="hs-entry" style="background:${i===0?'#fef9e7':i===1?'#f8f9fa':i===2?'#fff8f0':'#fff'};border-color:${rankBg[i]||'#ecf0f1'}">
-      <div class="hs-rank" style="background:${rankBg[i]||'#bdc3c7'}">${i < 3 ? medals[i] : i+1}</div>
-      <div class="hs-name">${e.name}</div>
-      <div class="hs-score">Höhe&nbsp;<strong style="color:${i===0?'#e67e22':'#2c3e50'}">${e.score}</strong></div>
-    </div>`).join('');
 }
 
 // ── START ──────────────────────────────────────────────
