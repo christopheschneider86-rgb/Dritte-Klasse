@@ -84,6 +84,12 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 .stat-card-eng .stat-count{color:#7b2dbd;}
 .stat-soon{font-size:11px;font-style:italic;color:#bdc3c7;}
 
+/* ─── FILTER-TABS (Eltern-Stats) ─── */
+.stats-filter{display:flex;gap:8px;margin-bottom:16px;background:#f0f4f8;padding:5px;border-radius:12px;}
+.stats-tab{flex:1;text-align:center;padding:8px 4px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:13px;color:#95a5a6;transition:all .15s;border:none;background:transparent;font-family:inherit;}
+.stats-tab:hover{color:var(--accent);}
+.stats-tab.active{background:white;color:var(--accent);box-shadow:0 2px 6px rgba(0,0,0,0.08);}
+
 /* ─── TIPS ─── */
 .footer-tips{margin-top:28px;background:white;padding:20px;border-radius:15px;max-width:600px;text-align:left;box-shadow:0 4px 12px rgba(0,0,0,0.05);}
 .footer-tips h3{font-size:16px;margin-bottom:15px;display:flex;align-items:center;gap:8px;}
@@ -180,7 +186,13 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
   </div>
   <div class="stats-child-name">
     <svg width="18" height="18" fill="none" stroke="#3498db" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-    <span id="statsChildName">–</span> – Gesamtaufgaben
+    <span id="statsChildName">–</span> – Aufgaben
+  </div>
+  <div class="stats-filter">
+    <button class="stats-tab active" id="tab-week" onclick="setStatsPeriod('week',this)">Diese Woche</button>
+    <button class="stats-tab" id="tab-lastweek" onclick="setStatsPeriod('lastweek',this)">Letzte Woche</button>
+    <button class="stats-tab" id="tab-3weeks" onclick="setStatsPeriod('3weeks',this)">Letzte 3 Wochen</button>
+    <button class="stats-tab" id="tab-all" onclick="setStatsPeriod('all',this)">Gesamt</button>
   </div>
   <div class="stats-grid" id="statsGrid"></div>
 </div>
@@ -247,6 +259,23 @@ function updateCoinDisplay(){
   }catch(e){}
 }
 
+let statsPeriod = 'week';
+
+function getWeekStart(weeksAgo) {
+  const d = new Date();
+  const day = d.getDay() || 7; // Mo=1 ... So=7
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate() - (day - 1) - weeksAgo * 7);
+  return d.getTime();
+}
+
+function setStatsPeriod(period, el) {
+  statsPeriod = period;
+  document.querySelectorAll('.stats-tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  updateParentStats();
+}
+
 function updateParentStats(){
   try{
     const raw=localStorage.getItem(STORAGE_KEY);
@@ -255,8 +284,41 @@ function updateParentStats(){
     const p=profs[activeProfId];
     if(!p) return;
     document.getElementById('statsChildName').textContent=p.name||'–';
-    const matheCount=(p.history||[]).length;
-    const hsuCount=(p.hsu_history||[]).length;
+
+    // Zeitraum berechnen
+    const now = Date.now();
+    let cutoff = 0;
+    if (statsPeriod === 'week') {
+      cutoff = getWeekStart(0);
+    } else if (statsPeriod === 'lastweek') {
+      cutoff = getWeekStart(1);
+      // nur letzte Woche: bis zum Beginn dieser Woche
+    } else if (statsPeriod === '3weeks') {
+      cutoff = getWeekStart(2);
+    }
+    // 'all' → cutoff bleibt 0
+
+    function filterHist(hist) {
+      if (!hist || !hist.length) return [];
+      if (statsPeriod === 'lastweek') {
+        const weekStart = getWeekStart(0);
+        return hist.filter(h => h.ts >= cutoff && h.ts < weekStart);
+      }
+      return hist.filter(h => !cutoff || h.ts >= cutoff);
+    }
+
+    const matheAll  = filterHist(p.history);
+    const hsuAll    = filterHist(p.hsu_history);
+    const matheOk   = matheAll.filter(h => h.ok).length;
+    const hsuOk     = hsuAll.filter(h => h.ok).length;
+    const matheCount = matheAll.length;
+    const hsuCount   = hsuAll.length;
+
+    function pct(ok, tot) {
+      if (!tot) return '';
+      return `<div style="font-size:11px;color:#7f8c8d;margin-top:3px;">${Math.round(ok/tot*100)}% richtig</div>`;
+    }
+
     const grid=document.getElementById('statsGrid');
     grid.innerHTML=`
       <div class="stat-card stat-card-math">
@@ -264,6 +326,7 @@ function updateParentStats(){
         <div>
           <div class="stat-count">${matheCount}</div>
           <div class="stat-label">Mathe-Aufgaben</div>
+          ${pct(matheOk, matheCount)}
         </div>
       </div>
       <div class="stat-card stat-card-hsu">
@@ -271,6 +334,7 @@ function updateParentStats(){
         <div>
           <div class="stat-count">${hsuCount}</div>
           <div class="stat-label">HSU-Aufgaben</div>
+          ${pct(hsuOk, hsuCount)}
         </div>
       </div>
       <div class="stat-card stat-card-german">
