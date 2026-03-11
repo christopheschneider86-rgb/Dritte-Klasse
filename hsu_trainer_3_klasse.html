@@ -257,7 +257,7 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 // ── STATE ──────────────────────────────────────────────
 let profiles = {}, curProfId = null, curTopicKey = null;
 let curQuestionPool = [], curShuffled = [], curShuffleIdx = 0, curQuestion = null, isBonusActive = false;
-let selectedAnswer = null, currentView = 'practice', dashPeriod = 'today';
+let selectedAnswer = null, answerLocked = false, currentView = 'practice', dashPeriod = 'today';
 
 // Fisher-Yates Shuffle
 function shuffleArray(arr) {
@@ -362,6 +362,7 @@ function openTopic(key) {
 function loadQuestion() {
   if (!curTopicKey || curQuestionPool.length === 0) return;
   selectedAnswer = null;
+  answerLocked = false;
   document.getElementById('bonusArea').innerHTML = '';
   document.getElementById('feedbackArea').innerHTML = '';
 
@@ -398,8 +399,7 @@ function loadQuestion() {
 
 // ── ANTWORT AUSWÄHLEN ──────────────────────────────────
 function selectMC(idx) {
-  // Bereits beantwortet wenn nextBtn sichtbar
-  if (document.getElementById('nextBtn').style.display !== 'none') return;
+  if (answerLocked) return;
   selectedAnswer = idx;
   curQuestion.choices.forEach((_, i) => {
     const b = document.getElementById('mc_' + i);
@@ -409,8 +409,7 @@ function selectMC(idx) {
 }
 
 function selectYesNo(val) {
-  // Bereits beantwortet wenn nextBtn sichtbar
-  if (document.getElementById('nextBtn').style.display !== 'none') return;
+  if (answerLocked) return;
   selectedAnswer = val;
   document.getElementById('yesno-nein')?.classList.toggle('selected-nein', val === 0);
   document.getElementById('yesno-ja')?.classList.toggle('selected-ja', val === 1);
@@ -420,6 +419,7 @@ function selectYesNo(val) {
 // ── ANTWORT PRÜFEN ─────────────────────────────────────
 function checkAnswer() {
   if (selectedAnswer === null) return;
+  answerLocked = true;
   const correct = selectedAnswer === curQuestion.sol;
   const fb = document.getElementById('feedbackArea');
   const p = profiles[curProfId];
@@ -479,6 +479,7 @@ function showBonusQuestion(bq) {
   isBonusActive = true;
   curQuestion = bq;
   selectedAnswer = null;
+  answerLocked = true;  // während Bonus lädt gesperrt, kurz danach freigeben
 
   let answerHtml = '';
   if (bq.isYesNo) {
@@ -507,6 +508,8 @@ function showBonusQuestion(bq) {
   document.getElementById('tHint').textContent = '';
   document.getElementById('tVisual').innerHTML = '';
   document.getElementById('feedbackArea').innerHTML = '';
+  // Kurze Verzögerung: verhindert Touch-Through vom vorherigen Klick auf "Antwort prüfen"
+  setTimeout(() => { answerLocked = false; }, 350);
 }
 
 function nextTask() {
