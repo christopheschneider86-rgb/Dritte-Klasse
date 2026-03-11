@@ -411,10 +411,14 @@ function selectMC(idx) {
 function selectYesNo(val) {
   const jaBtn = document.getElementById('yesno-ja');
   if (jaBtn && jaBtn.disabled) return;  // bereits beantwortet
+  // Ja/Nein: Antwort direkt bestätigen (kein separater "Antwort prüfen"-Schritt nötig)
+  document.getElementById('yesno-nein').disabled = true;
+  document.getElementById('yesno-ja').disabled = true;
+  document.getElementById('yesno-nein').classList.toggle('selected-nein', val === 0);
+  document.getElementById('yesno-ja').classList.toggle('selected-ja', val === 1);
   selectedAnswer = val;
-  document.getElementById('yesno-nein')?.classList.toggle('selected-nein', val === 0);
-  document.getElementById('yesno-ja')?.classList.toggle('selected-ja', val === 1);
-  document.getElementById('checkBtn').disabled = false;
+  document.getElementById('checkBtn').style.display = 'none';
+  checkAnswer();
 }
 
 // ── ANTWORT PRÜFEN ─────────────────────────────────────
@@ -424,13 +428,8 @@ function checkAnswer() {
   const fb = document.getElementById('feedbackArea');
   const p = profiles[curProfId];
 
-  // Visuelle Markierung
-  if (curQuestion.isYesNo) {
-    if (correct) {
-      document.getElementById('yesno-ja')?.classList.add(curQuestion.sol === 1 ? 'selected-ja' : '');
-      document.getElementById('yesno-nein')?.classList.add(curQuestion.sol === 0 ? 'selected-nein' : '');
-    }
-  } else if (curQuestion.choices) {
+  // Visuelle Markierung (nur MC – Ja/Nein wird direkt in selectYesNo markiert)
+  if (!curQuestion.isYesNo && curQuestion.choices) {
     curQuestion.choices.forEach((_, i) => {
       const b = document.getElementById('mc_' + i);
       if (!b) return;
@@ -439,9 +438,18 @@ function checkAnswer() {
       else if (i === selectedAnswer && !correct) b.classList.add('wrong');
     });
   }
-  if (document.getElementById('yesno-ja')) {
-    document.getElementById('yesno-ja').disabled = true;
-    document.getElementById('yesno-nein').disabled = true;
+  // Grüne/Rote Markierung bei Ja/Nein nach der Auswahl ergänzen
+  if (curQuestion.isYesNo) {
+    const ja = document.getElementById('yesno-ja');
+    const nein = document.getElementById('yesno-nein');
+    if (ja && nein) {
+      if (curQuestion.sol === 1) ja.classList.add('correct');
+      else nein.classList.add('correct');
+      if (!correct) {
+        if (selectedAnswer === 1) ja.classList.add('wrong');
+        else nein.classList.add('wrong');
+      }
+    }
   }
 
   // Statistik
