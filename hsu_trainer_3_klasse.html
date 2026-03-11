@@ -398,7 +398,8 @@ function loadQuestion() {
 
 // ── ANTWORT AUSWÄHLEN ──────────────────────────────────
 function selectMC(idx) {
-  if (document.getElementById('checkBtn').style.display === 'none') return;
+  // Bereits beantwortet wenn nextBtn sichtbar
+  if (document.getElementById('nextBtn').style.display !== 'none') return;
   selectedAnswer = idx;
   curQuestion.choices.forEach((_, i) => {
     const b = document.getElementById('mc_' + i);
@@ -408,7 +409,8 @@ function selectMC(idx) {
 }
 
 function selectYesNo(val) {
-  if (document.getElementById('checkBtn').style.display === 'none') return;
+  // Bereits beantwortet wenn nextBtn sichtbar
+  if (document.getElementById('nextBtn').style.display !== 'none') return;
   selectedAnswer = val;
   document.getElementById('yesno-nein')?.classList.toggle('selected-nein', val === 0);
   document.getElementById('yesno-ja')?.classList.toggle('selected-ja', val === 1);
@@ -493,7 +495,7 @@ function showBonusQuestion(bq) {
 
   document.getElementById('bonusArea').innerHTML = `
     <div class="bonus-box">
-      <div class="bonus-title">⭐ Bonusfrage! +2🪙</div>
+      <div class="bonus-title">⭐ Bonusfrage! +2 🪙</div>
       <div class="bonus-subtitle">${bq.q}</div>
       ${answerHtml}
     </div>`;
