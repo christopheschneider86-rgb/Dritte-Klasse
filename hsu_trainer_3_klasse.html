@@ -507,7 +507,7 @@ function showBonusQuestion(bq) {
   document.getElementById('tQuestion').textContent = '';
   document.getElementById('tHint').textContent = '';
   document.getElementById('tVisual').innerHTML = '';
-  document.getElementById('feedbackArea').innerHTML = '';
+  // feedbackArea NICHT löschen – "🎉 Richtig!" bleibt sichtbar während Bonusfrage erscheint
 }
 
 function nextTask() {
