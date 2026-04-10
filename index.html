@@ -4,10 +4,13 @@
 <meta charset="UTF-8">
 <title>Lern-Abenteuer Grundschule</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-<link rel="icon" type="image/png" href="main.png">
-<link rel="apple-touch-icon" href="main.png">
+<link rel="icon" type="image/png" href="images/main.png">
+<link rel="apple-touch-icon" href="images/main.png">
 <style>
-:root{--bg:#f0f8ff;--card:#fff;--text:#2c3e50;--math:#3498db;--german:#e67e22;--hsu:#27ae60;--eng:#9b59b6;--accent:#3498db;}
+:root{--bg:#f0f8ff;--card:#fff;--text:#2c3e50;--math:#3498db;--german:#e67e22;--hsu:#27ae60;--eng:#9b59b6;--musik:#e91e8c;--accent:#3498db;}
+.badge-musik{position:absolute;top:0;left:0;width:100%;height:8px;background:var(--musik);}
+.stat-card-musik{background:#fce4f4;border:2px solid #f0a8d8;}
+.stat-card-musik .stat-count{color:#b01570;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px;text-align:center;}
 
@@ -101,7 +104,7 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 <body>
 
 <div class="hero">
-  <img src="main.png" alt="Logo" class="hero-icon" onerror="this.style.display='none'">
+  <img src="images/main.png" alt="Logo" class="hero-icon" onerror="this.style.display='none'">
   <h1>Lern-Abenteuer</h1>
   <p>Spielerisch lernen für die 3. Klasse. Profil auswählen und starte dein Training!</p>
 </div>
@@ -125,7 +128,7 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 </div>
 
 <div class="grid">
-  <a href="mathe_trainer_3_klasse.html" class="subject-card" id="mathCard">
+  <a href="mathe/mathe_trainer_3_klasse.html" class="subject-card" id="mathCard">
     <div class="badge-math"></div>
     <div class="card-icon" style="color:var(--math);">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
@@ -151,7 +154,7 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
     </div>
   </div>
 
-  <a href="hsu_trainer_3_klasse.html" class="subject-card">
+  <a href="hsu/hsu_trainer_3_klasse.html" class="subject-card">
     <div class="badge-hsu"></div>
     <div class="card-icon" style="color:var(--hsu);">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -176,6 +179,19 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
       Kommt bald
     </div>
   </div>
+
+  <a href="musik/musik_trainer.html" class="subject-card">
+    <div class="badge-musik"></div>
+    <div class="card-icon" style="color:var(--musik);">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+    </div>
+    <div class="card-title">Musik</div>
+    <div class="card-desc">Peter und der Wolf, Instrumente kennenlernen & Klavier-Merkspiel.</div>
+    <div class="status active">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      Jetzt starten
+    </div>
+  </a>
 </div>
 
 <!-- ELTERN-STATISTIK -->
@@ -231,6 +247,7 @@ function loadProfiles(){
         for(const id of Object.keys(parsed)){
           if(!parsed[id].history) parsed[id].history=[];
           if(!parsed[id].hsu_history) parsed[id].hsu_history=[];
+          if(!parsed[id].musik_history) parsed[id].musik_history=[];
           if(parsed[id].score===undefined) parsed[id].score=0;
           if(parsed[id].coins===undefined) parsed[id].coins=0;
         }
@@ -239,7 +256,7 @@ function loadProfiles(){
     }
   }catch(e){}
   if(!Object.keys(profiles).length){
-    profiles={'p1':{name:'Kind 1',score:0,coins:0,history:[],hsu_history:[]}};
+    profiles={'p1':{name:'Kind 1',score:0,coins:0,history:[],hsu_history:[],musik_history:[]}};
     localStorage.setItem(STORAGE_KEY,JSON.stringify(profiles));
   }
   const saved=localStorage.getItem(ACTIVE_KEY);
@@ -307,12 +324,15 @@ function updateParentStats(){
       return hist.filter(h => !cutoff || h.ts >= cutoff);
     }
 
-    const matheAll  = filterHist(p.history);
-    const hsuAll    = filterHist(p.hsu_history);
-    const matheOk   = matheAll.filter(h => h.ok).length;
-    const hsuOk     = hsuAll.filter(h => h.ok).length;
+    const matheAll   = filterHist(p.history);
+    const hsuAll     = filterHist(p.hsu_history);
+    const musikAll   = filterHist(p.musik_history);
+    const matheOk    = matheAll.filter(h => h.ok).length;
+    const hsuOk      = hsuAll.filter(h => h.ok).length;
+    const musikOk    = musikAll.filter(h => h.ok).length;
     const matheCount = matheAll.length;
     const hsuCount   = hsuAll.length;
+    const musikCount = musikAll.length;
 
     function pct(ok, tot) {
       if (!tot) return '';
@@ -335,6 +355,14 @@ function updateParentStats(){
           <div class="stat-count">${hsuCount}</div>
           <div class="stat-label">HSU-Aufgaben</div>
           ${pct(hsuOk, hsuCount)}
+        </div>
+      </div>
+      <div class="stat-card stat-card-musik">
+        <div class="stat-icon">🎵</div>
+        <div>
+          <div class="stat-count">${musikCount}</div>
+          <div class="stat-label">Musik-Aufgaben</div>
+          ${pct(musikOk, musikCount)}
         </div>
       </div>
       <div class="stat-card stat-card-german">
@@ -366,7 +394,7 @@ function addProfile(){
   const name=prompt('Name des Kindes:');
   if(!name||!name.trim()) return;
   const id='p_'+Date.now();
-  profiles[id]={name:name.trim(),score:0,coins:0,history:[],hsu_history:[]};
+  profiles[id]={name:name.trim(),score:0,coins:0,history:[],hsu_history:[],musik_history:[]};
   saveProfiles();
   activeProfId=id;
   localStorage.setItem(ACTIVE_KEY,id);

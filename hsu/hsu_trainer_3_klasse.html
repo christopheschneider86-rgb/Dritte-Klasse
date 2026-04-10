@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <title>HSU-Trainer 3. Klasse Bayern</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<link rel="icon" type="image/png" href="icon_hsu.png">
-<link rel="apple-touch-icon" href="icon_hsu.png">
+<link rel="icon" type="image/png" href="../images/icon_hsu.png">
+<link rel="apple-touch-icon" href="../images/icon_hsu.png">
 <style>
 :root {
   --bg: #f0f7e9;
@@ -134,10 +134,10 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 <div class="app">
 <div class="card">
   <div class="header">
-    <a href="index.html" class="back-home" title="Zurück">
+    <a href="../index.html" class="back-home" title="Zurück">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
     </a>
-    <img src="icon_hsu.png" class="app-icon" alt="HSU" onerror="this.style.display='none'">
+    <img src="../images/icon_hsu.png" class="app-icon" alt="HSU" onerror="this.style.display='none'">
     <div class="header-text">
       <h1>HSU-Trainer 3. Klasse</h1>
       <p>by ZaboChris</p>
@@ -201,7 +201,7 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
     <!-- SPIEL-BANNER -->
     <div class="game-banner">
       <div class="game-banner-left">
-        <img src="hsu_finder.png" class="game-banner-icon" alt="🐾" onerror="this.style.display='none'">
+        <img src="../images/hsu_finder.png" class="game-banner-icon" alt="🐾" onerror="this.style.display='none'">
         <div>
           <div class="game-banner-title">🐾 Tier-Entdecker</div>
           <div class="game-banner-sub">Richtige Antwort = 1 Münze · 10 Münzen = eine Runde!</div>
@@ -241,7 +241,7 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
       <div id="hs-list" style="min-height:100px"></div>
       <div style="text-align:center;margin-top:20px">
         <button class="btn-play" onclick="openGame()" style="display:inline-flex;align-items:center;gap:8px">
-          <img src="hsu_finder.png" style="width:22px;height:22px;border-radius:5px" onerror="this.style.display='none'">
+          <img src="../images/hsu_finder.png" style="width:22px;height:22px;border-radius:5px" onerror="this.style.display='none'">
           Jetzt spielen
         </button>
       </div>
@@ -534,7 +534,7 @@ function switchView(v) {
   if (v === 'dashboard') updateDashboard(dashPeriod);
   if (v === 'highscore') updateHighscores();
 }
-function openGame() { window.location.href = 'tier_entdecker.html'; }
+function openGame() { window.location.href = '../tier_entdecker.html'; }
 
 // ── HIGHSCORE ──────────────────────────────────────────
 function updateHighscores() {

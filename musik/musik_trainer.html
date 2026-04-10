@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Musik-Trainer 3. Klasse</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<link rel="icon" type="image/png" href="../images/icon_musik.png">
+<link rel="apple-touch-icon" href="../images/icon_musik.png">
+<style>
+:root {
+  --musik:#e91e8c;
+  --musik-light:#fce4f4;
+  --musik-dark:#b01570;
+  --bg:#fdf0f8;
+  --card:#fff;
+  --text:#2c3e50;
+  --correct:#27ae60;
+  --wrong:#e74c3c;
+  --tip:#f39c12;
+  --radius:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 0 40px;}
+
+/* ── HEADER ── */
+.header{background:linear-gradient(135deg,var(--musik),var(--musik-dark));color:#fff;padding:16px 20px 20px;position:relative;border-radius:0 0 28px 28px;box-shadow:0 4px 16px rgba(233,30,140,0.3);}
+.header-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.back-home{background:rgba(255,255,255,0.2);border:none;color:#fff;border-radius:12px;padding:8px 14px;cursor:pointer;font-size:14px;font-weight:bold;display:flex;align-items:center;gap:6px;text-decoration:none;}
+.back-home:hover{background:rgba(255,255,255,0.3);}
+.app-icon{width:38px;height:38px;border-radius:10px;object-fit:cover;}
+.app-title{font-size:22px;font-weight:bold;flex:1;}
+.herzen{display:flex;gap:4px;font-size:26px;}
+
+/* ── FORTSCHRITTSBALKEN ── */
+.progress-bar-wrap{background:rgba(255,255,255,0.25);border-radius:10px;height:10px;margin-top:10px;}
+.progress-bar{background:#fff;height:10px;border-radius:10px;transition:width .5s;}
+.progress-label{font-size:12px;color:rgba(255,255,255,0.85);margin-top:5px;text-align:right;}
+
+/* ── MÜNZEN ── */
+.coin-display{position:absolute;top:16px;right:20px;background:rgba(255,255,255,0.2);border-radius:12px;padding:6px 12px;font-size:14px;font-weight:bold;color:#fff;display:flex;align-items:center;gap:5px;}
+
+/* ── HAUPT-KARTE ── */
+.main{padding:20px 16px 0;}
+.card{background:#fff;border-radius:var(--radius);box-shadow:0 6px 20px rgba(0,0,0,0.08);padding:22px 20px;margin-bottom:16px;}
+
+/* ── THEMA-BADGE ── */
+.thema-badge{display:inline-flex;align-items:center;gap:6px;background:var(--musik-light);color:var(--musik-dark);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:bold;margin-bottom:14px;}
+
+/* ── FRAGE-TYP BADGE ── */
+.typ-badge{display:inline-block;border-radius:12px;padding:3px 10px;font-size:11px;font-weight:bold;margin-bottom:10px;margin-left:8px;}
+.typ-choice{background:#e8f4fd;color:#2980b9;}
+.typ-bild{background:#fef9e7;color:#f39c12;}
+.typ-luecke{background:#eafaf1;color:#27ae60;}
+.typ-wf{background:#fdf2e9;color:#e67e22;}
+
+/* ── INSTRUMENT-BILD ── */
+.instrument-visual{text-align:center;margin:14px 0;padding:20px;background:linear-gradient(135deg,var(--musik-light),#fff);border-radius:14px;border:2px solid #f8c0e8;}
+.instrument-emoji{font-size:72px;line-height:1;display:block;margin-bottom:8px;}
+.instrument-name{font-size:13px;color:#888;font-style:italic;}
+
+/* ── FRAGE ── */
+.frage-text{font-size:19px;font-weight:bold;line-height:1.4;margin-bottom:20px;}
+.luecke-highlight{background:var(--musik-light);border-bottom:3px solid var(--musik);padding:2px 8px;border-radius:6px;font-weight:bold;color:var(--musik-dark);}
+
+/* ── ANTWORT-BUTTONS ── */
+.antworten{display:flex;flex-direction:column;gap:10px;}
+.antwort-btn{background:#f8f9fa;border:2px solid #e9ecef;border-radius:14px;padding:14px 16px;font-size:16px;font-weight:600;color:var(--text);cursor:pointer;text-align:left;transition:all .15s;display:flex;align-items:center;gap:10px;}
+.antwort-btn:hover:not(:disabled){background:var(--musik-light);border-color:var(--musik);}
+.antwort-btn.richtig{background:#d5f5e3;border-color:var(--correct);color:#1a5e3a;}
+.antwort-btn.falsch{background:#fde8e8;border-color:var(--wrong);color:#922b21;}
+.antwort-btn:disabled{cursor:default;}
+.antwort-nr{width:28px;height:28px;border-radius:50%;background:var(--musik-light);color:var(--musik-dark);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:bold;flex-shrink:0;}
+.antwort-btn.richtig .antwort-nr{background:#27ae60;color:#fff;}
+.antwort-btn.falsch .antwort-nr{background:#e74c3c;color:#fff;}
+
+/* ── WAHR/FALSCH BUTTONS ── */
+.wf-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.wf-btn{border:3px solid #e9ecef;border-radius:16px;padding:20px 10px;font-size:20px;font-weight:bold;cursor:pointer;background:#f8f9fa;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:8px;}
+.wf-btn:hover:not(:disabled){background:var(--musik-light);border-color:var(--musik);}
+.wf-btn.richtig{background:#d5f5e3;border-color:var(--correct);}
+.wf-btn.falsch{background:#fde8e8;border-color:var(--wrong);}
+.wf-icon{font-size:36px;}
+
+/* ── TIP ── */
+.tip-box{background:#fef9e7;border-left:4px solid var(--tip);border-radius:10px;padding:12px 14px;font-size:14px;color:#7d5a00;line-height:1.5;margin-top:14px;display:none;}
+.tip-box.show{display:block;}
+
+/* ── FEEDBACK ── */
+.feedback{text-align:center;padding:16px;border-radius:14px;font-size:17px;font-weight:bold;margin-top:14px;display:none;}
+.feedback.richtig{background:#d5f5e3;color:#1a5e3a;display:block;}
+.feedback.falsch{background:#fde8e8;color:#922b21;display:block;}
+
+/* ── WEITER BUTTON ── */
+.weiter-btn{width:100%;background:var(--musik);color:#fff;border:none;border-radius:14px;padding:16px;font-size:17px;font-weight:bold;cursor:pointer;margin-top:14px;display:none;transition:background .15s;}
+.weiter-btn:hover{background:var(--musik-dark);}
+.weiter-btn.show{display:block;}
+
+/* ── TIP BUTTON ── */
+.tip-btn{background:none;border:2px solid var(--tip);color:var(--tip);border-radius:12px;padding:8px 16px;font-size:13px;font-weight:bold;cursor:pointer;margin-top:12px;display:flex;align-items:center;gap:6px;}
+.tip-btn:hover{background:#fef9e7;}
+
+/* ── SPIEL BANNER ── */
+.spiel-banner{background:linear-gradient(135deg,#6a11cb,#2575fc);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 6px 16px rgba(106,17,203,0.3);}
+.spiel-banner:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(106,17,203,0.4);}
+.spiel-banner-icon{width:56px;height:56px;border-radius:14px;object-fit:cover;flex-shrink:0;}
+.spiel-banner-text h3{color:#fff;font-size:17px;margin-bottom:4px;}
+.spiel-banner-text p{color:rgba(255,255,255,0.8);font-size:13px;}
+.spiel-badge{background:rgba(255,255,255,0.2);color:#fff;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:bold;margin-top:8px;display:inline-block;}
+
+/* ── ERGEBNIS-SCREEN ── */
+.result-screen{text-align:center;padding:20px;}
+.result-emoji{font-size:64px;margin-bottom:12px;}
+.result-titel{font-size:26px;font-weight:bold;margin-bottom:8px;}
+.result-text{color:#666;font-size:15px;margin-bottom:20px;}
+.result-punkte{font-size:40px;font-weight:bold;color:var(--musik);margin-bottom:6px;}
+.result-sub{font-size:14px;color:#888;margin-bottom:24px;}
+.result-coins{background:#fef9e7;border:2px solid #f39c12;border-radius:14px;padding:14px;margin-bottom:20px;font-size:18px;font-weight:bold;color:#7d5a00;}
+.result-btns{display:flex;flex-direction:column;gap:10px;}
+.result-btn{border:none;border-radius:14px;padding:16px;font-size:16px;font-weight:bold;cursor:pointer;}
+.result-btn-nochmal{background:var(--musik);color:#fff;}
+.result-btn-home{background:#f0f4f8;color:var(--text);}
+
+/* ── START-SCREEN ── */
+.start-screen{text-align:center;padding:10px 0 20px;}
+.start-icon{width:90px;height:90px;border-radius:24px;object-fit:cover;margin-bottom:16px;box-shadow:0 6px 16px rgba(233,30,140,0.3);}
+.start-titel{font-size:24px;font-weight:bold;margin-bottom:8px;}
+.start-text{color:#666;font-size:14px;margin-bottom:24px;line-height:1.5;}
+.start-info{display:flex;justify-content:center;gap:16px;margin-bottom:24px;flex-wrap:wrap;}
+.start-info-item{background:var(--musik-light);border-radius:12px;padding:10px 16px;font-size:13px;font-weight:bold;color:var(--musik-dark);}
+.start-btn{background:var(--musik);color:#fff;border:none;border-radius:16px;padding:18px 40px;font-size:18px;font-weight:bold;cursor:pointer;box-shadow:0 4px 14px rgba(233,30,140,0.35);}
+.start-btn:hover{background:var(--musik-dark);}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <a href="../index.html" class="back-home">← Zurück</a>
+    <img src="../images/icon_musik.png" class="app-icon" alt="Musik" onerror="this.style.display='none'">
+    <div class="app-title">Musik-Trainer</div>
+    <div class="herzen" id="herzenAnzeige">❤️❤️❤️</div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progressBar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">Frage 0 von 0</div>
+  <div class="coin-display">🪙 <span id="coinCount">0</span></div>
+</div>
+
+<div class="main" id="mainContent"></div>
+
+<script src="musik_fragen.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════
+//  MUSIK-TRAINER – Hauptlogik
+// ═══════════════════════════════════════════════════════════
+const STORAGE_KEY = 'm_app_v9';
+const ACTIVE_KEY  = 'm_app_active_prof';
+const COINS_PER_CORRECT = 2;
+
+let herzen = 3;
+let currentIdx = 0;
+let fragen = [];
+let richtigCount = 0;
+let answeredCount = 0;
+let sessionCoins = 0;
+let aktiveProfilId = null;
+let profiles = {};
+let tipVerbraucht = false;
+
+// ─── PROFIL LADEN ──────────────────────────────────────────
+function loadProfile() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      profiles = JSON.parse(raw);
+      Object.keys(profiles).forEach(id => {
+        if (!profiles[id].musik_history) profiles[id].musik_history = [];
+        if (!profiles[id].coins) profiles[id].coins = 0;
+      });
+    }
+  } catch(e) {}
+  aktiveProfilId = localStorage.getItem(ACTIVE_KEY);
+  if (!aktiveProfilId || !profiles[aktiveProfilId]) {
+    aktiveProfilId = Object.keys(profiles)[0] || null;
+  }
+  updateCoinDisplay();
+}
+
+function saveHistory(richtig) {
+  if (!aktiveProfilId || !profiles[aktiveProfilId]) return;
+  const p = profiles[aktiveProfilId];
+  if (!p.musik_history) p.musik_history = [];
+  p.musik_history.push({ ts: Date.now(), ok: richtig });
+  if (richtig && !tipVerbraucht) {
+    p.coins = (p.coins || 0) + COINS_PER_CORRECT;
+    sessionCoins += COINS_PER_CORRECT;
+  } else if (richtig && tipVerbraucht) {
+    p.coins = (p.coins || 0) + 1;
+    sessionCoins += 1;
+  }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
+  updateCoinDisplay();
+}
+
+function updateCoinDisplay() {
+  const coins = profiles[aktiveProfilId]?.coins || 0;
+  document.getElementById('coinCount').textContent = coins;
+}
+
+// ─── FRAGEN MISCHEN ────────────────────────────────────────
+function initFragen() {
+  fragen = shuffleArray(MUSIK_FRAGEN).slice(0, 10);
+  currentIdx = 0;
+  herzen = 3;
+  richtigCount = 0;
+  answeredCount = 0;
+  sessionCoins = 0;
+}
+
+// ─── RENDER ────────────────────────────────────────────────
+function render() {
+  updateHerzen();
+  updateProgress();
+  const main = document.getElementById('mainContent');
+
+  if (currentIdx === 0 && answeredCount === 0) {
+    renderStart();
+    return;
+  }
+  if (currentIdx >= fragen.length || herzen <= 0) {
+    renderResult();
+    return;
+  }
+  renderFrage();
+}
+
+// ─── START ─────────────────────────────────────────────────
+function renderStart() {
+  const main = document.getElementById('mainContent');
+  main.innerHTML = `
+    <div class="card">
+      <div class="start-screen">
+        <img src="../images/icon_musik.png" class="start-icon" alt="Musik" onerror="this.style.display='none'">
+        <div class="start-titel">🎵 Musik-Trainer</div>
+        <div class="start-text">Teste dein Wissen über Instrumente<br>und „Peter und der Wolf"!</div>
+        <div class="start-info">
+          <div class="start-info-item">🎵 10 Fragen</div>
+          <div class="start-info-item">❤️ 3 Herzen</div>
+          <div class="start-info-item">🪙 +2 Münzen pro Antwort</div>
+        </div>
+        <button class="start-btn" onclick="startQuiz()">🎶 Starten!</button>
+      </div>
+    </div>
+    ${renderSpielBanner()}
+  `;
+}
+
+function startQuiz() {
+  initFragen();
+  answeredCount = 1;
+  renderFrage();
+}
+
+function renderSpielBanner() {
+  return `<div class="spiel-banner" onclick="window.location.href='musik_merker.html'">
+    <img src="../images/musik_merker.png" class="spiel-banner-icon" alt="Merkspiel" onerror="this.style.display='none'">
+    <div class="spiel-banner-text">
+      <h3>🎹 Musik-Merkspiel</h3>
+      <p>Spiele die Melodie auf dem Klavier nach!</p>
+      <div class="spiel-badge">🎮 Jetzt spielen</div>
+    </div>
+  </div>`;
+}
+
+// ─── FRAGE RENDERN ─────────────────────────────────────────
+function renderFrage() {
+  tipVerbraucht = false;
+  const f = fragen[currentIdx];
+  updateProgress();
+  const main = document.getElementById('mainContent');
+
+  let frageHTML = '';
+  if (f.typ === 'bild') {
+    const bild = INSTRUMENT_BILDER[f.instrumentKey] || {};
+    frageHTML = `
+      <div class="instrument-visual">
+        <span class="instrument-emoji">${bild.emoji || '🎵'}</span>
+        <div class="instrument-name">${bild.beschreibung || ''}</div>
+      </div>
+      <div class="frage-text">${f.frage}</div>`;
+  } else if (f.typ === 'luecke') {
+    const frageFormatiert = f.frage.replace('___', `<span class="luecke-highlight">???</span>`);
+    frageHTML = `<div class="frage-text">${frageFormatiert}</div>`;
+  } else {
+    frageHTML = `<div class="frage-text">${f.frage}</div>`;
+  }
+
+  let antwortenHTML = '';
+  if (f.typ === 'wahr_falsch') {
+    antwortenHTML = `
+      <div class="wf-wrap">
+        <button class="wf-btn" onclick="antworteWF(true)">
+          <span class="wf-icon">✅</span>
+          <span>Richtig</span>
+        </button>
+        <button class="wf-btn" onclick="antworteWF(false)">
+          <span class="wf-icon">❌</span>
+          <span>Falsch</span>
+        </button>
+      </div>`;
+  } else {
+    const buchstaben = ['A', 'B', 'C', 'D'];
+    antwortenHTML = `<div class="antworten">` +
+      f.antworten.map((a, i) => `
+        <button class="antwort-btn" onclick="antworte(${i})" id="btn_${i}">
+          <div class="antwort-nr">${buchstaben[i]}</div>
+          <span>${a}</span>
+        </button>`).join('') +
+      `</div>`;
+  }
+
+  const typBadge = { choice:'Multiple Choice', bild:'Bild', luecke:'Lückentext', wahr_falsch:'Wahr / Falsch' };
+  const typClass = { choice:'typ-choice', bild:'typ-bild', luecke:'typ-luecke', wahr_falsch:'typ-wf' };
+
+  main.innerHTML = `
+    <div class="card">
+      <div>
+        <span class="thema-badge">🎵 ${f.thema}</span>
+        <span class="typ-badge ${typClass[f.typ]}">${typBadge[f.typ]}</span>
+      </div>
+      ${frageHTML}
+      ${antwortenHTML}
+      <button class="tip-btn" onclick="zeigeTip()" id="tipBtn">💡 Tipp anzeigen</button>
+      <div class="tip-box" id="tipBox">${f.tip}</div>
+      <div class="feedback" id="feedbackBox"></div>
+      <button class="weiter-btn" id="weiterBtn" onclick="naechste()">Weiter →</button>
+    </div>
+    ${currentIdx === fragen.length - 1 ? '' : renderSpielBanner()}
+  `;
+}
+
+// ─── ANTWORTEN ─────────────────────────────────────────────
+function antworte(gewaehlt) {
+  const f = fragen[currentIdx];
+  const richtig = gewaehlt === f.richtig;
+  const btns = document.querySelectorAll('.antwort-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[f.richtig].classList.add('richtig');
+  if (!richtig) {
+    btns[gewaehlt].classList.add('falsch');
+    herzen--;
+    updateHerzen();
+  }
+  zeigeFeedback(richtig, f);
+  saveHistory(richtig);
+  if (richtig) richtigCount++;
+  answeredCount++;
+}
+
+function antworteWF(gewaehlt) {
+  const f = fragen[currentIdx];
+  const richtig = gewaehlt === f.richtig;
+  const btns = document.querySelectorAll('.wf-btn');
+  btns.forEach(b => b.disabled = true);
+  const richtigIdx = f.richtig ? 0 : 1;
+  btns[richtigIdx].classList.add('richtig');
+  if (!richtig) {
+    btns[gewaehlt ? 0 : 1].classList.add('falsch');
+    herzen--;
+    updateHerzen();
+  }
+  zeigeFeedback(richtig, f);
+  saveHistory(richtig);
+  if (richtig) richtigCount++;
+  answeredCount++;
+}
+
+function zeigeFeedback(richtig, f) {
+  const fb = document.getElementById('feedbackBox');
+  fb.className = 'feedback ' + (richtig ? 'richtig' : 'falsch');
+  fb.textContent = richtig ? '🎉 Super! Richtig!' : '❌ Leider falsch!';
+  document.getElementById('tipBtn').style.display = 'none';
+  if (!richtig) document.getElementById('tipBox').classList.add('show');
+  document.getElementById('weiterBtn').classList.add('show');
+}
+
+function zeigeTip() {
+  tipVerbraucht = true;
+  document.getElementById('tipBox').classList.add('show');
+  document.getElementById('tipBtn').style.display = 'none';
+}
+
+function naechste() {
+  currentIdx++;
+  if (currentIdx >= fragen.length || herzen <= 0) {
+    renderResult();
+  } else {
+    renderFrage();
+  }
+}
+
+// ─── HERZEN & PROGRESS ─────────────────────────────────────
+function updateHerzen() {
+  const icons = ['💔', '💔', '💔'];
+  for (let i = 0; i < herzen; i++) icons[i] = '❤️';
+  document.getElementById('herzenAnzeige').textContent = icons.join('');
+}
+
+function updateProgress() {
+  const total = fragen.length;
+  const done = currentIdx;
+  const pct = total ? (done / total) * 100 : 0;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `Frage ${Math.min(done + 1, total)} von ${total}`;
+}
+
+// ─── ERGEBNIS ──────────────────────────────────────────────
+function renderResult() {
+  const total = fragen.length;
+  const pct = Math.round((richtigCount / total) * 100);
+  let emoji = '😕', titel = 'Weiter üben!';
+  if (pct >= 90) { emoji = '🌟'; titel = 'Musik-Profi!'; }
+  else if (pct >= 70) { emoji = '🎉'; titel = 'Sehr gut!'; }
+  else if (pct >= 50) { emoji = '👍'; titel = 'Gut gemacht!'; }
+
+  const main = document.getElementById('mainContent');
+  main.innerHTML = `
+    <div class="card">
+      <div class="result-screen">
+        <div class="result-emoji">${emoji}</div>
+        <div class="result-titel">${titel}</div>
+        <div class="result-text">Du hast ${richtigCount} von ${total} Fragen richtig beantwortet.</div>
+        <div class="result-punkte">${pct}%</div>
+        <div class="result-sub">Ergebnis</div>
+        <div class="result-coins">🪙 +${sessionCoins} Münzen verdient!</div>
+        <div class="result-btns">
+          <button class="result-btn result-btn-nochmal" onclick="nochmal()">🔄 Nochmal spielen</button>
+          <button class="result-btn result-btn-home" onclick="window.location.href='../index.html'">🏠 Zur Startseite</button>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('progressBar').style.width = '100%';
+  document.getElementById('progressLabel').textContent = `Fertig! ${richtigCount}/${total} richtig`;
+}
+
+function nochmal() {
+  initFragen();
+  answeredCount = 1;
+  renderFrage();
+}
+
+// ─── START ─────────────────────────────────────────────────
+loadProfile();
+render();
+</script>
+</body>
+</html>
