@@ -1,0 +1,91 @@
+{
+  "skill_name": "codebase-indexer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Ich arbeite an der Lernapp unter /sessions/peaceful-compassionate-babbage/mnt/Dritte-Klasse. Kannst du mir bitte eine CODEBASE_MAP.md erstellen? Ich möchte in Zukunft weniger Tokens verschwenden indem du nicht immer alle Dateien neu liest.",
+      "expected_output": "Eine vollständige CODEBASE_MAP.md im Projekt-Root mit: Datei-Struktur (ASCII-Tree), Modul-Beschreibungen mit Key-Functions, Shared Storage Keys (m_app_v9 etc.), Known Issues, und Tipps wie man zukünftige Sessions startet.",
+      "assertions": [
+        {
+          "text": "CODEBASE_MAP.md wird im Projekt-Root gespeichert",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "Datei enthält ASCII-Baum mit allen relevanten Dateien",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "LocalStorage Keys (m_app_v9, m_musik_hs etc.) sind dokumentiert",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "Mindestens 3 Key-Functions pro komplexer Datei dokumentiert",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "Anleitung für zukünftige Sessions (wie startet man den nächsten Prompt) enthalten",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "Map ist unter 400 Zeilen (nicht zu lang)",
+          "passed": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Kannst du die CODEBASE_MAP.md aktualisieren? Wir haben gerade den startCoins-Bug in musik_merker.html gefixt und die addCoins() Funktion entfernt. Das sollte in der Map dokumentiert sein.",
+      "expected_output": "Die bestehende CODEBASE_MAP.md wird gezielt aktualisiert: Known Issues Tabelle bekommt den neuen Fix-Eintrag, musik_merker.html Sektion wird angepasst (startCoins Variable, addCoins entfernt), Changelog bekommt neuen Eintrag.",
+      "assertions": [
+        {
+          "text": "Bestehende Map wird aktualisiert, NICHT neu erstellt",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "Changelog-Eintrag für startCoins-Fix hinzugefügt",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "Known Issues Tabelle zeigt den Fix als erledigt",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "addCoins() wird als entfernt markiert in der musik_merker Sektion",
+          "passed": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Ich starte ein neues Projekt: eine einfache Todo-App mit index.html, app.js und style.css. Kannst du mir am Anfang eine Codebase Map erstellen? Die Dateien sind in /sessions/peaceful-compassionate-babbage/mnt/Dritte-Klasse/todo-test/",
+      "expected_output": "Auch für ein kleines 3-Datei-Projekt entsteht eine sinnvolle CODEBASE_MAP.md. Sie sollte kurz sein (unter 100 Zeilen), die wichtigsten Funktionen aus app.js zeigen, und trotzdem die wichtigen Punkte abdecken.",
+      "assertions": [
+        {
+          "text": "Map wird erstellt auch wenn Projekt klein ist",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "Map ist proportional kurz (unter 150 Zeilen für 3-Datei-Projekt)",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "Enthält trotzdem alle Pflicht-Sektionen (Struktur, State, Changelog)",
+          "passed": null,
+          "evidence": null
+        }
+      ]
+    }
+  ]
+}

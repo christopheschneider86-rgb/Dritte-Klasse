@@ -1,0 +1,3 @@
+body { font-family: sans-serif; max-width: 400px; margin: 40px auto; }
+li.done span { text-decoration: line-through; color: #aaa; }
+button { cursor: pointer; }

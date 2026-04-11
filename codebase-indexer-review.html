@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --bg: #faf9f5;
+      --surface: #ffffff;
+      --border: #e8e6dc;
+      --text: #141413;
+      --text-muted: #b0aea5;
+      --accent: #d97757;
+      --accent-hover: #c4613f;
+      --green: #788c5d;
+      --green-bg: #eef2e8;
+      --red: #c44;
+      --red-bg: #fceaea;
+      --header-bg: #141413;
+      --header-text: #faf9f5;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- Header ---- */
+    .header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .header .instructions {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+    .header .progress {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      text-align: right;
+    }
+
+    /* ---- Main content ---- */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ---- Sections ---- */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .section-header {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .section-body {
+      padding: 1rem;
+    }
+
+    /* ---- Config badge ---- */
+    .config-badge {
+      display: inline-block;
+      padding: 0.2rem 0.625rem;
+      border-radius: 9999px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-left: 0.75rem;
+      vertical-align: middle;
+    }
+    .config-badge.config-primary {
+      background: rgba(33, 150, 243, 0.12);
+      color: #1976d2;
+    }
+    .config-badge.config-baseline {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f57f17;
+    }
+
+    /* ---- Prompt ---- */
+    .prompt-text {
+      white-space: pre-wrap;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    /* ---- Outputs ---- */
+    .output-file {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .output-file + .output-file {
+      margin-top: 1rem;
+    }
+    .output-file-header {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .output-file-header .dl-btn {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 500;
+      opacity: 0.8;
+    }
+    .output-file-header .dl-btn:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .output-file-content {
+      padding: 0.75rem;
+      overflow-x: auto;
+    }
+    .output-file-content pre {
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    }
+    .output-file-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    .output-file-content iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+    .output-file-content table {
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      width: 100%;
+    }
+    .output-file-content table td,
+    .output-file-content table th {
+      border: 1px solid var(--border);
+      padding: 0.375rem 0.5rem;
+      text-align: left;
+    }
+    .output-file-content table th {
+      background: var(--bg);
+      font-weight: 600;
+    }
+    .output-file-content .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .output-file-content .download-link:hover {
+      background: var(--border);
+    }
+    .empty-state {
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* ---- Feedback ---- */
+    .prev-feedback {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.625rem 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .prev-feedback-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+      color: var(--text-muted);
+    }
+    .feedback-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      resize: vertical;
+      color: var(--text);
+    }
+    .feedback-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .feedback-status {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      min-height: 1.1em;
+    }
+
+    /* ---- Grades (collapsible) ---- */
+    .grades-toggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .grades-toggle:hover {
+      color: var(--accent);
+    }
+    .grades-toggle .arrow {
+      margin-right: 0.5rem;
+      transition: transform 0.15s;
+      font-size: 0.75rem;
+    }
+    .grades-toggle .arrow.open {
+      transform: rotate(90deg);
+    }
+    .grades-content {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .grades-content.open {
+      display: block;
+    }
+    .grades-summary {
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .grade-badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .grade-pass { background: var(--green-bg); color: var(--green); }
+    .grade-fail { background: var(--red-bg); color: var(--red); }
+    .assertion-list {
+      list-style: none;
+    }
+    .assertion-item {
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8125rem;
+    }
+    .assertion-item:last-child { border-bottom: none; }
+    .assertion-status {
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+    .assertion-status.pass { color: var(--green); }
+    .assertion-status.fail { color: var(--red); }
+    .assertion-evidence {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      padding-left: 1.5rem;
+    }
+
+    /* ---- View tabs ---- */
+    .view-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 2rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .view-tab {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .view-tab:hover { color: var(--text); }
+    .view-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .view-panel { display: none; }
+    .view-panel.active { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
+    /* ---- Benchmark view ---- */
+    .benchmark-view {
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .benchmark-table {
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    .benchmark-table th, .benchmark-table td {
+      padding: 0.625rem 0.75rem;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    .benchmark-table th {
+      font-family: 'Poppins', sans-serif;
+      background: var(--header-bg);
+      color: var(--header-text);
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .benchmark-table tr:hover { background: var(--bg); }
+    .benchmark-table tr.benchmark-row-with { background: rgba(33, 150, 243, 0.06); }
+    .benchmark-table tr.benchmark-row-without { background: rgba(255, 193, 7, 0.06); }
+    .benchmark-table tr.benchmark-row-with:hover { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-without:hover { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-table tr.benchmark-row-avg { font-weight: 600; border-top: 2px solid var(--border); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-with { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-without { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-delta-positive { color: var(--green); font-weight: 600; }
+    .benchmark-delta-negative { color: var(--red); font-weight: 600; }
+    .benchmark-notes {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .benchmark-notes h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+    .benchmark-notes ul {
+      list-style: disc;
+      padding-left: 1.25rem;
+    }
+    .benchmark-notes li {
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      margin-bottom: 0.375rem;
+    }
+    .benchmark-empty {
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    /* ---- Navigation ---- */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .nav-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .done-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .done-btn:hover {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .done-btn.ready {
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+    }
+    .done-btn.ready:hover {
+      background: var(--accent-hover);
+    }
+    /* ---- Done overlay ---- */
+    .done-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .done-overlay.visible {
+      display: flex;
+    }
+    .done-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 2rem 3rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+    }
+    .done-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .done-card p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .done-card .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .done-card button {
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .done-card button:hover {
+      background: var(--bg);
+    }
+    /* ---- Toast ---- */
+    .toast {
+      position: fixed;
+      bottom: 5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" style="height:100vh; display:flex; flex-direction:column;">
+    <div class="header">
+      <div>
+        <h1>Eval Review: <span id="skill-name"></span></h1>
+        <div class="instructions">Review each output and leave feedback below. Navigate with arrow keys or buttons. When done, copy feedback and paste into Claude Code.</div>
+      </div>
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <!-- View tabs (only shown when benchmark data exists) -->
+    <div class="view-tabs" id="view-tabs" style="display:none;">
+      <button class="view-tab active" onclick="switchView('outputs')">Outputs</button>
+      <button class="view-tab" onclick="switchView('benchmark')">Benchmark</button>
+    </div>
+
+    <!-- Outputs panel (qualitative review) -->
+    <div class="view-panel active" id="panel-outputs">
+    <div class="main">
+      <!-- Prompt -->
+      <div class="section">
+        <div class="section-header">Prompt <span class="config-badge" id="config-badge" style="display:none;"></span></div>
+        <div class="section-body">
+          <div class="prompt-text" id="prompt-text"></div>
+        </div>
+      </div>
+
+      <!-- Outputs -->
+      <div class="section">
+        <div class="section-header">Output</div>
+        <div class="section-body" id="outputs-body">
+          <div class="empty-state">No output files found</div>
+        </div>
+      </div>
+
+      <!-- Previous Output (collapsible) -->
+      <div class="section" id="prev-outputs-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="togglePrevOutputs()">
+            <span class="arrow" id="prev-outputs-arrow">&#9654;</span>
+            Previous Output
+          </div>
+        </div>
+        <div class="grades-content" id="prev-outputs-content"></div>
+      </div>
+
+      <!-- Grades (collapsible) -->
+      <div class="section" id="grades-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="toggleGrades()">
+            <span class="arrow" id="grades-arrow">&#9654;</span>
+            Formal Grades
+          </div>
+        </div>
+        <div class="grades-content" id="grades-content"></div>
+      </div>
+
+      <!-- Feedback -->
+      <div class="section">
+        <div class="section-header">Your Feedback</div>
+        <div class="section-body">
+          <textarea
+            class="feedback-textarea"
+            id="feedback"
+            placeholder="What do you think of this output? Any issues, suggestions, or things that look great?"
+          ></textarea>
+          <div class="feedback-status" id="feedback-status"></div>
+          <div class="prev-feedback" id="prev-feedback" style="display:none;">
+            <div class="prev-feedback-label">Previous feedback</div>
+            <div id="prev-feedback-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav" id="outputs-nav">
+      <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">&#8592; Previous</button>
+      <button class="done-btn" id="done-btn" onclick="showDoneDialog()">Submit All Reviews</button>
+      <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next &#8594;</button>
+    </div>
+    </div><!-- end panel-outputs -->
+
+    <!-- Benchmark panel (quantitative stats) -->
+    <div class="view-panel" id="panel-benchmark">
+      <div class="benchmark-view" id="benchmark-content">
+        <div class="benchmark-empty">No benchmark data available. Run a benchmark to see quantitative results here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Done overlay -->
+  <div class="done-overlay" id="done-overlay">
+    <div class="done-card">
+      <h2>Review Complete</h2>
+      <p>Your feedback has been saved. Go back to your Claude Code session and tell Claude you're done reviewing.</p>
+      <div class="btn-row">
+        <button onclick="closeDoneDialog()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ---- Embedded data (injected by generate_review.py) ----
+    const EMBEDDED_DATA = {"skill_name": "codebase-indexer", "runs": [{"id": "eval-1-dritte-klasse-map-with_skill", "prompt": "Ich arbeite an der Lernapp unter /sessions/peaceful-compassionate-babbage/mnt/Dritte-Klasse. Kannst du mir bitte eine CODEBASE_MAP.md erstellen?", "eval_id": 1, "outputs": [{"name": "CODEBASE_MAP.md", "type": "text", "content": "# Codebase Map \u2013 Lern-Abenteuer 3. Klasse\n\n**Last updated:** 2026-04-11  \n**Purpose:** Gamified learning app for 3rd-grade German elementary school children with modules for math (Mathe), home science (HSU), and music (Musik). Features profile management, coin-based rewards, localStorage-backed progress tracking, and parent statistics dashboard.\n\n---\n\n## File Structure\n\n```\n/Dritte-Klasse/\n\u251c\u2500\u2500 index.html                          # Main hub: profile selector, 5-subject grid, parent stats\n\u251c\u2500\u2500 tier_entdecker.html                 # Interactive animal explorer game (HSU module)\n\u251c\u2500\u2500 mathe/\n\u2502   \u251c\u2500\u2500 mathe_trainer_3_klasse.html      # Math trainer: 9 topic tiles, multi-choice/puzzle tasks\n\u2502   \u2514\u2500\u2500 mathe_jump.html                  # Math mini-game (jumping/physical challenge)\n\u251c\u2500\u2500 hsu/\n\u2502   \u251c\u2500\u2500 hsu_trainer_3_klasse.html        # Home science trainer: 10+ topics (Wald, Wasser, etc.)\n\u2502   \u2514\u2500\u2500 hsu_fragen.js                    # Question bank for HSU (200+ questions, 10+ topics)\n\u251c\u2500\u2500 musik/\n\u2502   \u251c\u2500\u2500 musik_trainer.html               # Music trainer: 3 sub-modules (Peter/Wolf, Instruments, Klavier)\n\u2502   \u251c\u2500\u2500 musik_merker.html                # Piano memory game (Simon says with music)\n\u2502   \u251c\u2500\u2500 musik_orchester.html             # Orchestra instruments explorer\n\u2502   \u2514\u2500\u2500 musik_fragen.js                  # Question bank for music (100+ questions)\n\u2514\u2500\u2500 todo-test/                           # Test folder (ignore)\n```\n\n---\n\n## Modules & Key Functions\n\n### index.html\n**Purpose:** Landing page with profile manager, subject grid, coin wallet, and parent stats dashboard.  \n**Lines:** 452 | **Complexity:** high\n\n**Key functions & global state:**\n- `loadProfiles()` \u2014 Load all profiles from localStorage (STORAGE_KEY='m_app_v9')\n- `saveProfiles()` \u2014 Persist profiles to localStorage\n- `setActive(id)` \u2014 Switch active profile, refresh UI and stats\n- `addProfile()` \u2014 Create new child profile via prompt\n- `deleteProfile(id, e)` \u2014 Remove profile (needs confirmation)\n- `updateParentStats()` \u2014 Calculate and display topic stats (filtered by time period: week, lastweek, 3weeks, all)\n- `render()` \u2014 Render profile chips and add button\n- **Global state:** `profiles` (object of {id \u2192 name, coins, score, history, hsu_history, musik_history}), `activeProfId`\n\n**Key localStorage keys:**\n- `m_app_v9` \u2014 All profiles + history\n- `m_app_active_prof` \u2014 Active profile ID\n\n---\n\n### mathe/mathe_trainer_3_klasse.html\n**Purpose:** Math trainer with 9 topic tiles (Zahlraum 1000, Addition, Subraction, Multiplikation, Division, Geometrie, Uhrzeit, Geld, Vermischtes).  \n**Lines:** 676 | **Complexity:** high\n\n**Key game mechanics:**\n- 9 topic tiles \u2192 each opens a subtype bar with 3-5 sub-topics\n- Multi-choice (4 options), number input (Mauer-style brick walls), visual puzzles (T-Haus cross)\n- Coin cost per attempt (stored in profile.coins)\n- Star rating (0-3 stars based on correctness)\n- Stores attempt history in profile.history (timestamp, topic, subtopic, ok, difficulty)\n\n**Key functions:**\n- `loadProfile()` \u2014 Load active profile's data, coins, history\n- `updateCoinDisplay()` \u2014 Refresh coin count display\n- `renderQuestion()` \u2014 Generate and render current task\n- `checkAnswer()` \u2014 Validate input, award coins/stars, add history entry\n- `playSound()` \u2014 Audio feedback (success/error)\n\n---\n\n### mathe/mathe_jump.html\n**Purpose:** Physical/active math game (jumping or movement-based challenge).  \n**Lines:** 418 | **Complexity:** medium\n\n*Not fully analyzed yet \u2014 likely interactive game*\n\n---\n\n### hsu/hsu_trainer_3_klasse.html\n**Purpose:** Home Science (HSU) trainer with 10+ topic tiles (Wald, Wasser, Feuerwehr, Blutkreislauf, Orientierung, Ritter, M\u00e4rchen, Geschichte, Beruf, Kontinente, Sicher im Verkehr, Sommer).  \n**Lines:** 612 | **Complexity:** high\n\n**Key game mechanics:**\n- Similar to Mathe: topic tiles \u2192 task display area\n- Questions loaded from hsu_fragen.js (HSU_TOPICS)\n- Multi-choice, Yes/No toggles, True/False\n- Bonus questions after correct answers\n- Coin rewards, star ratings, history tracking\n\n**Key functions:**\n- `loadProfile()`, `updateCoinDisplay()`, `checkAnswer()`\n- `renderQuestion()` \u2014 Render MC, Yes/No, or text-based task\n- History stored in profile.hsu_history\n\n---\n\n### hsu/hsu_fragen.js\n**Purpose:** Question bank for HSU trainer (10 topic objects, ~200 questions total).  \n**Lines:** 215 | **Complexity:** medium\n\n**Structure:**\n- `HSU_TOPICS` object: key=topic-slug, value={title, icon, sub, color, questions[]}\n- Each question: `{q, hint, choices[], sol, isYesNo, bonus}`\n- Topics: wald, wasser, feuerwehr, blutkreislauf, orientierung, ritter, m\u00e4rchen, geschichte, beruf, kontinente, verkehr, sommer\n\n---\n\n### musik/musik_trainer.html\n**Purpose:** Music trainer hub with 3 sub-modules: Peter & the Wolf, Instruments, Piano game.  \n**Lines:** 615 | **Complexity:** high\n\n**Key sections:**\n- Profile loader + coin display\n- 3 subject tiles linking to: musik_merker.html, musik_orchester.html, q&a questions (inline)\n- Question rendering for Peter/Wolf topics\n- Same coin cost, history tracking pattern as Mathe/HSU\n\n---\n\n### musik/musik_merker.html\n**Purpose:** Piano memory game (Simon Says with musical notes, 9 levels, highscore tracking).  \n**Lines:** 656 | **Complexity:** high\n\n**Key game mechanics:**\n- Generate random sequence of piano notes (length increases with level)\n- Player must repeat by clicking white-key buttons\n- Lose heart for wrong note; game over at 0 hearts\n- Visual piano (7 white keys A\u2013G, CSS-only)\n- Web Audio API for tone generation (playTon function, frequency-based)\n- Highscores stored per profile in localStorage (m_musik_hs)\n\n**Key functions & state:**\n- `loadProfile()`, `loadHighscores()`, `saveHighscore()`\n- `generiereSequenz()` \u2014 Generate random 9-note sequence\n- `spieleSequenz()` \u2014 Play back sequence to user\n- `tasteDr\u00fccken(noteIdx)` \u2014 Handle user click, validate against sequence\n- `playTon(freq, dauer)` \u2014 Generate tone via Web Audio API\n- **State:** `sequenz` (array of note indices), `eingabe` (user input), `level`, `herzen`, `abspielIdx`\n\n**localStorage keys:**\n- `m_musik_hs` \u2014 Highscores array [{name, lvl}]\n\n---\n\n### musik/musik_orchester.html\n**Purpose:** Orchestra instruments explorer (visual tour of instruments from Peter & the Wolf).  \n**Lines:** 384 | **Complexity:** medium\n\n*Interactive exhibit of 7 main instruments with descriptions and SVG images*\n\n---\n\n### musik/musik_fragen.js\n**Purpose:** Question bank for music trainer (~100 questions, 3 topics).  \n**Lines:** 605 | **Complexity:** medium\n\n**Structure:**\n- `INSTRUMENT_BILD` object: instrument name \u2192 SVG path in img/ folder\n- `MUSIK_TOPICS` object: key=topic-slug, value={icon, title, sub, questions[]}\n- Each question: `{tag, q, hint, choices[], sol, visual, bonus}`\n- Topics: peter_wolf, instrumente, klavier\n\n---\n\n### tier_entdecker.html\n**Purpose:** Interactive animal explorer game (HSU module, standalone).  \n**Lines:** 100+ | **Complexity:** medium\n\n*Likely memory or matching game with animal images and facts*\n\n---\n\n## Shared State & Storage\n\n| Key/Variable | Where set | Where read | What it holds |\n|---|---|---|---|\n| `m_app_v9` | index.html, trainers | All modules | Complete profiles object: {profileId \u2192 {name, coins, score, history, hsu_history, musik_history}} |\n| `m_app_active_prof` | index.html, trainers | All modules | ID of currently active profile |\n| `m_musik_hs` | musik_merker.html | musik_merker.html | JSON array of highscores: [{name, lvl}] |\n| `profiles[id].coins` | All trainers (checkAnswer) | index.html, trainers | Coin balance per profile |\n| `profiles[id].history` | mathe_trainer | index.html (stats) | Array of mathe attempts: [{ts, topic, subtopic, ok, stars, ...}] |\n| `profiles[id].hsu_history` | hsu_trainer | index.html (stats) | Array of HSU attempts |\n| `profiles[id].musik_history` | musik modules | index.html (stats) | Array of music attempts |\n\n---\n\n## Known Issues & Fixes\n\n| Problem | File | Status | Notes |\n|---|---|---|---|\n| Parent stats periods (lastweek, 3weeks) may have off-by-one errors | index.html lines 308\u2013325 | \u26a0\ufe0f Open | `getWeekStart()` assumes Monday=1, Sunday=7. Edge cases at week boundaries untested. |\n| Web Audio API context may fail on some browsers without user gesture | musik_merker.html line 228 | \u26a0\ufe0f Known | ensureAudio() tries to resume context; some phones still block. |\n| SVG instrument images may 404 if images/img/ folders missing | musik modules | \u26a0\ufe0f Open | No fallback; shows broken image if SVG not found. |\n| Coin deduction doesn't prevent negative balance | music_merker, trainers | \u26a0\ufe0f Open | removeCoins() clamps to 0 but no UI warning when cost > balance. |\n| localStorage full might corrupt profiles silently | all modules | \u26a0\ufe0f Known | No error handling for quota exceeded. |\n\n---\n\n## How to Use This Map (for Claude)\n\n1. **Profile & state management:** Always read index.html first \u2014 it owns localStorage keys `m_app_v9` and `m_app_active_prof`.\n2. **Add a new subject:** Copy pattern from `mathe_trainer_3_klasse.html` or `hsu_trainer_3_klasse.html`. Create trainer HTML + question JS file.\n3. **Fix coin/scoring bug:** Check `mathe_trainer` or `hsu_trainer` in the checkAnswer() function, then sync logic to music_merker.html.\n4. **Add new HSU/Musik questions:** Edit `hsu_fragen.js` or `musik_fragen.js` \u2014 just add `{ q, hint, choices, sol, ...}` objects to the relevant topic.\n5. **Debug parent stats:** Focus on index.html lines 296\u2013383 (updateParentStats) and the time-period filtering logic.\n6. **Audio issues:** Check musik_merker.html `ensureAudio()` and `playTon()` functions.\n\n---\n\n## Changelog\n\n| Date | Change | Files affected |\n|---|---|---|\n| 2026-04-11 | Codebase map created | (all) |\n"}], "grading": null}, {"id": "eval-1-dritte-klasse-map-without_skill", "prompt": "Ich arbeite an der Lernapp unter /sessions/peaceful-compassionate-babbage/mnt/Dritte-Klasse. Kannst du mir bitte eine CODEBASE_MAP.md erstellen?", "eval_id": 1, "outputs": [{"name": "CODEBASE_MAP.md", "type": "text", "content": "# Codebase Map - Lernapp Dritte Klasse\n\n**Letzte Aktualisierung:** 2026-04-11  \n**Autor:** Claude + Christoph Schneider  \n**Zweck:** Schnelle Navigation, Token-Optimierung, Abh\u00e4ngigkeits\u00fcbersicht\n\n---\n\n## \ud83d\udcc1 Projekt-Struktur\n\n```\nDritte-Klasse/\n\u251c\u2500\u2500 index.html                    # \ud83c\udfe0 Startseite, Modul-Auswahl (Mathe, Musik, HSU)\n\u251c\u2500\u2500 README.md                      # Dokumentation mit Badges, Features, Setup\n\u251c\u2500\u2500 CODEBASE_MAP.md               # Diese Datei\n\u251c\u2500\u2500 ELTERNCHAT_MUSIK.txt          # Ank\u00fcndigung neuer Musik-Features f\u00fcr Eltern\n\u2502\n\u251c\u2500\u2500 mathe/\n\u2502   \u251c\u2500\u2500 mathe_trainer_3_klasse.html    # \ud83d\udd22 Grundrechenarten-Trainer (+ - * \u00f7)\n\u2502   \u2514\u2500\u2500 mathe_jump.html                # \ud83c\udfae Jump-Game (Zahlenlinie, Spr\u00fcnge)\n\u2502\n\u251c\u2500\u2500 musik/\n\u2502   \u251c\u2500\u2500 musik_trainer.html         # \ud83c\udfbc Instrumentenerkennung + Lexikon-Button\n\u2502   \u2502                              # \u2192 Fragen zu 7 Orchesterinstrumenten\n\u2502   \u2502                              # \u2192 M\u00fcnz-System (1 M\u00fcnze = 1 richtige Antwort)\n\u2502   \u251c\u2500\u2500 musik_merker.html          # \ud83c\udfb9 Piano-Memory-Spiel (10 M\u00fcnzen/Runde)\n\u2502   \u2502                              # \u2192 H\u00f6re Melodie \u2192 spiele auf Klavier nach\n\u2502   \u2502                              # \u2192 3 Leben pro Runde, Level-System (1-9)\n\u2502   \u251c\u2500\u2500 musik_orchester.html       # \ud83d\udcda Orchester-Lexikon (7 Instrumente)\n\u2502   \u2502                              # \u2192 Standalone & Overlay-Modal\n\u2502   \u2502                              # \u2192 Peter & Wolf, Eselsbr\u00fccken, Tabs\n\u2502   \u251c\u2500\u2500 musik_fragen.js            # \ud83d\udccb Question-DB f\u00fcr Trainer (Instrumente)\n\u2502   \u2514\u2500\u2500 img/\n\u2502       \u251c\u2500\u2500 geige.svg              # Violin (Streicher)\n\u2502       \u251c\u2500\u2500 fagott.svg             # Bassoon (Holzbl\u00e4ser)\n\u2502       \u251c\u2500\u2500 querfloete.svg         # Flute (Holzbl\u00e4ser)\n\u2502       \u251c\u2500\u2500 oboe.svg               # Oboe (Holzbl\u00e4ser)\n\u2502       \u251c\u2500\u2500 klarinette.svg         # Clarinet (Holzbl\u00e4ser)\n\u2502       \u251c\u2500\u2500 horn.svg               # Horn (Blechbl\u00e4ser)\n\u2502       \u2514\u2500\u2500 pauken.svg             # Timpani (Schlagwerk)\n\u2502\n\u251c\u2500\u2500 hsu/\n\u2502   \u251c\u2500\u2500 hsu_trainer_3_klasse.html  # \ud83d\udd0d Spurenfinder-Spiel (HSU Sachkunde)\n\u2502   \u2502                              # \u2192 Tier-Spuren erraten, Punkte sammeln\n\u2502   \u2514\u2500\u2500 hsu_fragen.js              # \ud83d\udccb Question-DB f\u00fcr HSU Trainer\n\u2502\n\u251c\u2500\u2500 images/                         # \ud83d\udcc2 Bilder f\u00fcr diverse Module\n\u2502   \u2514\u2500\u2500 [Weitere Ressourcen - siehe Bash ls f\u00fcr Details]\n\u2502\n\u251c\u2500\u2500 tier_entdecker.html             # \ud83e\udd81 Tier-Enzyklop\u00e4die (geplant/entwicklung)\n\u2502\n\u251c\u2500\u2500 todo-test/                      # \ud83e\uddea Test-Modul f\u00fcr Todo-Funktionalit\u00e4t (experimentell)\n\u2502   \u251c\u2500\u2500 index.html                  # Todo-App HTML\n\u2502   \u251c\u2500\u2500 app.js                      # Todo-App JavaScript-Logik\n\u2502   \u2514\u2500\u2500 style.css                   # Todo-App Styling\n\u2502\n\u2514\u2500\u2500 codebase-indexer-skill/         # \ud83d\udd27 Codebase-Indexer Skill (Hilfstool)\n    \u251c\u2500\u2500 SKILL.md                    # Skill-Dokumentation\n    \u2514\u2500\u2500 evals/\n        \u2514\u2500\u2500 evals.json              # Evaluation-Daten\n```\n\n---\n\n## \ud83d\udcca Datei-\u00dcbersicht (Gr\u00f6\u00dfen & Zeilen)\n\n| Datei | Zeilen | Gr\u00f6\u00dfe | Typ | Beschreibung |\n|-------|--------|-------|-----|-------------|\n| `index.html` | ~600 | ~24KB | HTML | Startseite & Modul-Navigation |\n| `musik_trainer.html` | ~600 | ~30KB | HTML | Instrumentenerkennung-Trainer |\n| `musik_merker.html` | ~650 | ~35KB | HTML | Piano-Memory-Spiel |\n| `musik_orchester.html` | ~400 | ~20KB | HTML | Orchester-Lexikon |\n| `musik_fragen.js` | ~150 | ~8KB | JS | Fragen-Datenbank (Instrumente) |\n| `mathe_trainer_3_klasse.html` | ~400 | ~20KB | HTML | Grundrechenarten-Trainer |\n| `mathe_jump.html` | ~300 | ~15KB | HTML | Zahlenraum-Sprung-Spiel |\n| `hsu_trainer_3_klasse.html` | ~500 | ~25KB | HTML | Spurenfinder-Spiel (Sachkunde) |\n| `hsu_fragen.js` | ~80 | ~5KB | JS | Fragen-Datenbank (HSU) |\n| `tier_entdecker.html` | ~500 | ~32KB | HTML | Tier-Enzyklop\u00e4die (geplant) |\n| `todo-test/index.html` | ~20 | ~307B | HTML | Todo-Test UI |\n| `todo-test/app.js` | ~30 | ~867B | JS | Todo-Test Logik |\n| `todo-test/style.css` | ~10 | ~[embedded] | CSS | Todo-Test Styling |\n\n---\n\n## \ud83d\udd17 State Management & LocalStorage Keys\n\n| Key | Datei(en) | Struktur | Gr\u00f6\u00dfe | Notizen |\n|-----|-----------|----------|-------|---------|\n| `m_app_v9` | musik_trainer.html + musik_merker.html | `{ profId: { name, coins, score, musik_history, hsu_history, history } }` | ~5KB | **Shared zwischen Trainer & Merkspiel** |\n| `m_app_active_prof` | alle Trainer | ID des aktiven Profils (z.B. 'p1') | <100B | Global aktives Profil |\n| `m_musik_hs` | musik_merker.html | `[{ name, level, date }]` (Highscores) | ~1KB | Spiel-Highscores |\n| `hsu_app_v1` | hsu_trainer_3_klasse.html | `{ profId: { name, score, hsu_history } }` | ~3KB | HSU Punkte & Geschichte |\n| `mathe_app_v1` | mathe_trainer_3_klasse.html | `{ profId: { name, score, history } }` | ~3KB | Mathe Punkte & Geschichte |\n\n**\u26a0\ufe0f WICHTIG:** musik_trainer.html + musik_merker.html teilen `m_app_v9`!\n- **Trainer** addiert 1 M\u00fcnze pro richtige Antwort\n- **Merker** subtrahiert 10 M\u00fcnzen beim Spielstart\n- **Merker** zeigt startCoins (readonly w\u00e4hrend Spiel) um Flicker zu vermeiden\n\n---\n\n## \ud83c\udfb5 Musik-Modul (Detailliert)\n\n### musik_trainer.html\n**Zeilen:** ~600 | **Gr\u00f6\u00dfe:** ~30KB  \n**Zweck:** Instrumentenerkennung trainieren, M\u00fcnzen verdienen\n\n**Wichtige Funktionen:**\n- `loadStorage()` - L\u00e4dt Profile aus `m_app_v9`\n- `checkAnswer()` - Pr\u00fcft Antwort, addiert M\u00fcnze, zeigt Feedback\n- `updateUI()` - Aktualisiert Profilansicht, Coins-Anzeige\n- `openLexikon()` / `closeLexikon()` - Overlay-Modal f\u00fcr Orchester-Lexikon\n- `changeProfile(profId)` - Profilwechsel\n\n**M\u00fcnz-Flow:**\n```\nFrage richtig \u2192 p.coins++ \u2192 saveStorage() \u2192 updateUI() \u2192 Anzeige aktualisiert\n```\n\n**CSS-Klassen:**\n- `.feedback.ok` - Gr\u00fcne Best\u00e4tigung\n- `.feedback.bad` - Rote Fehlermeldung\n- `.lexikon-overlay` - Modal-Overlay (z-index: 500)\n- `.btn-lexikon` - Pink button f\u00fcr Lexikon-Aufruf\n\n**iframe-Integration:**\n- Lexikon l\u00e4dt `musik_orchester.html` in `<iframe>`\n- `postMessage()` f\u00fcr Kommunikation (optional, nicht aktuell genutzt)\n\n---\n\n### musik_merker.html\n**Zeilen:** ~650 | **Gr\u00f6\u00dfe:** ~35KB  \n**Zweck:** Piano-Memory-Spiel, M\u00fcnzen ausgeben, Highscores speichern\n\n**Wichtige Variablen:**\n- `herzen` (3 pro Runde) - Leben-System\n- `level` (1-9) - Melodie-L\u00e4nge (level+1 Noten)\n- `sequenz` - Array der zu merkenden Noten (z.B. [0, 3, 1])\n- `eingabe` - Array der vom Spieler eingegebenen Noten\n- `startCoins` - M\u00fcnzen beim Spielstart (readonly, keine Updates w\u00e4hrend Spiel!)\n\n**Wichtige Funktionen:**\n- `tryStartGame()` - Pr\u00fcft M\u00fcnzen (10 erforderlich), subtrahiert, setzt State zur\u00fcck\n- `tryNochmal()` - Wiederholen (neue Runde, 10 M\u00fcnzen)\n- `generiereSequenz()` - Generiert zuf\u00e4llige Melodie basierend auf Level\n- `spieleSequenz()` - Spielt Melodie ab (mit Audio Context)\n- `handleKeyPress(idx)` - Spieler dr\u00fcckt Klaviertaste\n- `updateHerzen(verlorenIdx)` - Animiert Herzen-Verlust\n- `renderResult(gameOver, abgezogeneCoins)` - Zeigt End-Screen\n\n**M\u00fcnz-Logik:**\n```\nSTART: removeCoins(10) \u2192 startCoins = currentCoins \u2192 spielPhase = 'eingabe'\nW\u00c4HREND SPIEL: startCoins wird NICHT aktualisiert (readonly!)\nENDE: renderResult() zeigt \"Verbleibend: X M\u00fcnzen\" (aktuelle coins aus storage)\n```\n\n**Audio:**\n- Web Audio API, OscillatorNode\n- Frequenzen: C (261.63) bis C\u00b2 (523.25 Hz)\n- Dauer: 400ms pro Note\n\n**Herzen-Animation:**\n```\nFalsch \u2192 herzen-- \u2192 updateHerzen(herzIndex) \n  \u2192 .herzen-icon.verloren (rot) nach 420ms \n  \u2192 .herzen-icon.leer (schwarz/\ud83d\udda4)\n```\n\n---\n\n### musik_orchester.html\n**Zeilen:** ~400 | **Gr\u00f6\u00dfe:** ~20KB  \n**Zweck:** Orchester-Lexikon mit 7 Instrumenten\n\n**7 Instrumente:**\n1. **Geige** (Violine) - Streicher - Peter\n2. **Fagott** - Holzbl\u00e4ser - Gro\u00dfvater\n3. **Querfl\u00f6te** - Holzbl\u00e4ser - Vogel\n4. **Oboe** - Holzbl\u00e4ser - Ente\n5. **Klarinette** - Holzbl\u00e4ser - Katze\n6. **Horn** - Blechbl\u00e4ser - J\u00e4ger\n7. **Pauken** - Schlagwerk - B\u00e4r\n\n**Funktionen:**\n- `filterByGroup(groupName)` - Filtert Instrumente nach Gruppe\n- Expandable Cards - Click \u2192 Details anzeigen\n- Standalone + Overlay-compatible (Back-Button versteckt wenn iframe)\n\n**Tab-Navigation:**\n- Streicher, Holzbl\u00e4ser, Blechbl\u00e4ser, Schlagwerk, Peter & Wolf, Alle\n\n**Daten-Struktur (pro Instrument):**\n```javascript\n{\n  name: \"Geige\",\n  group: \"Streicher\",\n  character: \"Peter\",\n  characterEmoji: \"\ud83d\udc66\",\n  description: \"...\",\n  sound: \"Warm, hell, ausdrucksstark\",\n  howToPlay: \"Mit Bogen streichen...\",\n  features: \"...\",\n  mnemonic: \"\ud83c\udfbb Eselsbr\u00fccke: Geige = Gi + E (Pferd + Ei)\"\n}\n```\n\n### musik_fragen.js\n**Zeilen:** ~150 | **Gr\u00f6\u00dfe:** ~8KB  \n**Struktur:** Datenbank mit Instrument-Fragen und Antworten\n**Export:** Array `fragen` mit Struktur `{ question, options, correct, category }`\n\n---\n\n## \ud83d\udd22 Mathematik-Modul\n\n### mathe_trainer_3_klasse.html\n**Zeilen:** ~400 | **Gr\u00f6\u00dfe:** ~20KB  \n**Zweck:** Grundrechenarten trainieren (+ - * \u00f7)\n\n**State:**\n- `profiles` - Wie in Musik\n- `currentQuestion` - Aktuelle Aufgabe\n- `currentView` - 'practice' oder 'stats'\n\n**Funktionen:**\n- `generateQuestion()` - Zuf\u00e4llige Aufgabe (beachtet Schwierigkeit)\n- `checkAnswer()` - Pr\u00fcft, aktualisiert Score, speichert in localStorage\n- `updateUI()` - Aktualisiert Anzeige mit Score\n\n---\n\n### mathe_jump.html\n**Zeilen:** ~300 | **Gr\u00f6\u00dfe:** ~15KB  \n**Zweck:** Zahlenraum-Game (Spr\u00fcnge auf Zahlenline)\n\n**Gameplay:**\n- Startposition auf Zahlenlinie\n- Zielzahl anzeigen\n- Spieler springt zu korrekten Position\n- Punkte f\u00fcr richtige Antworten\n\n---\n\n## \ud83d\udd0d HSU-Modul (Sachkunde)\n\n### hsu_trainer_3_klasse.html\n**Zeilen:** ~500 | **Gr\u00f6\u00dfe:** ~25KB  \n**Zweck:** Spurenfinder-Spiel (Tier-Spuren erraten)\n\n**Layout (\u00e4hnlich wie musik_trainer):**\n- Tier-Spur-Bild anzeigen\n- Multiple Choice (4 Antworten)\n- Punkte f\u00fcr richtige Antworten\n- State speichern in `hsu_app_v1`\n\n### hsu_fragen.js\n**Zeilen:** ~80 | **Gr\u00f6\u00dfe:** ~5KB  \n**Struktur:** Datenbank mit Tier-Spuren-Fragen\n**Export:** Array mit Struktur `{ image, options, correct, category }`\n\n---\n\n## \ud83e\udd81 Tier-Entdecker Modul (Geplant)\n\n### tier_entdecker.html\n**Zeilen:** ~500 | **Gr\u00f6\u00dfe:** ~32KB  \n**Status:** Entwicklung (noch nicht in Navigation integriert)\n**Zweck:** Interaktive Tier-Enzyklop\u00e4die mit Bildern, Steckbriefen, Sounds\n**Geplant:** Pro Tier - Beschreibung, Lebensraum, Ern\u00e4hrung, Interaktive Fakten\n\n---\n\n## \ud83e\uddea Todo-Test Modul (Experimentell)\n\n### todo-test/index.html\n**Gr\u00f6\u00dfe:** ~307B  \n**Zweck:** Einfache Todo-App zum Testen von JS-Interaktivit\u00e4t\n\n### todo-test/app.js\n**Gr\u00f6\u00dfe:** ~867B  \n**Funktionen:** Add/Remove/Complete Todo Items mit LocalStorage\n\n### todo-test/style.css\n**Zweck:** Styling f\u00fcr Todo-Interface\n\n---\n\n## \ud83d\udc1b Known Issues & Fixes\n\n| Problem | Datei | Status | Fix |\n|---------|-------|--------|-----|\n| SVG-Text-Labels unter Instrument-Bildern sichtbar | musik_trainer.html, musik/img/*.svg | \u2705 BEHOBEN | `<text>` Elemente entfernt via Python-Regex |\n| \"Nochmal anh\u00f6ren\" zieht Leben ab | musik_trainer.html (alte Version) | \u2705 BEHOBEN | Life-Deduction aus Button-Handler entfernt |\n| Highscore speichert nicht bei fr\u00fchem Exit | musik_merker.html | \u2705 BEHOBEN | `beforeunload` + `pagehide` Event-Listener |\n| M\u00fcnzen-Flicker im Merkspiel | musik_merker.html | \u2705 BEHOBEN | `startCoins` (readonly) statt Live-Sync |\n| localStorage.lock + git.lock | Git | \u2705 BEHOBEN | Manuelle Lock-File-L\u00f6schung |\n\n---\n\n## \ud83d\udcca Token-Optimierungs-Tipps\n\n**F\u00fcr DIESE Codebase:**\n1. **Nicht alle HTML-Dateien neu lesen** \u2192 Nutze diese Map stattdessen\n2. **Bei Bug-Reports:** Sag mir die Datei + Zeilen-Bereich, dann lese ich gezielt\n3. **Bei neuen Features:** \"F\u00fcge X zu musik_merker.html (Zeile ~450) hinzu\"\n4. **Maps aktualisieren:** Nach major changes (neue Datei, gro\u00dfe Refactors)\n\n**Schnell-Referenz f\u00fcr h\u00e4ufige Anfragen:**\n- \"Wie funktioniert das M\u00fcnz-System?\" \u2192 Siehe `musik_merker.html` M\u00fcnz-Logik-Abschnitt\n- \"Wie spiele ich Audio ab?\" \u2192 Siehe `musik_merker.html` Audio-Sektion (Web Audio API)\n- \"Wo sind die Instrumente definiert?\" \u2192 `musik_orchester.html` oder `musik_fragen.js`\n- \"Wie funktioniert Profilwechsel?\" \u2192 Alle Trainer verwenden `m_app_active_prof` in localStorage\n- \"Welche SVG-Bilder gibt es?\" \u2192 `musik/img/` - 7 Instrumente (geige, fagott, etc.)\n\n**Generelle Tipps:**\n- F\u00fcr gezielten Input: Sag mir Datei-Name + Zeilen-Range\n- Nutze Grep/Search statt komplettes Read\n- Eine Map pro Projekt = 1-2 Minuten lesen, statt 10-15 Minuten Code durchsuchen\n\n---\n\n## \ud83d\udd00 Abh\u00e4ngigkeits-Graph\n\n```\nindex.html (Start)\n\u251c\u2500\u2500 musik_trainer.html\n\u2502   \u251c\u2500\u2500 musik_fragen.js (externe DB)\n\u2502   \u251c\u2500\u2500 musik_orchester.html (iframe-Modal)\n\u2502   \u2514\u2500\u2500 localStorage[m_app_v9]\n\u251c\u2500\u2500 musik_merker.html\n\u2502   \u251c\u2500\u2500 musik_trainer.html (shared storage m_app_v9)\n\u2502   \u2514\u2500\u2500 localStorage[m_musik_hs] (Highscores)\n\u251c\u2500\u2500 musik_orchester.html (standalone oder iframe)\n\u251c\u2500\u2500 mathe_trainer_3_klasse.html\n\u2502   \u2514\u2500\u2500 localStorage[mathe_app_v1]\n\u251c\u2500\u2500 mathe_jump.html\n\u2502   \u2514\u2500\u2500 localStorage[mathe_app_v1]\n\u251c\u2500\u2500 hsu_trainer_3_klasse.html\n\u2502   \u251c\u2500\u2500 hsu_fragen.js (externe DB)\n\u2502   \u2514\u2500\u2500 localStorage[hsu_app_v1]\n\u2514\u2500\u2500 tier_entdecker.html (noch nicht verlinkt)\n```\n\n---\n\n## \ud83d\ude80 Geplante Features\n\n- [ ] Deutsch-Modul (Rechtschreibung, Grammatik)\n- [ ] Englisch-Modul\n- [ ] Teacher-Dashboard (Stats f\u00fcr alle Sch\u00fcler)\n- [ ] Dark Mode\n- [ ] Offline-Unterst\u00fctzung (Service Worker)\n- [ ] tier_entdecker.html in Navigation integrieren\n\n---\n\n## \ud83d\udcdd \u00c4nderungs-Log\n\n| Datum | \u00c4nderung | Datei |\n|-------|----------|-------|\n| 2026-04-11 | CODEBASE_MAP.md erweitert mit todo-test Modul | - |\n| 2026-04-11 | startCoins-System, M\u00fcnz-Flicker behoben | musik_merker.html |\n| 2026-04-11 | CODEBASE_MAP.md erstellt | - |\n| 2026-04-10 | musik_orchester.html und Lexikon-Modal hinzugef\u00fcgt | - |\n| 2026-04-10 | 10-M\u00fcnzen-System f\u00fcr Merkspiel implementiert | - |\n| 2026-04-01 | Projekt-Start | - |\n\n---\n\n## \ud83c\udfaf Quick Links zu h\u00e4ufigen Anpassungen\n\n**Neue Frage hinzuf\u00fcgen?**\n- Musik: `musik/musik_fragen.js` - Array `fragen` erweitern\n- HSU: `hsu/hsu_fragen.js` - Array `fragen` erweitern\n\n**Neue Profilfelder?**\n- Alle Trainer laden/speichern aus localStorage\n- Struktur \u00e4ndern in `musik_trainer.html` loadStorage() Sektion\n- Dann propagiere zu anderen Trainern (musik_merker.html, mathe, hsu)\n\n**Layout/Design \u00e4ndern?**\n- `index.html` - Startseite & Navigation\n- Jedes HTML-File hat embedded `<style>` Tags\n\n**SVG-Icons austauschen?**\n- Neue SVG-Datei in `musik/img/` ablegen\n- Referenz in `musik_orchester.html` oder `musik_trainer.html` aktualisieren\n\n---\n\n## \ud83d\udcde Support & Kontakt\n\n**For Questions:**\n- Christoph Schneider (Projektleitung)\n- Claude (Code-Assistent)\n\n**Dokumentation:**\n- README.md - Feature-\u00dcbersicht\n- Diese Datei (CODEBASE_MAP.md) - Technische Details\n- Inline-Kommentare in HTML/JS - Zeilenebene Dokumentation\n"}, {"name": "README.md", "type": "text", "content": "# CODEBASE_MAP.md - Erstellung f\u00fcr Lernapp \"Dritte Klasse\"\n\n## Zweck\n\nDiese CODEBASE_MAP.md wurde erstellt, um k\u00fcnftig Token zu sparen und die Dokumentation der Lernapp schneller und pr\u00e4ziser durchsuchen zu k\u00f6nnen, anstatt jedes Mal alle Dateien neu zu lesen.\n\n## Was wurde dokumentiert?\n\n### Vollst\u00e4ndige Abdeckung\n\n**Strukturelle \u00dcbersicht:**\n- \u2705 Projektstruktur mit allen Verzeichnissen\n- \u2705 13 HTML-Dateien (Trainer, Spiele, Tests)\n- \u2705 3 JavaScript-Datenbanken (musik_fragen.js, hsu_fragen.js, todo-test/app.js)\n- \u2705 7 SVG-Instrumente-Bilder (musik/img/)\n- \u2705 5 CSS-Stylesheets (embedded oder separat)\n\n**Detaillierte Module:**\n1. **Musik-Modul** - 4 HTML-Dateien + 1 JS-DB + 7 SVG-Icons\n   - musik_trainer.html (Instrumentenerkennung)\n   - musik_merker.html (Piano-Memory mit Herzensystem)\n   - musik_orchester.html (Lexikon mit 7 Instrumenten)\n   - musik_fragen.js (Fragen-Datenbank)\n\n2. **Mathematik-Modul** - 2 HTML-Dateien\n   - mathe_trainer_3_klasse.html (Grundrechenarten)\n   - mathe_jump.html (Zahlenlinie-Spiel)\n\n3. **HSU-Modul** (Sachkunde) - 2 HTML-Dateien + 1 JS-DB\n   - hsu_trainer_3_klasse.html (Spurenfinder)\n   - hsu_fragen.js (Fragen-Datenbank)\n\n4. **Tier-Entdecker** - 1 HTML-Datei (noch nicht integriert)\n\n5. **Todo-Test** - 3 Dateien (experimentell)\n\n### Technische Details\n\n**LocalStorage-Management:**\n- \u2705 5 Keys dokumentiert mit Strukturen\n- \u2705 Cross-Modul-Abh\u00e4ngigkeiten (z.B. m_app_v9 zwischen musik_trainer & musik_merker)\n- \u2705 Wichtige Notizen zu readonly-Variablen (startCoins-System)\n\n**State & Funktionen:**\n- \u2705 Wichtigste Funktionen pro Modul\n- \u2705 Audio-Implementierung (Web Audio API)\n- \u2705 Animation-Flows (Herzen-System)\n- \u2705 M\u00fcnz-System (Trainer vs. Merkspiel)\n\n**Abh\u00e4ngigkeits-Graph:**\n- \u2705 Visualisierung welche Dateien welche laden\n- \u2705 iframe-Integration (musik_trainer \u2192 musik_orchester)\n- \u2705 localStorage-Abh\u00e4ngigkeiten\n\n## Token-Einsparungen\n\n**Vorher:** Jede Anfrage erforderte vollst\u00e4ndige Datei-Reads\n- musik_trainer.html: ~30KB\n- musik_merker.html: ~35KB\n- musik_orchester.html: ~20KB\n- mathe_trainer.html: ~20KB\n- hsu_trainer.html: ~25KB\n- **Gesamt: ~130KB pro anfrage!**\n\n**Nachher:** CODEBASE_MAP.md nachschlagen (15KB einmalig)\n- \"Wie funktioniert das M\u00fcnz-System?\" \u2192 MAP konsultieren, nur bei Bedarf gezieltes Read\n- \"Welche localStorage-Keys gibt es?\" \u2192 MAP nachschlagen\n- \"Wo sind die Instrumente definiert?\" \u2192 MAP gibt Antwort + Datei+Zeilen\n\n**Gesch\u00e4tzte Einsparung:** 80-90% weniger Tokens f\u00fcr Navigations- & \u00dcbersichtsfragen\n\n## Schnell-Referenzen in der Map\n\nDie Map enth\u00e4lt folgende praktische Abschnitte:\n\n1. **\ud83d\udcc1 Projekt-Struktur** - Komplette Directory-Tree\n2. **\ud83d\udcca Datei-\u00dcbersicht** - Gr\u00f6\u00dfen & Zeilenzahlen\n3. **\ud83d\udd17 State Management** - LocalStorage-Keys mit Strukturen\n4. **\ud83c\udfb5 Musik-Modul (Detailliert)** - 3 Sub-Sections\n5. **\ud83d\udd00 Abh\u00e4ngigkeits-Graph** - Welche Dateien laden was\n6. **\ud83d\udd00 Quick Links** - Wo man Dinge \u00e4ndert\n7. **\ud83d\udc1b Known Issues** - Behobene Bugs mit Fixes\n8. **\ud83d\ude80 Geplante Features** - Roadmap\n9. **\ud83d\udcdd \u00c4nderungs-Log** - Version History\n\n## Wie man die Map nutzt\n\n### Szenario 1: Bug-Report\n**Alt:** \"Warum flackern die M\u00fcnzen im Merkspiel?\"\n- Alles lesen m\u00fcssen (~35KB)\n\n**Neu:** \"Warum flackern die M\u00fcnzen im Merkspiel?\"\n- MAP \u2192 \"musik_merker.html\" \u2192 M\u00fcnz-Logik-Sektion\n- Sieht sofort: \"startCoins (readonly) System\"\n- Gezieltes Read von 10-15 Zeilen statt 650\n\n### Szenario 2: Neue Frage hinzuf\u00fcgen\n**Alt:** \"Wie f\u00fcge ich eine neue Frage hinzu?\"\n- musik_fragen.js durchsuchen, Struktur verstehen (~8KB read)\n\n**Neu:** \"Wie f\u00fcge ich eine neue Frage hinzu?\"\n- MAP \u2192 \"musik_fragen.js\" Sektion\n- Sieht sofort: \"Export: Array `fragen` mit Struktur...\"\n- Versteht die Struktur ohne Datei zu lesen\n\n### Szenario 3: Cross-Modul-Debugging\n**Alt:** \"Warum passt der Profilwechsel nicht zwischen Trainer und Merkspiel?\"\n- Alle Dateien durchsuchen, localStorage-Keys finden (~50KB+ reads)\n\n**Neu:** \"Warum passt der Profilwechsel nicht?\"\n- MAP \u2192 \"State Management\" Sektion\n- Sieht sofort: \"\u26a0\ufe0f WICHTIG: musik_trainer.html + musik_merker.html teilen `m_app_v9`!\"\n- Sofort klar, wo das Problem ist\n\n## Dateiformat\n\n- **Format:** Markdown (.md)\n- **Gr\u00f6\u00dfe:** 15KB (402 Zeilen)\n- **Sprache:** Deutsch (wie das Projekt)\n- **Emoji-Nutzer:** Ja (f\u00fcr schnelle visuelle Orientierung)\n- **Versionskontrolle:** Mit Git verfolgbar\n\n## Wartung der Map\n\nDie Map sollte aktualisiert werden, wenn:\n- \u2705 Neue HTML-Datei hinzugef\u00fcgt wird\n- \u2705 LocalStorage-Keys ge\u00e4ndert werden\n- \u2705 Major Features hinzugef\u00fcgt werden\n- \u2705 Neue Module/Spiele erstellt werden\n\n**Nicht n\u00f6tig f\u00fcr:**\n- Kleinere Bug-Fixes\n- Styling-\u00c4nderungen\n- Inline-Kommentare aktualisieren\n\n## Zusammenfassung\n\nDiese **CODEBASE_MAP.md** ersetzt das Lesen von ~130KB Code durch eine 15KB \u00dcbersichtsdatei und spart damit **80-90% der Tokens** f\u00fcr Navigations-, Struktur- und Dependancy-Fragen.\n\nDie Map ist umfassend genug, um alle technischen Details zu verstehen, aber pr\u00e4gnant genug, um schnell konsultiert zu werden.\n"}], "grading": null}, {"id": "eval-2-map-update-with_skill", "prompt": "Kannst du die CODEBASE_MAP.md aktualisieren? Wir haben den startCoins-Bug in musik_merker.html gefixt und addCoins() entfernt.", "eval_id": 2, "outputs": [{"name": "CODEBASE_MAP.md", "type": "text", "content": "# Codebase Map - Lernapp Dritte Klasse\n\n**Letzte Aktualisierung:** 2026-04-11  \n**Autor:** Claude + Christoph Schneider  \n**Zweck:** Schnelle Navigation, Token-Optimierung, Abh\u00e4ngigkeits\u00fcbersicht\n\n---\n\n## \ud83d\udcc1 Projekt-Struktur\n\n```\nDritte-Klasse/\n\u251c\u2500\u2500 index.html                    # \ud83c\udfe0 Startseite, Modul-Auswahl (Mathe, Musik, HSU)\n\u251c\u2500\u2500 README.md                      # Dokumentation mit Badges, Features, Setup\n\u251c\u2500\u2500 CODEBASE_MAP.md               # Diese Datei\n\u251c\u2500\u2500 ELTERNCHAT_MUSIK.txt          # Ank\u00fcndigung neuer Musik-Features f\u00fcr Eltern\n\u2502\n\u251c\u2500\u2500 mathe/\n\u2502   \u251c\u2500\u2500 mathe_trainer_3_klasse.html    # \ud83d\udd22 Grundrechenarten-Trainer (+ - * \u00f7)\n\u2502   \u2514\u2500\u2500 mathe_jump.html                # \ud83c\udfae Jump-Game (Zahlenlinie, Spr\u00fcnge)\n\u2502\n\u251c\u2500\u2500 musik/\n\u2502   \u251c\u2500\u2500 musik_trainer.html         # \ud83c\udfbc Instrumentenerkennung + Lexikon-Button\n\u2502   \u2502                              # \u2192 Fragen zu 7 Orchesterinstrumenten\n\u2502   \u2502                              # \u2192 M\u00fcnz-System (1 M\u00fcnze = 1 richtige Antwort)\n\u2502   \u251c\u2500\u2500 musik_merker.html          # \ud83c\udfb9 Piano-Memory-Spiel (10 M\u00fcnzen/Runde)\n\u2502   \u2502                              # \u2192 H\u00f6re Melodie \u2192 spiele auf Klavier nach\n\u2502   \u2502                              # \u2192 3 Leben pro Runde, Level-System (1-9)\n\u2502   \u251c\u2500\u2500 musik_orchester.html       # \ud83d\udcda Orchester-Lexikon (7 Instrumente)\n\u2502   \u2502                              # \u2192 Standalone & Overlay-Modal\n\u2502   \u2502                              # \u2192 Peter & Wolf, Eselsbr\u00fccken, Tabs\n\u2502   \u251c\u2500\u2500 musik_fragen.js            # \ud83d\udccb Question-DB f\u00fcr Trainer (Instrumente)\n\u2502   \u2514\u2500\u2500 img/\n\u2502       \u251c\u2500\u2500 geige.svg              # Violin (Streicher)\n\u2502       \u251c\u2500\u2500 fagott.svg             # Bassoon (Holzbl\u00e4ser)\n\u2502       \u251c\u2500\u2500 querfloete.svg         # Flute (Holzbl\u00e4ser)\n\u2502       \u251c\u2500\u2500 oboe.svg               # Oboe (Holzbl\u00e4ser)\n\u2502       \u251c\u2500\u2500 klarinette.svg         # Clarinet (Holzbl\u00e4ser)\n\u2502       \u251c\u2500\u2500 horn.svg               # Horn (Blechbl\u00e4ser)\n\u2502       \u2514\u2500\u2500 pauken.svg             # Timpani (Schlagwerk)\n\u2502\n\u251c\u2500\u2500 hsu/\n\u2502   \u251c\u2500\u2500 hsu_trainer_3_klasse.html  # \ud83d\udd0d Spurenfinder-Spiel (HSU Sachkunde)\n\u2502   \u2502                              # \u2192 Tier-Spuren erraten, Punkte sammeln\n\u2502   \u2514\u2500\u2500 hsu_fragen.js              # \ud83d\udccb Question-DB f\u00fcr HSU Trainer\n\u2502\n\u2514\u2500\u2500 tier_entdecker.html             # \ud83e\udd81 Tier-Enzyklop\u00e4die (geplant/entwicklung)\n```\n\n---\n\n## \ud83d\udd17 State Management & LocalStorage Keys\n\n| Key | Datei | Struktur | Gr\u00f6\u00dfe |\n|-----|-------|----------|-------|\n| `m_app_v9` | musik_trainer.html + musik_merker.html | `{ profId: { name, coins, score, musik_history, hsu_history, history } }` | ~5KB |\n| `m_app_active_prof` | alle Trainer | ID des aktiven Profils (z.B. 'p1') | <100B |\n| `m_musik_hs` | musik_merker.html | `[{ name, level, date }]` (Highscores) | ~1KB |\n| `hsu_app_v1` | hsu_trainer_3_klasse.html | `{ profId: { name, score, hsu_history } }` | ~3KB |\n| `mathe_app_v1` | mathe_trainer_3_klasse.html | `{ profId: { name, score, history } }` | ~3KB |\n\n**\u26a0\ufe0f WICHTIG:** musik_trainer.html + musik_merker.html teilen `m_app_v9`!\n- Trainer addiert 1 M\u00fcnze pro richtige Antwort\n- Merker subtrahiert 10 M\u00fcnzen beim Spielstart\n- Merker zeigt startCoins (readonly w\u00e4hrend Spiel)\n\n---\n\n## \ud83c\udfb5 Musik-Modul (Detailliert)\n\n### musik_trainer.html\n**Zeilen:** ~600 | **Gr\u00f6\u00dfe:** ~30KB  \n**Zweck:** Instrumentenerkennung trainieren, M\u00fcnzen verdienen\n\n**Wichtige Funktionen:**\n- `loadStorage()` - L\u00e4dt Profile aus `m_app_v9`\n- `checkAnswer()` - Pr\u00fcft Antwort, addiert M\u00fcnze, zeigt Feedback\n- `updateUI()` - Aktualisiert Profilansicht, Coins-Anzeige\n- `openLexikon()` / `closeLexikon()` - Overlay-Modal f\u00fcr Orchester-Lexikon\n- `changeProfile(profId)` - Profilwechsel\n\n**M\u00fcnz-Flow:**\n```\nFrage richtig \u2192 p.coins++ \u2192 saveStorage() \u2192 updateUI() \u2192 Anzeige aktualisiert\n```\n\n**CSS-Klassen:**\n- `.feedback.ok` - Gr\u00fcne Best\u00e4tigung\n- `.feedback.bad` - Rote Fehlermeldung\n- `.lexikon-overlay` - Modal-Overlay (z-index: 500)\n- `.btn-lexikon` - Pink button f\u00fcr Lexikon-Aufruf\n\n**iframe-Integration:**\n- Lexikon l\u00e4dt `musik_orchester.html` in `<iframe>`\n- `postMessage()` f\u00fcr Kommunikation (optional, nicht aktuell genutzt)\n\n---\n\n### musik_merker.html\n**Zeilen:** ~650 | **Gr\u00f6\u00dfe:** ~35KB  \n**Zweck:** Piano-Memory-Spiel, M\u00fcnzen ausgeben, Highscores speichern\n\n**Wichtige Variablen:**\n- `herzen` (3 pro Runde) - Leben-System\n- `level` (1-9) - Melodie-L\u00e4nge (level+1 Noten)\n- `sequenz` - Array der zu merkenden Noten (z.B. [0, 3, 1])\n- `eingabe` - Array der vom Spieler eingegebenen Noten\n- `startCoins` - M\u00fcnzen beim Spielstart (readonly, keine Updates w\u00e4hrend Spiel!)\n\n**Wichtige Funktionen:**\n- `tryStartGame()` - Pr\u00fcft M\u00fcnzen (10 erforderlich), subtrahiert, setzt State zur\u00fcck\n- `tryNochmal()` - Wiederholen (neue Runde, 10 M\u00fcnzen)\n- `generiereSequenz()` - Generiert zuf\u00e4llige Melodie basierend auf Level\n- `spieleSequenz()` - Spielt Melodie ab (mit Audio Context)\n- `handleKeyPress(idx)` - Spieler dr\u00fcckt Klaviertaste\n- `updateHerzen(verlorenIdx)` - Animiert Herzen-Verlust\n- `renderResult(gameOver, abgezogeneCoins)` - Zeigt End-Screen\n\n**M\u00fcnz-Logik:**\n```\nSTART: removeCoins(10) \u2192 startCoins = currentCoins \u2192 spielPhase = 'eingabe'\nW\u00c4HREND SPIEL: startCoins wird NICHT aktualisiert (readonly!)\nENDE: renderResult() zeigt \"Verbleibend: X M\u00fcnzen\" (aktuelle coins aus storage)\n```\n\n**Audio:**\n- Web Audio API, OscillatorNode\n- Frequenzen: C (261.63) bis C\u00b2 (523.25 Hz)\n- Dauer: 400ms pro Note\n\n**Herzen-Animation:**\n```\nFalsch \u2192 herzen-- \u2192 updateHerzen(herzIndex) \n  \u2192 .herzen-icon.verloren (rot) nach 420ms \n  \u2192 .herzen-icon.leer (schwarz/\ud83d\udda4)\n```\n\n---\n\n### musik_orchester.html\n**Zeilen:** ~400 | **Gr\u00f6\u00dfe:** ~20KB  \n**Zweck:** Orchester-Lexikon mit 7 Instrumenten\n\n**7 Instrumente:**\n1. **Geige** (Violine) - Streicher - Peter\n2. **Fagott** - Holzbl\u00e4ser - Gro\u00dfvater\n3. **Querfl\u00f6te** - Holzbl\u00e4ser - Vogel\n4. **Oboe** - Holzbl\u00e4ser - Ente\n5. **Klarinette** - Holzbl\u00e4ser - Katze\n6. **Horn** - Blechbl\u00e4ser - J\u00e4ger\n7. **Pauken** - Schlagwerk - B\u00e4r\n\n**Funktionen:**\n- `filterByGroup(groupName)` - Filtert Instrumente nach Gruppe\n- Expandable Cards - Click \u2192 Details anzeigen\n- Standalone + Overlay-compatible (Back-Button versteckt wenn iframe)\n\n**Tab-Navigation:**\n- Streicher, Holzbl\u00e4ser, Blechbl\u00e4ser, Schlagwerk, Peter & Wolf, Alle\n\n**Daten-Struktur (pro Instrument):**\n```javascript\n{\n  name: \"Geige\",\n  group: \"Streicher\",\n  character: \"Peter\",\n  characterEmoji: \"\ud83d\udc66\",\n  description: \"...\",\n  sound: \"Warm, hell, ausdrucksstark\",\n  howToPlay: \"Mit Bogen streichen...\",\n  features: \"...\",\n  mnemonic: \"\ud83c\udfbb Eselsbr\u00fccke: Geige = Gi + E (Pferd + Ei)\"\n}\n```\n\n---\n\n## \ud83d\udd22 Mathematik-Modul\n\n### mathe_trainer_3_klasse.html\n**Zeilen:** ~400 | **Gr\u00f6\u00dfe:** ~20KB  \n**Zweck:** Grundrechenarten trainieren (+ - * \u00f7)\n\n**State:**\n- `profiles` - Wie in Musik\n- `currentQuestion` - Aktuelle Aufgabe\n- `currentView` - 'practice' oder 'stats'\n\n**Funktionen:**\n- `generateQuestion()` - Zuf\u00e4llige Aufgabe\n- `checkAnswer()` - Pr\u00fcft, aktualisiert Score\n\n---\n\n### mathe_jump.html\n**Zeilen:** ~300 | **Gr\u00f6\u00dfe:** ~15KB  \n**Zweck:** Zahlenraum-Game (Spr\u00fcnge auf Zahlenline)\n\n---\n\n## \ud83d\udd0d HSU-Modul (Sachkunde)\n\n### hsu_trainer_3_klasse.html\n**Zeilen:** ~500 | **Gr\u00f6\u00dfe:** ~25KB  \n**Zweck:** Spurenfinder-Spiel (Tier-Spuren erraten)\n\n**Layout (\u00e4hnlich wie musik_trainer):**\n- Tier-Spur-Bild anzeigen\n- Multiple Choice (4 Antworten)\n- Punkte f\u00fcr richtige Antworten\n\n---\n\n## \ud83d\udc1b Known Issues & Fixes\n\n| Problem | Datei | Status | Fix |\n|---------|-------|--------|-----|\n| SVG-Text-Labels unter Instrument-Bildern sichtbar | musik_trainer.html, musik/img/*.svg | \u2705 BEHOBEN | `<text>` Elemente entfernt via Python-Regex |\n| \"Nochmal anh\u00f6ren\" zieht Leben ab | musik_trainer.html (alte Version) | \u2705 BEHOBEN | Life-Deduction aus Button-Handler entfernt |\n| Highscore speichert nicht bei fr\u00fchem Exit | musik_merker.html | \u2705 BEHOBEN | `beforeunload` + `pagehide` Event-Listener |\n| M\u00fcnzen-Flicker im Merkspiel | musik_merker.html | \u2705 BEHOBEN | `startCoins` (readonly) statt Live-Sync |\n| localStorage.lock + git.lock | Git | \u2705 BEHOBEN | Manuelle Lock-File-L\u00f6schung |\n| startCoins-Bug (M\u00fcnz-Aktualisierung w\u00e4hrend Spiel) | musik_merker.html | \u2705 BEHOBEN | `addCoins()` Funktion entfernt, `startCoins` Capture vor Spielstart |\n\n---\n\n## \ud83d\udcca Token-Optimierungs-Tipps\n\n**F\u00fcr DIESE Codebase:**\n1. **Nicht alle HTML-Dateien neu lesen** \u2192 Nutze diese Map stattdessen\n2. **Bei Bug-Reports:** Sag mir die Datei + Zeilen-Bereich, dann lese ich gezielt\n3. **Bei neuen Features:** \"F\u00fcge X zu musik_merker.html (Zeile ~450) hinzu\"\n4. **Maps aktualisieren:** Nach major changes (neue Datei, gro\u00dfe Refactors)\n\n**Generelle Tipps:**\n- F\u00fcr gezielten Input: Sag mir Datei-Name + Zeilen-Range\n- Nutze Grep/Search statt komplettes Read\n- Eine Map pro Projekt = 1-2 Minutes lesen, statt 10-15 Minutes Code durchsuchen\n\n---\n\n## \ud83d\ude80 Geplante Features\n\n- [ ] Deutsch-Modul (Rechtschreibung, Grammatik)\n- [ ] Englisch-Modul\n- [ ] Teacher-Dashboard (Stats f\u00fcr alle Sch\u00fcler)\n- [ ] Dark Mode\n- [ ] Offline-Unterst\u00fctzung (Service Worker)\n\n---\n\n## \ud83d\udcdd \u00c4nderungs-Log\n\n| Datum | \u00c4nderung | Datei |\n|-------|----------|-------|\n| 2026-04-11 | startCoins-Bug gefixt: `addCoins()` entfernt, M\u00fcnz-State korrekt isoliert | musik_merker.html |\n| 2026-04-11 | startCoins-System, M\u00fcnz-Flicker behoben | musik_merker.html |\n| 2026-04-11 | CODEBASE_MAP.md erstellt | - |\n| 2026-04-10 | musik_orchester.html und Lexikon-Modal hinzugef\u00fcgt | - |\n| 2026-04-10 | 10-M\u00fcnzen-System f\u00fcr Merkspiel implementiert | - |\n| 2026-04-01 | Projekt-Start | - |\n\n"}], "grading": null}, {"id": "eval-3-small-project-with_skill", "prompt": "Ich starte ein neues Projekt: eine einfache Todo-App. Kannst du mir am Anfang eine Codebase Map erstellen? Die Dateien sind in todo-test/", "eval_id": 3, "outputs": [{"name": "CODEBASE_MAP.md", "type": "text", "content": "# Codebase Map \u2013 Todo-App\n\n**Last updated:** 2026-04-11  \n**Purpose:** A simple, lightweight Todo application that lets users create, mark as done, and delete tasks with localStorage persistence.\n\n---\n\n## File Structure\n\n```\ntodo-test/\n\u251c\u2500\u2500 index.html          # Main HTML entry point with form and list container\n\u251c\u2500\u2500 app.js              # Core app logic: todo state management, DOM rendering\n\u251c\u2500\u2500 style.css           # Minimal styling for layout and visual feedback\n\u2514\u2500\u2500 CODEBASE_MAP.md     # This file\n```\n\n---\n\n## Modules & Key Functions\n\n### index.html\n**Purpose:** HTML entry point that provides the UI structure (input field, button, list container).  \n**Lines:** 9 | **Complexity:** low\n\n- No functions; static HTML structure\n- Imports `app.js` and `style.css`\n- Contains input with id `todoInput` and list with id `todoList` that app.js targets\n\n### app.js\n**Purpose:** Manages todo state, localStorage persistence, and dynamic DOM rendering.  \n**Lines:** 28 | **Complexity:** low\n\nKey functions:\n- `addTodo()` \u2014 reads input field, creates todo object with id and done flag, saves and re-renders\n- `toggleTodo(id)` \u2014 flips done status of a todo and updates display\n- `deleteTodo(id)` \u2014 removes a todo from the list\n- `save()` \u2014 serializes todos array to localStorage\n- `render()` \u2014 generates HTML list items from todos array and updates the DOM\n\n### style.css\n**Purpose:** Minimal styling for layout and visual effects (strikethrough for completed items).  \n**Lines:** 3 | **Complexity:** low\n\n- Body: font family, max-width container, centered margin\n- `.done span`: strikethrough text and gray color for completed todos\n- Button: cursor pointer\n\n---\n\n## Shared State & Storage\n\n| Key/Variable | Where set | Where read | What it holds |\n|---|---|---|---|\n| `STORAGE_KEY` (constant) | app.js line 1 | app.js (save/load) | String `'todos_v1'` \u2014 key for localStorage |\n| `todos` (array) | app.js line 2 (initial load from localStorage) | addTodo, toggleTodo, deleteTodo, render | Array of todo objects: `{id, text, done}` |\n| localStorage entry at `'todos_v1'` | save() function | app.js line 2 (on page load) | JSON stringified todos array |\n\n---\n\n## Known Issues & Fixes\n\n| Problem | File | Status | Notes |\n|---|---|---|---|\n| No input validation beyond trim() | app.js | \u26a0\ufe0f Open | addTodo() does not prevent duplicate entries or very long text; consider adding length/uniqueness checks |\n| No edit functionality | \u2014 | \u26a0\ufe0f Open | Users can only add, mark done, or delete; no way to update existing todo text |\n| Inline onclick handlers | index.html, app.js | \u26a0\ufe0f Open | Uses onclick attributes; modern best practice is event listeners for separation of concerns |\n| No error handling | app.js | \u26a0\ufe0f Open | If localStorage is full or disabled, save() will fail silently |\n\n---\n\n## How to Use This Map (for Claude)\n\n- **To add a feature** (e.g., edit todos, filter by done/pending): start in `app.js`, add a new function above `render()`, then add corresponding buttons/logic in the HTML or as onclick handlers\n- **To fix persistence bugs**: check `save()` and the initial load at line 2 in `app.js`\n- **To change styling**: edit `style.css` \u2014 it's minimal and all rules are visible\n- **To understand the flow**: load \u2192 `todos` array from localStorage \u2192 user clicks button \u2192 calls `addTodo/toggleTodo/deleteTodo` \u2192 calls `save()` then `render()`\n- **To debug the UI**: search `index.html` for element IDs (`todoInput`, `todoList`) and cross-reference them in `app.js`\n\n---\n\n## Changelog\n\n| Date | Change | Files affected |\n|---|---|---|\n| 2026-04-11 | Initial codebase map creation | CODEBASE_MAP.md |\n\n---\n\n## Quick Facts\n\n- **Total lines:** 40 (9 HTML + 28 JS + 3 CSS)\n- **No dependencies:** pure vanilla JavaScript, no frameworks or libraries\n- **Storage:** localStorage only (no database)\n- **Browser API used:** localStorage, DOM manipulation, Date.now() for todo IDs\n"}], "grading": null}], "previous_feedback": {}, "previous_outputs": {}};
+
+    // ---- State ----
+    let feedbackMap = {};  // run_id -> feedback text
+    let currentIndex = 0;
+    let visitedRuns = new Set();
+
+    // ---- Init ----
+    async function init() {
+      // Load saved feedback from server — but only if this isn't a fresh
+      // iteration (indicated by previous_feedback being present). When
+      // previous feedback exists, the feedback.json on disk is stale from
+      // the prior iteration and should not pre-fill the textareas.
+      const hasPrevious = Object.keys(EMBEDDED_DATA.previous_feedback || {}).length > 0
+        || Object.keys(EMBEDDED_DATA.previous_outputs || {}).length > 0;
+      if (!hasPrevious) {
+        try {
+          const resp = await fetch("/api/feedback");
+          const data = await resp.json();
+          if (data.reviews) {
+            for (const r of data.reviews) feedbackMap[r.run_id] = r.feedback;
+          }
+        } catch { /* first run, no feedback yet */ }
+      }
+
+      document.getElementById("skill-name").textContent = EMBEDDED_DATA.skill_name;
+      showRun(0);
+
+      // Wire up feedback auto-save
+      const textarea = document.getElementById("feedback");
+      let saveTimeout = null;
+      textarea.addEventListener("input", () => {
+        clearTimeout(saveTimeout);
+        document.getElementById("feedback-status").textContent = "";
+        saveTimeout = setTimeout(() => saveCurrentFeedback(), 800);
+      });
+    }
+
+    // ---- Navigation ----
+    function navigate(delta) {
+      const newIndex = currentIndex + delta;
+      if (newIndex >= 0 && newIndex < EMBEDDED_DATA.runs.length) {
+        saveCurrentFeedback();
+        showRun(newIndex);
+      }
+    }
+
+    function updateNavButtons() {
+      document.getElementById("prev-btn").disabled = currentIndex === 0;
+      document.getElementById("next-btn").disabled =
+        currentIndex === EMBEDDED_DATA.runs.length - 1;
+    }
+
+    // ---- Show a run ----
+    function showRun(index) {
+      currentIndex = index;
+      const run = EMBEDDED_DATA.runs[index];
+
+      // Progress
+      document.getElementById("progress").textContent =
+        `${index + 1} of ${EMBEDDED_DATA.runs.length}`;
+
+      // Prompt
+      document.getElementById("prompt-text").textContent = run.prompt;
+
+      // Config badge
+      const badge = document.getElementById("config-badge");
+      const configMatch = run.id.match(/(with_skill|without_skill|new_skill|old_skill)/);
+      if (configMatch) {
+        const config = configMatch[1];
+        const isBaseline = config === "without_skill" || config === "old_skill";
+        badge.textContent = config.replace(/_/g, " ");
+        badge.className = "config-badge " + (isBaseline ? "config-baseline" : "config-primary");
+        badge.style.display = "inline-block";
+      } else {
+        badge.style.display = "none";
+      }
+
+      // Outputs
+      renderOutputs(run);
+
+      // Previous outputs
+      renderPrevOutputs(run);
+
+      // Grades
+      renderGrades(run);
+
+      // Previous feedback
+      const prevFb = (EMBEDDED_DATA.previous_feedback || {})[run.id];
+      const prevEl = document.getElementById("prev-feedback");
+      if (prevFb) {
+        document.getElementById("prev-feedback-text").textContent = prevFb;
+        prevEl.style.display = "block";
+      } else {
+        prevEl.style.display = "none";
+      }
+
+      // Feedback
+      document.getElementById("feedback").value = feedbackMap[run.id] || "";
+      document.getElementById("feedback-status").textContent = "";
+
+      updateNavButtons();
+
+      // Track visited runs and promote done button when all visited
+      visitedRuns.add(index);
+      const doneBtn = document.getElementById("done-btn");
+      if (visitedRuns.size >= EMBEDDED_DATA.runs.length) {
+        doneBtn.classList.add("ready");
+      }
+
+      // Scroll main content to top
+      document.querySelector(".main").scrollTop = 0;
+    }
+
+    // ---- Render outputs ----
+    function renderOutputs(run) {
+      const container = document.getElementById("outputs-body");
+      container.innerHTML = "";
+
+      const outputs = run.outputs || [];
+      if (outputs.length === 0) {
+        container.innerHTML = '<div class="empty-state">No output files</div>';
+        return;
+      }
+
+      for (const file of outputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        // Always show file header with download link
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const content = document.createElement("div");
+        content.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          content.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          content.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          content.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(content, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          content.appendChild(a);
+        } else if (file.type === "error") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          pre.style.color = "var(--red)";
+          content.appendChild(pre);
+        }
+
+        fileDiv.appendChild(content);
+        container.appendChild(fileDiv);
+      }
+    }
+
+    // ---- XLSX rendering via SheetJS ----
+    function renderXlsx(container, b64Data) {
+      try {
+        const raw = Uint8Array.from(atob(b64Data), c => c.charCodeAt(0));
+        const wb = XLSX.read(raw, { type: "array" });
+
+        for (let i = 0; i < wb.SheetNames.length; i++) {
+          const sheetName = wb.SheetNames[i];
+          const ws = wb.Sheets[sheetName];
+
+          if (wb.SheetNames.length > 1) {
+            const sheetLabel = document.createElement("div");
+            sheetLabel.style.cssText =
+              "font-weight:600; font-size:0.8rem; color:#b0aea5; margin-top:0.5rem; margin-bottom:0.25rem;";
+            sheetLabel.textContent = "Sheet: " + sheetName;
+            container.appendChild(sheetLabel);
+          }
+
+          const htmlStr = XLSX.utils.sheet_to_html(ws, { editable: false });
+          const wrapper = document.createElement("div");
+          wrapper.innerHTML = htmlStr;
+          container.appendChild(wrapper);
+        }
+      } catch (err) {
+        container.textContent = "Error rendering spreadsheet: " + err.message;
+      }
+    }
+
+    // ---- Grades ----
+    function renderGrades(run) {
+      const section = document.getElementById("grades-section");
+      const content = document.getElementById("grades-content");
+
+      if (!run.grading) {
+        section.style.display = "none";
+        return;
+      }
+
+      const grading = run.grading;
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("grades-arrow").classList.remove("open");
+
+      const summary = grading.summary || {};
+      const expectations = grading.expectations || [];
+
+      let html = '<div style="padding: 1rem;">';
+
+      // Summary line
+      const passRate = summary.pass_rate != null
+        ? Math.round(summary.pass_rate * 100) + "%"
+        : "?";
+      const badgeClass = summary.pass_rate >= 0.8 ? "grade-pass" : summary.pass_rate >= 0.5 ? "" : "grade-fail";
+      html += '<div class="grades-summary">';
+      html += '<span class="grade-badge ' + badgeClass + '">' + passRate + '</span>';
+      html += '<span>' + (summary.passed || 0) + ' passed, ' + (summary.failed || 0) + ' failed of ' + (summary.total || 0) + '</span>';
+      html += '</div>';
+
+      // Assertions list
+      html += '<ul class="assertion-list">';
+      for (const exp of expectations) {
+        const statusClass = exp.passed ? "pass" : "fail";
+        const statusIcon = exp.passed ? "\u2713" : "\u2717";
+        html += '<li class="assertion-item">';
+        html += '<span class="assertion-status ' + statusClass + '">' + statusIcon + '</span>';
+        html += '<span>' + escapeHtml(exp.text) + '</span>';
+        if (exp.evidence) {
+          html += '<div class="assertion-evidence">' + escapeHtml(exp.evidence) + '</div>';
+        }
+        html += '</li>';
+      }
+      html += '</ul>';
+
+      html += '</div>';
+      content.innerHTML = html;
+    }
+
+    function toggleGrades() {
+      const content = document.getElementById("grades-content");
+      const arrow = document.getElementById("grades-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Previous outputs (collapsible) ----
+    function renderPrevOutputs(run) {
+      const section = document.getElementById("prev-outputs-section");
+      const content = document.getElementById("prev-outputs-content");
+      const prevOutputs = (EMBEDDED_DATA.previous_outputs || {})[run.id];
+
+      if (!prevOutputs || prevOutputs.length === 0) {
+        section.style.display = "none";
+        return;
+      }
+
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("prev-outputs-arrow").classList.remove("open");
+
+      // Render the files into the content area
+      content.innerHTML = "";
+      const wrapper = document.createElement("div");
+      wrapper.style.padding = "1rem";
+
+      for (const file of prevOutputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const fc = document.createElement("div");
+        fc.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          fc.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          fc.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          fc.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(fc, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          fc.appendChild(a);
+        }
+
+        fileDiv.appendChild(fc);
+        wrapper.appendChild(fileDiv);
+      }
+
+      content.appendChild(wrapper);
+    }
+
+    function togglePrevOutputs() {
+      const content = document.getElementById("prev-outputs-content");
+      const arrow = document.getElementById("prev-outputs-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Feedback (saved to server -> feedback.json) ----
+    function saveCurrentFeedback() {
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // Build reviews array from map
+      const reviews = [];
+      for (const [run_id, feedback] of Object.entries(feedbackMap)) {
+        if (feedback.trim()) {
+          reviews.push({ run_id, feedback, timestamp: new Date().toISOString() });
+        }
+      }
+
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviews, status: "in_progress" }),
+      }).then(() => {
+        document.getElementById("feedback-status").textContent = "Saved";
+      }).catch(() => {
+        // Static mode or server unavailable — no-op on auto-save,
+        // feedback will be downloaded on final submit
+        document.getElementById("feedback-status").textContent = "Will download on submit";
+      });
+    }
+
+    // ---- Done ----
+    function showDoneDialog() {
+      // Save current textarea to feedbackMap (but don't POST yet)
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // POST once with status: complete — include ALL runs so the model
+      // can distinguish "no feedback" (looks good) from "not reviewed"
+      const reviews = [];
+      const ts = new Date().toISOString();
+      for (const r of EMBEDDED_DATA.runs) {
+        reviews.push({ run_id: r.id, feedback: feedbackMap[r.id] || "", timestamp: ts });
+      }
+      const payload = JSON.stringify({ reviews, status: "complete" }, null, 2);
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+      }).then(() => {
+        document.getElementById("done-overlay").classList.add("visible");
+      }).catch(() => {
+        // Server not available (static mode) — download as file
+        const blob = new Blob([payload], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "feedback.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        document.getElementById("done-overlay").classList.add("visible");
+      });
+    }
+
+    function closeDoneDialog() {
+      // Reset status back to in_progress
+      saveCurrentFeedback();
+      document.getElementById("done-overlay").classList.remove("visible");
+    }
+
+    // ---- Toast ----
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      setTimeout(() => toast.classList.remove("visible"), 2000);
+    }
+
+    // ---- Keyboard nav ----
+    document.addEventListener("keydown", (e) => {
+      // Don't capture when typing in textarea
+      if (e.target.tagName === "TEXTAREA") return;
+
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        navigate(-1);
+      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        navigate(1);
+      }
+    });
+
+    // ---- Util ----
+    function getDownloadUri(file) {
+      if (file.data_uri) return file.data_uri;
+      if (file.data_b64) return "data:application/octet-stream;base64," + file.data_b64;
+      if (file.type === "text") return "data:text/plain;charset=utf-8," + encodeURIComponent(file.content);
+      return "#";
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ---- View switching ----
+    function switchView(view) {
+      document.querySelectorAll(".view-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+      document.querySelector(`[onclick="switchView('${view}')"]`).classList.add("active");
+      document.getElementById("panel-" + view).classList.add("active");
+    }
+
+    // ---- Benchmark rendering ----
+    function renderBenchmark() {
+      const data = EMBEDDED_DATA.benchmark;
+      if (!data) return;
+
+      // Show the tabs
+      document.getElementById("view-tabs").style.display = "flex";
+
+      const container = document.getElementById("benchmark-content");
+      const summary = data.run_summary || {};
+      const metadata = data.metadata || {};
+      const notes = data.notes || [];
+
+      let html = "";
+
+      // Header
+      html += "<h2 style='font-family: Poppins, sans-serif; margin-bottom: 0.5rem;'>Benchmark Results</h2>";
+      html += "<p style='color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.25rem;'>";
+      if (metadata.skill_name) html += "<strong>" + escapeHtml(metadata.skill_name) + "</strong> &mdash; ";
+      if (metadata.timestamp) html += metadata.timestamp + " &mdash; ";
+      if (metadata.evals_run) html += "Evals: " + metadata.evals_run.join(", ") + " &mdash; ";
+      html += (metadata.runs_per_configuration || "?") + " runs per configuration";
+      html += "</p>";
+
+      // Summary table
+      html += '<table class="benchmark-table">';
+
+      function fmtStat(stat, pct) {
+        if (!stat) return "—";
+        const suffix = pct ? "%" : "";
+        const m = pct ? (stat.mean * 100).toFixed(0) : stat.mean.toFixed(1);
+        const s = pct ? (stat.stddev * 100).toFixed(0) : stat.stddev.toFixed(1);
+        return m + suffix + " ± " + s + suffix;
+      }
+
+      function deltaClass(val) {
+        if (!val) return "";
+        const n = parseFloat(val);
+        if (n > 0) return "benchmark-delta-positive";
+        if (n < 0) return "benchmark-delta-negative";
+        return "";
+      }
+
+      // Discover config names dynamically (everything except "delta")
+      const configs = Object.keys(summary).filter(k => k !== "delta");
+      const configA = configs[0] || "config_a";
+      const configB = configs[1] || "config_b";
+      const labelA = configA.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const labelB = configB.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const a = summary[configA] || {};
+      const b = summary[configB] || {};
+      const delta = summary.delta || {};
+
+      html += "<thead><tr><th>Metric</th><th>" + escapeHtml(labelA) + "</th><th>" + escapeHtml(labelB) + "</th><th>Delta</th></tr></thead>";
+      html += "<tbody>";
+
+      html += "<tr><td><strong>Pass Rate</strong></td>";
+      html += "<td>" + fmtStat(a.pass_rate, true) + "</td>";
+      html += "<td>" + fmtStat(b.pass_rate, true) + "</td>";
+      html += '<td class="' + deltaClass(delta.pass_rate) + '">' + (delta.pass_rate || "—") + "</td></tr>";
+
+      // Time (only show row if data exists)
+      if (a.time_seconds || b.time_seconds) {
+        html += "<tr><td><strong>Time (s)</strong></td>";
+        html += "<td>" + fmtStat(a.time_seconds, false) + "</td>";
+        html += "<td>" + fmtStat(b.time_seconds, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.time_seconds) + '">' + (delta.time_seconds ? delta.time_seconds + "s" : "—") + "</td></tr>";
+      }
+
+      // Tokens (only show row if data exists)
+      if (a.tokens || b.tokens) {
+        html += "<tr><td><strong>Tokens</strong></td>";
+        html += "<td>" + fmtStat(a.tokens, false) + "</td>";
+        html += "<td>" + fmtStat(b.tokens, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.tokens) + '">' + (delta.tokens || "—") + "</td></tr>";
+      }
+
+      html += "</tbody></table>";
+
+      // Per-eval breakdown (if runs data available)
+      const runs = data.runs || [];
+      if (runs.length > 0) {
+        const evalIds = [...new Set(runs.map(r => r.eval_id))].sort((a, b) => a - b);
+
+        html += "<h3 style='font-family: Poppins, sans-serif; margin-bottom: 0.75rem;'>Per-Eval Breakdown</h3>";
+
+        const hasTime = runs.some(r => r.result && r.result.time_seconds != null);
+        const hasErrors = runs.some(r => r.result && r.result.errors > 0);
+
+        for (const evalId of evalIds) {
+          const evalRuns = runs.filter(r => r.eval_id === evalId);
+          const evalName = evalRuns[0] && evalRuns[0].eval_name ? evalRuns[0].eval_name : "Eval " + evalId;
+
+          html += "<h4 style='font-family: Poppins, sans-serif; margin: 1rem 0 0.5rem; color: var(--text);'>" + escapeHtml(evalName) + "</h4>";
+          html += '<table class="benchmark-table">';
+          html += "<thead><tr><th>Config</th><th>Run</th><th>Pass Rate</th>";
+          if (hasTime) html += "<th>Time (s)</th>";
+          if (hasErrors) html += "<th>Crashes During Execution</th>";
+          html += "</tr></thead>";
+          html += "<tbody>";
+
+          // Group by config and render with average rows
+          const configGroups = [...new Set(evalRuns.map(r => r.configuration))];
+          for (let ci = 0; ci < configGroups.length; ci++) {
+            const config = configGroups[ci];
+            const configRuns = evalRuns.filter(r => r.configuration === config);
+            if (configRuns.length === 0) continue;
+
+            const rowClass = ci === 0 ? "benchmark-row-with" : "benchmark-row-without";
+            const configLabel = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+            for (const run of configRuns) {
+              const r = run.result || {};
+              const prClass = r.pass_rate >= 0.8 ? "benchmark-delta-positive" : r.pass_rate < 0.5 ? "benchmark-delta-negative" : "";
+              html += '<tr class="' + rowClass + '">';
+              html += "<td>" + configLabel + "</td>";
+              html += "<td>" + run.run_number + "</td>";
+              html += '<td class="' + prClass + '">' + ((r.pass_rate || 0) * 100).toFixed(0) + "% (" + (r.passed || 0) + "/" + (r.total || 0) + ")</td>";
+              if (hasTime) html += "<td>" + (r.time_seconds != null ? r.time_seconds.toFixed(1) : "—") + "</td>";
+              if (hasErrors) html += "<td>" + (r.errors || 0) + "</td>";
+              html += "</tr>";
+            }
+
+            // Average row
+            const rates = configRuns.map(r => (r.result || {}).pass_rate || 0);
+            const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;
+            const avgPrClass = avgRate >= 0.8 ? "benchmark-delta-positive" : avgRate < 0.5 ? "benchmark-delta-negative" : "";
+            html += '<tr class="benchmark-row-avg ' + rowClass + '">';
+            html += "<td>" + configLabel + "</td>";
+            html += "<td>Avg</td>";
+            html += '<td class="' + avgPrClass + '">' + (avgRate * 100).toFixed(0) + "%</td>";
+            if (hasTime) {
+              const times = configRuns.map(r => (r.result || {}).time_seconds).filter(t => t != null);
+              html += "<td>" + (times.length ? (times.reduce((a, b) => a + b, 0) / times.length).toFixed(1) : "—") + "</td>";
+            }
+            if (hasErrors) html += "<td></td>";
+            html += "</tr>";
+          }
+          html += "</tbody></table>";
+
+          // Per-assertion detail for this eval
+          const runsWithExpectations = {};
+          for (const config of configGroups) {
+            runsWithExpectations[config] = evalRuns.filter(r => r.configuration === config && r.expectations && r.expectations.length > 0);
+          }
+          const hasAnyExpectations = Object.values(runsWithExpectations).some(runs => runs.length > 0);
+          if (hasAnyExpectations) {
+            // Collect all unique assertion texts across all configs
+            const allAssertions = [];
+            const seen = new Set();
+            for (const config of configGroups) {
+              for (const run of runsWithExpectations[config]) {
+                for (const exp of (run.expectations || [])) {
+                  if (!seen.has(exp.text)) {
+                    seen.add(exp.text);
+                    allAssertions.push(exp.text);
+                  }
+                }
+              }
+            }
+
+            html += '<table class="benchmark-table" style="margin-top: 0.5rem;">';
+            html += "<thead><tr><th>Assertion</th>";
+            for (const config of configGroups) {
+              const label = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+              html += "<th>" + escapeHtml(label) + "</th>";
+            }
+            html += "</tr></thead><tbody>";
+
+            for (const assertionText of allAssertions) {
+              html += "<tr><td>" + escapeHtml(assertionText) + "</td>";
+
+              for (const config of configGroups) {
+                html += "<td>";
+                for (const run of runsWithExpectations[config]) {
+                  const exp = (run.expectations || []).find(e => e.text === assertionText);
+                  if (exp) {
+                    const cls = exp.passed ? "benchmark-delta-positive" : "benchmark-delta-negative";
+                    const icon = exp.passed ? "\u2713" : "\u2717";
+                    html += '<span class="' + cls + '" title="Run ' + run.run_number + ': ' + escapeHtml(exp.evidence || "") + '">' + icon + "</span> ";
+                  } else {
+                    html += "— ";
+                  }
+                }
+                html += "</td>";
+              }
+              html += "</tr>";
+            }
+            html += "</tbody></table>";
+          }
+        }
+      }
+
+      // Notes
+      if (notes.length > 0) {
+        html += '<div class="benchmark-notes">';
+        html += "<h3>Analysis Notes</h3>";
+        html += "<ul>";
+        for (const note of notes) {
+          html += "<li>" + escapeHtml(note) + "</li>";
+        }
+        html += "</ul></div>";
+      }
+
+      container.innerHTML = html;
+    }
+
+    // ---- Start ----
+    init();
+    renderBenchmark();
+  </script>
+</body>
+</html>
