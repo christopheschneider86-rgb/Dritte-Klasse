@@ -15,6 +15,22 @@ Willkommen auf der Lernplattform meiner Tochter! Hier findest du eine kleine, ki
 
 ---
 
+### 🎵 Musik
+
+[![Musik Trainer Starten](https://img.shields.io/badge/🎼_Musik_Trainer_starten-3498db?style=for-the-badge&logoColor=white)](https://christopheschneider86-rgb.github.io/Dritte-Klasse/musik/musik_trainer.html)
+
+**Musiktrainer mit Merkspiel:** Ein Gedächtnisspiel, bei dem die Kinder Musikinstrumente identifizieren und Melodien nachspielen. Jede Runde kostet 10 Münzen (verdient durch richtige Antworten im Trainer).
+
+**🎼 Orchester-Lexikon:** Ein interaktives Nachschlagewerk mit allen 7 Orchesterinstrumenten. Kinder können:
+- **Instrument-Details** erkunden: Wie klingt es? Wie spielt man es? Besondere Merkmale?
+- **Peter und der Wolf** entdecken: Welches Instrument gehört zu welcher Figur und warum?
+- **Eselsbrücken** lernen: Merksprüche zum Erinnerung der Instrumente
+- Instrumente nach **Instrumentengruppe** sortiert ansehen: Streicher, Holzbläser, Blechbläser, Schlagwerk
+
+*(Aufrufbar während des Trainings über den Lexikon-Button – ohne das Lernen zu unterbrechen)*
+
+---
+
 ### 📚 Deutsch (Demnächst)
 *Kommt bald...*
 
