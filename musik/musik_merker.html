@@ -135,7 +135,6 @@ const HS_KEY      = 'm_musik_hs';
 
 let herzen = 3;
 let level  = 1;
-let sessionCoins = 0;
 let aktiveProfilId = null;
 let profiles = {};
 let audioCtx = null;
@@ -374,7 +373,6 @@ function tasteDrücken(noteIdx) {
   if (eingabe.length === sequenz.length) {
     // ALLE RICHTIG → Level up!
     successSound();
-    addCoins(level);
     updateStatus('🎉 Perfekt! Weiter zu Level ' + (level+1) + '!');
     setTimeout(() => {
       level++;
@@ -437,7 +435,6 @@ function tryStartGame() {
   removeCoins(COIN_COST);
   herzen = 3;
   level = 1;
-  sessionCoins = 0;
   resetHerzenAnzeige();
   updateLevelInfo();
   document.getElementById('herzenPanel').style.display = '';
@@ -453,7 +450,6 @@ function tryNochmal() {
   removeCoins(COIN_COST);
   herzen = 3;
   level = 1;
-  sessionCoins = 0;
   resetHerzenAnzeige();
   updateLevelInfo();
   document.getElementById('herzenPanel').style.display = '';
@@ -616,11 +612,7 @@ function renderResult(gameOver, abgezogeneCoins) {
 
   const currentCoins = profiles[aktiveProfilId]?.coins || 0;
   const canPlay = currentCoins >= COIN_COST;
-  let coinHtml = '';
-  if (sessionCoins > 0) {
-    coinHtml = `<div class="result-coins">🪙 +${sessionCoins} Münzen verdient in dieser Runde!</div>`;
-  }
-  const coinAvailHtml = `<div style="font-size:14px;color:#7f8c8d;margin-top:6px">Guthaben: 🪙 ${currentCoins} Münzen</div>`;
+  const coinAvailHtml = `<div style="font-size:14px;color:#7f8c8d;margin-top:6px">Verbleibend: 🪙 ${currentCoins} Münzen</div>`;
 
   main.innerHTML = `
     <div class="card">
@@ -629,7 +621,6 @@ function renderResult(gameOver, abgezogeneCoins) {
         <div class="result-titel">${titel}</div>
         <div class="result-text">${gameOver ? 'Keine Herzen mehr!' : ''} Du hast Level ${level} erreicht!</div>
         ${hsHtml}
-        ${coinHtml}
         ${coinAvailHtml}
         <div class="result-btns">
           <button class="result-btn btn-nochmal" onclick="tryNochmal()" ${!canPlay ? 'style="opacity:.5"' : ''}>
