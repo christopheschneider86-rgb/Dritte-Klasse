@@ -138,6 +138,7 @@ let level  = 1;
 let aktiveProfilId = null;
 let profiles = {};
 let audioCtx = null;
+let startCoins = 0; // Münzen beim Spielstart (wird nicht aktualisiert während Spiel läuft)
 
 // Eine Oktave C4–C5
 const NOTEN = [
@@ -185,6 +186,8 @@ function loadProfile() {
     profiles = { p1: { name:'Kind 1', coins:0, musik_history:[] } };
     aktiveProfilId = 'p1';
   }
+  // Speichere die Münzen beim Spielstart (wird nicht aktualisiert während Spiel läuft)
+  startCoins = profiles[aktiveProfilId]?.coins || 0;
   updateCoinDisplay();
 }
 
@@ -199,8 +202,10 @@ function removeCoins(n) {
 }
 
 function updateCoinDisplay() {
+  // Zeige nur die Münzen, die beim Spielstart geladen wurden
+  // (wird nicht aktualisiert während des Spiels, um Verwechslung zu vermeiden)
   const el = document.getElementById('coinCount');
-  if (el) el.textContent = profiles[aktiveProfilId]?.coins || 0;
+  if (el) el.textContent = startCoins;
 }
 
 // ── HIGHSCORE ──────────────────────────────────────────
