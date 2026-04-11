@@ -8,151 +8,165 @@
 <link rel="apple-touch-icon" href="../images/icon_musik.png">
 <style>
 :root{
-  --musik:#e91e8c;
-  --musik-dark:#b01570;
-  --musik-light:#fce4f4;
+  --accent:#e91e8c;
+  --accent-dark:#b01570;
+  --accent-soft:#fce4f4;
   --bg:#fdf0f8;
-  --correct:#27ae60;
-  --wrong:#e74c3c;
+  --text:#2c3e50;
+  --muted:#666;
+  --success:#27ae60;
+  --danger:#e74c3c;
+  --radius:18px;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:#2c3e50;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding-bottom:30px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding-bottom:30px;touch-action:manipulation}
 
 /* ── HEADER ── */
-.header{width:100%;background:linear-gradient(135deg,#6a11cb,#2575fc);color:#fff;padding:14px 20px 18px;border-radius:0 0 24px 24px;box-shadow:0 4px 16px rgba(106,17,203,0.35);}
-.header-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.back-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;border-radius:10px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:bold;text-decoration:none;display:flex;align-items:center;gap:5px;}
-.back-btn:hover{background:rgba(255,255,255,0.3);}
-.app-icon{width:34px;height:34px;border-radius:8px;object-fit:cover;}
-.header-title{font-size:19px;font-weight:bold;flex:1;}
-.herzen{font-size:22px;display:flex;gap:3px;}
-.level-info{background:rgba(255,255,255,0.18);border-radius:10px;padding:8px 14px;font-size:13px;text-align:center;}
-.coin-display{position:absolute;top:14px;right:20px;background:rgba(255,255,255,0.2);border-radius:10px;padding:5px 10px;font-size:13px;font-weight:bold;color:#fff;display:flex;align-items:center;gap:4px;}
+.header{width:100%;background:linear-gradient(135deg,#6a11cb,#2575fc);color:#fff;padding:14px 20px 14px;border-radius:0 0 24px 24px;box-shadow:0 4px 16px rgba(106,17,203,0.35)}
+.header-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.back-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;border-radius:10px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:bold;text-decoration:none;display:flex;align-items:center;gap:5px}
+.back-btn:hover{background:rgba(255,255,255,0.3)}
+.app-icon{width:34px;height:34px;border-radius:8px;object-fit:cover}
+.header-title{font-size:19px;font-weight:bold;flex:1}
+.header-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.coin-display{background:rgba(255,255,255,0.2);border-radius:10px;padding:5px 12px;font-size:14px;font-weight:bold;color:#fff;display:flex;align-items:center;gap:4px}
+.level-info{background:rgba(255,255,255,0.18);border-radius:10px;padding:8px 14px;font-size:13px;text-align:center}
+/* ── HERZEN-PANEL ── */
+.herzen-panel{width:100%;max-width:480px;margin:12px auto 0;background:white;border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,0.08);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.herzen-label{font-size:13px;font-weight:bold;color:#666;text-transform:uppercase;letter-spacing:.5px}
+.herzen-icons{display:flex;gap:6px;font-size:26px}
+.herzen-icon{transition:transform .2s,filter .2s}
+.herzen-icon.leer{filter:grayscale(1);opacity:.35}
+.herzen-icon.verloren{animation:herzVerloren .4s ease}
+@keyframes herzVerloren{0%{transform:scale(1.4)}50%{transform:scale(0.7);filter:grayscale(1)}100%{transform:scale(1);filter:grayscale(1);opacity:.35}}
 
 /* ── MAIN ── */
-.main{width:100%;max-width:480px;padding:18px 14px 0;}
+.main{width:100%;max-width:480px;padding:18px 14px 0}
+.card{background:#fff;border-radius:var(--radius);box-shadow:0 6px 20px rgba(0,0,0,0.08);padding:20px;margin-bottom:14px}
 
-/* ── KARTE ── */
-.card{background:#fff;border-radius:18px;box-shadow:0 6px 20px rgba(0,0,0,0.08);padding:20px;margin-bottom:14px;}
-
-/* ── NOTEN-ANZEIGE ── */
-.noten-anzeige{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;min-height:54px;align-items:center;margin:10px 0;}
-.note-chip{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#6a11cb,#2575fc);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:bold;box-shadow:0 3px 8px rgba(106,17,203,0.3);transition:transform .1s;}
-.note-chip.highlight{transform:scale(1.3);background:linear-gradient(135deg,#f39c12,#e74c3c);}
-.note-chip.correct{background:linear-gradient(135deg,#27ae60,#1e8449);}
-.note-chip.wrong{background:linear-gradient(135deg,#e74c3c,#c0392b);}
+/* ── NOTEN-SEQUENZ ── */
+.noten-label{text-align:center;font-size:13px;color:var(--muted);margin-bottom:8px;font-weight:600}
+.noten-anzeige{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;min-height:54px;align-items:center;margin:0 0 12px;padding:10px;background:var(--accent-soft);border-radius:14px;border:2px solid #f0c8e4}
+.note-chip{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#6a11cb,#2575fc);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;box-shadow:0 3px 8px rgba(106,17,203,0.3);transition:transform .15s,background .15s;user-select:none;flex-shrink:0}
+.note-chip.playing{transform:scale(1.35);background:linear-gradient(135deg,#f39c12,#e74c3c) !important;box-shadow:0 4px 12px rgba(243,156,18,0.5)}
+/* Nach dem Abspielen werden Chips ausgeblendet – kein Abschreiben! */
+.note-chip.hidden{opacity:0;pointer-events:none}
 
 /* ── STATUS ── */
-.status-text{text-align:center;font-size:15px;color:#666;margin:10px 0 4px;min-height:22px;font-weight:600;}
-.status-emoji{text-align:center;font-size:28px;min-height:36px;}
+.status-text{text-align:center;font-size:15px;color:var(--muted);margin:8px 0 4px;min-height:22px;font-weight:600}
 
 /* ── KLAVIATUR ── */
-.klaviatur-wrap{position:relative;height:130px;width:100%;max-width:400px;margin:16px auto 0;touch-action:none;}
-.white-keys{display:flex;height:130px;width:100%;}
-.white-key{flex:1;background:#fff;border:2px solid #ccc;border-radius:0 0 8px 8px;cursor:pointer;position:relative;transition:background .07s;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;font-size:11px;font-weight:bold;color:#999;user-select:none;}
-.white-key:hover{background:#f5f0ff;}
-.white-key.active{background:#d4a8ff;}
-.white-key.correct-flash{background:#a8f0c8 !important;}
-.white-key.wrong-flash{background:#ffb3b3 !important;}
+.klaviatur-wrap{position:relative;height:130px;width:100%;max-width:400px;margin:14px auto 0;user-select:none}
+.white-keys{display:flex;height:130px;width:100%}
+.white-key{flex:1;background:#fff;border:2px solid #ccc;border-radius:0 0 8px 8px;cursor:pointer;position:relative;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;font-size:11px;font-weight:bold;color:#bbb;transition:background .07s;-webkit-tap-highlight-color:transparent}
+.white-key:active,.white-key.active{background:#d4a8ff}
+.white-key.correct-flash{background:#a8f0c8 !important;border-color:#27ae60 !important}
+.white-key.wrong-flash{background:#ffb3b3 !important;border-color:#e74c3c !important}
+/* Eingabe-Fortschritt auf Chips anzeigen */
+.note-chip.eingabe-ok{background:linear-gradient(135deg,#27ae60,#1e8449) !important}
 
-.black-keys{position:absolute;top:0;left:0;width:100%;height:80px;pointer-events:none;}
-.black-key{position:absolute;width:6%;height:80px;background:#2c3e50;border-radius:0 0 5px 5px;cursor:pointer;z-index:2;pointer-events:all;transition:background .07s;user-select:none;}
-.black-key:hover{background:#4a4a7a;}
-.black-key.active{background:#9b59b6;}
+/* ── BUTTONS ── */
+.play-btn{width:100%;background:linear-gradient(135deg,#6a11cb,#2575fc);color:#fff;border:none;border-radius:14px;padding:16px;font-size:17px;font-weight:bold;cursor:pointer;margin-top:12px;transition:opacity .15s}
+.play-btn:disabled{opacity:.45;cursor:default}
+.play-btn:hover:not(:disabled){opacity:.9}
+.tip-btn{background:none;border:2px solid #f39c12;color:#f39c12;border-radius:12px;padding:8px 16px;font-size:13px;font-weight:bold;cursor:pointer;margin-top:10px;display:none;align-items:center;gap:6px}
+.tip-btn.visible{display:flex}
+.tip-box{background:#fef9e7;border-left:4px solid #f39c12;border-radius:10px;padding:12px 14px;font-size:14px;color:#7d5a00;margin-top:10px;display:none;line-height:1.5}
+.tip-box.show{display:block}
 
-/* ── BUTTON ── */
-.play-btn{width:100%;background:linear-gradient(135deg,#6a11cb,#2575fc);color:#fff;border:none;border-radius:14px;padding:16px;font-size:17px;font-weight:bold;cursor:pointer;margin-top:12px;transition:opacity .15s;}
-.play-btn:disabled{opacity:.5;cursor:default;}
-.play-btn:hover:not(:disabled){opacity:.9;}
-.tip-btn{background:none;border:2px solid #f39c12;color:#f39c12;border-radius:12px;padding:8px 16px;font-size:13px;font-weight:bold;cursor:pointer;margin-top:10px;display:flex;align-items:center;gap:6px;}
-.tip-box{background:#fef9e7;border-left:4px solid #f39c12;border-radius:10px;padding:12px 14px;font-size:14px;color:#7d5a00;margin-top:10px;display:none;line-height:1.5;}
-.tip-box.show{display:block;}
+/* ── LEVEL-BADGE ── */
+.level-badge{display:inline-block;background:linear-gradient(135deg,#f39c12,#e67e22);color:#fff;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:bold;margin-bottom:10px}
 
-/* ── ERGEBNIS ── */
-.result-card{text-align:center;padding:20px;}
-.result-emoji{font-size:60px;margin-bottom:10px;}
-.result-titel{font-size:24px;font-weight:bold;margin-bottom:6px;}
-.result-text{color:#666;font-size:14px;margin-bottom:18px;}
-.result-coins{background:#fef9e7;border:2px solid #f39c12;border-radius:12px;padding:12px;font-size:16px;font-weight:bold;color:#7d5a00;margin-bottom:16px;}
-.result-btns{display:flex;flex-direction:column;gap:10px;}
-.result-btn{border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:bold;cursor:pointer;}
-.btn-nochmal{background:linear-gradient(135deg,#6a11cb,#2575fc);color:#fff;}
-.btn-trainer{background:var(--musik-light);color:var(--musik-dark);}
-.btn-home{background:#f0f4f8;color:#2c3e50;}
+/* ── GAMEOVER / RESULT ── */
+.result-card{text-align:center;padding:20px}
+.result-emoji{font-size:60px;margin-bottom:10px}
+.result-titel{font-size:24px;font-weight:bold;margin-bottom:6px}
+.result-text{color:#666;font-size:14px;margin-bottom:18px}
+.result-coins{background:#fef9e7;border:2px solid #f39c12;border-radius:12px;padding:12px;font-size:16px;font-weight:bold;color:#7d5a00;margin-bottom:16px}
+.result-btns{display:flex;flex-direction:column;gap:10px}
+.result-btn{border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:bold;cursor:pointer}
+.btn-nochmal{background:linear-gradient(135deg,#6a11cb,#2575fc);color:#fff}
+.btn-trainer{background:var(--accent-soft);color:var(--accent-dark)}
+.btn-home{background:#f0f4f8;color:var(--text)}
 
-/* ── MELODIE-SEQUENZEN ── */
-.level-badge{display:inline-block;background:linear-gradient(135deg,#f39c12,#e74c3c);color:#fff;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:bold;margin-bottom:10px;}
+/* ── HIGHSCORE-EINBLENDUNG ── */
+.hs-new{background:linear-gradient(135deg,#f1c40f,#e67e22);color:#2c3e50;border-radius:12px;padding:12px 16px;margin-bottom:16px;font-weight:bold;font-size:15px;text-align:center}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<div class="header" style="position:relative;">
+<div class="header">
   <div class="header-top">
     <a href="musik_trainer.html" class="back-btn">← Trainer</a>
     <img src="../images/musik_merker.png" class="app-icon" alt="" onerror="this.style.display='none'">
     <div class="header-title">🎹 Musik-Merkspiel</div>
-    <div class="herzen" id="herzenAnzeige">❤️❤️❤️</div>
+    <div class="header-right">
+      <div class="coin-display">🪙 <span id="coinCount">0</span></div>
+    </div>
   </div>
   <div class="level-info" id="levelInfo">Level 1 – Merke dir 2 Noten und spiel sie nach!</div>
-  <div class="coin-display">🪙 <span id="coinCount">0</span></div>
+</div>
+
+<!-- HERZEN-PANEL -->
+<div class="herzen-panel" id="herzenPanel" style="display:none">
+  <div class="herzen-label">Leben</div>
+  <div class="herzen-icons" id="herzenAnzeige">
+    <span class="herzen-icon" id="herz_0">❤️</span>
+    <span class="herzen-icon" id="herz_1">❤️</span>
+    <span class="herzen-icon" id="herz_2">❤️</span>
+  </div>
+  <div style="font-size:13px;color:#999;text-align:right;line-height:1.4">Jedes Herz<br>= 1 Versuch</div>
 </div>
 
 <div class="main" id="mainContent"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 //  MUSIK-MERKSPIEL
-//  Sequenz wird abgespielt → Kind spielt auf Klaviatur nach
-//  Web Audio API für Töne
-// ═══════════════════════════════════════════════════════════
+//  - Sequenz abspielen → Noten-Chips verschwinden
+//  - Kind spielt nach → bei Fehler Herz abziehen
+//  - 3 Herzen = 3 Leben; bei 0 → Game Over
+//  - Highscore-Tabelle (Key: m_musik_hs)
+// ═══════════════════════════════════════════════════════
+
 const STORAGE_KEY = 'm_app_v9';
 const ACTIVE_KEY  = 'm_app_active_prof';
+const HS_KEY      = 'm_musik_hs';
 
 let herzen = 3;
-let level = 1;
+let level  = 1;
 let sessionCoins = 0;
 let aktiveProfilId = null;
 let profiles = {};
 let audioCtx = null;
 
-// ── NOTEN: C4 bis C5 (eine Oktave) + schwarze Tasten ──────
+// Eine Oktave C4–C5
 const NOTEN = [
-  { name:'C', freq:261.63, typ:'white', pos:0 },
-  { name:'D', freq:293.66, typ:'white', pos:1 },
-  { name:'E', freq:329.63, typ:'white', pos:2 },
-  { name:'F', freq:349.23, typ:'white', pos:3 },
-  { name:'G', freq:392.00, typ:'white', pos:4 },
-  { name:'A', freq:440.00, typ:'white', pos:5 },
-  { name:'H', freq:493.88, typ:'white', pos:6 },
-  { name:'C2',freq:523.25, typ:'white', pos:7 },
+  { name:'C',  freq:261.63 },
+  { name:'D',  freq:293.66 },
+  { name:'E',  freq:329.63 },
+  { name:'F',  freq:349.23 },
+  { name:'G',  freq:392.00 },
+  { name:'A',  freq:440.00 },
+  { name:'H',  freq:493.88 },
+  { name:'C²', freq:523.25 },
 ];
-const WHITE_COUNT = 8;
 
-// Vorgegebene Melodien – werden mit zunehmenden Level länger
-// Basiert auf einfachen Kindermelodien (Tonfolgen)
+// Melodie-Quellen (bekannte Kindermelodien als Notenindizes)
 const MELODIEN = [
-  // Level 1-2: 2 Noten
-  [0,2],           // C E
-  [0,4],           // C G
-  [2,4],           // E G
-  // Level 3-4: 3 Noten
-  [0,2,4],         // C E G
-  [0,4,2],         // C G E
-  [4,2,0],         // G E C
-  [0,2,4,2],       // C E G E – Level 5
-  [0,0,4,4,5,5,4], // Twinkle – Level 6-7
-  [0,4,5,4,2,2,1,1,0], // Twinkle voll – Level 8+
+  [0,4,5,4,2,2,1,1,0],         // Twinkle Twinkle
+  [4,4,5,5,4,4,2],              // Teil 2
+  [0,0,4,4,5,5,4,3,3,2,2,1,1,0], // Ganzes Twinkle
+  [2,2,4,4,5,4,2],              // Hänschen klein Anfang
+  [4,2,4,5,4,2,0,2,4,0],        // Bruder Jakob
 ];
 
-// Aktuelle Sequenz und Eingabe
 let sequenz = [];
 let eingabe = [];
-let spielPhase = 'start'; // start | abspielen | eingabe | feedback | result
-let highlightTimeout = null;
-let tipVerbraucht = false;
+let spielPhase = 'bereit'; // bereit | abspielen | eingabe | gameover | result
+let chipsSichtbar = true;
 
-// ── PROFIL ─────────────────────────────────────────────────
+// ── PROFIL ─────────────────────────────────────────────
 function loadProfile() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -160,12 +174,17 @@ function loadProfile() {
       profiles = JSON.parse(raw);
       Object.keys(profiles).forEach(id => {
         if (!profiles[id].coins) profiles[id].coins = 0;
+        if (!profiles[id].musik_history) profiles[id].musik_history = [];
       });
     }
   } catch(e) {}
   aktiveProfilId = localStorage.getItem(ACTIVE_KEY);
   if (!aktiveProfilId || !profiles[aktiveProfilId]) {
     aktiveProfilId = Object.keys(profiles)[0] || null;
+  }
+  if (!aktiveProfilId) {
+    profiles = { p1: { name:'Kind 1', coins:0, musik_history:[] } };
+    aktiveProfilId = 'p1';
   }
   updateCoinDisplay();
 }
@@ -178,17 +197,44 @@ function addCoins(n) {
   updateCoinDisplay();
 }
 
-function updateCoinDisplay() {
-  document.getElementById('coinCount').textContent = profiles[aktiveProfilId]?.coins || 0;
+function removeCoins(n) {
+  if (!aktiveProfilId || !profiles[aktiveProfilId]) return;
+  const current = profiles[aktiveProfilId].coins || 0;
+  const abzug = Math.min(n, current); // nicht unter 0
+  profiles[aktiveProfilId].coins = current - abzug;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
+  sessionCoins -= abzug;
+  updateCoinDisplay();
+  return abzug;
 }
 
-// ── AUDIO ──────────────────────────────────────────────────
+function updateCoinDisplay() {
+  const el = document.getElementById('coinCount');
+  if (el) el.textContent = profiles[aktiveProfilId]?.coins || 0;
+}
+
+// ── HIGHSCORE ──────────────────────────────────────────
+function loadHighscores() {
+  try { return JSON.parse(localStorage.getItem(HS_KEY) || '[]'); } catch(e) { return []; }
+}
+function saveHighscore(name, lvl) {
+  let hs = loadHighscores();
+  hs.push({ name, score: lvl });
+  hs.sort((a,b) => b.score - a.score);
+  hs = hs.slice(0, 10); // Top 10
+  localStorage.setItem(HS_KEY, JSON.stringify(hs));
+}
+function isHighscore(lvl) {
+  const hs = loadHighscores();
+  return hs.length < 10 || lvl > hs[hs.length-1].score;
+}
+
+// ── AUDIO ──────────────────────────────────────────────
 function ensureAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if (audioCtx.state === 'suspended') audioCtx.resume();
 }
-
-function playTon(freq, dauer = 0.4) {
+function playTon(freq, dauer=0.4) {
   ensureAudio();
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
@@ -196,125 +242,149 @@ function playTon(freq, dauer = 0.4) {
   gain.connect(audioCtx.destination);
   osc.type = 'triangle';
   osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-  gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+  gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
   gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dauer);
   osc.start(audioCtx.currentTime);
   osc.stop(audioCtx.currentTime + dauer);
 }
-
 function successSound() {
-  [523, 659, 784].forEach((f, i) => {
-    setTimeout(() => playTon(f, 0.3), i * 150);
-  });
+  [523,659,784].forEach((f,i) => setTimeout(()=>playTon(f,0.3), i*150));
 }
-
 function errorSound() {
-  playTon(200, 0.5);
+  playTon(180, 0.5);
+}
+function gameOverSound() {
+  [400,300,200].forEach((f,i) => setTimeout(()=>playTon(f,0.4), i*200));
 }
 
-// ── SEQUENZ GENERIEREN ─────────────────────────────────────
+// ── SEQUENZ GENERIEREN ─────────────────────────────────
 function generiereSequenz() {
   const laenge = Math.min(level + 1, 9);
   const quelleIdx = Math.min(Math.floor(level / 2), MELODIEN.length - 1);
   const quelle = MELODIEN[quelleIdx];
-  // Schneide auf aktuelle Länge zu
   sequenz = quelle.slice(0, Math.min(laenge, quelle.length));
-  // Wenn kürzer als gewünscht, fülle mit zufälligen Noten auf
   while (sequenz.length < laenge) {
-    sequenz.push(Math.floor(Math.random() * WHITE_COUNT));
+    sequenz.push(Math.floor(Math.random() * 8));
   }
   eingabe = [];
+  chipsSichtbar = true;
 }
 
-// ── SEQUENZ ABSPIELEN ──────────────────────────────────────
+// ── CHIPS RENDERN ──────────────────────────────────────
+function renderChips(sichtbar) {
+  chipsSichtbar = sichtbar;
+  const container = document.getElementById('noteChips');
+  if (!container) return;
+  container.innerHTML = '';
+  sequenz.forEach((ni, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'note-chip' + (sichtbar ? '' : ' hidden');
+    chip.id = 'chip_' + i;
+    chip.textContent = NOTEN[ni].name;
+    container.appendChild(chip);
+  });
+}
+
+// ── SEQUENZ ABSPIELEN ──────────────────────────────────
 let abspielIdx = 0;
 function spieleSequenz() {
   spielPhase = 'abspielen';
+  chipsSichtbar = true;
+  renderChips(true); // Chips beim Abspielen sichtbar
   updatePlayBtn();
+  updateStatus('🔊 Hör gut zu...');
   abspielIdx = 0;
   spieleNaechste();
 }
 
 function spieleNaechste() {
   if (abspielIdx >= sequenz.length) {
+    // Nach dem Abspielen: Chips ausblenden, dann Eingabe
     setTimeout(() => {
+      renderChips(false); // ← CHIPS VERSCHWINDEN
+      updateStatus('👆 Jetzt bist du dran! Spiel die Noten nach!');
       spielPhase = 'eingabe';
-      updateStatus('👆 Jetzt bist du dran! Spiel die Noten nach!', '');
       updatePlayBtn();
     }, 400);
     return;
   }
-  const noteIdx = sequenz[abspielIdx];
-  highlightNote(noteIdx, true);
-  playTon(NOTEN[noteIdx].freq, 0.5);
+  const ni = sequenz[abspielIdx];
+  // Chip kurz highlighten
+  const chip = document.getElementById('chip_' + abspielIdx);
+  if (chip) {
+    chip.classList.add('playing');
+    setTimeout(() => chip.classList.remove('playing'), 450);
+  }
+  // Klaviertaste kurz leuchten
+  flashKey(ni, 'active', 450);
+  playTon(NOTEN[ni].freq, 0.45);
   setTimeout(() => {
-    highlightNote(noteIdx, false);
     abspielIdx++;
     setTimeout(spieleNaechste, 150);
-  }, 550);
+  }, 520);
 }
 
-function highlightNote(idx, an) {
-  const chips = document.querySelectorAll('.note-chip');
-  if (chips[idx]) {
-    chips[idx].classList.toggle('highlight', an);
-  }
-  const keys = document.querySelectorAll('.white-key');
-  if (keys[idx]) {
-    keys[idx].classList.toggle('active', an);
-  }
-}
-
-// ── EINGABE VERARBEITEN ────────────────────────────────────
+// ── TASTENDRUCK ────────────────────────────────────────
 function tasteDrücken(noteIdx) {
   if (spielPhase !== 'eingabe') return;
-  playTon(NOTEN[noteIdx].freq, 0.35);
-  flashKey(noteIdx, 'active', 200);
+  playTon(NOTEN[noteIdx].freq, 0.32);
+  flashKey(noteIdx, 'active', 180);
 
-  eingabe.push(noteIdx);
-  const pos = eingabe.length - 1;
+  const pos = eingabe.length;
   const erwartet = sequenz[pos];
 
   if (noteIdx !== erwartet) {
     // FALSCH
     flashKey(noteIdx, 'wrong-flash', 600);
-    herzen--;
-    updateHerzen();
-    spielPhase = 'feedback';
     errorSound();
-    setTimeout(() => {
-      if (herzen <= 0) {
-        renderResult();
-      } else {
-        updateStatus('❌ Nicht ganz! Schau dir die Noten nochmal an!', '');
-        showTipBtn();
-        spielPhase = 'bereit';
-        updatePlayBtn();
-        eingabe = [];
-      }
-    }, 700);
+    const verlorenIdx = herzen - 1; // Index des Herzens das verloren geht (von 0)
+    herzen--;
+    updateHerzen(verlorenIdx);
+    spielPhase = 'pause';
+
+    if (herzen <= 0) {
+      setTimeout(() => {
+        gameOverSound();
+        document.getElementById('herzenPanel').style.display = 'none';
+        renderResult(true, 0);
+      }, 700);
+    } else {
+      // Tipp zeigen, Nochmal-Möglichkeit
+      updateStatus('❌ Falsch! Noch ' + herzen + ' ❤️ übrig. Hör nochmal zu!');
+      const tipBtn = document.getElementById('tipBtn');
+      if (tipBtn) tipBtn.classList.add('visible');
+      spielPhase = 'bereit';
+      updatePlayBtn();
+      eingabe = []; // Eingabe zurücksetzen
+    }
     return;
   }
 
-  // Richtig so weit
+  // RICHTIG
   flashKey(noteIdx, 'correct-flash', 300);
-  updateNoteChips();
+  eingabe.push(noteIdx);
+
+  // Eingabe-Fortschritt: entsprechenden Chip (ganz am Ende wieder einblenden)
+  const chip = document.getElementById('chip_' + (pos));
+  if (chip) {
+    chip.classList.remove('hidden');
+    chip.classList.add('eingabe-ok');
+  }
 
   if (eingabe.length === sequenz.length) {
-    // ALLE RICHTIG!
-    spielPhase = 'feedback';
+    // ALLE RICHTIG → Level up!
     successSound();
     addCoins(level);
-    updateStatus('🎉 Bravo! Perfekt gespielt!', '');
+    updateStatus('🎉 Perfekt! Weiter zu Level ' + (level+1) + '!');
     setTimeout(() => {
       level++;
       updateLevelInfo();
       generiereSequenz();
       renderSpielfeld();
-      updateStatus('🎵 Schaffst du Level ' + level + '? Hör zuerst zu!', '');
+      updateStatus('🎵 Level ' + level + '! Hör zuerst zu!');
       spielPhase = 'bereit';
       updatePlayBtn();
-    }, 1200);
+    }, 1100);
   }
 }
 
@@ -322,27 +392,104 @@ function flashKey(idx, cls, dauer) {
   const keys = document.querySelectorAll('.white-key');
   if (!keys[idx]) return;
   keys[idx].classList.add(cls);
-  setTimeout(() => keys[idx].classList.remove(cls), dauer);
+  setTimeout(() => keys[idx] && keys[idx].classList.remove(cls), dauer);
 }
 
-function updateNoteChips() {
-  const chips = document.querySelectorAll('.note-chip');
-  eingabe.forEach((ni, i) => {
-    if (chips[i]) chips[i].classList.add('correct');
-  });
-}
-
-// ── RENDER ─────────────────────────────────────────────────
-function render() {
+// ── START-SCREEN ───────────────────────────────────────
+function renderStartScreen() {
+  document.getElementById('herzenPanel').style.display = 'none';
+  document.getElementById('levelInfo').textContent = '🎹 Musik-Merkspiel';
+  const currentCoins = profiles[aktiveProfilId]?.coins || 0;
+  const canPlay = currentCoins >= COIN_COST;
   const main = document.getElementById('mainContent');
-  main.innerHTML = '';
-  if (spielPhase === 'result') {
-    renderResult();
+  main.innerHTML = `
+    <div class="card" style="text-align:center;padding:24px">
+      <div style="font-size:56px;margin-bottom:10px">🎹</div>
+      <div style="font-size:20px;font-weight:bold;color:#2c3e50;margin-bottom:8px">Musik-Merkspiel</div>
+      <div style="font-size:14px;color:#666;margin-bottom:20px;line-height:1.6">
+        Hör dir eine Melodie an und spiel sie auf dem Klavier nach!<br>
+        Du hast <strong>3 Herzen</strong> – bei jedem Fehler verlierst du eines.<br>
+        Je weiter du kommst, desto mehr Münzen gewinnst du!
+      </div>
+      <div style="background:#fef9e7;border:2px solid #f1c40f;border-radius:14px;padding:14px;margin-bottom:20px;font-size:16px;font-weight:bold;color:#7d5a00">
+        🪙 Jede Runde kostet <strong>10 Münzen</strong><br>
+        <span style="font-size:14px;font-weight:normal;margin-top:4px;display:block">Dein Guthaben: <strong>${currentCoins} Münzen</strong></span>
+      </div>
+      <button onclick="tryStartGame()" style="display:block;width:100%;background:${canPlay ? 'linear-gradient(135deg,#6a11cb,#2575fc)' : '#bdc3c7'};color:white;border:none;border-radius:14px;padding:16px;font-size:17px;font-weight:bold;cursor:${canPlay ? 'pointer' : 'not-allowed'};box-shadow:${canPlay ? '0 4px 14px rgba(106,17,203,0.4)' : 'none'};margin-bottom:10px">
+        ${canPlay ? '🎵 Los geht\'s! (−10 🪙)' : '❌ Nicht genug Münzen'}
+      </button>
+      ${!canPlay ? `<div style="font-size:13px;color:#e74c3c;margin-bottom:12px">Du brauchst noch ${COIN_COST - currentCoins} Münzen. Lerne im Musik-Trainer!</div>` : ''}
+      <button onclick="window.location.href='musik_trainer.html'" style="display:block;width:100%;background:#fce4f4;color:#b01570;border:2px solid #f0a8d8;border-radius:14px;padding:13px;font-size:15px;font-weight:bold;cursor:pointer">
+        🎵 Zum Musik-Trainer
+      </button>
+    </div>`;
+}
+
+// ── SPIELSTART mit Münzabzug ───────────────────────────
+const COIN_COST = 10;
+
+function tryStartGame() {
+  const coins = profiles[aktiveProfilId]?.coins || 0;
+  if (coins < COIN_COST) {
+    showNoCoinMessage();
     return;
   }
+  removeCoins(COIN_COST);
+  herzen = 3;
+  level = 1;
+  sessionCoins = 0;
+  resetHerzenAnzeige();
+  updateLevelInfo();
+  document.getElementById('herzenPanel').style.display = '';
+  render();
+}
+
+function tryNochmal() {
+  const coins = profiles[aktiveProfilId]?.coins || 0;
+  if (coins < COIN_COST) {
+    showNoCoinMessage();
+    return;
+  }
+  removeCoins(COIN_COST);
+  herzen = 3;
+  level = 1;
+  sessionCoins = 0;
+  resetHerzenAnzeige();
+  updateLevelInfo();
+  document.getElementById('herzenPanel').style.display = '';
+  render();
+}
+
+function resetHerzenAnzeige() {
+  for (let i = 0; i < 3; i++) {
+    const el = document.getElementById('herz_' + i);
+    if (el) { el.className = 'herzen-icon'; el.textContent = '❤️'; }
+  }
+}
+
+function showNoCoinMessage() {
+  let el = document.getElementById('noCoinMsg');
+  if (el) return;
+  el = document.createElement('div');
+  el.id = 'noCoinMsg';
+  el.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;text-align:center;padding:20px;';
+  el.innerHTML = `
+    <div style="background:#1a1a2e;border-radius:20px;padding:30px;max-width:380px;box-shadow:0 10px 30px rgba(0,0,0,0.4);">
+      <div style="font-size:50px;margin-bottom:10px;">🪙</div>
+      <h2 style="color:#f1c40f;margin:0 0 10px 0;font-size:26px;">Keine Münzen!</h2>
+      <p style="font-size:16px;margin:0 0 8px 0;">Du brauchst <b>10 🪙</b> um zu spielen.</p>
+      <p style="font-size:14px;color:rgba(255,255,255,0.65);margin-bottom:20px;">Beantworte Fragen im Musik-Trainer,<br>um Münzen zu verdienen!</p>
+      <button onclick="window.location.href='musik_trainer.html'" style="display:block;width:100%;background:#e91e8c;color:white;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:bold;cursor:pointer;margin-bottom:10px;">🎵 Zum Musik-Trainer</button>
+      <button onclick="document.getElementById('noCoinMsg').remove();" style="background:transparent;color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:8px 16px;font-size:14px;cursor:pointer;">Zurück</button>
+    </div>`;
+  document.body.appendChild(el);
+}
+
+// ── RENDER SPIELFELD ───────────────────────────────────
+function render() {
   generiereSequenz();
   renderSpielfeld();
-  updateStatus('🎵 Drücke "Abspielen" und merk dir die Noten!', '');
+  updateStatus('🎵 Drücke "Abspielen" und merk dir die Noten!');
   spielPhase = 'bereit';
   updatePlayBtn();
 }
@@ -351,52 +498,50 @@ function renderSpielfeld() {
   const main = document.getElementById('mainContent');
   main.innerHTML = `
     <div class="card">
-      <div style="text-align:center;margin-bottom:8px;">
+      <div style="text-align:center;margin-bottom:6px;">
         <span class="level-badge">🌟 Level ${level}</span>
-        <div style="font-size:13px;color:#888;margin-top:4px;">Merke dir diese ${sequenz.length} Noten:</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:4px">Merke dir die Reihenfolge der Noten:</div>
       </div>
 
-      <!-- NOTEN-CHIPS -->
-      <div class="noten-anzeige" id="noteChips">
-        ${sequenz.map((ni, i) => `<div class="note-chip" id="chip_${i}">${NOTEN[ni].name}</div>`).join('')}
-      </div>
+      <div class="noten-label">Die Noten werden beim Abspielen angezeigt und dann versteckt 👀</div>
+      <div class="noten-anzeige" id="noteChips"></div>
 
-      <div class="status-emoji" id="statusEmoji"></div>
       <div class="status-text" id="statusText"></div>
 
       <!-- KLAVIATUR -->
-      <div class="klaviatur-wrap" id="klaviatur">
+      <div class="klaviatur-wrap">
         <div class="white-keys" id="whiteKeys"></div>
       </div>
 
-      <!-- BUTTONS -->
       <button class="play-btn" id="playBtn" onclick="spieleSequenz()">▶️ Melodie anhören</button>
-      <button class="tip-btn" id="tipBtn" onclick="zeigeTip()" style="display:none">💡 Tipp anzeigen</button>
+      <button class="tip-btn" id="tipBtn" onclick="zeigeTip()">💡 Tipp anzeigen</button>
       <div class="tip-box" id="tipBox">
-        🎹 Schau auf die Noten-Chips oben – sie zeigen dir die Namen der Tasten, die du drücken musst!
-        Die Reihenfolge von links nach rechts auf dem Klavier ist: C – D – E – F – G – A – H – C
+        🎹 Die Noten auf den Chips von links nach rechts zeigen dir die richtige Reihenfolge!
+        Auf dem Klavier findest du die Tasten: C – D – E – F – G – A – H – C²
+        Der Name der Note steht unten auf jeder Taste.
       </div>
     </div>
   `;
 
+  // Chips initial aufbauen
+  renderChips(true);
+
   // Klaviatur aufbauen
-  const whiteKeysEl = document.getElementById('whiteKeys');
+  const wk = document.getElementById('whiteKeys');
   NOTEN.forEach((n, i) => {
     const btn = document.createElement('div');
     btn.className = 'white-key';
-    btn.id = `key_${i}`;
+    btn.id = 'key_' + i;
     btn.textContent = n.name;
     btn.addEventListener('touchstart', e => { e.preventDefault(); tasteDrücken(i); }, {passive:false});
     btn.addEventListener('mousedown', e => { e.preventDefault(); tasteDrücken(i); });
-    whiteKeysEl.appendChild(btn);
+    wk.appendChild(btn);
   });
 }
 
-function updateStatus(text, emoji) {
-  const st = document.getElementById('statusText');
-  const se = document.getElementById('statusEmoji');
-  if (st) st.textContent = text;
-  if (se) se.textContent = emoji;
+function updateStatus(text) {
+  const el = document.getElementById('statusText');
+  if (el) el.textContent = text;
 }
 
 function updatePlayBtn() {
@@ -406,9 +551,14 @@ function updatePlayBtn() {
     btn.textContent = '🔊 Wird abgespielt...';
     btn.disabled = true;
   } else if (spielPhase === 'eingabe') {
-    btn.textContent = '🔄 Nochmal anhören';
+    btn.textContent = '🔄 Nochmal anhören (−1 Versuch)';
     btn.disabled = false;
     btn.onclick = () => {
+      if (herzen > 1) {
+        const verlorenIdx = herzen - 1;
+        herzen--;
+        updateHerzen(verlorenIdx);
+      }
       eingabe = [];
       spieleSequenz();
     };
@@ -419,68 +569,90 @@ function updatePlayBtn() {
   }
 }
 
-function showTipBtn() {
-  const tipBtn = document.getElementById('tipBtn');
-  if (tipBtn) tipBtn.style.display = 'flex';
-}
-
 function zeigeTip() {
-  tipVerbraucht = true;
   document.getElementById('tipBox').classList.add('show');
-  document.getElementById('tipBtn').style.display = 'none';
+  document.getElementById('tipBtn').classList.remove('visible');
 }
 
-function updateHerzen() {
-  const icons = ['💔', '💔', '💔'];
-  for (let i = 0; i < herzen; i++) icons[i] = '❤️';
-  document.getElementById('herzenAnzeige').textContent = icons.join('');
+function updateHerzen(verlorenIdx) {
+  for (let i = 0; i < 3; i++) {
+    const el = document.getElementById('herz_' + i);
+    if (!el) continue;
+    if (i < herzen) {
+      el.className = 'herzen-icon';
+      el.textContent = '❤️';
+    } else {
+      if (i === verlorenIdx) {
+        el.className = 'herzen-icon verloren';
+        setTimeout(() => { el.className = 'herzen-icon leer'; el.textContent = '🖤'; }, 420);
+      } else {
+        el.className = 'herzen-icon leer';
+        el.textContent = '🖤';
+      }
+    }
+  }
 }
 
 function updateLevelInfo() {
   const laenge = Math.min(level + 1, 9);
-  document.getElementById('levelInfo').textContent =
-    `Level ${level} – Merke dir ${laenge} Noten und spiel sie nach!`;
+  const el = document.getElementById('levelInfo');
+  if (el) el.textContent = `Level ${level} – Merke dir ${laenge} Noten und spiel sie nach!`;
 }
 
-// ── ERGEBNIS ───────────────────────────────────────────────
-function renderResult() {
-  spielPhase = 'result';
-  let emoji = '😕', titel = 'Weiter üben!';
-  if (level >= 8) { emoji = '🌟'; titel = 'Musik-Genie!'; }
-  else if (level >= 5) { emoji = '🎉'; titel = 'Super gemacht!'; }
-  else if (level >= 3) { emoji = '👍'; titel = 'Gut gespielt!'; }
-
+// ── RESULT / GAMEOVER ──────────────────────────────────
+function renderResult(gameOver, abgezogeneCoins) {
+  spielPhase = gameOver ? 'gameover' : 'result';
   const main = document.getElementById('mainContent');
+
+  let emoji, titel;
+  if (gameOver) { emoji = '💀'; titel = 'Game Over!'; }
+  else if (level >= 8) { emoji = '🌟'; titel = 'Musik-Genie!'; }
+  else if (level >= 5) { emoji = '🎉'; titel = 'Super gemacht!'; }
+  else { emoji = '👍'; titel = 'Gut gespielt!'; }
+
+  // Highscore prüfen
+  const neuerHs = isHighscore(level);
+  const profName = profiles[aktiveProfilId]?.name || 'Unbekannt';
+  let hsHtml = '';
+  if (neuerHs) {
+    saveHighscore(profName, level);
+    hsHtml = `<div class="hs-new">🏆 Neuer Highscore! Level ${level} eingetragen!</div>`;
+  }
+
+  const currentCoins = profiles[aktiveProfilId]?.coins || 0;
+  const canPlay = currentCoins >= COIN_COST;
+  let coinHtml = '';
+  if (sessionCoins > 0) {
+    coinHtml = `<div class="result-coins">🪙 +${sessionCoins} Münzen verdient in dieser Runde!</div>`;
+  }
+  const coinAvailHtml = `<div style="font-size:14px;color:#7f8c8d;margin-top:6px">Guthaben: 🪙 ${currentCoins} Münzen</div>`;
+
   main.innerHTML = `
     <div class="card">
       <div class="result-card">
         <div class="result-emoji">${emoji}</div>
         <div class="result-titel">${titel}</div>
-        <div class="result-text">Du hast Level ${level} erreicht!</div>
-        <div class="result-coins">🪙 +${sessionCoins} Münzen verdient!</div>
+        <div class="result-text">${gameOver ? 'Keine Herzen mehr!' : ''} Du hast Level ${level} erreicht!</div>
+        ${hsHtml}
+        ${coinHtml}
+        ${coinAvailHtml}
         <div class="result-btns">
-          <button class="result-btn btn-nochmal" onclick="nochmal()">🔄 Nochmal spielen</button>
+          <button class="result-btn btn-nochmal" onclick="tryNochmal()" ${!canPlay ? 'style="opacity:.5"' : ''}>
+            🔄 Nochmal spielen ${canPlay ? '(–10 🪙)' : '– zu wenig Münzen'}
+          </button>
           <button class="result-btn btn-trainer" onclick="window.location.href='musik_trainer.html'">🎵 Zum Musik-Trainer</button>
           <button class="result-btn btn-home" onclick="window.location.href='../index.html'">🏠 Startseite</button>
         </div>
       </div>
     </div>`;
-  document.getElementById('levelInfo').textContent = 'Spiel beendet!';
+
+  const li = document.getElementById('levelInfo');
+  if (li) li.textContent = gameOver ? '💀 Game Over!' : '🏁 Spiel beendet!';
 }
 
-function nochmal() {
-  herzen = 3;
-  level = 1;
-  sessionCoins = 0;
-  tipVerbraucht = false;
-  updateHerzen();
-  updateLevelInfo();
-  render();
-}
-
-// ── START ───────────────────────────────────────────────────
+// ── START ───────────────────────────────────────────────
 loadProfile();
-render();
+renderStartScreen();
 </script>
 </body>
 </html>

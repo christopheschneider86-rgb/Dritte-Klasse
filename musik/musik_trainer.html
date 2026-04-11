@@ -8,452 +8,567 @@
 <link rel="apple-touch-icon" href="../images/icon_musik.png">
 <style>
 :root {
-  --musik:#e91e8c;
-  --musik-light:#fce4f4;
-  --musik-dark:#b01570;
-  --bg:#fdf0f8;
-  --card:#fff;
-  --text:#2c3e50;
-  --correct:#27ae60;
-  --wrong:#e74c3c;
-  --tip:#f39c12;
-  --radius:18px;
+  --bg: #fdf0f8;
+  --card: #ffffff;
+  --accent: #e91e8c;
+  --accent-soft: #fce4f4;
+  --accent-dark: #b01570;
+  --danger: #e74c3c;
+  --success: #27ae60;
+  --warning: #f1c40f;
+  --text: #222222;
+  --muted: #666666;
+  --radius: 18px;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 0 40px;}
-
-/* ── HEADER ── */
-.header{background:linear-gradient(135deg,var(--musik),var(--musik-dark));color:#fff;padding:16px 20px 20px;position:relative;border-radius:0 0 28px 28px;box-shadow:0 4px 16px rgba(233,30,140,0.3);}
-.header-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
-.back-home{background:rgba(255,255,255,0.2);border:none;color:#fff;border-radius:12px;padding:8px 14px;cursor:pointer;font-size:14px;font-weight:bold;display:flex;align-items:center;gap:6px;text-decoration:none;}
-.back-home:hover{background:rgba(255,255,255,0.3);}
-.app-icon{width:38px;height:38px;border-radius:10px;object-fit:cover;}
-.app-title{font-size:22px;font-weight:bold;flex:1;}
-.herzen{display:flex;gap:4px;font-size:26px;}
-
-/* ── FORTSCHRITTSBALKEN ── */
-.progress-bar-wrap{background:rgba(255,255,255,0.25);border-radius:10px;height:10px;margin-top:10px;}
-.progress-bar{background:#fff;height:10px;border-radius:10px;transition:width .5s;}
-.progress-label{font-size:12px;color:rgba(255,255,255,0.85);margin-top:5px;text-align:right;}
-
-/* ── MÜNZEN ── */
-.coin-display{position:absolute;top:16px;right:20px;background:rgba(255,255,255,0.2);border-radius:12px;padding:6px 12px;font-size:14px;font-weight:bold;color:#fff;display:flex;align-items:center;gap:5px;}
-
-/* ── HAUPT-KARTE ── */
-.main{padding:20px 16px 0;}
-.card{background:#fff;border-radius:var(--radius);box-shadow:0 6px 20px rgba(0,0,0,0.08);padding:22px 20px;margin-bottom:16px;}
-
-/* ── THEMA-BADGE ── */
-.thema-badge{display:inline-flex;align-items:center;gap:6px;background:var(--musik-light);color:var(--musik-dark);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:bold;margin-bottom:14px;}
-
-/* ── FRAGE-TYP BADGE ── */
-.typ-badge{display:inline-block;border-radius:12px;padding:3px 10px;font-size:11px;font-weight:bold;margin-bottom:10px;margin-left:8px;}
-.typ-choice{background:#e8f4fd;color:#2980b9;}
-.typ-bild{background:#fef9e7;color:#f39c12;}
-.typ-luecke{background:#eafaf1;color:#27ae60;}
-.typ-wf{background:#fdf2e9;color:#e67e22;}
-
-/* ── INSTRUMENT-BILD ── */
-.instrument-visual{text-align:center;margin:14px 0;padding:20px;background:linear-gradient(135deg,var(--musik-light),#fff);border-radius:14px;border:2px solid #f8c0e8;}
-.instrument-emoji{font-size:72px;line-height:1;display:block;margin-bottom:8px;}
-.instrument-name{font-size:13px;color:#888;font-style:italic;}
-
-/* ── FRAGE ── */
-.frage-text{font-size:19px;font-weight:bold;line-height:1.4;margin-bottom:20px;}
-.luecke-highlight{background:var(--musik-light);border-bottom:3px solid var(--musik);padding:2px 8px;border-radius:6px;font-weight:bold;color:var(--musik-dark);}
-
-/* ── ANTWORT-BUTTONS ── */
-.antworten{display:flex;flex-direction:column;gap:10px;}
-.antwort-btn{background:#f8f9fa;border:2px solid #e9ecef;border-radius:14px;padding:14px 16px;font-size:16px;font-weight:600;color:var(--text);cursor:pointer;text-align:left;transition:all .15s;display:flex;align-items:center;gap:10px;}
-.antwort-btn:hover:not(:disabled){background:var(--musik-light);border-color:var(--musik);}
-.antwort-btn.richtig{background:#d5f5e3;border-color:var(--correct);color:#1a5e3a;}
-.antwort-btn.falsch{background:#fde8e8;border-color:var(--wrong);color:#922b21;}
-.antwort-btn:disabled{cursor:default;}
-.antwort-nr{width:28px;height:28px;border-radius:50%;background:var(--musik-light);color:var(--musik-dark);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:bold;flex-shrink:0;}
-.antwort-btn.richtig .antwort-nr{background:#27ae60;color:#fff;}
-.antwort-btn.falsch .antwort-nr{background:#e74c3c;color:#fff;}
-
-/* ── WAHR/FALSCH BUTTONS ── */
-.wf-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.wf-btn{border:3px solid #e9ecef;border-radius:16px;padding:20px 10px;font-size:20px;font-weight:bold;cursor:pointer;background:#f8f9fa;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:8px;}
-.wf-btn:hover:not(:disabled){background:var(--musik-light);border-color:var(--musik);}
-.wf-btn.richtig{background:#d5f5e3;border-color:var(--correct);}
-.wf-btn.falsch{background:#fde8e8;border-color:var(--wrong);}
-.wf-icon{font-size:36px;}
-
-/* ── TIP ── */
-.tip-box{background:#fef9e7;border-left:4px solid var(--tip);border-radius:10px;padding:12px 14px;font-size:14px;color:#7d5a00;line-height:1.5;margin-top:14px;display:none;}
-.tip-box.show{display:block;}
-
-/* ── FEEDBACK ── */
-.feedback{text-align:center;padding:16px;border-radius:14px;font-size:17px;font-weight:bold;margin-top:14px;display:none;}
-.feedback.richtig{background:#d5f5e3;color:#1a5e3a;display:block;}
-.feedback.falsch{background:#fde8e8;color:#922b21;display:block;}
-
-/* ── WEITER BUTTON ── */
-.weiter-btn{width:100%;background:var(--musik);color:#fff;border:none;border-radius:14px;padding:16px;font-size:17px;font-weight:bold;cursor:pointer;margin-top:14px;display:none;transition:background .15s;}
-.weiter-btn:hover{background:var(--musik-dark);}
-.weiter-btn.show{display:block;}
-
-/* ── TIP BUTTON ── */
-.tip-btn{background:none;border:2px solid var(--tip);color:var(--tip);border-radius:12px;padding:8px 16px;font-size:13px;font-weight:bold;cursor:pointer;margin-top:12px;display:flex;align-items:center;gap:6px;}
-.tip-btn:hover{background:#fef9e7;}
-
-/* ── SPIEL BANNER ── */
-.spiel-banner{background:linear-gradient(135deg,#6a11cb,#2575fc);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 6px 16px rgba(106,17,203,0.3);}
-.spiel-banner:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(106,17,203,0.4);}
-.spiel-banner-icon{width:56px;height:56px;border-radius:14px;object-fit:cover;flex-shrink:0;}
-.spiel-banner-text h3{color:#fff;font-size:17px;margin-bottom:4px;}
-.spiel-banner-text p{color:rgba(255,255,255,0.8);font-size:13px;}
-.spiel-badge{background:rgba(255,255,255,0.2);color:#fff;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:bold;margin-top:8px;display:inline-block;}
-
-/* ── ERGEBNIS-SCREEN ── */
-.result-screen{text-align:center;padding:20px;}
-.result-emoji{font-size:64px;margin-bottom:12px;}
-.result-titel{font-size:26px;font-weight:bold;margin-bottom:8px;}
-.result-text{color:#666;font-size:15px;margin-bottom:20px;}
-.result-punkte{font-size:40px;font-weight:bold;color:var(--musik);margin-bottom:6px;}
-.result-sub{font-size:14px;color:#888;margin-bottom:24px;}
-.result-coins{background:#fef9e7;border:2px solid #f39c12;border-radius:14px;padding:14px;margin-bottom:20px;font-size:18px;font-weight:bold;color:#7d5a00;}
-.result-btns{display:flex;flex-direction:column;gap:10px;}
-.result-btn{border:none;border-radius:14px;padding:16px;font-size:16px;font-weight:bold;cursor:pointer;}
-.result-btn-nochmal{background:var(--musik);color:#fff;}
-.result-btn-home{background:#f0f4f8;color:var(--text);}
-
-/* ── START-SCREEN ── */
-.start-screen{text-align:center;padding:10px 0 20px;}
-.start-icon{width:90px;height:90px;border-radius:24px;object-fit:cover;margin-bottom:16px;box-shadow:0 6px 16px rgba(233,30,140,0.3);}
-.start-titel{font-size:24px;font-weight:bold;margin-bottom:8px;}
-.start-text{color:#666;font-size:14px;margin-bottom:24px;line-height:1.5;}
-.start-info{display:flex;justify-content:center;gap:16px;margin-bottom:24px;flex-wrap:wrap;}
-.start-info-item{background:var(--musik-light);border-radius:12px;padding:10px 16px;font-size:13px;font-weight:bold;color:var(--musik-dark);}
-.start-btn{background:var(--musik);color:#fff;border:none;border-radius:16px;padding:18px 40px;font-size:18px;font-weight:bold;cursor:pointer;box-shadow:0 4px 14px rgba(233,30,140,0.35);}
-.start-btn:hover{background:var(--musik-dark);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;justify-content:center;touch-action:manipulation}
+.app{width:100%;max-width:1100px;padding:12px}
+@media(min-width:768px){.app{padding:24px}}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:0 8px 24px rgba(0,0,0,0.08);padding:16px}
+.header{display:flex;align-items:center;gap:16px;margin-bottom:14px;position:relative}
+.back-home{background:#ecf0f1;border:none;border-radius:12px;padding:10px 12px;cursor:pointer;color:var(--text);display:flex;align-items:center;justify-content:center;transition:background .2s;text-decoration:none}
+.back-home svg{width:24px;height:24px}
+.back-home:hover{background:#bdc3c7}
+.app-icon{width:64px;height:64px;border-radius:16px;object-fit:cover;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
+.header-text h1{font-size:22px;margin-bottom:4px;color:#2c3e50}
+.header-text p{font-size:14px;color:var(--muted)}
+.profile-bar,.score-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.score-bar{padding:12px 16px;border-radius:16px;background:var(--accent-soft);font-size:14px}
+.score-bar strong{font-size:18px;color:var(--accent-dark);display:flex;align-items:center;gap:6px}
+.stars{color:#f39c12;display:flex;gap:4px}
+.star-icon{width:26px;height:26px;fill:currentColor}
+.star-empty{fill:none;stroke:currentColor;stroke-width:2}
+.btn{padding:12px 18px;border-radius:12px;font-size:15px;border:none;cursor:pointer;display:flex;align-items:center;gap:8px;justify-content:center;min-height:44px}
+.btn-primary{background:var(--accent);color:white;font-weight:bold;transition:background .2s,box-shadow .2s,transform .1s}
+.btn-primary:not(:disabled){box-shadow:0 4px 14px rgba(233,30,140,0.4)}
+.btn-primary:not(:disabled):hover{background:var(--accent-dark)}
+.btn-primary:not(:disabled):active{transform:scale(0.96)}
+.btn-primary:disabled{background:#f0a8d8;color:#c06090;cursor:not-allowed;box-shadow:none}
+.btn-secondary{background:#ecf0f1;color:var(--text)}
+.btn-secondary:active{transform:scale(0.96)}
+.btn-outline{background:white;border:2px solid var(--accent);color:var(--accent);font-weight:bold}
+.btn-outline:active{transform:scale(0.96)}
+.btn svg{width:20px;height:20px}
+.speaker-btn{background:var(--accent-soft);color:var(--accent);border:none;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s;flex-shrink:0}
+.speaker-btn svg{width:22px;height:22px}
+.speaker-btn:active{transform:scale(0.9)}
+.child-badge{display:flex;align-items:center;gap:8px;background:#fce4f4;border:2px solid #f0a8d8;border-radius:12px;padding:8px 14px}
+.child-badge svg{width:18px;height:18px;stroke:var(--accent);flex-shrink:0}
+.child-badge span{font-weight:bold;font-size:15px;color:var(--accent-dark)}
+/* LAYOUT */
+.main-layout{display:grid;grid-template-columns:1fr 1.2fr;gap:20px;align-items:start}
+@media(max-width:900px){.main-layout{grid-template-columns:1fr}.header-text h1{font-size:18px}.app-icon{width:48px;height:48px}}
+/* THEMEN-KACHELN */
+.tile-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.tile{background:#fef7fb;border-radius:14px;padding:14px 10px;border:2px solid #f0c8e4;cursor:pointer;transition:all .2s;min-height:80px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.tile:hover,.tile.active{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-2px);box-shadow:0 4px 10px rgba(233,30,140,0.15)}
+.tile-icon{font-size:28px;margin-bottom:4px}
+.tile-title{font-size:13px;font-weight:bold;margin-bottom:2px;color:#2c3e50}
+.tile-sub{font-size:11px;color:var(--muted)}
+/* PANEL */
+.panel-title{font-size:20px;font-weight:bold;margin-bottom:12px;color:#2c3e50;display:flex;align-items:center;gap:8px}
+.view-container{display:none}
+.view-container.active{display:block}
+/* AUFGABEN-BOX */
+.task-box{padding:24px;border-radius:16px;background:#fdfaf8;border:2px solid #f0d8ec;text-align:center;box-shadow:inset 0 2px 10px rgba(0,0,0,0.02)}
+.question-wrapper{display:flex;align-items:center;justify-content:center;gap:15px;margin-bottom:12px}
+.task-question{font-size:22px;font-weight:bold;color:#2c3e50;line-height:1.4}
+.task-hint{font-size:15px;color:var(--muted);margin-bottom:20px;display:flex;justify-content:center;align-items:center;gap:6px}
+/* INSTRUMENT-VISUAL */
+.instrument-visual{margin:10px auto 18px;padding:14px 10px;background:linear-gradient(135deg,var(--accent-soft),#fff);border-radius:14px;border:2px solid #f0c8e4;display:inline-block;min-width:120px;text-align:center}
+.instrument-emoji-big{font-size:64px;line-height:1;display:block}
+.instrument-svg{width:120px;height:120px;object-fit:contain;display:block;margin:0 auto}
+/* MULTIPLE CHOICE */
+.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+@media(max-width:600px){.mc-grid{grid-template-columns:1fr}}
+.mc-btn{padding:14px 12px;border-radius:14px;border:2px solid #f0c8e4;background:white;color:#2c3e50;font-size:15px;font-weight:bold;cursor:pointer;transition:all .15s;text-align:left}
+.mc-btn:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft);transform:translateY(-1px)}
+.mc-btn.selected{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-dark)}
+.mc-btn.correct{background:#d4efdf;border-color:#27ae60;color:#1a6e40}
+.mc-btn.wrong{background:#fde8e8;border-color:#e74c3c;color:#922b21}
+.mc-btn:disabled{cursor:default}
+/* JA/NEIN */
+.yesno-wrap{display:flex;gap:14px;justify-content:center;margin:8px 0}
+.yesno-btn{width:110px;padding:14px 0;font-size:20px;font-weight:bold;border-radius:14px;border:3px solid #f0c8e4;background:white;color:#2c3e50;cursor:pointer;transition:all .15s}
+.yesno-btn:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(0,0,0,0.1)}
+.yesno-btn.selected-ja{background:#27ae60;border-color:#27ae60;color:white;box-shadow:0 4px 12px rgba(39,174,96,0.4)}
+.yesno-btn.selected-nein{background:#e74c3c;border-color:#e74c3c;color:white;box-shadow:0 4px 12px rgba(231,76,60,0.4)}
+.feedback{margin-top:20px;font-size:18px;font-weight:bold;min-height:28px;display:flex;justify-content:center;align-items:center;gap:8px}
+.feedback.ok{color:var(--success)}
+.feedback.bad{color:var(--danger)}
+/* DASHBOARD */
+.dashboard-box{background:#fdfaf8;border:2px solid #f0d8ec;border-radius:16px;padding:24px;margin-top:10px}
+.filter-tabs{display:flex;gap:10px;margin-bottom:20px;background:#f5e8f5;padding:6px;border-radius:12px}
+.filter-tab{flex:1;text-align:center;padding:10px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:14px;color:var(--muted)}
+.filter-tab.active{background:white;color:var(--accent);box-shadow:0 2px 6px rgba(0,0,0,0.05)}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:25px}
+.kpi-card{background:#fef7fb;border-radius:12px;padding:15px;text-align:center;border:1px solid #f0c8e4}
+.kpi-value{font-size:32px;font-weight:bold;color:#2c3e50;margin:5px 0}
+.kpi-label{font-size:13px;color:var(--muted)}
+.analysis-section{margin-top:20px;text-align:left}
+.analysis-section h3{font-size:16px;color:#2c3e50;margin-bottom:12px;padding-bottom:5px;border-bottom:2px solid #f0d8ec}
+.topic-row{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#fff;border:1px solid #f0d8ec;border-radius:8px;margin-bottom:8px}
+.topic-name{font-weight:bold;font-size:14px;color:#2c3e50}
+.topic-stats{font-size:13px;color:var(--muted)}
+/* SPIEL-BANNER */
+.game-banner{display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding:14px 18px;border-radius:16px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:white;gap:12px;flex-wrap:wrap}
+.game-banner-left{display:flex;align-items:center;gap:12px}
+.game-banner-icon{width:52px;height:52px;border-radius:12px;object-fit:cover;box-shadow:0 4px 10px rgba(0,0,0,0.4);flex-shrink:0}
+.game-banner-title{font-size:16px;font-weight:bold;margin-bottom:3px}
+.game-banner-sub{font-size:13px;color:rgba(255,255,255,0.65)}
+.game-banner-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.coin-badge-big{background:rgba(255,255,255,0.12);border:1px solid rgba(255,200,0,0.4);border-radius:20px;padding:6px 14px;font-size:15px;font-weight:bold;color:#f1c40f;white-space:nowrap}
+.btn-play{background:linear-gradient(135deg,#f1c40f,#e67e22);color:#2c3e50;font-weight:bold;border:none;border-radius:12px;padding:10px 18px;cursor:pointer;font-size:15px;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 12px rgba(241,196,15,0.4);white-space:nowrap}
+.btn-play:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(241,196,15,0.55)}
+.btn-play:active{transform:scale(0.96)}
+/* HIGHSCORE */
+.hs-entry{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;margin-bottom:7px;border:2px solid #f0d8ec;background:#fff}
+.hs-rank{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;flex-shrink:0;color:white}
+.hs-name{flex:1;font-weight:bold;font-size:15px;color:#2c3e50}
+.hs-score{font-size:16px;font-weight:bold;color:#2c3e50}
+/* MÜNZEN */
+.coin-display{display:flex;align-items:center;gap:6px;font-size:20px;font-weight:bold;color:var(--accent-dark)}
+.coin-emoji{font-size:22px;line-height:1}
 </style>
 </head>
 <body>
-
-<!-- HEADER -->
-<div class="header">
-  <div class="header-top">
-    <a href="../index.html" class="back-home">← Zurück</a>
+<div class="app">
+<div class="card">
+  <div class="header">
+    <a href="../index.html" class="back-home" title="Zurück">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    </a>
     <img src="../images/icon_musik.png" class="app-icon" alt="Musik" onerror="this.style.display='none'">
-    <div class="app-title">Musik-Trainer</div>
-    <div class="herzen" id="herzenAnzeige">❤️❤️❤️</div>
+    <div class="header-text">
+      <h1>Musik-Trainer 3. Klasse</h1>
+      <p>Peter und der Wolf – Instrumente &amp; mehr</p>
+    </div>
   </div>
-  <div class="progress-bar-wrap">
-    <div class="progress-bar" id="progressBar" style="width:0%"></div>
-  </div>
-  <div class="progress-label" id="progressLabel">Frage 0 von 0</div>
-  <div class="coin-display">🪙 <span id="coinCount">0</span></div>
-</div>
 
-<div class="main" id="mainContent"></div>
+  <div class="profile-bar">
+    <div class="child-badge">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      <span id="curChildName"></span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-outline" id="hsBtn" onclick="switchView(currentView==='highscore'?'practice':'highscore')" style="padding:10px 14px;font-size:14px">
+        <span id="hsBtnText">Bestenliste</span>
+      </button>
+      <button class="btn btn-outline" onclick="switchView(currentView==='dashboard'?'practice':'dashboard')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        <span id="dashBtnText">Eltern-Stats</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ÜBUNGS-MODUS -->
+  <div id="view-practice" class="view-container active">
+    <div class="score-bar">
+      <div class="coin-display">
+        <span class="coin-emoji">🪙</span>
+        <span id="coinText">0</span>
+        <span style="font-size:14px;font-weight:normal;color:#a07030;margin-left:2px">Münzen</span>
+      </div>
+      <div class="stars" id="starsText"></div>
+    </div>
+
+    <div class="main-layout">
+      <div>
+        <div class="panel-title">🎵 Themengebiete</div>
+        <div class="tile-grid" id="taskTiles"></div>
+      </div>
+      <div>
+        <div class="panel-title" id="taskTitle">Aktuelle Aufgabe</div>
+        <div class="task-box">
+          <div class="question-wrapper">
+            <div class="task-question" id="tQuestion">Wähle links ein Thema!</div>
+            <button class="speaker-btn" id="readBtn" style="display:none" title="Vorlesen" onclick="speakCurrent()">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"/></svg>
+            </button>
+          </div>
+          <div class="task-hint" id="tHint"></div>
+          <div id="tVisual"></div>
+          <div id="feedbackArea"></div>
+          <div style="margin-top:15px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary" id="checkBtn" disabled onclick="checkAnswer()">Antwort prüfen</button>
+            <button class="btn btn-secondary" id="nextBtn" style="display:none" onclick="nextTask()">Nächste Aufgabe ➔</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SPIEL-BANNER -->
+    <div class="game-banner">
+      <div class="game-banner-left">
+        <img src="../images/musik_merker.png" class="game-banner-icon" alt="🎹" onerror="this.style.display='none'">
+        <div>
+          <div class="game-banner-title">🎹 Musik-Merkspiel</div>
+          <div class="game-banner-sub">Richtige Antwort = 1 Münze · 10 Münzen = eine Runde Merkspiel!</div>
+        </div>
+      </div>
+      <div class="game-banner-right">
+        <div class="coin-badge-big">🪙 <span id="coinBannerText">0</span></div>
+        <button class="btn-play" onclick="window.location.href='musik_merker.html'">Spielen →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ELTERN-DASHBOARD -->
+  <div id="view-dashboard" class="view-container">
+    <div class="panel-title" style="margin-top:10px">Lernfortschritt &amp; Auswertung</div>
+    <div class="dashboard-box">
+      <div class="filter-tabs">
+        <div class="filter-tab active" onclick="updateDashboard('today',this)">Heute</div>
+        <div class="filter-tab" onclick="updateDashboard('week',this)">Letzte 7 Tage</div>
+        <div class="filter-tab" onclick="updateDashboard('all',this)">Gesamtzeit</div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-label">Gelöste Aufgaben</div><div class="kpi-value" id="dash-total">0</div></div>
+        <div class="kpi-card"><div class="kpi-label">Erfolgsquote</div><div class="kpi-value" id="dash-quote">0%</div></div>
+      </div>
+      <div class="analysis-section"><h3>🟢 Stärken (Läuft super)</h3><div id="dash-good"></div></div>
+      <div class="analysis-section"><h3>🟡 Übungsbedarf (Geht so)</h3><div id="dash-medium"></div></div>
+      <div class="analysis-section"><h3>🔴 Problemzonen (Hier intensivieren)</h3><div id="dash-bad"></div></div>
+      <button class="btn btn-secondary" style="width:100%;margin-top:30px;font-size:13px" onclick="resetStats()">Fortschritt für dieses Kind löschen</button>
+    </div>
+  </div>
+
+  <!-- HIGHSCORE-VIEW -->
+  <div id="view-highscore" class="view-container">
+    <div class="panel-title" style="margin-top:10px">🏆 Musik-Merkspiel – Bestenliste</div>
+    <div class="dashboard-box">
+      <div id="hs-list" style="min-height:100px"></div>
+      <div style="text-align:center;margin-top:20px">
+        <button class="btn-play" onclick="window.location.href='musik_merker.html'" style="display:inline-flex;align-items:center;gap:8px">
+          <img src="../images/musik_merker.png" style="width:22px;height:22px;border-radius:5px" onerror="this.style.display='none'">
+          Jetzt spielen
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- .card -->
+</div><!-- .app -->
 
 <script src="musik_fragen.js"></script>
 <script>
-// ═══════════════════════════════════════════════════════════
-//  MUSIK-TRAINER – Hauptlogik
-// ═══════════════════════════════════════════════════════════
-const STORAGE_KEY = 'm_app_v9';
-const ACTIVE_KEY  = 'm_app_active_prof';
-const COINS_PER_CORRECT = 2;
+// ── STATE ──────────────────────────────────────────────
+let profiles = {}, curProfId = null, curTopicKey = null;
+let curQuestionPool = [], curShuffled = [], curShuffleIdx = 0, curQuestion = null;
+let selectedAnswer = null, currentView = 'practice', dashPeriod = 'today';
 
-let herzen = 3;
-let currentIdx = 0;
-let fragen = [];
-let richtigCount = 0;
-let answeredCount = 0;
-let sessionCoins = 0;
-let aktiveProfilId = null;
-let profiles = {};
-let tipVerbraucht = false;
-
-// ─── PROFIL LADEN ──────────────────────────────────────────
-function loadProfile() {
+// ── STORAGE ────────────────────────────────────────────
+function loadStorage() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem('m_app_v9');
     if (raw) {
-      profiles = JSON.parse(raw);
-      Object.keys(profiles).forEach(id => {
-        if (!profiles[id].musik_history) profiles[id].musik_history = [];
-        if (!profiles[id].coins) profiles[id].coins = 0;
-      });
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+        for (const id of Object.keys(parsed)) {
+          if (!parsed[id].musik_history) parsed[id].musik_history = [];
+          if (!parsed[id].hsu_history) parsed[id].hsu_history = [];
+          if (!parsed[id].history) parsed[id].history = [];
+          if (parsed[id].score === undefined) parsed[id].score = 0;
+          if (parsed[id].coins === undefined) parsed[id].coins = 0;
+        }
+        profiles = parsed;
+      }
     }
   } catch(e) {}
-  aktiveProfilId = localStorage.getItem(ACTIVE_KEY);
-  if (!aktiveProfilId || !profiles[aktiveProfilId]) {
-    aktiveProfilId = Object.keys(profiles)[0] || null;
+  if (Object.keys(profiles).length === 0) {
+    profiles = { p1: { name: 'Kind 1', score: 0, coins: 0, history: [], hsu_history: [], musik_history: [] } };
   }
-  updateCoinDisplay();
+  const saved = localStorage.getItem('m_app_active_prof');
+  curProfId = (saved && profiles[saved]) ? saved : Object.keys(profiles)[0];
+}
+function saveStorage() {
+  try { localStorage.setItem('m_app_v9', JSON.stringify(profiles)); } catch(e) {}
 }
 
-function saveHistory(richtig) {
-  if (!aktiveProfilId || !profiles[aktiveProfilId]) return;
-  const p = profiles[aktiveProfilId];
-  if (!p.musik_history) p.musik_history = [];
-  p.musik_history.push({ ts: Date.now(), ok: richtig });
-  if (richtig && !tipVerbraucht) {
-    p.coins = (p.coins || 0) + COINS_PER_CORRECT;
-    sessionCoins += COINS_PER_CORRECT;
-  } else if (richtig && tipVerbraucht) {
-    p.coins = (p.coins || 0) + 1;
-    sessionCoins += 1;
-  }
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
-  updateCoinDisplay();
+// ── TTS ────────────────────────────────────────────────
+function speak(text) {
+  try {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'de-DE'; u.rate = 0.9;
+      window.speechSynthesis.speak(u);
+    }
+  } catch(e) {}
+}
+function speakCurrent() {
+  if (curQuestion) speak(curQuestion.q + '. ' + (curQuestion.hint || ''));
 }
 
-function updateCoinDisplay() {
-  const coins = profiles[aktiveProfilId]?.coins || 0;
-  document.getElementById('coinCount').textContent = coins;
-}
-
-// ─── FRAGEN MISCHEN ────────────────────────────────────────
-function initFragen() {
-  fragen = shuffleArray(MUSIK_FRAGEN).slice(0, 10);
-  currentIdx = 0;
-  herzen = 3;
-  richtigCount = 0;
-  answeredCount = 0;
-  sessionCoins = 0;
-}
-
-// ─── RENDER ────────────────────────────────────────────────
-function render() {
-  updateHerzen();
-  updateProgress();
-  const main = document.getElementById('mainContent');
-
-  if (currentIdx === 0 && answeredCount === 0) {
-    renderStart();
-    return;
-  }
-  if (currentIdx >= fragen.length || herzen <= 0) {
-    renderResult();
-    return;
-  }
-  renderFrage();
-}
-
-// ─── START ─────────────────────────────────────────────────
-function renderStart() {
-  const main = document.getElementById('mainContent');
-  main.innerHTML = `
-    <div class="card">
-      <div class="start-screen">
-        <img src="../images/icon_musik.png" class="start-icon" alt="Musik" onerror="this.style.display='none'">
-        <div class="start-titel">🎵 Musik-Trainer</div>
-        <div class="start-text">Teste dein Wissen über Instrumente<br>und „Peter und der Wolf"!</div>
-        <div class="start-info">
-          <div class="start-info-item">🎵 10 Fragen</div>
-          <div class="start-info-item">❤️ 3 Herzen</div>
-          <div class="start-info-item">🪙 +2 Münzen pro Antwort</div>
-        </div>
-        <button class="start-btn" onclick="startQuiz()">🎶 Starten!</button>
-      </div>
-    </div>
-    ${renderSpielBanner()}
-  `;
-}
-
-function startQuiz() {
-  initFragen();
-  answeredCount = 1;
-  renderFrage();
-}
-
-function renderSpielBanner() {
-  return `<div class="spiel-banner" onclick="window.location.href='musik_merker.html'">
-    <img src="../images/musik_merker.png" class="spiel-banner-icon" alt="Merkspiel" onerror="this.style.display='none'">
-    <div class="spiel-banner-text">
-      <h3>🎹 Musik-Merkspiel</h3>
-      <p>Spiele die Melodie auf dem Klavier nach!</p>
-      <div class="spiel-badge">🎮 Jetzt spielen</div>
-    </div>
-  </div>`;
-}
-
-// ─── FRAGE RENDERN ─────────────────────────────────────────
-function renderFrage() {
-  tipVerbraucht = false;
-  const f = fragen[currentIdx];
-  updateProgress();
-  const main = document.getElementById('mainContent');
-
-  let frageHTML = '';
-  if (f.typ === 'bild') {
-    const bild = INSTRUMENT_BILDER[f.instrumentKey] || {};
-    frageHTML = `
-      <div class="instrument-visual">
-        <span class="instrument-emoji">${bild.emoji || '🎵'}</span>
-        <div class="instrument-name">${bild.beschreibung || ''}</div>
-      </div>
-      <div class="frage-text">${f.frage}</div>`;
-  } else if (f.typ === 'luecke') {
-    const frageFormatiert = f.frage.replace('___', `<span class="luecke-highlight">???</span>`);
-    frageHTML = `<div class="frage-text">${frageFormatiert}</div>`;
-  } else {
-    frageHTML = `<div class="frage-text">${f.frage}</div>`;
-  }
-
-  let antwortenHTML = '';
-  if (f.typ === 'wahr_falsch') {
-    antwortenHTML = `
-      <div class="wf-wrap">
-        <button class="wf-btn" onclick="antworteWF(true)">
-          <span class="wf-icon">✅</span>
-          <span>Richtig</span>
-        </button>
-        <button class="wf-btn" onclick="antworteWF(false)">
-          <span class="wf-icon">❌</span>
-          <span>Falsch</span>
-        </button>
-      </div>`;
-  } else {
-    const buchstaben = ['A', 'B', 'C', 'D'];
-    antwortenHTML = `<div class="antworten">` +
-      f.antworten.map((a, i) => `
-        <button class="antwort-btn" onclick="antworte(${i})" id="btn_${i}">
-          <div class="antwort-nr">${buchstaben[i]}</div>
-          <span>${a}</span>
-        </button>`).join('') +
-      `</div>`;
-  }
-
-  const typBadge = { choice:'Multiple Choice', bild:'Bild', luecke:'Lückentext', wahr_falsch:'Wahr / Falsch' };
-  const typClass = { choice:'typ-choice', bild:'typ-bild', luecke:'typ-luecke', wahr_falsch:'typ-wf' };
-
-  main.innerHTML = `
-    <div class="card">
-      <div>
-        <span class="thema-badge">🎵 ${f.thema}</span>
-        <span class="typ-badge ${typClass[f.typ]}">${typBadge[f.typ]}</span>
-      </div>
-      ${frageHTML}
-      ${antwortenHTML}
-      <button class="tip-btn" onclick="zeigeTip()" id="tipBtn">💡 Tipp anzeigen</button>
-      <div class="tip-box" id="tipBox">${f.tip}</div>
-      <div class="feedback" id="feedbackBox"></div>
-      <button class="weiter-btn" id="weiterBtn" onclick="naechste()">Weiter →</button>
-    </div>
-    ${currentIdx === fragen.length - 1 ? '' : renderSpielBanner()}
-  `;
-}
-
-// ─── ANTWORTEN ─────────────────────────────────────────────
-function antworte(gewaehlt) {
-  const f = fragen[currentIdx];
-  const richtig = gewaehlt === f.richtig;
-  const btns = document.querySelectorAll('.antwort-btn');
-  btns.forEach(b => b.disabled = true);
-  btns[f.richtig].classList.add('richtig');
-  if (!richtig) {
-    btns[gewaehlt].classList.add('falsch');
-    herzen--;
-    updateHerzen();
-  }
-  zeigeFeedback(richtig, f);
-  saveHistory(richtig);
-  if (richtig) richtigCount++;
-  answeredCount++;
-}
-
-function antworteWF(gewaehlt) {
-  const f = fragen[currentIdx];
-  const richtig = gewaehlt === f.richtig;
-  const btns = document.querySelectorAll('.wf-btn');
-  btns.forEach(b => b.disabled = true);
-  const richtigIdx = f.richtig ? 0 : 1;
-  btns[richtigIdx].classList.add('richtig');
-  if (!richtig) {
-    btns[gewaehlt ? 0 : 1].classList.add('falsch');
-    herzen--;
-    updateHerzen();
-  }
-  zeigeFeedback(richtig, f);
-  saveHistory(richtig);
-  if (richtig) richtigCount++;
-  answeredCount++;
-}
-
-function zeigeFeedback(richtig, f) {
-  const fb = document.getElementById('feedbackBox');
-  fb.className = 'feedback ' + (richtig ? 'richtig' : 'falsch');
-  fb.textContent = richtig ? '🎉 Super! Richtig!' : '❌ Leider falsch!';
-  document.getElementById('tipBtn').style.display = 'none';
-  if (!richtig) document.getElementById('tipBox').classList.add('show');
-  document.getElementById('weiterBtn').classList.add('show');
-}
-
-function zeigeTip() {
-  tipVerbraucht = true;
-  document.getElementById('tipBox').classList.add('show');
-  document.getElementById('tipBtn').style.display = 'none';
-}
-
-function naechste() {
-  currentIdx++;
-  if (currentIdx >= fragen.length || herzen <= 0) {
-    renderResult();
-  } else {
-    renderFrage();
-  }
-}
-
-// ─── HERZEN & PROGRESS ─────────────────────────────────────
-function updateHerzen() {
-  const icons = ['💔', '💔', '💔'];
-  for (let i = 0; i < herzen; i++) icons[i] = '❤️';
-  document.getElementById('herzenAnzeige').textContent = icons.join('');
-}
-
-function updateProgress() {
-  const total = fragen.length;
-  const done = currentIdx;
-  const pct = total ? (done / total) * 100 : 0;
-  document.getElementById('progressBar').style.width = pct + '%';
-  document.getElementById('progressLabel').textContent = `Frage ${Math.min(done + 1, total)} von ${total}`;
-}
-
-// ─── ERGEBNIS ──────────────────────────────────────────────
-function renderResult() {
-  const total = fragen.length;
-  const pct = Math.round((richtigCount / total) * 100);
-  let emoji = '😕', titel = 'Weiter üben!';
-  if (pct >= 90) { emoji = '🌟'; titel = 'Musik-Profi!'; }
-  else if (pct >= 70) { emoji = '🎉'; titel = 'Sehr gut!'; }
-  else if (pct >= 50) { emoji = '👍'; titel = 'Gut gemacht!'; }
-
-  const main = document.getElementById('mainContent');
-  main.innerHTML = `
-    <div class="card">
-      <div class="result-screen">
-        <div class="result-emoji">${emoji}</div>
-        <div class="result-titel">${titel}</div>
-        <div class="result-text">Du hast ${richtigCount} von ${total} Fragen richtig beantwortet.</div>
-        <div class="result-punkte">${pct}%</div>
-        <div class="result-sub">Ergebnis</div>
-        <div class="result-coins">🪙 +${sessionCoins} Münzen verdient!</div>
-        <div class="result-btns">
-          <button class="result-btn result-btn-nochmal" onclick="nochmal()">🔄 Nochmal spielen</button>
-          <button class="result-btn result-btn-home" onclick="window.location.href='../index.html'">🏠 Zur Startseite</button>
-        </div>
-      </div>
+// ── UI INIT ────────────────────────────────────────────
+function initUI() {
+  document.getElementById('curChildName').textContent = profiles[curProfId]?.name;
+  const g = document.getElementById('taskTiles');
+  g.innerHTML = '';
+  for (const [k, v] of Object.entries(MUSIK_TOPICS)) {
+    g.innerHTML += `<div class="tile" id="tile_${k}" onclick="openTopic('${k}')">
+      <div class="tile-icon">${v.icon}</div>
+      <div class="tile-title">${v.title}</div>
+      <div class="tile-sub">${v.sub}</div>
     </div>`;
-  document.getElementById('progressBar').style.width = '100%';
-  document.getElementById('progressLabel').textContent = `Fertig! ${richtigCount}/${total} richtig`;
+  }
+  updateUI();
 }
 
-function nochmal() {
-  initFragen();
-  answeredCount = 1;
-  renderFrage();
+function updateUI() {
+  const p = profiles[curProfId];
+  const coins = p.coins || 0;
+  document.getElementById('coinText').textContent = coins;
+  document.getElementById('coinBannerText').textContent = coins;
+  document.getElementById('curChildName').textContent = p.name;
+  const n = Math.min(5, Math.floor((p.score || 0) / 50));
+  let h = '';
+  for (let i = 0; i < 5; i++) {
+    h += i < n
+      ? '<svg class="star-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>'
+      : '<svg class="star-icon star-empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+  }
+  document.getElementById('starsText').innerHTML = h;
 }
 
-// ─── START ─────────────────────────────────────────────────
-loadProfile();
-render();
+// ── THEMA ÖFFNEN ───────────────────────────────────────
+function openTopic(key) {
+  curTopicKey = key;
+  document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
+  const tile = document.getElementById('tile_' + key);
+  if (tile) tile.classList.add('active');
+  const topic = MUSIK_TOPICS[key];
+  document.getElementById('taskTitle').textContent = topic.icon + ' ' + topic.title;
+  curQuestionPool = [...topic.questions];
+  if (!profiles[curProfId].musik_history) profiles[curProfId].musik_history = [];
+  curShuffled = shuffleArray([...curQuestionPool]);
+  curShuffleIdx = 0;
+  loadQuestion();
+}
+
+// ── FRAGE LADEN ────────────────────────────────────────
+function loadQuestion() {
+  if (!curTopicKey || curQuestionPool.length === 0) return;
+  selectedAnswer = null;
+  document.getElementById('feedbackArea').innerHTML = '';
+
+  if (curShuffleIdx >= curShuffled.length) {
+    curShuffled = shuffleArray([...curQuestionPool]);
+    curShuffleIdx = 0;
+  }
+  curQuestion = curShuffled[curShuffleIdx++];
+
+  document.getElementById('tQuestion').textContent = curQuestion.q;
+  // Tipp NICHT sofort anzeigen – nur als unsichtbares Element
+  const hintEl = document.getElementById('tHint');
+  hintEl.textContent = '';
+  hintEl.dataset.hint = curQuestion.hint || '';
+  document.getElementById('readBtn').style.display = '';
+
+  const vis = document.getElementById('tVisual');
+  let visualHtml = '';
+
+  // Instrument-Bild anzeigen (SVG – kein alt-Text, kein Abschreiben!)
+  if (curQuestion.visual && INSTRUMENT_BILD[curQuestion.visual]) {
+    visualHtml += `<div class="instrument-visual">
+      <img class="instrument-svg" src="${INSTRUMENT_BILD[curQuestion.visual]}" alt="" onerror="this.style.display='none'">
+    </div>`;
+  }
+
+  if (curQuestion.isYesNo) {
+    visualHtml += `<div class="yesno-wrap">
+      <button class="yesno-btn" id="yesno-nein" onclick="selectYesNo(0)">❌ Nein</button>
+      <button class="yesno-btn" id="yesno-ja" onclick="selectYesNo(1)">✅ Ja</button>
+    </div>`;
+  } else if (curQuestion.choices) {
+    // Antworten mischen (außer bei Ja/Nein) – aber sol mitführen
+    const indexed = curQuestion.choices.map((c, i) => ({ c, orig: i }));
+    const shuffled = shuffleArray(indexed);
+    const newSol = shuffled.findIndex(x => x.orig === curQuestion.sol);
+    curQuestion._shuffledChoices = shuffled.map(x => x.c);
+    curQuestion._shuffledSol = newSol;
+    visualHtml += '<div class="mc-grid">' +
+      curQuestion._shuffledChoices.map((c, i) =>
+        `<button class="mc-btn" id="mc_${i}" onclick="selectMC(${i})">${['🅐','🅑','🅒','🅓'][i]} ${c}</button>`
+      ).join('') + '</div>';
+  }
+
+  vis.innerHTML = visualHtml;
+  document.getElementById('checkBtn').disabled = true;
+  document.getElementById('checkBtn').style.display = '';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+// ── ANTWORT AUSWÄHLEN ──────────────────────────────────
+function selectMC(idx) {
+  const b0 = document.getElementById('mc_0');
+  if (b0 && b0.disabled) return;
+  selectedAnswer = idx;
+  (curQuestion._shuffledChoices || curQuestion.choices).forEach((_, i) => {
+    const b = document.getElementById('mc_' + i);
+    if (b) b.classList.toggle('selected', i === idx);
+  });
+  document.getElementById('checkBtn').disabled = false;
+}
+
+function selectYesNo(val) {
+  const jaBtn = document.getElementById('yesno-ja');
+  if (jaBtn && jaBtn.disabled) return;
+  document.getElementById('yesno-nein').disabled = true;
+  document.getElementById('yesno-ja').disabled = true;
+  document.getElementById('yesno-nein').classList.toggle('selected-nein', val === 0);
+  document.getElementById('yesno-ja').classList.toggle('selected-ja', val === 1);
+  selectedAnswer = val;
+  document.getElementById('checkBtn').style.display = 'none';
+  checkAnswer();
+}
+
+// ── ANTWORT PRÜFEN ─────────────────────────────────────
+function checkAnswer() {
+  if (selectedAnswer === null) return;
+  const sol = curQuestion._shuffledSol !== undefined ? curQuestion._shuffledSol : curQuestion.sol;
+  const correct = selectedAnswer === sol;
+  const fb = document.getElementById('feedbackArea');
+  const p = profiles[curProfId];
+
+  if (!curQuestion.isYesNo && curQuestion.choices) {
+    (curQuestion._shuffledChoices || curQuestion.choices).forEach((_, i) => {
+      const b = document.getElementById('mc_' + i);
+      if (!b) return;
+      b.disabled = true;
+      if (i === sol) b.classList.add('correct');
+      else if (i === selectedAnswer && !correct) b.classList.add('wrong');
+    });
+  }
+  if (curQuestion.isYesNo) {
+    const ja = document.getElementById('yesno-ja');
+    const nein = document.getElementById('yesno-nein');
+    if (ja && nein) {
+      if (curQuestion.sol === 1) ja.classList.add('correct');
+      else nein.classList.add('correct');
+      if (!correct) {
+        if (selectedAnswer === 1) ja.classList.add('wrong');
+        else nein.classList.add('wrong');
+      }
+    }
+  }
+
+  // Statistik
+  p.musik_history.push({ key: curTopicKey, ok: correct, ts: Date.now() });
+
+  // Tipp immer anzeigen (Eselsbrücke / Merkhilfe) – sowohl bei richtig als auch falsch
+  const hint = document.getElementById('tHint').dataset.hint;
+  if (hint) {
+    document.getElementById('tHint').textContent = '💡 ' + hint;
+  }
+
+  if (correct) {
+    p.coins = (p.coins || 0) + 1;
+    p.score = (p.score || 0) + 10;
+    fb.innerHTML = `<div class="feedback ok">🎉 Super! Richtig! +1 🪙</div>`;
+    speak('Super! Richtig!');
+  } else {
+    const richtig = curQuestion.isYesNo
+      ? (curQuestion.sol === 1 ? 'Ja' : 'Nein')
+      : (curQuestion._shuffledChoices || curQuestion.choices)[sol];
+    fb.innerHTML = `<div class="feedback bad">❌ Nicht ganz. Richtig wäre: <strong>${richtig}</strong></div>`;
+    speak('Nicht ganz. Die Antwort ist ' + richtig);
+  }
+
+  saveStorage(); updateUI();
+  document.getElementById('checkBtn').style.display = 'none';
+  document.getElementById('nextBtn').style.display = '';
+}
+
+function nextTask() {
+  loadQuestion();
+}
+
+// ── VIEW-NAVIGATION ────────────────────────────────────
+function switchView(v) {
+  currentView = v;
+  ['practice', 'dashboard', 'highscore'].forEach(name => {
+    document.getElementById('view-' + name).className = 'view-container' + (name === v ? ' active' : '');
+  });
+  document.getElementById('dashBtnText').textContent = v === 'dashboard' ? 'üben' : 'Eltern-Stats';
+  document.getElementById('hsBtnText').textContent = v === 'highscore' ? 'üben' : 'Bestenliste';
+  if (v === 'dashboard') updateDashboard(dashPeriod);
+  if (v === 'highscore') updateHighscores();
+}
+
+// ── HIGHSCORE ──────────────────────────────────────────
+function updateHighscores() {
+  let hs = [];
+  try { hs = JSON.parse(localStorage.getItem('m_musik_hs') || '[]'); } catch(e) {}
+  const list = document.getElementById('hs-list');
+  if (!hs.length) {
+    list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:30px 0;font-size:15px">Noch keine Einträge.<br>Los spielen! 🎹</p>';
+    return;
+  }
+  const medals = ['🥇','🥈','🥉'];
+  const rankBg = ['#f39c12','#95a5a6','#e67e22'];
+  list.innerHTML = hs.map((e, i) => `
+    <div class="hs-entry" style="background:${i===0?'#fef9e7':i===1?'#f8f9fa':i===2?'#fff8f0':'#fff'};border-color:${rankBg[i]||'#f0d8ec'}">
+      <div class="hs-rank" style="background:${rankBg[i]||'#bdc3c7'}">${i < 3 ? medals[i] : i+1}</div>
+      <div class="hs-name">${e.name}</div>
+      <div class="hs-score" style="color:${i===0?'#e91e8c':'#2c3e50'}">Level&nbsp;<strong>${e.score}</strong></div>
+    </div>`).join('');
+}
+
+// ── DASHBOARD ──────────────────────────────────────────
+function updateDashboard(period, el) {
+  dashPeriod = period;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const p = profiles[curProfId];
+  const now = Date.now();
+  const cutoff = period === 'today' ? now - 86400000 : period === 'week' ? now - 7 * 86400000 : 0;
+  const hist = (p.musik_history || []).filter(h => h.ts >= cutoff);
+  const total = hist.length, correct = hist.filter(h => h.ok).length;
+  document.getElementById('dash-total').textContent = total;
+  document.getElementById('dash-quote').textContent = (total > 0 ? Math.round(correct / total * 100) : 0) + '%';
+
+  const byTopic = {};
+  hist.forEach(h => {
+    if (!byTopic[h.key]) byTopic[h.key] = { right: 0, wrong: 0 };
+    if (h.ok) byTopic[h.key].right++; else byTopic[h.key].wrong++;
+  });
+
+  function buildRow(key, stat) {
+    const tot = stat.right + stat.wrong, rate = stat.right / tot, pct = Math.round(rate * 100);
+    const bc = rate > 0.75 ? 'var(--success)' : rate > 0.4 ? 'var(--warning)' : 'var(--danger)';
+    const topic = MUSIK_TOPICS[key];
+    const name = topic ? (topic.icon + ' ' + topic.title) : key;
+    return `<div class="topic-row">
+      <span class="topic-name">${name}</span>
+      <span class="topic-stats">${stat.right}/${tot} richtig &nbsp;<strong style="color:${bc}">${pct}%</strong></span>
+    </div>`;
+  }
+
+  const good = [], medium = [], bad = [];
+  for (const [key, stat] of Object.entries(byTopic)) {
+    const rate = stat.right / (stat.right + stat.wrong);
+    if (rate > 0.75) good.push(buildRow(key, stat));
+    else if (rate > 0.4) medium.push(buildRow(key, stat));
+    else bad.push(buildRow(key, stat));
+  }
+  const empty = '<p style="color:var(--muted);font-size:14px">Keine Daten im gewählten Zeitraum.</p>';
+  document.getElementById('dash-good').innerHTML = good.length ? good.join('') : empty;
+  document.getElementById('dash-medium').innerHTML = medium.length ? medium.join('') : '<p style="color:var(--muted);font-size:14px"></p>';
+  document.getElementById('dash-bad').innerHTML = bad.length ? bad.join('') : '<p style="color:var(--muted);font-size:14px"></p>';
+}
+
+function resetStats() {
+  if (!confirm('Wirklich alle Musik-Daten für ' + profiles[curProfId].name + ' löschen?')) return;
+  profiles[curProfId].score = 0;
+  profiles[curProfId].musik_history = [];
+  profiles[curProfId].coins = 0;
+  saveStorage(); updateUI(); updateDashboard(dashPeriod);
+}
+
+// ── START ──────────────────────────────────────────────
+loadStorage();
+initUI();
 </script>
 </body>
 </html>
