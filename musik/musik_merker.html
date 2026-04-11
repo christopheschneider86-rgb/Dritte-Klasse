@@ -551,14 +551,9 @@ function updatePlayBtn() {
     btn.textContent = '🔊 Wird abgespielt...';
     btn.disabled = true;
   } else if (spielPhase === 'eingabe') {
-    btn.textContent = '🔄 Nochmal anhören (−1 Versuch)';
+    btn.textContent = '🔄 Nochmal anhören';
     btn.disabled = false;
     btn.onclick = () => {
-      if (herzen > 1) {
-        const verlorenIdx = herzen - 1;
-        herzen--;
-        updateHerzen(verlorenIdx);
-      }
       eingabe = [];
       spieleSequenz();
     };
@@ -649,6 +644,22 @@ function renderResult(gameOver, abgezogeneCoins) {
   const li = document.getElementById('levelInfo');
   if (li) li.textContent = gameOver ? '💀 Game Over!' : '🏁 Spiel beendet!';
 }
+
+// ── BESTENLISTE BEIM VERLASSEN SICHERN ─────────────────
+// Wenn das Spiel läuft und der User die Seite verlässt (z.B. Zurück-Button),
+// wird der aktuelle Level in die Bestenliste eingetragen.
+function saveProgressOnLeave() {
+  if (spielPhase === 'bereit' || spielPhase === 'abspielen' || spielPhase === 'eingabe' || spielPhase === 'pause') {
+    if (level > 1) { // Erst ab Level 2 (mindestens eine Runde geschafft)
+      const profName = profiles[aktiveProfilId]?.name || 'Unbekannt';
+      if (isHighscore(level)) {
+        saveHighscore(profName, level);
+      }
+    }
+  }
+}
+window.addEventListener('beforeunload', saveProgressOnLeave);
+window.addEventListener('pagehide', saveProgressOnLeave); // iOS Safari
 
 // ── START ───────────────────────────────────────────────
 loadProfile();

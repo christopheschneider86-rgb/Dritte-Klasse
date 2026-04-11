@@ -129,9 +129,27 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 /* MÜNZEN */
 .coin-display{display:flex;align-items:center;gap:6px;font-size:20px;font-weight:bold;color:var(--accent-dark)}
 .coin-emoji{font-size:22px;line-height:1}
+/* LEXIKON-OVERLAY */
+.lexikon-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:500;align-items:flex-start;justify-content:center;padding:10px;overflow-y:auto}
+.lexikon-overlay.open{display:flex}
+.lexikon-frame-wrap{background:#fdf0f8;border-radius:20px;width:100%;max-width:900px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.4);position:relative;max-height:90vh;overflow-y:auto}
+.lexikon-close{position:sticky;top:10px;float:right;margin:10px 10px 0 0;z-index:10;background:#e91e8c;color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.3);flex-shrink:0}
+.lexikon-close:hover{background:#b01570}
+.btn-lexikon{background:linear-gradient(135deg,var(--accent-soft),#fff3fb);color:var(--accent-dark);border:2px solid #f0a8d8;border-radius:12px;padding:10px 14px;cursor:pointer;font-size:14px;font-weight:bold;display:flex;align-items:center;gap:6px;transition:all .15s}
+.btn-lexikon:hover{background:var(--accent-soft);box-shadow:0 3px 10px rgba(233,30,140,0.2)}
+.btn-lexikon svg{width:18px;height:18px}
 </style>
 </head>
 <body>
+
+<!-- ORCHESTER-LEXIKON OVERLAY -->
+<div class="lexikon-overlay" id="lexikonOverlay" onclick="closeLexikonOnBg(event)">
+  <div class="lexikon-frame-wrap" id="lexikonFrameWrap">
+    <button class="lexikon-close" onclick="closeLexikon()" title="Schließen">✕</button>
+    <iframe id="lexikonFrame" src="" style="width:100%;min-height:600px;border:none;display:block" title="Orchester-Lexikon"></iframe>
+  </div>
+</div>
+
 <div class="app">
 <div class="card">
   <div class="header">
@@ -151,6 +169,10 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
       <span id="curChildName"></span>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-lexikon" onclick="openLexikon()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        🎼 Lexikon
+      </button>
       <button class="btn btn-outline" id="hsBtn" onclick="switchView(currentView==='highscore'?'practice':'highscore')" style="padding:10px 14px;font-size:14px">
         <span id="hsBtnText">Bestenliste</span>
       </button>
@@ -564,6 +586,25 @@ function resetStats() {
   profiles[curProfId].musik_history = [];
   profiles[curProfId].coins = 0;
   saveStorage(); updateUI(); updateDashboard(dashPeriod);
+}
+
+// ── LEXIKON-OVERLAY ────────────────────────────────────
+function openLexikon() {
+  const overlay = document.getElementById('lexikonOverlay');
+  const frame = document.getElementById('lexikonFrame');
+  // Nur beim ersten Öffnen laden (danach bleibt es im Cache)
+  if (!frame.src || frame.src === window.location.href) {
+    frame.src = 'musik_orchester.html';
+  }
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLexikon() {
+  document.getElementById('lexikonOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeLexikonOnBg(e) {
+  if (e.target === document.getElementById('lexikonOverlay')) closeLexikon();
 }
 
 // ── START ──────────────────────────────────────────────

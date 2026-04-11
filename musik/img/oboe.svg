@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 320" width="120" height="320">
+  <!-- Oboe - schlankes, konisches Holzrohr mit Doppelrohrblatt -->
+  <!-- Hauptkorpus - leicht konisch (oben schmaler, unten weiter) -->
+  <path d="M52 60 L52 260 Q52 272 60 275 Q68 272 68 260 L68 60Z" fill="#6B3A1F" stroke="#4a2800" stroke-width="2"/>
+  <!-- Holzmaserung -->
+  <line x1="56" y1="70" x2="56" y2="265" stroke="#5a3000" stroke-width="0.8" opacity="0.6"/>
+  <line x1="63" y1="70" x2="63" y2="265" stroke="#5a3000" stroke-width="0.8" opacity="0.6"/>
+  <!-- Trichter (Schallbecher) unten -->
+  <path d="M52 255 Q42 268 40 278 Q60 285 80 278 Q78 268 68 255Z" fill="#6B3A1F" stroke="#4a2800" stroke-width="2"/>
+  <!-- Metallringe -->
+  <rect x="49" y="78" width="22" height="5" rx="2" fill="#bbb" stroke="#888" stroke-width="1"/>
+  <rect x="49" y="155" width="22" height="5" rx="2" fill="#bbb" stroke="#888" stroke-width="1"/>
+  <rect x="49" y="245" width="22" height="5" rx="2" fill="#bbb" stroke="#888" stroke-width="1"/>
+  <!-- Klappen (typisch für Oboe - viele kleine Klappen) -->
+  <ellipse cx="60" cy="95" rx="6" ry="4" fill="#aaa" stroke="#666" stroke-width="1.5"/>
+  <ellipse cx="60" cy="112" rx="6" ry="4" fill="#aaa" stroke="#666" stroke-width="1.5"/>
+  <ellipse cx="60" cy="130" rx="6" ry="4" fill="#aaa" stroke="#666" stroke-width="1.5"/>
+  <ellipse cx="60" cy="148" rx="6" ry="4" fill="#aaa" stroke="#666" stroke-width="1.5"/>
+  <ellipse cx="60" cy="168" rx="6" ry="4" fill="#aaa" stroke="#666" stroke-width="1.5"/>
+  <ellipse cx="60" cy="188" rx="6" ry="4" fill="#aaa" stroke="#666" stroke-width="1.5"/>
+  <ellipse cx="60" cy="210" rx="6" ry="4" fill="#aaa" stroke="#666" stroke-width="1.5"/>
+  <ellipse cx="60" cy="230" rx="6" ry="4" fill="#aaa" stroke="#666" stroke-width="1.5"/>
+  <!-- Grifflöcher -->
+  <circle cx="56" cy="105" r="3" fill="#4a2800"/>
+  <circle cx="56" cy="120" r="3" fill="#4a2800"/>
+  <circle cx="64" cy="105" r="3" fill="#4a2800"/>
+  <circle cx="64" cy="120" r="3" fill="#4a2800"/>
+  <!-- Oberes Mundstück (Staple + Doppelrohrblatt) -->
+  <rect x="56" y="40" width="8" height="22" rx="3" fill="#aaa" stroke="#777" stroke-width="1.5"/>
+  <!-- Doppelrohrblatt - das Herzstück der Oboe! -->
+  <path d="M57 38 C55 30 54 22 56 16 C58 12 62 12 64 16 C66 22 65 30 63 38Z" fill="#c8a05a" stroke="#8B6914" stroke-width="1.5"/>
+  <line x1="60" y1="16" x2="60" y2="38" stroke="#8B6914" stroke-width="1"/>
+  <!-- Beschriftung des Doppelrohrlatts -->
+  <line x1="68" y1="25" x2="82" y2="22" stroke="#e74c3c" stroke-width="1.5"/>
+
+  <!-- Label -->
+
+</svg>

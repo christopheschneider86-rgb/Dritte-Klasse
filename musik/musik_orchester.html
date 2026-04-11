@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Orchester-Lexikon – Musik 3. Klasse</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<link rel="icon" type="image/png" href="../images/icon_musik.png">
+<link rel="apple-touch-icon" href="../images/icon_musik.png">
+<style>
+:root{
+  --bg:#fdf0f8;--card:#fff;--accent:#e91e8c;--accent-soft:#fce4f4;--accent-dark:#b01570;
+  --text:#222;--muted:#666;--radius:18px;
+  --streicher:#e74c3c;--holz:#27ae60;--blech:#f39c12;--schlag:#9b59b6;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.app{max-width:900px;margin:0 auto;padding:14px}
+
+/* ── HEADER ── */
+.header{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,var(--accent-dark),var(--accent));color:#fff;border-radius:var(--radius);padding:16px 20px;margin-bottom:18px;box-shadow:0 4px 16px rgba(233,30,140,0.3)}
+.back-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;border-radius:10px;padding:8px 14px;cursor:pointer;font-size:13px;font-weight:bold;text-decoration:none;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.back-btn:hover{background:rgba(255,255,255,0.3)}
+.header-icon{font-size:36px;line-height:1}
+.header-text h1{font-size:20px;font-weight:bold}
+.header-text p{font-size:13px;opacity:.8;margin-top:2px}
+
+/* ── TAB-NAVIGATION ── */
+.tabs{display:flex;gap:8px;margin-bottom:18px;background:#fff;padding:6px;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,0.06);flex-wrap:wrap}
+.tab{flex:1;min-width:80px;padding:10px 8px;border-radius:10px;border:none;background:transparent;cursor:pointer;font-weight:bold;font-size:13px;color:#999;transition:all .15s;text-align:center}
+.tab:hover{background:#fce4f4;color:var(--accent)}
+.tab.active{color:#fff;box-shadow:0 3px 10px rgba(0,0,0,0.15)}
+.tab[data-gruppe="streicher"].active{background:var(--streicher)}
+.tab[data-gruppe="holz"].active{background:var(--holz)}
+.tab[data-gruppe="blech"].active{background:var(--blech)}
+.tab[data-gruppe="schlag"].active{background:var(--schlag)}
+.tab[data-gruppe="peter"].active{background:var(--accent)}
+.tab[data-gruppe="alle"].active{background:#2c3e50}
+
+/* ── GRUPPEN-BANNER ── */
+.gruppen-banner{border-radius:14px;padding:14px 18px;margin-bottom:16px;color:#fff;display:flex;align-items:center;gap:14px}
+.gruppen-banner-icon{font-size:40px;line-height:1}
+.gruppen-banner h2{font-size:18px;font-weight:bold;margin-bottom:3px}
+.gruppen-banner p{font-size:13px;opacity:.85;line-height:1.5}
+
+/* ── INSTRUMENT-GRID ── */
+.instr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+.instr-card{background:#fff;border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,0.07);overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;border:2px solid transparent}
+.instr-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.12)}
+.instr-card.open{border-color:var(--accent)}
+.instr-card-top{padding:16px;text-align:center}
+.instr-card-top img{width:100px;height:100px;object-fit:contain;display:block;margin:0 auto 10px}
+.instr-name{font-size:16px;font-weight:bold;color:#2c3e50;margin-bottom:2px}
+.instr-gruppe{font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:.5px;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:6px}
+.instr-kurz{font-size:13px;color:var(--muted);line-height:1.4}
+/* Aufklappbereich */
+.instr-detail{display:none;padding:0 16px 16px;border-top:2px solid #f5f5f5}
+.instr-card.open .instr-detail{display:block}
+.detail-section{margin-top:12px}
+.detail-label{font-size:11px;font-weight:bold;text-transform:uppercase;color:#999;letter-spacing:.5px;margin-bottom:5px}
+.detail-text{font-size:14px;color:#2c3e50;line-height:1.5}
+.eselsbruecke{background:#fef9e7;border-left:3px solid #f1c40f;border-radius:0 8px 8px 0;padding:10px 12px;margin-top:8px;font-size:13px;color:#7d5a00;line-height:1.5}
+.eselsbruecke strong{display:block;margin-bottom:3px;font-size:12px;text-transform:uppercase;letter-spacing:.3px}
+
+/* ── PETER UND DER WOLF TABELLE ── */
+.peter-table{width:100%;border-collapse:collapse;margin-bottom:16px}
+.peter-table th{padding:10px 12px;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#fff;background:var(--accent)}
+.peter-table th:first-child{border-radius:10px 0 0 0}
+.peter-table th:last-child{border-radius:0 10px 0 0}
+.peter-table td{padding:10px 12px;border-bottom:1px solid #f0d8ec;font-size:14px;vertical-align:middle}
+.peter-table tr:last-child td{border-bottom:none}
+.peter-table tr:hover td{background:#fdf0f8}
+.figur-emoji{font-size:22px;margin-right:6px}
+.instr-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:13px;font-weight:bold}
+
+/* ── ALLE-ANSICHT ── */
+.alle-gruppe-titel{font-size:15px;font-weight:bold;color:#fff;padding:8px 14px;border-radius:10px;margin:14px 0 10px;display:flex;align-items:center;gap:8px}
+
+/* ── GRUPPEN-FARBEN ── */
+.g-streicher{background:rgba(231,76,60,0.12);color:var(--streicher);border-color:rgba(231,76,60,0.3)}
+.g-holz{background:rgba(39,174,96,0.12);color:var(--holz);border-color:rgba(39,174,96,0.3)}
+.g-blech{background:rgba(243,156,18,0.12);color:var(--blech);border-color:rgba(243,156,18,0.3)}
+.g-schlag{background:rgba(155,89,182,0.12);color:var(--schlag);border-color:rgba(155,89,182,0.3)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <a href="musik_trainer.html" class="back-btn" id="backBtn">← Trainer</a>
+    <div class="header-icon">🎼</div>
+    <div class="header-text">
+      <h1>Orchester-Lexikon</h1>
+      <p>Peter und der Wolf · Instrumente · Eselsbrücken</p>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-gruppe="peter" onclick="showGruppe('peter',this)">🐺 Peter &amp; Wolf</button>
+    <button class="tab" data-gruppe="streicher" onclick="showGruppe('streicher',this)">🎻 Streicher</button>
+    <button class="tab" data-gruppe="holz" onclick="showGruppe('holz',this)">🎵 Holzbläser</button>
+    <button class="tab" data-gruppe="blech" onclick="showGruppe('blech',this)">🎺 Blechbläser</button>
+    <button class="tab" data-gruppe="schlag" onclick="showGruppe('schlag',this)">🥁 Schlagwerk</button>
+    <button class="tab" data-gruppe="alle" onclick="showGruppe('alle',this)">📋 Alle</button>
+  </div>
+
+  <div id="content"></div>
+
+</div>
+
+<script>
+// ─── DATEN ────────────────────────────────────────────────────────────────
+const INSTRUMENTE = [
+  {
+    id: 'geige',
+    name: 'Geige (Violine)',
+    gruppe: 'streicher',
+    gruppeLabel: 'Streichinstrument',
+    gruppeClass: 'g-streicher',
+    bild: 'img/geige.svg',
+    kurz: 'Das kleinste Streichinstrument – klingt hell und lebhaft.',
+    wie: 'Mit einem Bogen über 4 Saiten streichen.',
+    klang: 'Hell, klar, lebendig – von sanft bis leidenschaftlich.',
+    merkmale: '4 Saiten · Bogen aus Rosshaar · liegt unter dem Kinn · Holzkorpus mit charakteristischen f-Löchern.',
+    peter: { figur: 'Peter', emoji: '👦', warum: 'Lebhaft, jung, mutig – genau wie Peter! Die helle Geige klingt fröhlich und abenteuerlustig.' },
+    eselsbruecke: 'Die GEIGE klingt wie ein fröhliches KIND – und Peter ist ein mutiges Kind!'
+  },
+  {
+    id: 'fagott',
+    name: 'Fagott',
+    gruppe: 'holz',
+    gruppeLabel: 'Holzblasinstrument',
+    gruppeClass: 'g-holz',
+    bild: 'img/fagott.svg',
+    kurz: 'Tiefes, schweres Holzblasinstrument mit s-förmigem Rohr.',
+    wie: 'Durch ein Doppelrohrblatt blasen – der Luftstrom bringt zwei Holzblättchen zum Schwingen.',
+    klang: 'Tief, schwer, gelegentlich komisch – wie ein alter, brummender Mann.',
+    merkmale: 'S-förmiges Verbindungsrohr (Bocal) · über 1 m lang · Holzkorpus · Doppelrohrblatt.',
+    peter: { figur: 'Großvater', emoji: '👴', warum: 'Langsam, tief, schwerfällig – wie ein alter Großvater, der mühsam geht. Das Fagott brummt wie eine alte Stimme.' },
+    eselsbruecke: 'FAGOTT klingt tief – wie ein alter MANN mit tiefer Stimme. Und hat ein komisches S-Rohr – wie ein alter Herr mit gebücktem Rücken!'
+  },
+  {
+    id: 'querfloete',
+    name: 'Querflöte',
+    gruppe: 'holz',
+    gruppeLabel: 'Holzblasinstrument',
+    gruppeClass: 'g-holz',
+    bild: 'img/querfloete.svg',
+    kurz: 'Wird waagerecht gehalten – klingt klar und zwitschernd.',
+    wie: 'In das Mundloch blasen (kein Rohrblatt!) – der Luftstrom erzeugt den Ton.',
+    klang: 'Klar, hell, leicht – wie ein Vogel der zwitschert.',
+    merkmale: 'Waagerecht (quer) gehalten · kein Rohrblatt · aus Metall (früher Holz) · viele Klappen.',
+    peter: { figur: 'Vogel', emoji: '🐦', warum: 'Der Vogel flattert hoch oben und zwitschert – die Querflöte klingt genauso: hell, leicht, zwitschernd.' },
+    eselsbruecke: 'QUERFLÖTE → QUER = waagerecht halten! Klingt wie ein VOGEL, weil beide hoch und hell sind.'
+  },
+  {
+    id: 'oboe',
+    name: 'Oboe',
+    gruppe: 'holz',
+    gruppeLabel: 'Holzblasinstrument',
+    gruppeClass: 'g-holz',
+    bild: 'img/oboe.svg',
+    kurz: 'Schlankes Rohr mit nasalem, schnatternd klingendem Ton.',
+    wie: 'Durch ein Doppelrohrblatt blasen – zwei Holzblättchen schwingen gegeneinander.',
+    klang: 'Näselnd, schnatternd – wie eine Ente, die quakt.',
+    merkmale: 'Doppelrohrblatt (2 Holzblättchen) · leicht konisch (oben schmaler) · dunkles Holz · viele Klappen.',
+    peter: { figur: 'Ente', emoji: '🦆', warum: 'Die Ente schnattert und watschelt – die Oboe klingt näselnd und schnatternder als andere Instrumente. Perfekt für die Ente!' },
+    eselsbruecke: 'OBOE klingt wie OBACHT – eine wackelnde Ente! Doppelrohrblatt = zwei Holzblättchen, die wie Entenschnabel klappern.'
+  },
+  {
+    id: 'klarinette',
+    name: 'Klarinette',
+    gruppe: 'holz',
+    gruppeLabel: 'Holzblasinstrument',
+    gruppeClass: 'g-holz',
+    bild: 'img/klarinette.svg',
+    kurz: 'Schwarzes Rohr mit warmem, sanftem Klang – 5 Teile.',
+    wie: 'Durch ein einfaches Rohrblatt (1 Holzblättchen) blasen.',
+    klang: 'Warm, samtig, weich – wie eine Katze, die schnurrt.',
+    merkmale: 'Einfaches Rohrblatt · zylindrisch (gleichmäßige Breite) · 5 Teile · viele silberne Klappen.',
+    peter: { figur: 'Katze', emoji: '🐱', warum: 'Die Katze schleicht leise und weich – die Klarinette klingt samtig und warm. Wie weiches Katzenfell!' },
+    eselsbruecke: 'KLARINETTE = KLAR und WARM – wie eine schnurrende Katze! 5 Teile = 5 Katzenpfoten... fast!'
+  },
+  {
+    id: 'horn',
+    name: 'Horn (Waldhorn)',
+    gruppe: 'blech',
+    gruppeLabel: 'Blechblasinstrument',
+    gruppeClass: 'g-blech',
+    bild: 'img/horn.svg',
+    kurz: 'Rundes, gewickeltes Metallrohr – klingt dunkel und mächtig.',
+    wie: 'Lippen in das Mundstück pressen und hineinblasen – die Lippenschwingung erzeugt den Ton.',
+    klang: 'Tief, warm, dunkel, mächtig – wie ein bedrohliches Tier im Wald.',
+    merkmale: 'Kreisförmig gewickelt · großer Schallbecher · 3 Ventile · Messing · früher Signalinstrument der Jäger.',
+    peter: { figur: 'Wolf', emoji: '🐺', warum: 'Der Wolf ist dunkel, mächtig, bedrohlich – und das Horn klingt genauso: tief, warm, gefährlich. Das Horn war früher ein Jagdinstrument – perfekt für den Wolf!' },
+    eselsbruecke: 'HORN (Waldhorn) = WALD = WOLF! Früher riefen Jäger mit dem Horn – jetzt stellt es den gefährlichsten Waldbewohner dar.'
+  },
+  {
+    id: 'pauken',
+    name: 'Pauken',
+    gruppe: 'schlag',
+    gruppeLabel: 'Schlaginstrument',
+    gruppeClass: 'g-schlag',
+    bild: 'img/pauken.svg',
+    kurz: 'Kesselförmige Trommeln auf Stativ – können gestimmt werden.',
+    wie: 'Mit Schlägeln auf das gespannte Fell schlagen.',
+    klang: 'Dumpf, donnend, explosiv – wie Kanonenschüsse oder Donnerschläge.',
+    merkmale: 'Kesselförmig (Kupfer- oder Messingkessel) · spannbares Fell · stimmbar per Pedal · meist 2-4 Pauken im Orchester.',
+    peter: { figur: 'Jäger (Schüsse)', emoji: '🔫', warum: 'Die Pauken klingen wie Kanonenschüsse – Bumm, Bumm! Wenn die Jäger ihre Gewehre abfeuern, schlagen die Pauken zu.' },
+    eselsbruecke: 'PAUKEN = BUMM BUMM = Schüsse! Die einzige Trommel im Orchester die man STIMMEN kann – sie hat ein bestimmtes Tonhöhe!'
+  },
+];
+
+const PETER_FIGUREN = [
+  { figur: 'Peter', emoji: '👦', instrId: 'geige', instr: 'Geige (Violine)', gruppeClass: 'g-streicher', beschr: 'Jung, mutig, fröhlich' },
+  { figur: 'Großvater', emoji: '👴', instrId: 'fagott', instr: 'Fagott', gruppeClass: 'g-holz', beschr: 'Alt, langsam, schwerfällig' },
+  { figur: 'Vogel', emoji: '🐦', instrId: 'querfloete', instr: 'Querflöte', gruppeClass: 'g-holz', beschr: 'Leicht, hoch, zwitschernd' },
+  { figur: 'Ente', emoji: '🦆', instrId: 'oboe', instr: 'Oboe', gruppeClass: 'g-holz', beschr: 'Schnatternд, watschelnd' },
+  { figur: 'Katze', emoji: '🐱', instrId: 'klarinette', instr: 'Klarinette', gruppeClass: 'g-holz', beschr: 'Weich, samtig, schleichend' },
+  { figur: 'Wolf', emoji: '🐺', instrId: 'horn', instr: 'Horn (Waldhorn)', gruppeClass: 'g-blech', beschr: 'Dunkel, mächtig, bedrohlich' },
+  { figur: 'Jäger (Schüsse)', emoji: '🔫', instrId: 'pauken', instr: 'Pauken', gruppeClass: 'g-schlag', beschr: 'Krachend, explosiv' },
+];
+
+const GRUPPEN_INFO = {
+  streicher: {
+    farbe: 'var(--streicher)', emoji: '🎻',
+    titel: 'Streichinstrumente',
+    beschr: 'Mit einem Bogen über Saiten gestrichen oder gezupft. Größtes Stimmvolumen im Orchester – von der kleinen Geige bis zum riesigen Kontrabass.'
+  },
+  holz: {
+    farbe: 'var(--holz)', emoji: '🎵',
+    titel: 'Holzblasinstrumente',
+    beschr: 'Durch Blasen in ein Rohrblatt oder Mundloch gespielt. Ursprünglich aus Holz – auch wenn Querflöten heute aus Metall sind, heißen sie trotzdem Holzbläser!'
+  },
+  blech: {
+    farbe: 'var(--blech)', emoji: '🎺',
+    titel: 'Blechblasinstrumente',
+    beschr: 'Aus Metall (Messing/Blech), gespielt durch Lippenschwingung. Trompete, Horn, Posaune, Tuba – klingen laut und mächtig.'
+  },
+  schlag: {
+    farbe: 'var(--schlag)', emoji: '🥁',
+    titel: 'Schlaginstrumente',
+    beschr: 'Durch Schlagen, Klopfen oder Reiben gespielt. Die Pauken sind besonders: sie können auf eine bestimmte Tonhöhe gestimmt werden!'
+  },
+};
+
+// ─── RENDER-FUNKTIONEN ─────────────────────────────────────────────────────
+
+function renderInstrumentKarte(instr) {
+  return `
+    <div class="instr-card" id="card_${instr.id}" onclick="toggleCard('${instr.id}')">
+      <div class="instr-card-top">
+        <img src="${instr.bild}" alt="${instr.name}">
+        <div class="instr-name">${instr.name}</div>
+        <span class="instr-gruppe ${instr.gruppeClass}">${instr.gruppeLabel}</span>
+        <div class="instr-kurz">${instr.kurz}</div>
+      </div>
+      <div class="instr-detail">
+        ${instr.peter ? `
+        <div class="detail-section">
+          <div class="detail-label">🎭 Peter und der Wolf</div>
+          <div class="detail-text"><span style="font-size:20px">${instr.peter.emoji}</span> <strong>${instr.peter.figur}</strong><br>${instr.peter.warum}</div>
+        </div>` : ''}
+        <div class="detail-section">
+          <div class="detail-label">🎵 Wie klingt es?</div>
+          <div class="detail-text">${instr.klang}</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">🎹 Wie spielt man es?</div>
+          <div class="detail-text">${instr.wie}</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">🔍 Merkmale</div>
+          <div class="detail-text">${instr.merkmale}</div>
+        </div>
+        <div class="eselsbruecke">
+          <strong>💡 Eselsbrücke zum Merken</strong>
+          ${instr.eselsbruecke}
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleCard(id) {
+  const card = document.getElementById('card_' + id);
+  card.classList.toggle('open');
+}
+
+function showGruppe(gruppe, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const content = document.getElementById('content');
+
+  if (gruppe === 'peter') {
+    content.innerHTML = renderPeterWolf();
+  } else if (gruppe === 'alle') {
+    content.innerHTML = renderAlle();
+  } else {
+    const info = GRUPPEN_INFO[gruppe];
+    const instrumente = INSTRUMENTE.filter(i => i.gruppe === gruppe);
+    content.innerHTML = `
+      <div class="gruppen-banner" style="background:${info.farbe}">
+        <div class="gruppen-banner-icon">${info.emoji}</div>
+        <div>
+          <h2>${info.titel}</h2>
+          <p>${info.beschr}</p>
+        </div>
+      </div>
+      <div class="instr-grid">${instrumente.map(renderInstrumentKarte).join('')}</div>`;
+  }
+}
+
+function renderPeterWolf() {
+  const instr = (id) => INSTRUMENTE.find(i => i.id === id);
+  return `
+    <div style="background:linear-gradient(135deg,#1a1a2e,#0f3460);border-radius:16px;padding:18px;margin-bottom:18px;color:#fff">
+      <div style="font-size:22px;font-weight:bold;margin-bottom:6px">🐺 Peter und der Wolf</div>
+      <div style="font-size:14px;opacity:.8;line-height:1.6">
+        Ein Märchen von <strong>Sergei Prokofjew</strong> (1936) – jede Figur wird von einem anderen Instrument dargestellt.
+        Prokofjew schrieb das Stück, damit Kinder die Orchesterinstrumente kennenlernen!
+      </div>
+    </div>
+
+    <table class="peter-table">
+      <thead>
+        <tr>
+          <th>Figur</th>
+          <th>Instrument</th>
+          <th>Warum passt das?</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${PETER_FIGUREN.map(f => {
+          const i = instr(f.instrId);
+          return `
+          <tr>
+            <td><span class="figur-emoji">${f.emoji}</span><strong>${f.figur}</strong><br><span style="font-size:12px;color:#999">${f.beschr}</span></td>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px">
+                <img src="${i ? i.bild : ''}" style="width:40px;height:40px;object-fit:contain" alt="${f.instr}">
+                <span class="instr-badge ${f.gruppeClass}">${f.instr}</span>
+              </div>
+            </td>
+            <td style="font-size:13px;color:#555">${i ? i.peter.warum : ''}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+
+    <div style="background:#fef9e7;border-radius:14px;padding:16px;margin-top:6px">
+      <div style="font-weight:bold;color:#7d5a00;margin-bottom:10px;font-size:15px">💡 Alle Eselsbrücken auf einen Blick</div>
+      ${PETER_FIGUREN.map(f => {
+        const i = instr(f.instrId);
+        return `<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;font-size:13px">
+          <span style="font-size:18px;flex-shrink:0">${f.emoji}</span>
+          <div><strong>${f.figur} = ${f.instr}:</strong> ${i ? i.eselsbruecke : ''}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function renderAlle() {
+  const gruppen = ['streicher','holz','blech','schlag'];
+  const infos = GRUPPEN_INFO;
+  return gruppen.map(g => {
+    const info = infos[g];
+    const instrumente = INSTRUMENTE.filter(i => i.gruppe === g);
+    return `
+      <div class="alle-gruppe-titel" style="background:${info.farbe}">${info.emoji} ${info.titel}</div>
+      <div class="instr-grid">${instrumente.map(renderInstrumentKarte).join('')}</div>`;
+  }).join('');
+}
+
+// ─── START ────────────────────────────────────────────────────────────────
+
+// Wenn als Overlay geöffnet (im iframe oder eingebunden), Back-Button anpassen
+if (window.parent !== window) {
+  document.getElementById('backBtn').style.display = 'none';
+}
+
+// Initial: Peter und der Wolf anzeigen
+showGruppe('peter', document.querySelector('.tab[data-gruppe="peter"]'));
+</script>
+</body>
+</html>

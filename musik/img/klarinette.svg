@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 320" width="120" height="320">
+  <!-- Klarinette - zylindrisch, schwarz, 5 Teile -->
+  <!-- Hauptkorpus - zylindrisch (gleichmäßige Breite = Unterschied zur Oboe!) -->
+  <rect x="50" y="55" width="20" height="220" rx="8" fill="#1a1a1a" stroke="#333" stroke-width="2"/>
+  <!-- Oberstück-Glanz -->
+  <rect x="53" y="58" width="5" height="215" rx="3" fill="white" opacity="0.08"/>
+  <!-- Trichter (Schallbecher) unten - typisch ausgestellt -->
+  <path d="M50 270 Q40 280 38 292 Q60 298 82 292 Q80 280 70 270Z" fill="#1a1a1a" stroke="#333" stroke-width="2"/>
+  <!-- Glanz Trichter -->
+  <path d="M50 270 Q45 278 44 286" fill="none" stroke="white" stroke-width="1" opacity="0.15"/>
+  <!-- 5 TEILE der Klarinette - durch silberne Ringe getrennt -->
+  <!-- Teil 1: Mundstück (oben) -->
+  <rect x="52" y="22" width="16" height="20" rx="5" fill="#222" stroke="#444" stroke-width="1.5"/>
+  <!-- Einfaches Rohrblatt -->
+  <rect x="54" y="15" width="12" height="18" rx="3" fill="#c8a05a" stroke="#8B6914" stroke-width="1.5"/>
+  <line x1="60" y1="15" x2="60" y2="33" stroke="#8B6914" stroke-width="0.8"/>
+  <!-- Teil-Verbindungsringe (silber) -->
+  <rect x="48" y="40" width="24" height="5" rx="2.5" fill="#bbb" stroke="#888" stroke-width="1"/>
+  <rect x="48" y="110" width="24" height="5" rx="2.5" fill="#bbb" stroke="#888" stroke-width="1"/>
+  <rect x="48" y="170" width="24" height="5" rx="2.5" fill="#bbb" stroke="#888" stroke-width="1"/>
+  <rect x="48" y="230" width="24" height="5" rx="2.5" fill="#bbb" stroke="#888" stroke-width="1"/>
+  <!-- Klappen - versilbert (charakteristisch für Klarinette) -->
+  <ellipse cx="60" cy="70" rx="7" ry="4.5" fill="#ccc" stroke="#888" stroke-width="1.5"/>
+  <ellipse cx="60" cy="85" rx="7" ry="4.5" fill="#ccc" stroke="#888" stroke-width="1.5"/>
+  <ellipse cx="60" cy="100" rx="7" ry="4.5" fill="#ccc" stroke="#888" stroke-width="1.5"/>
+  <!-- Große Ringklappen (typisch Klarinette) -->
+  <circle cx="60" cy="125" r="7" fill="none" stroke="#ccc" stroke-width="2.5"/>
+  <circle cx="60" cy="125" r="3" fill="#ccc"/>
+  <circle cx="60" cy="145" r="7" fill="none" stroke="#ccc" stroke-width="2.5"/>
+  <circle cx="60" cy="145" r="3" fill="#ccc"/>
+  <circle cx="60" cy="160" r="7" fill="none" stroke="#ccc" stroke-width="2.5"/>
+  <circle cx="60" cy="160" r="3" fill="#ccc"/>
+  <ellipse cx="60" cy="185" rx="7" ry="4.5" fill="#ccc" stroke="#888" stroke-width="1.5"/>
+  <ellipse cx="60" cy="200" rx="7" ry="4.5" fill="#ccc" stroke="#888" stroke-width="1.5"/>
+  <ellipse cx="60" cy="215" rx="7" ry="4.5" fill="#ccc" stroke="#888" stroke-width="1.5"/>
+  <!-- Grifflöcher -->
+  <circle cx="56" cy="75" r="2.5" fill="#333"/>
+  <circle cx="56" cy="90" r="2.5" fill="#333"/>
+  <circle cx="64" cy="75" r="2.5" fill="#333"/>
+  <!-- Teile-Beschriftung -->
+  <line x1="73" y1="32" x2="90" y2="28" stroke="#e74c3c" stroke-width="1" stroke-dasharray="2,2"/>
+
+  <line x1="73" y1="75" x2="90" y2="72" stroke="#3498db" stroke-width="1" stroke-dasharray="2,2"/>
+
+  <!-- Label -->
+
+</svg>

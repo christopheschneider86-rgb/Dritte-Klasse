@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 320" width="200" height="320">
+  <!-- Fagott - mit charakteristischem s-förmigem Verbindungsrohr (Bocal) -->
+  <!-- Hauptrohr lang (links) -->
+  <rect x="72" y="40" width="18" height="220" rx="7" fill="#c8860a" stroke="#7a4f00" stroke-width="2"/>
+  <!-- Holzmaserung Hauptrohr -->
+  <line x1="75" y1="50" x2="75" y2="255" stroke="#b8750a" stroke-width="0.8" opacity="0.5"/>
+  <line x1="83" y1="50" x2="83" y2="255" stroke="#b8750a" stroke-width="0.8" opacity="0.5"/>
+  <!-- Verbindungsstück unten -->
+  <rect x="72" y="255" width="56" height="12" rx="5" fill="#8B5A00" stroke="#5a3000" stroke-width="1.5"/>
+  <!-- Zweites Rohr (rechts, kürzer) -->
+  <rect x="110" y="70" width="18" height="200" rx="7" fill="#d4920e" stroke="#7a4f00" stroke-width="2"/>
+  <!-- Holzmaserung zweites Rohr -->
+  <line x1="113" y1="80" x2="113" y2="265" stroke="#b8750a" stroke-width="0.8" opacity="0.5"/>
+  <line x1="121" y1="80" x2="121" y2="265" stroke="#b8750a" stroke-width="0.8" opacity="0.5"/>
+  <!-- Klappen am Hauptrohr -->
+  <ellipse cx="81" cy="90" rx="7" ry="4" fill="#888" stroke="#555" stroke-width="1.5" transform="rotate(-15,81,90)"/>
+  <ellipse cx="81" cy="115" rx="7" ry="4" fill="#888" stroke="#555" stroke-width="1.5" transform="rotate(-10,81,115)"/>
+  <ellipse cx="81" cy="145" rx="7" ry="4" fill="#888" stroke="#555" stroke-width="1.5" transform="rotate(-5,81,145)"/>
+  <ellipse cx="81" cy="175" rx="7" ry="4" fill="#888" stroke="#555" stroke-width="1.5"/>
+  <ellipse cx="81" cy="205" rx="7" ry="4" fill="#888" stroke="#555" stroke-width="1.5" transform="rotate(5,81,205)"/>
+  <!-- Klappen am zweiten Rohr -->
+  <ellipse cx="119" cy="100" rx="7" ry="4" fill="#888" stroke="#555" stroke-width="1.5" transform="rotate(10,119,100)"/>
+  <ellipse cx="119" cy="130" rx="7" ry="4" fill="#888" stroke="#555" stroke-width="1.5" transform="rotate(5,119,130)"/>
+  <ellipse cx="119" cy="160" rx="7" ry="4" fill="#888" stroke="#555" stroke-width="1.5"/>
+  <ellipse cx="119" cy="190" rx="7" ry="4" fill="#888" stroke="#555" stroke-width="1.5" transform="rotate(-5,119,190)"/>
+  <ellipse cx="119" cy="225" rx="7" ry="4" fill="#888" stroke="#555" stroke-width="1.5" transform="rotate(-10,119,225)"/>
+  <!-- S-förmiges Verbindungsrohr (Bocal) - das charakteristische Erkennungszeichen! -->
+  <path d="M81 40 C81 25 90 20 98 22 C106 24 112 30 112 42 C112 55 105 62 98 60 C91 58 85 55 81 48"
+        fill="none" stroke="#aaa" stroke-width="5" stroke-linecap="round"/>
+  <path d="M81 40 C81 25 90 20 98 22 C106 24 112 30 112 42 C112 55 105 62 98 60 C91 58 85 55 81 48"
+        fill="none" stroke="#ccc" stroke-width="3" stroke-linecap="round"/>
+  <!-- Mundstück -->
+  <path d="M77 42 C74 38 72 34 70 30 C68 26 68 22 70 20 C72 18 75 19 76 22 C78 26 78 32 79 38"
+        fill="none" stroke="#888" stroke-width="3.5" stroke-linecap="round"/>
+  <rect x="68" y="17" width="8" height="6" rx="3" fill="#555"/>
+  <!-- Metallringe am Rohr -->
+  <rect x="70" y="60" width="20" height="4" rx="2" fill="#999" stroke="#777" stroke-width="1"/>
+  <rect x="108" y="82" width="20" height="4" rx="2" fill="#999" stroke="#777" stroke-width="1"/>
+  <rect x="70" y="240" width="20" height="4" rx="2" fill="#999" stroke="#777" stroke-width="1"/>
+  <rect x="108" y="255" width="20" height="4" rx="2" fill="#999" stroke="#777" stroke-width="1"/>
+  <!-- Pfeilmarkierung für s-Rohr -->
+  <path d="M55 35 L70 30" stroke="#e74c3c" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrowhead)"/>
+
+  <!-- Label -->
+
+</svg>

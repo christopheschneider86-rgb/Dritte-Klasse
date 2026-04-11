@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 320" width="200" height="320">
+  <!-- Geige (Violine) - detaillierte Zeichnung -->
+  <!-- Korpus -->
+  <path d="M100 80 C70 80 50 95 48 115 C45 135 55 148 55 160 C55 172 42 185 42 200 C42 230 65 265 100 270 C135 265 158 230 158 200 C158 185 145 172 145 160 C145 148 155 135 152 115 C150 95 130 80 100 80Z" fill="#c8860a" stroke="#7a4f00" stroke-width="2.5"/>
+  <!-- Taillierung links -->
+  <path d="M48 115 C38 130 38 150 42 160" fill="none" stroke="#7a4f00" stroke-width="2.5"/>
+  <!-- Taillierung rechts -->
+  <path d="M152 115 C162 130 162 150 158 160" fill="none" stroke="#7a4f00" stroke-width="2.5"/>
+  <!-- Zargen (Schatten) -->
+  <path d="M100 80 C70 80 50 95 48 115 C38 130 38 150 42 160 C42 172 42 185 42 200 C42 230 65 265 100 270 C135 265 158 230 158 200 C158 185 158 172 158 160 C162 150 162 130 152 115 C150 95 130 80 100 80Z" fill="none" stroke="#5a3000" stroke-width="1" opacity="0.4"/>
+  <!-- Holzmaserung -->
+  <path d="M80 130 Q100 125 120 130 Q100 140 80 130Z" fill="#b8750a" opacity="0.5"/>
+  <path d="M75 160 Q100 155 125 160 Q100 170 75 160Z" fill="#b8750a" opacity="0.4"/>
+  <path d="M78 200 Q100 195 122 200 Q100 210 78 200Z" fill="#b8750a" opacity="0.4"/>
+  <!-- f-Löcher links -->
+  <path d="M65 165 C62 158 60 150 63 143 L66 155 C64 162 65 170 68 175Z" fill="#4a2800" stroke="#4a2800" stroke-width="1"/>
+  <circle cx="63" cy="143" r="3.5" fill="#4a2800"/>
+  <circle cx="68" cy="175" r="3.5" fill="#4a2800"/>
+  <!-- f-Löcher rechts -->
+  <path d="M135 165 C138 158 140 150 137 143 L134 155 C136 162 135 170 132 175Z" fill="#4a2800" stroke="#4a2800" stroke-width="1"/>
+  <circle cx="137" cy="143" r="3.5" fill="#4a2800"/>
+  <circle cx="132" cy="175" r="3.5" fill="#4a2800"/>
+  <!-- Steg -->
+  <rect x="90" y="186" width="20" height="6" rx="2" fill="#8B4513"/>
+  <path d="M91 192 L91 197 M99 192 L99 197 M107 192 L107 197" stroke="#8B4513" stroke-width="1.5"/>
+  <!-- Hals -->
+  <rect x="94" y="30" width="12" height="55" rx="4" fill="#9b6800" stroke="#5a3000" stroke-width="1.5"/>
+  <!-- Schnecke -->
+  <path d="M100 30 C95 25 90 18 92 12 C94 6 100 4 105 8 C110 12 108 20 103 25" fill="none" stroke="#5a3000" stroke-width="2.5"/>
+  <circle cx="97" cy="14" r="4" fill="none" stroke="#5a3000" stroke-width="2"/>
+  <!-- Wirbel -->
+  <circle cx="88" cy="35" r="4" fill="#7a4f00" stroke="#5a3000" stroke-width="1.5"/>
+  <circle cx="88" cy="48" r="4" fill="#7a4f00" stroke="#5a3000" stroke-width="1.5"/>
+  <circle cx="112" cy="35" r="4" fill="#7a4f00" stroke="#5a3000" stroke-width="1.5"/>
+  <circle cx="112" cy="48" r="4" fill="#7a4f00" stroke="#5a3000" stroke-width="1.5"/>
+  <!-- Saiten -->
+  <line x1="95" y1="35" x2="95" y2="192" stroke="#888" stroke-width="0.8"/>
+  <line x1="98" y1="35" x2="98" y2="192" stroke="#888" stroke-width="0.9"/>
+  <line x1="102" y1="35" x2="102" y2="192" stroke="#888" stroke-width="1.0"/>
+  <line x1="105" y1="35" x2="105" y2="192" stroke="#888" stroke-width="1.1"/>
+  <!-- Saitenhalter -->
+  <path d="M88 250 L100 265 L112 250 L108 240 L92 240Z" fill="#4a2800"/>
+  <line x1="95" y1="192" x2="92" y2="245" stroke="#888" stroke-width="0.8"/>
+  <line x1="98" y1="192" x2="97" y2="245" stroke="#888" stroke-width="0.9"/>
+  <line x1="102" y1="192" x2="103" y2="245" stroke="#888" stroke-width="1.0"/>
+  <line x1="105" y1="192" x2="108" y2="245" stroke="#888" stroke-width="1.1"/>
+  <!-- Bogen (rechts daneben) -->
+  <path d="M165 60 C168 100 168 200 165 260" fill="none" stroke="#7a4f00" stroke-width="3"/>
+  <line x1="165" y1="60" x2="165" y2="260" stroke="#ccc" stroke-width="1" opacity="0.8"/>
+  <rect x="163" y="56" width="8" height="12" rx="2" fill="#9b6800"/>
+  <rect x="163" y="256" width="8" height="8" rx="2" fill="#9b6800"/>
+  <!-- Label -->
+
+</svg>

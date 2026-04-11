@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 220" width="280" height="220">
+  <!-- Waldhorn (Horn) - charakteristische kreisförmige Wicklung -->
+  <!-- Hauptwicklung - großer Kreis -->
+  <circle cx="130" cy="110" r="75" fill="none" stroke="#d4a00a" stroke-width="14"/>
+  <!-- Glanz auf Wicklung -->
+  <circle cx="130" cy="110" r="75" fill="none" stroke="#f0c830" stroke-width="4" stroke-dasharray="40,20" stroke-dashoffset="10"/>
+  <!-- Zweite innere Wicklung -->
+  <circle cx="130" cy="110" r="52" fill="none" stroke="#d4a00a" stroke-width="10"/>
+  <circle cx="130" cy="110" r="52" fill="none" stroke="#f0c830" stroke-width="3" stroke-dasharray="30,15" stroke-dashoffset="5"/>
+  <!-- Ventile (3 Ventile = Merkmal des Horns) -->
+  <rect x="108" y="58" width="16" height="30" rx="6" fill="#c8960a" stroke="#8B6800" stroke-width="2"/>
+  <rect x="128" y="52" width="16" height="30" rx="6" fill="#c8960a" stroke="#8B6800" stroke-width="2"/>
+  <rect x="148" y="58" width="16" height="30" rx="6" fill="#c8960a" stroke="#8B6800" stroke-width="2"/>
+  <!-- Ventil-Knöpfe -->
+  <circle cx="116" cy="60" r="7" fill="#e8a010" stroke="#8B6800" stroke-width="1.5"/>
+  <circle cx="136" cy="54" r="7" fill="#e8a010" stroke="#8B6800" stroke-width="1.5"/>
+  <circle cx="156" cy="60" r="7" fill="#e8a010" stroke="#8B6800" stroke-width="1.5"/>
+  <!-- Mundrohr (dünn, gewunden nach links-oben) -->
+  <path d="M65 95 C55 85 48 75 52 62 C56 50 68 46 78 52 C88 58 90 72 85 82"
+        fill="none" stroke="#d4a00a" stroke-width="9"/>
+  <path d="M65 95 C55 85 48 75 52 62 C56 50 68 46 78 52 C88 58 90 72 85 82"
+        fill="none" stroke="#f0c830" stroke-width="3"/>
+  <!-- Mundstück (klein, trichterförmig) -->
+  <path d="M58 98 C52 96 46 93 44 90 C42 87 44 84 48 83 C52 82 57 85 60 89"
+        fill="#d4a00a" stroke="#8B6800" stroke-width="1.5"/>
+  <ellipse cx="44" cy="90" rx="5" ry="4" fill="#b88800"/>
+  <!-- Großer Schallbecher (rechts) - sehr weit ausgestellt -->
+  <path d="M185 110 C210 100 235 95 255 105 C265 115 260 130 245 138 C225 148 200 145 185 135 C178 130 178 118 185 110Z"
+        fill="#d4a00a" stroke="#8B6800" stroke-width="2"/>
+  <ellipse cx="258" cy="120" rx="18" ry="22" fill="#d4a00a" stroke="#8B6800" stroke-width="2"/>
+  <ellipse cx="258" cy="120" rx="14" ry="17" fill="#c8900a"/>
+  <ellipse cx="258" cy="120" rx="8" ry="10" fill="#5a4000" opacity="0.6"/>
+  <!-- Glanz Schallbecher -->
+  <path d="M245 106 C255 104 264 110 266 118" fill="none" stroke="#f0c830" stroke-width="3" opacity="0.7"/>
+  <!-- Verbindungsrohre zu Ventilen -->
+  <path d="M116 88 C116 98 120 105 130 110" fill="none" stroke="#d4a00a" stroke-width="7"/>
+  <path d="M136 82 C136 95 133 105 130 110" fill="none" stroke="#d4a00a" stroke-width="7"/>
+  <path d="M156 88 C156 98 150 105 130 110" fill="none" stroke="#d4a00a" stroke-width="7"/>
+  <!-- Label -->
+
+</svg>
