@@ -188,21 +188,12 @@ function loadProfile() {
   updateCoinDisplay();
 }
 
-function addCoins(n) {
-  if (!aktiveProfilId || !profiles[aktiveProfilId]) return;
-  profiles[aktiveProfilId].coins = (profiles[aktiveProfilId].coins || 0) + n;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
-  sessionCoins += n;
-  updateCoinDisplay();
-}
-
 function removeCoins(n) {
   if (!aktiveProfilId || !profiles[aktiveProfilId]) return;
   const current = profiles[aktiveProfilId].coins || 0;
   const abzug = Math.min(n, current); // nicht unter 0
   profiles[aktiveProfilId].coins = current - abzug;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
-  sessionCoins -= abzug;
   updateCoinDisplay();
   return abzug;
 }
