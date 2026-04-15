@@ -211,5 +211,57 @@ const HSU_TOPICS = {
       { q: "Wie nennt man eine Maschine, die Strom aus Wind erzeugt?", hint: "Du siehst sie auf Feldern.", choices: ["Solarzelle","Windrad / Windkraftanlage","Wasserpumpe","Dampfmaschine"], sol: 1, bonus: true },
     ]
   },
+  
+    // ──────────────────────────────────────────────
+    // 10. MEDIEN & WERBUNG
+    // ──────────────────────────────────────────────
+    medien: {
+    title: "Medien & Werbung",
+    icon: "📱",
+    sub: "Analog, Digital & Werbung",
+    color: "#9b59b6",
+    questions: [
+    // --- TEIL 1: GRUNDLAGEN MEDIEN ---
+    { q: "Wobei helfen uns Medien?", hint: "Wir nutzen sie zum Beispiel, um etwas Neues zu erfahren.", choices: ["Essen zu kochen", "Informationen zu bekommen oder weiterzugeben", "Schneller zu rennen", "Besser zu schlafen"], sol: 1 },
+    { q: "Was können alles in Medien enthalten sein?", hint: "Schau in deine Aufzeichnungen vom 25.2.", choices: ["Nur Buchstaben", "Nur bunte Farben", "Texte, Bilder, Töne oder Zeichen", "Nur geheime Codes"], sol: 2 },
+    { q: "Welche Medien nutzt du laut deinen Notizen vielleicht zu Hause?", hint: "Was gibt es im Kinderzimmer oder Wohnzimmer?", choices: ["Alexa, Tablet, CD, Fernseher", "Mikrowelle, Kühlschrank, Herd", "Fahrrad, Roller, Inliner", "Baum, Strauch, Blume"], sol: 0 },
+    { q: "Ist eine Landkarte auch ein Medium?", hint: "Gibt sie dir Informationen weiter?", isYesNo: true, sol: 1 },
+    { q: "Was meint man mit dem Wort 'Medienzeit'?", hint: "Es geht um die Uhr...", choices: ["Die Zeit, in der das Tablet geladen wird", "Die Zeit am Tag, die man mit digitalen Medien verbringen darf", "Die Uhrzeit in den Nachrichten", "Die Zeit, in der man schläft"], sol: 1 },
+
+    // --- TEIL 2: ANALOG VS. DIGITAL ---
+    { q: "Woraus bestehen analoge Medien oft?", hint: "Denk an ein Buch oder ein Plakat.", choices: ["Aus Plastik und Kabeln", "Aus Strom und Akkus", "Aus Papier oder anderen Materialien", "Aus Glas und Metall"], sol: 2 },
+    { q: "Arbeiten analoge Medien mit Computertechnik?", hint: "Braucht ein Plakat einen Computer in sich drin?", isYesNo: true, sol: 0 },
+    { q: "Welches dieser Beispiele ist ein analoges Medium?", hint: "Es braucht keinen Strom.", choices: ["Tablet", "Smartphone", "Zeitung", "Laptop"], sol: 2 },
+    { q: "Was brauchen digitale Medien IMMER, damit sie funktionieren?", hint: "Ohne das bleibt der Bildschirm schwarz.", choices: ["Internet", "Strom oder einen Akku", "Eine Antenne", "Gutes Wetter"], sol: 1 },
+    { q: "Wie verarbeiten digitale Medien ihre Informationen?", hint: "Das Wort klingt nach Technik.", choices: ["Magisch", "Mechanisch", "Elektronisch", "Gar nicht"], sol: 2 },
+    { q: "Welches der folgenden Geräte ist ein digitales Medium?", hint: "Es hat einen Akku.", choices: ["Tafel", "Buch", "Smartphone", "Notizblock"], sol: 2 },
+
+    // --- TEIL 3: FARBEN IN DER WERBUNG ---
+    { q: "Warum werden in der Werbung oft ganz bestimmte Farben benutzt?", hint: "Was machen Farben mit uns?", choices: ["Weil sie billiger zu drucken sind", "Um Aufmerksamkeit zu wecken und Gefühle auszulösen", "Weil der Drucker kaputt ist", "Um den Text zu verstecken"], sol: 1 },
+    { q: "Welche Farbe fällt in der Werbung schnell auf und wirkt 'stark und spannend'?", hint: "Achtung, hier passiert was!", choices: ["Blau", "Grün", "Rot", "Schwarz"], sol: 2 },
+    { q: "Welche Farbe wirkt oft 'ruhig und vertrauenswürdig'?", hint: "Denk an einen klaren See oder den weiten Himmel.", choices: ["Rot", "Grün", "Weiß", "Blau"], sol: 3 },
+    { q: "Welche Farbe wählt man, wenn eine Werbung an 'Natur und Gesundheit' erinnern soll?", hint: "Denk an Bäume und Wiesen.", choices: ["Gelb", "Rot", "Grün", "Schwarz"], sol: 2 },
+    { q: "Wofür steht die Farbe Weiß in der Werbung oft?", hint: "Denk an frisch gewaschene Wäsche.", choices: ["Natur", "Spannung", "Sauberkeit", "Teuer"], sol: 2 },
+    { q: "Wie wirkt die Farbe Schwarz oder Dunkelgrau in der Werbung meistens?", hint: "Denk an eine Werbung für Schmuck oder ein schickes Auto.", choices: ["Edel und teuer", "Billig und kaputt", "Gesund und frisch", "Laut und wild"], sol: 0 },
+
+    // --- TEIL 4: BILDER, HELDEN & PERSONEN ---
+    { q: "Warum werden oft Bilder in der Werbung verwendet?", hint: "Ein Bild sagt mehr als tausend Worte.", choices: ["Weil Text zu langweilig ist", "Sie zeigen schnell worum es geht und sprechen Gefühle an", "Weil der Platz sonst leer ist", "Damit man nicht lesen muss"], sol: 1 },
+    { q: "Was sieht man ganz oft auf Werbebildern?", hint: "Schau in deinen Hefteintrag vom 11.3.", choices: ["Das Produkt, Menschen, Figuren oder Tiere", "Nur leere Straßen", "Nur schwarze Flächen", "Nur Buchstaben"], sol: 0 },
+    { q: "Wen zeigen Firmen oft in ihrer Werbung, damit wir das Produkt toll finden?", hint: "Wir bewundern sie oft.", choices: ["Unbekannte Menschen", "Helden, Sportler und Vorbilder", "Leute, die schlafen", "Nur Zeichentrickfiguren"], sol: 1 },
+    { q: "Warum nutzen Firmen bekannte Personen für die Werbung?", hint: "Was haben wir für ein Gefühl bei diesen Menschen?", choices: ["Wir kennen sie, finden sie gut und achten mehr auf die Werbung", "Sie arbeiten umsonst", "Sie haben die Firma gegründet", "Sie können gut zeichnen"], sol: 0 },
+    { q: "Was ist oft die WIRKUNG auf uns, wenn unser Held in der Werbung auftritt?", hint: "Was wollen wir dann?", choices: ["Wir schalten den Fernseher aus", "Wir wollen auch so sein und das Produkt haben", "Wir vergessen das Produkt sofort", "Wir werden wütend"], sol: 1 },
+    { q: "Wird in der Werbung das Leben immer genau so gezeigt, wie es in echt ist?", hint: "In der Werbung sieht immer alles perfekt aus...", isYesNo: true, sol: 0 },
+    { q: "Warum wird in der Werbung vieles 'extra gut dargestellt'?", hint: "Was will der Verkäufer erreichen?", choices: ["Damit die Werbung wie ein Märchen ist", "Damit wir das Produkt unbedingt kaufen wollen", "Weil sie lügen wollen", "Damit der Film länger dauert"], sol: 1 },
+
+    // --- TEIL 5: TRANSFER- & BONUSFRAGEN (SCHWIERIGER) ---
+    { q: "Welches der folgenden Dinge ist KEIN Medium zur Informationsweitergabe?", hint: "Ein Medium überträgt Text, Bild oder Ton.", choices: ["Ein Radio", "Ein Buch", "Ein Apfel", "Ein Verkehrsschild"], sol: 2, bonus: true },
+    { q: "Eine Werbung für eine leckere Bio-Limonade. Welche Farbe wird im Hintergrund wahrscheinlich viel zu sehen sein?", hint: "Es geht um Natur und Gesundheit.", choices: ["Schwarz", "Rot", "Grün", "Weiß"], sol: 2, bonus: true },
+    { q: "In der Waschmittel-Werbung tragen die Menschen fast immer Kleidung in welcher Farbe?", hint: "Es soll extrem sauber wirken.", choices: ["Bunt gemischt", "Weiß", "Dunkelbraun", "Rot"], sol: 1, bonus: true },
+    { q: "Eine Werbung für ein ganz neues, extrem teures Auto. Welche Farben passen laut deinen Notizen am besten?", hint: "Es soll edel und teuer wirken.", choices: ["Schwarz oder dunkle, edle Farben", "Knalliges Grün", "Nur Weiß", "Viele bunte Punkte"], sol: 0, bonus: true },
+    { q: "Ein Plakat an der Bushaltestelle leuchtet im Dunkeln, weil eine Lampe darauf strahlt. Ist das Plakat dadurch ein 'digitales Medium'?", hint: "Verarbeitet das Plakat selbst Informationen mit Computertechnik?", choices: ["Ja, weil es leuchtet", "Nein, es bleibt ein analoges Medium aus Papier", "Ja, weil es Strom braucht", "Nein, es ist gar kein Medium mehr"], sol: 1, bonus: true },
+    { q: "Warum ist es wichtig, dass Eltern eine 'Medienzeit' mit ihren Kindern absprechen?", hint: "Gibt es noch andere wichtige Dinge am Tag?", choices: ["Damit der Akku nicht kaputt geht", "Weil Strom so teuer ist", "Damit man genug Zeit für andere Dinge wie Spielen, Freunde und Hausaufgaben hat", "Damit das Internet nicht leer wird"], sol: 2, bonus: true },
+    { q: "Wenn ein berühmter Fußballer Werbung für Gummibärchen macht: Machen ihn die Gummibärchen wirklich zu einem guten Sportler?", hint: "Denk an den Satz: 'In der Werbung wird vieles extra gut dargestellt'.", choices: ["Ja, deshalb ist er so gut", "Nein, das ist nur Werbung, damit wir sie kaufen", "Ja, in Gummibärchen ist viel Kraft", "Nein, er isst sie gar nicht"], sol: 1, bonus: true }
+    ]
+    },
 
 };
