@@ -540,7 +540,7 @@ function updateCheckBtn(){
   document.getElementById('checkBtn').disabled=!allFilled;
 }
 
-function speakCurrent(){if(curInstance) speak(stripHTML(curInstance.q)+'. '+(curInstance.hint||''));}
+function speakCurrent(){if(curInstance) speak(stripHTML(curInstance.q));}
 
 function selectYesNo(val){
   const inp=document.getElementById('inp_1');

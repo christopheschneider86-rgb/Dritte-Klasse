@@ -319,7 +319,7 @@ function speak(text) {
   } catch(e) {}
 }
 function speakCurrent() {
-  if (curQuestion) speak(curQuestion.q + '. ' + (curQuestion.hint || ''));
+  if (curQuestion) speak(curQuestion.q);
 }
 
 // ── UI INIT ────────────────────────────────────────────
