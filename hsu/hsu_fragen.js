@@ -275,7 +275,23 @@ const HSU_TOPICS = {
     { q: "Marie hat aufgeschrieben, warum der Ketchup in Wirklichkeit NICHT gesund ist. Warum?", hint: "Schau dir die Zutaten an.", choices: ["Weil Tomaten ungesund sind", "Weil er abgelaufen ist", "Weil Tomatenmark, Zucker, Essig und Salz drin sind", "Weil er schlecht schmeckt"], sol: 2 },
     { q: "Was genau wollen die Ketchup-Verkäufer mit dem Wort 'gesund' bei den Eltern erreichen?", hint: "Das hast du ganz unten auf dein Arbeitsblatt geschrieben!", choices: ["Dass Mamas und Papas denken es ist gesund und es für die Kinder kaufen", "Dass die Eltern den Ketchup selbst essen", "Dass die Eltern den Ketchup wegwerfen", "Dass sie sich beschweren"], sol: 0 },
     
-    // --- TEIL 8: TRANSFER- & BONUSFRAGEN (SCHWIERIGER) ---
+    // --- TEIL 8: REGELN IM INTERNET ---
+{ q: "Was gehört zu deinen persönlichen Daten?", hint: "Dinge, die nicht jeder über dich wissen soll.", choices: ["Lieblingsfarbe und Lieblingstier", "Name, Adresse und Schule", "Dein Lieblingsessen", "Dein Lieblingsbuch"], sol: 1 },
+{ q: "Darfst du persönliche Daten (wie deine Adresse) im Internet einfach weitergeben?", hint: "Ganz wichtige Regel!", isYesNo: true, sol: 0 },
+{ q: "Was musst du tun, bevor du ein Foto von jemand anderem im Internet teilst?", hint: "Die andere Person muss einverstanden sein.", choices: ["Gar nichts", "Um Erlaubnis fragen", "Es einfach heimlich tun", "Das Bild schwarz-weiß machen"], sol: 1 },
+{ q: "Stimmt immer alles, was man im Internet liest oder sieht?", hint: "Denk an die Regel vom 13.04.", isYesNo: true, sol: 0 },
+{ q: "Was solltest du tun, wenn dir im Internet etwas komisch vorkommt oder du dir unsicher bist?", hint: "Du bist nicht allein!", choices: ["Einfach den Computer ausmachen und weinen", "Mich bei Erwachsenen (z.B. Eltern) melden und Hilfe holen", "Meinen Freunden davon erzählen und nichts weiter tun", "Einfach weiterklicken"], sol: 1 },
+{ q: "Wenn du im Internet einen bunten Knopf mit der Aufschrift 'Hier klicken - alles GRATIS!' siehst, was tust du?", hint: "Erinnere dich an die Regeln.", choices: ["Ich klicke sofort drauf", "Ich klicke nicht einfach auf 'gratis'", "Ich frage meine Freunde, ob sie auch klicken", "Ich drücke dreimal drauf"], sol: 1 },
+
+// --- TEIL 9: FAKE NEWS ---
+{ q: "Was sind 'Fake News'?", hint: "Schau auf deinen Zettel vom 14.4.", choices: ["Neuigkeiten über Tiere", "Nachrichten, die nicht wahr sind, aber so aussehen, als wären sie wahr", "Alte Nachrichten aus der Zeitung", "Nachrichten, die nur aus Bildern bestehen"], sol: 1 },
+{ q: "Wie nennt man Nachrichten, die aussehen als wären sie wahr, es aber in Wirklichkeit nicht sind?", hint: "Ein englischer Begriff.", choices: ["Good News", "Old News", "Fake News", "Happy News"], sol: 2 },
+{ q: "Woran kannst du eine Fake News manchmal schon beim Lesen erkennen?", hint: "Wie klingt die Geschichte?", choices: ["Sie klingt langweilig", "Sie klingt zu unglaublich oder zu übertrieben", "Sie ist sehr kurz", "Es sind viele Rechtschreibfehler drin"], sol: 1 },
+{ q: "Ein Zeichen für Fake News ist, wenn die Nachricht von einer ... Seite kommt.", hint: "Kannst du der Seite glauben?", choices: ["sehr bekannten", "nicht vertrauenswürdigen", "blauen", "sehr schnellen"], sol: 1 },
+{ q: "Du hast eine unglaubliche Nachricht gelesen. Wie kannst du prüfen, ob sie wahr ist?", hint: "Was machen andere Zeitungen?", choices: ["Ich schaue, ob auch andere gute Seiten oder Zeitungen darüber berichten", "Ich warte einen Tag ab", "Ich frage mein Haustier", "Ich glaube es einfach"], sol: 0 },
+{ q: "Wenn es bei einer Nachricht KEINE Quelle gibt (also nicht dort steht, woher die Info kommt) – was bedeutet das oft?", hint: "Ist das ein gutes Zeichen?", choices: ["Dass die Nachricht ganz neu ist", "Dass es sich um Fake News handeln könnte", "Dass die Zeitung den Namen vergessen hat", "Dass die Nachricht besonders wichtig ist"], sol: 1 },
+
+    // --- TEIL 10: TRANSFER- & BONUSFRAGEN (SCHWIERIGER) ---
     { q: "Welches der folgenden Dinge ist KEIN Medium zur Informationsweitergabe?", hint: "Ein Medium überträgt Text, Bild oder Ton.", choices: ["Ein Radio", "Ein Buch", "Ein Apfel", "Ein Verkehrsschild"], sol: 2, bonus: true },
     { q: "Eine Werbung für eine leckere Bio-Limonade. Welche Farbe wird im Hintergrund wahrscheinlich viel zu sehen sein?", hint: "Es geht um Natur und Gesundheit.", choices: ["Schwarz", "Rot", "Grün", "Weiß"], sol: 2, bonus: true },
     { q: "In der Waschmittel-Werbung tragen die Menschen fast immer Kleidung in welcher Farbe?", hint: "Es soll extrem sauber wirken.", choices: ["Bunt gemischt", "Weiß", "Dunkelbraun", "Rot"], sol: 1, bonus: true },
@@ -286,7 +302,10 @@ const HSU_TOPICS = {
     { q: "Warum sollte ein Slogan 'einzigartig sein und sich leicht einprägen lassen'?", hint: "Was passiert, wenn du im Supermarkt stehst?", choices: ["Damit du den Spruch singst und dich an das Produkt erinnerst", "Weil lange Sätze zu teuer zu drucken sind", "Damit Lehrer es in der Schule abfragen", "Damit die Konkurrenz ihn klaut"], sol: 0, bonus: true },
     { q: "Eine Werbung zeigt eine Limo, die aus echten Früchten tropft (bildliche Gestaltungselemente). Welches Gefühl soll das wecken?", hint: "Frisch, frischer...", choices: ["Das Gefühl von künstlichem Zucker", "Das Gefühl von Natur und großer Frische", "Das Gefühl von Wärme", "Das Gefühl von billigem Wasser"], sol: 1, bonus: true },
     { q: "Stell dir vor, du erfindest einen Schokoriegel. Welcher Slogan wäre laut Arbeitsblatt am besten?", hint: "Kurz, einprägsam, einzigartig.", choices: ["Dieser Riegel hat Schokolade, Nüsse und Karamel.", "Schoko-Kracher: Knuspert lauter als du denkst!", "Er kostet 1 Euro.", "Ein Schokoriegel von mir gemacht."], sol: 1, bonus: true },
-    { q: "Werbung nutzt Tricks, damit Menschen Produkte kaufen, die sie vielleicht gar nicht brauchen. Stimmt das?", hint: "Ist das der Sinn von Werbung?", isYesNo: true, sol: 1, bonus: true }
+    { q: "Werbung nutzt Tricks, damit Menschen Produkte kaufen, die sie vielleicht gar nicht brauchen. Stimmt das?", hint: "Ist das der Sinn von Werbung?", isYesNo: true, sol: 1, bonus: true },
+    { q: "Warum sollte man im Internet immer vorsichtig sein?", hint: "Sind alle Menschen im Internet ehrlich?", choices: ["Weil das Internet schnell kaputt geht", "Weil man nicht sofort weiß, wer auf der anderen Seite sitzt oder ob etwas wahr ist", "Weil das Internet sonst teuer wird", "Weil man sonst schlechte Noten bekommt"], sol: 1, bonus: true },
+{ q: "Du bekommst eine Nachricht: 'Du hast 1000 Euro gewonnen! Klicke auf diesen Link, um das Geld zu bekommen!' Was ist das wahrscheinlich?", hint: "Ist das unglaublich? Kommt es von einer unbekannten Quelle?", choices: ["Ein echter Gewinn", "Eine Schulaufgabe", "Fake News oder ein Trick", "Ein nettes Geschenk"], sol: 2, bonus: true },
+{ q: "Stell dir vor, eine unbekannte Webseite schreibt: 'Morgen fällt in ganz Bayern die Schule aus!' Keine andere Zeitung berichtet darüber. Ist das wahr?", hint: "Erinnere dich an die Merkmale für Fake News.", choices: ["Ja, weil es im Internet steht", "Nein, weil andere gute Seiten nicht darüber berichten", "Ja, weil ich das gerne möchte", "Nein, weil morgen Sonntag ist"], sol: 1, bonus: true }
     ]
     },
 
