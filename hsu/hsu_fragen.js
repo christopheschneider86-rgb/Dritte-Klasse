@@ -253,7 +253,29 @@ const HSU_TOPICS = {
     { q: "Wird in der Werbung das Leben immer genau so gezeigt, wie es in echt ist?", hint: "In der Werbung sieht immer alles perfekt aus...", isYesNo: true, sol: 0 },
     { q: "Warum wird in der Werbung vieles 'extra gut dargestellt'?", hint: "Was will der Verkäufer erreichen?", choices: ["Damit die Werbung wie ein Märchen ist", "Damit wir das Produkt unbedingt kaufen wollen", "Weil sie lügen wollen", "Damit der Film länger dauert"], sol: 1 },
 
-    // --- TEIL 5: TRANSFER- & BONUSFRAGEN (SCHWIERIGER) ---
+    // --- TEIL 5: BAUSTEINE EINES PLAKATS ---
+    { q: "Was ist das Hauptziel von einem Werbeplakat?", hint: "Was sollen die Leute am Ende tun?", choices: ["Dass die Menschen das Plakat abreißen", "Dass das beworbene Produkt im Einkaufswagen landet", "Dass die Straße schöner aussieht", "Dass die Leute stehen bleiben und lesen lernen"], sol: 1 },
+    { q: "Was ist ein 'Logo' auf einem Werbeplakat?", hint: "Man verbindet es sofort mit einer bestimmten Firma.", choices: ["Ein langer Text über die Firma", "Der Preis des Produkts", "Ein Zeichen aus Bildern oder Symbolen für eine Firma", "Das Ablaufdatum"], sol: 2 },
+    { q: "Was ist ein 'Slogan'?", hint: "Haribo macht Kinder froh...", choices: ["Ein kurzer, einprägsamer Spruch zum Werben", "Der Erfinder des Produkts", "Die Zutatenliste", "Das Bild in der Mitte"], sol: 0 },
+    { q: "Welcher Begriff passt zu Wörtern wie 'Lecker', 'Fruchtig' oder 'Gesund' auf einem Plakat?", hint: "Wie ist etwas?", choices: ["Wichtige Informationen", "Passende Adjektive (Wiewörter)", "Logo", "Slogan"], sol: 1 },
+    { q: "Was ist das 'Produktbild' auf einem Plakat?", hint: "Das, worum es geht.", choices: ["Ein Bild von den Chefs", "Eine Abbildung von dem, was verkauft wird", "Ein Bild vom Supermarkt", "Ein Bild von der Plakatfarbe"], sol: 1 },
+    { q: "Wie nennt man die große Überschrift ganz oben auf dem Plakat?", hint: "Kopfzeile oder...", choices: ["Logo", "Slogan", "Headline", "Adjektiv"], sol: 2 },
+
+    // --- TEIL 6: WERBETRICKS & WAHRHEIT (KETCHUP-BEISPIEL) ---
+    { q: "Stimmen die Aussagen auf Werbeplakaten immer mit der Wahrheit überein?", hint: "Erinnere dich an den Tomatig-Ketchup.", isYesNo: true, sol: 0 },
+    { q: "Warum steht auf einem ungesunden Ketchup 'gesund & lecker' oder 'viele Vitamine'?", hint: "Was soll das bei den Käufern auslösen?", choices: ["Weil der Chef das selbst glaubt", "Damit Mamas und Papas denken es sei gesund und es kaufen", "Weil es das Gesetz so vorschreibt", "Damit Kinder nicht weinen"], sol: 1 },
+    { q: "Woran kann man am besten erkennen, ob ein Lebensmittel wirklich gesund ist?", hint: "Wo steht die Wahrheit?", choices: ["Am schönen Produktbild", "Am lustigen Slogan", "An der Zutatenliste", "An der Headline"], sol: 2 },
+    { q: "Wenn in den Zutaten von Ketchup 'Tomatenmark, Zucker, Essig, Salz' steht, ist es dann sehr gesund?", hint: "Ein bestimmter Stoff macht es ungesund.", choices: ["Ja, wegen dem Tomatenmark", "Nein, weil viel Zucker und Salz drin ist", "Ja, wegen dem Essig", "Nein, weil keine Tomaten drin sind"], sol: 1 },
+    
+    // --- TEIL 7: NOCH MEHR DETAILS ZU DEN ARBEITSBLÄTTERN ---
+    { q: "Auf dem Limo-Plakat steht ganz unten klein: 'Nur für kurze Zeit...'. Welcher Baustein ist das?", hint: "Es ist kein Slogan und keine Überschrift.", choices: ["Logo", "Wichtige Informationen zum Produkt", "Headline", "Produktbild"], sol: 1 },
+    { q: "Was gehört zu den 'bildlichen Gestaltungselementen' auf dem Power-Limo Plakat?", hint: "Es ist nicht das Produkt selbst, sondern das drumherum.", choices: ["Die aufgeschnittenen Zitronen und Orangen", "Die große Überschrift", "Die Zutatenliste", "Das Logo"], sol: 0 },
+    { q: "Ein Logo besteht häufig aus...", hint: "Schau auf den Text beim Limo-Plakat links.", choices: ["Langen Sätzen", "Bildern, Symbolen oder kurzen Wörtern", "Zutaten", "Vielen bunten Farben"], sol: 1 },
+    { q: "Mit welchen Argumenten wirbt das Tomatig-Ketchup auf dem Plakat?", hint: "Was hast du auf die erste Linie geschrieben?", choices: ["Scharf und würzig", "Billig und in einer großen Flasche", "Mit besonders vielen Vitaminen, gesund & lecker", "Garantiert zuckerfrei"], sol: 2 },
+    { q: "Marie hat aufgeschrieben, warum der Ketchup in Wirklichkeit NICHT gesund ist. Warum?", hint: "Schau dir die Zutaten an.", choices: ["Weil Tomaten ungesund sind", "Weil er abgelaufen ist", "Weil Tomatenmark, Zucker, Essig und Salz drin sind", "Weil er schlecht schmeckt"], sol: 2 },
+    { q: "Was genau wollen die Ketchup-Verkäufer mit dem Wort 'gesund' bei den Eltern erreichen?", hint: "Das hast du ganz unten auf dein Arbeitsblatt geschrieben!", choices: ["Dass Mamas und Papas denken es ist gesund und es für die Kinder kaufen", "Dass die Eltern den Ketchup selbst essen", "Dass die Eltern den Ketchup wegwerfen", "Dass sie sich beschweren"], sol: 0 },
+    
+    // --- TEIL 8: TRANSFER- & BONUSFRAGEN (SCHWIERIGER) ---
     { q: "Welches der folgenden Dinge ist KEIN Medium zur Informationsweitergabe?", hint: "Ein Medium überträgt Text, Bild oder Ton.", choices: ["Ein Radio", "Ein Buch", "Ein Apfel", "Ein Verkehrsschild"], sol: 2, bonus: true },
     { q: "Eine Werbung für eine leckere Bio-Limonade. Welche Farbe wird im Hintergrund wahrscheinlich viel zu sehen sein?", hint: "Es geht um Natur und Gesundheit.", choices: ["Schwarz", "Rot", "Grün", "Weiß"], sol: 2, bonus: true },
     { q: "In der Waschmittel-Werbung tragen die Menschen fast immer Kleidung in welcher Farbe?", hint: "Es soll extrem sauber wirken.", choices: ["Bunt gemischt", "Weiß", "Dunkelbraun", "Rot"], sol: 1, bonus: true },
@@ -261,6 +283,10 @@ const HSU_TOPICS = {
     { q: "Ein Plakat an der Bushaltestelle leuchtet im Dunkeln, weil eine Lampe darauf strahlt. Ist das Plakat dadurch ein 'digitales Medium'?", hint: "Verarbeitet das Plakat selbst Informationen mit Computertechnik?", choices: ["Ja, weil es leuchtet", "Nein, es bleibt ein analoges Medium aus Papier", "Ja, weil es Strom braucht", "Nein, es ist gar kein Medium mehr"], sol: 1, bonus: true },
     { q: "Warum ist es wichtig, dass Eltern eine 'Medienzeit' mit ihren Kindern absprechen?", hint: "Gibt es noch andere wichtige Dinge am Tag?", choices: ["Damit der Akku nicht kaputt geht", "Weil Strom so teuer ist", "Damit man genug Zeit für andere Dinge wie Spielen, Freunde und Hausaufgaben hat", "Damit das Internet nicht leer wird"], sol: 2, bonus: true },
     { q: "Wenn ein berühmter Fußballer Werbung für Gummibärchen macht: Machen ihn die Gummibärchen wirklich zu einem guten Sportler?", hint: "Denk an den Satz: 'In der Werbung wird vieles extra gut dargestellt'.", choices: ["Ja, deshalb ist er so gut", "Nein, das ist nur Werbung, damit wir sie kaufen", "Ja, in Gummibärchen ist viel Kraft", "Nein, er isst sie gar nicht"], sol: 1, bonus: true }
+    { q: "Warum sollte ein Slogan 'einzigartig sein und sich leicht einprägen lassen'?", hint: "Was passiert, wenn du im Supermarkt stehst?", choices: ["Damit du den Spruch singst und dich an das Produkt erinnerst", "Weil lange Sätze zu teuer zu drucken sind", "Damit Lehrer es in der Schule abfragen", "Damit die Konkurrenz ihn klaut"], sol: 0, bonus: true },
+    { q: "Eine Werbung zeigt eine Limo, die aus echten Früchten tropft (bildliche Gestaltungselemente). Welches Gefühl soll das wecken?", hint: "Frisch, frischer...", choices: ["Das Gefühl von künstlichem Zucker", "Das Gefühl von Natur und großer Frische", "Das Gefühl von Wärme", "Das Gefühl von billigem Wasser"], sol: 1, bonus: true },
+    { q: "Stell dir vor, du erfindest einen Schokoriegel. Welcher Slogan wäre laut Arbeitsblatt am besten?", hint: "Kurz, einprägsam, einzigartig.", choices: ["Dieser Riegel hat Schokolade, Nüsse und Karamel.", "Schoko-Kracher: Knuspert lauter als du denkst!", "Er kostet 1 Euro.", "Ein Schokoriegel von mir gemacht."], sol: 1, bonus: true },
+    { q: "Werbung nutzt Tricks, damit Menschen Produkte kaufen, die sie vielleicht gar nicht brauchen. Stimmt das?", hint: "Ist das der Sinn von Werbung?", isYesNo: true, sol: 1, bonus: true }
     ]
     },
 
