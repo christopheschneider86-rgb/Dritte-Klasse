@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Die Himmelsleiter – Religion</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<style>
+:root {
+  --accent: #e67e22;
+  --accent-dark: #c0652d;
+  --bg: #0f0a20;
+  --card: #1a1230;
+  --gold: #f1c40f;
+  --success: #27ae60;
+  --danger: #e74c3c;
+  --rung-off: #2a2050;
+  --rung-on: #f1c40f;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:white;min-height:100vh;display:flex;justify-content:center;touch-action:manipulation;overflow-x:hidden}
+.app{width:100%;max-width:900px;padding:12px;display:flex;flex-direction:column;min-height:100vh}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.back-btn{background:rgba(255,255,255,0.1);border:none;border-radius:12px;padding:10px 12px;cursor:pointer;color:white;display:flex;align-items:center;text-decoration:none;transition:background .2s}
+.back-btn:hover{background:rgba(255,255,255,0.2)}
+.back-btn svg{width:22px;height:22px}
+.header-title{font-size:22px;font-weight:bold;color:var(--gold)}
+.header-sub{font-size:13px;color:rgba(255,255,255,0.6);margin-top:2px}
+.coin-bar{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.08);border-radius:12px;padding:8px 14px;font-size:16px;font-weight:bold;color:var(--gold);margin-left:auto}
+
+/* SPIELFELD */
+.game-area{display:grid;grid-template-columns:110px 1fr;gap:16px;flex:1;align-items:start;margin-bottom:16px}
+@media(max-width:600px){.game-area{grid-template-columns:80px 1fr;gap:10px}}
+
+/* LEITER */
+.ladder-wrap{display:flex;flex-direction:column;align-items:center;gap:0;position:relative;padding-top:10px}
+.heaven{font-size:36px;margin-bottom:8px;filter:drop-shadow(0 0 12px gold);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.rung-wrap{display:flex;flex-direction:column-reverse;gap:4px;position:relative}
+.rung{width:80px;height:24px;border-radius:6px;background:var(--rung-off);border:2px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,0.3);font-weight:bold;transition:all .4s;position:relative}
+@media(max-width:600px){.rung{width:60px;height:20px;font-size:10px}}
+.rung.lit{background:var(--rung-on);border-color:gold;color:#2c3e50;box-shadow:0 0 10px rgba(241,196,15,0.6)}
+.rung.current{animation:blink .8s infinite}
+@keyframes blink{0%,100%{box-shadow:0 0 10px rgba(241,196,15,0.8)}50%{box-shadow:0 0 20px gold,0 0 30px rgba(241,196,15,0.4)}}
+.ladder-poles{position:absolute;top:0;bottom:0;left:12px;right:12px;pointer-events:none}
+.pole{position:absolute;top:0;bottom:0;width:4px;background:rgba(255,255,255,0.15);border-radius:2px}
+.pole-l{left:6px}
+.pole-r{right:6px}
+.character{font-size:28px;transition:transform .4s ease;text-align:center;margin-top:6px}
+
+/* FRAGEN-BEREICH */
+.question-card{background:var(--card);border-radius:18px;padding:20px;border:1px solid rgba(255,255,255,0.1)}
+.q-label{font-size:12px;color:rgba(255,255,255,0.5);font-weight:bold;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.q-text{font-size:20px;font-weight:bold;color:white;line-height:1.4;margin-bottom:8px}
+@media(max-width:600px){.q-text{font-size:17px}}
+.q-hint{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:16px;display:flex;align-items:center;gap:6px}
+.bild-karte{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px;text-align:center;margin-bottom:14px;display:inline-block}
+.bild-emoji{font-size:52px;line-height:1;display:block;margin-bottom:4px}
+.bild-label{font-size:11px;color:rgba(255,255,255,0.5);font-style:italic}
+.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+@media(max-width:500px){.mc-grid{grid-template-columns:1fr}}
+.mc-btn{padding:12px 10px;border-radius:12px;border:2px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:white;font-size:14px;font-weight:bold;cursor:pointer;transition:all .15s;text-align:left}
+.mc-btn:hover:not(:disabled){border-color:var(--accent);background:rgba(230,126,34,0.15)}
+.mc-btn.selected{border-color:var(--accent);background:rgba(230,126,34,0.2);color:var(--gold)}
+.mc-btn.correct{background:rgba(39,174,96,0.25);border-color:#27ae60;color:#7debb5}
+.mc-btn.wrong{background:rgba(231,76,60,0.25);border-color:#e74c3c;color:#f5a8a1}
+.mc-btn:disabled{cursor:default}
+.feedback-bar{min-height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:bold;gap:8px;margin:8px 0}
+.feedback-bar.ok{color:#7debb5}
+.feedback-bar.bad{color:#f5a8a1}
+.action-btn{width:100%;padding:14px;border-radius:14px;font-size:16px;font-weight:bold;border:none;cursor:pointer;transition:all .2s}
+.check-btn{background:var(--accent);color:white}
+.check-btn:disabled{background:#5a3a20;color:#a07050;cursor:not-allowed}
+.check-btn:not(:disabled):hover{background:var(--accent-dark)}
+.next-btn{background:linear-gradient(135deg,var(--gold),var(--accent));color:#2c3e50;margin-top:10px}
+.progress-bar{height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;margin-bottom:12px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--accent));transition:width .4s;border-radius:4px}
+.q-counter{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:8px}
+
+/* START / ERGEBNIS */
+.overlay-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;flex:1;gap:16px}
+.big-emoji{font-size:72px;line-height:1}
+.overlay-title{font-size:28px;font-weight:bold;color:var(--gold)}
+.overlay-sub{font-size:16px;color:rgba(255,255,255,0.7);line-height:1.5;max-width:400px}
+.start-btn{background:linear-gradient(135deg,var(--gold),var(--accent));color:#2c3e50;font-weight:bold;border:none;border-radius:16px;padding:16px 40px;font-size:18px;cursor:pointer;box-shadow:0 6px 20px rgba(241,196,15,0.4);transition:transform .2s}
+.start-btn:hover{transform:translateY(-3px)}
+.cost-badge{background:rgba(241,196,15,0.15);border:1px solid rgba(241,196,15,0.4);border-radius:12px;padding:10px 20px;color:var(--gold);font-size:15px;font-weight:bold}
+.stars-row{display:flex;gap:8px;justify-content:center;font-size:40px}
+.result-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:340px}
+.result-stat{background:rgba(255,255,255,0.06);border-radius:12px;padding:14px;text-align:center}
+.result-stat-val{font-size:28px;font-weight:bold;color:var(--gold)}
+.result-stat-label{font-size:12px;color:rgba(255,255,255,0.6);margin-top:4px}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;width:100%}
+.secondary-btn{background:rgba(255,255,255,0.1);color:white;border:none;border-radius:14px;padding:13px 24px;font-size:15px;font-weight:bold;cursor:pointer}
+.secondary-btn:hover{background:rgba(255,255,255,0.18)}
+
+/* Sterne-Anzeige */
+.star{font-size:36px;transition:transform .3s}
+.star.earned{animation:starPop .4s ease}
+@keyframes starPop{0%{transform:scale(0)}70%{transform:scale(1.3)}100%{transform:scale(1)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="religion_trainer.html" class="back-btn" title="Zurück">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    </a>
+    <div>
+      <div class="header-title">✨ Die Himmelsleiter</div>
+      <div class="header-sub">Klettere hoch – beantworte 10 Fragen!</div>
+    </div>
+    <div class="coin-bar">🪙 <span id="coinDisplay">0</span></div>
+  </div>
+
+  <!-- START-SCREEN -->
+  <div class="overlay-screen" id="screenStart">
+    <div class="big-emoji">🪜</div>
+    <div class="overlay-title">Die Himmelsleiter</div>
+    <div class="overlay-sub">
+      Wie im Traum von Jakob – klettere auf der Himmelsleiter empor!<br><br>
+      Richtige Antwort = <b>eine Sprosse höher</b> 🆙<br>
+      Falsche Antwort = <b>eine Sprosse runter</b> 😬<br><br>
+      Schaffst du es ganz nach oben?
+    </div>
+    <div class="cost-badge">🪙 Kostet 10 Münzen zum Starten</div>
+    <button class="start-btn" onclick="startGame()">Leiter besteigen! →</button>
+    <button class="secondary-btn" onclick="window.location.href='religion_trainer.html'">Zurück zum Trainer</button>
+  </div>
+
+  <!-- SPIEL -->
+  <div id="screenGame" style="display:none;flex-direction:column;flex:1">
+    <div class="game-area">
+      <!-- LEITER -->
+      <div class="ladder-wrap" id="ladderWrap">
+        <div class="heaven" id="heavenEmoji">⭐</div>
+        <div class="rung-wrap" id="rungWrap">
+          <!-- Rungs rendered by JS -->
+        </div>
+        <div class="character" id="character">🧍</div>
+      </div>
+
+      <!-- FRAGEN -->
+      <div class="question-card">
+        <div class="q-counter" id="qCounter">Frage 1 von 10</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+        <div class="q-label">Frage</div>
+        <div class="q-text" id="qText">–</div>
+        <div class="q-hint" id="qHint"></div>
+        <div id="qVisual"></div>
+        <div class="mc-grid" id="mcGrid"></div>
+        <div class="feedback-bar" id="feedbackBar"></div>
+        <button class="action-btn check-btn" id="checkBtn" disabled onclick="checkAnswer()">Antwort prüfen</button>
+        <button class="action-btn next-btn" id="nextBtn" style="display:none" onclick="nextQuestion()">Weiter ➔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ERGEBNIS -->
+  <div class="overlay-screen" id="screenResult" style="display:none">
+    <div class="big-emoji" id="resultEmoji">🎉</div>
+    <div class="overlay-title" id="resultTitle">Geschafft!</div>
+    <div class="stars-row" id="starsRow"></div>
+    <div class="result-stats">
+      <div class="result-stat"><div class="result-stat-val" id="resCorrect">0</div><div class="result-stat-label">Richtig</div></div>
+      <div class="result-stat"><div class="result-stat-val" id="resCoins">+0</div><div class="result-stat-label">Münzen verdient</div></div>
+    </div>
+    <div class="overlay-sub" id="resultMsg"></div>
+    <div class="btn-row">
+      <button class="start-btn" onclick="startGame()">Nochmal spielen 🔁</button>
+      <button class="secondary-btn" onclick="window.location.href='religion_trainer.html'">Zum Trainer</button>
+    </div>
+  </div>
+</div>
+
+<script src="religion_fragen.js"></script>
+<script>
+const STORAGE_KEY = 'm_app_v9';
+const ACTIVE_KEY = 'm_app_active_prof';
+const TOTAL_Q = 10;
+const RUNGS = 10;
+
+let profiles = {}, curProfId = null;
+let questions = [], qIdx = 0, rungPos = 5, correct = 0, coinsEarned = 0;
+let selectedAnswer = null;
+
+function loadStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) profiles = JSON.parse(raw) || {};
+  } catch(e) {}
+  for (const id of Object.keys(profiles)) {
+    if (!profiles[id].rel_history) profiles[id].rel_history = [];
+    if (profiles[id].coins === undefined) profiles[id].coins = 0;
+  }
+  const saved = localStorage.getItem(ACTIVE_KEY);
+  curProfId = (saved && profiles[saved]) ? saved : Object.keys(profiles)[0];
+}
+
+function saveStorage() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles)); } catch(e) {}
+}
+
+function getProfile() { return profiles[curProfId] || null; }
+
+function updateCoinDisplay() {
+  const p = getProfile();
+  document.getElementById('coinDisplay').textContent = p ? p.coins : 0;
+}
+
+function buildLadder() {
+  const wrap = document.getElementById('rungWrap');
+  wrap.innerHTML = '';
+  for (let i = 1; i <= RUNGS; i++) {
+    const div = document.createElement('div');
+    div.className = 'rung';
+    div.id = 'rung' + i;
+    div.textContent = i;
+    wrap.appendChild(div);
+  }
+  updateLadder();
+}
+
+function updateLadder() {
+  for (let i = 1; i <= RUNGS; i++) {
+    const el = document.getElementById('rung' + i);
+    el.classList.toggle('lit', i < rungPos);
+    el.classList.toggle('current', i === rungPos);
+  }
+  const char = document.getElementById('character');
+  char.style.transform = `translateY(0)`;
+  if (rungPos > RUNGS) {
+    document.getElementById('heavenEmoji').style.filter = 'drop-shadow(0 0 20px gold) brightness(1.5)';
+    char.textContent = '👼';
+  } else {
+    char.textContent = rungPos === 1 ? '😰' : rungPos <= 4 ? '🧍' : rungPos <= 7 ? '🧗' : '🧗';
+  }
+}
+
+function getQuestions() {
+  const all = [];
+  for (const t of Object.values(RELIGION_TOPICS)) {
+    all.push(...t.questions);
+  }
+  const shuffled = all.sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, TOTAL_Q);
+}
+
+function startGame() {
+  const p = getProfile();
+  if (!p) { alert('Bitte zuerst ein Profil auswählen!'); return; }
+  if ((p.coins || 0) < 10) {
+    alert('Du brauchst 10 Münzen! Übe zuerst im Trainer, um Münzen zu verdienen. 🪙');
+    return;
+  }
+  p.coins -= 10;
+  saveStorage();
+  updateCoinDisplay();
+
+  questions = getQuestions();
+  qIdx = 0;
+  rungPos = 1;
+  correct = 0;
+  coinsEarned = 0;
+
+  document.getElementById('screenStart').style.display = 'none';
+  document.getElementById('screenResult').style.display = 'none';
+  const gameEl = document.getElementById('screenGame');
+  gameEl.style.display = 'flex';
+
+  buildLadder();
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[qIdx];
+  selectedAnswer = null;
+
+  document.getElementById('qCounter').textContent = `Frage ${qIdx+1} von ${TOTAL_Q}`;
+  document.getElementById('progressFill').style.width = (qIdx / TOTAL_Q * 100) + '%';
+  document.getElementById('qText').textContent = q.q;
+
+  const hintEl = document.getElementById('qHint');
+  hintEl.innerHTML = q.hint ? `💡 ${q.hint}` : '';
+
+  const vis = document.getElementById('qVisual');
+  if (q.imgEmoji) {
+    vis.innerHTML = `<div class="bild-karte"><span class="bild-emoji">${q.imgEmoji}</span><div class="bild-label">${q.imgLabel||''}</div></div>`;
+  } else {
+    vis.innerHTML = '';
+  }
+
+  const grid = document.getElementById('mcGrid');
+  grid.innerHTML = '';
+  q.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'mc-btn';
+    btn.textContent = c;
+    btn.onclick = () => selectAnswer(btn, i);
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('feedbackBar').textContent = '';
+  document.getElementById('feedbackBar').className = 'feedback-bar';
+  document.getElementById('checkBtn').disabled = true;
+  document.getElementById('checkBtn').style.display = 'block';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function selectAnswer(btn, idx) {
+  document.querySelectorAll('.mc-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedAnswer = idx;
+  document.getElementById('checkBtn').disabled = false;
+}
+
+function checkAnswer() {
+  if (selectedAnswer === null) return;
+  const q = questions[qIdx];
+  const ok = selectedAnswer === q.sol;
+  const btns = document.querySelectorAll('.mc-btn');
+  btns.forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.sol) b.classList.add('correct');
+    else if (i === selectedAnswer && !ok) b.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedbackBar');
+  if (ok) {
+    correct++;
+    coinsEarned += 1;
+    rungPos = Math.min(rungPos + 1, RUNGS + 1);
+    fb.textContent = '⬆️ Richtig! Eine Sprosse höher!';
+    fb.className = 'feedback-bar ok';
+    playSound('success');
+    const p = getProfile();
+    if (p) { p.coins = (p.coins||0) + 1; saveStorage(); updateCoinDisplay(); }
+  } else {
+    rungPos = Math.max(rungPos - 1, 1);
+    fb.textContent = '⬇️ Nicht ganz – aber weiter!';
+    fb.className = 'feedback-bar bad';
+    playSound('fail');
+  }
+
+  updateLadder();
+
+  const p = getProfile();
+  if (p) {
+    if (!p.rel_history) p.rel_history = [];
+    p.rel_history.push({ ts: Date.now(), topic: 'leiter', ok });
+    saveStorage();
+  }
+
+  document.getElementById('checkBtn').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'block';
+}
+
+function nextQuestion() {
+  qIdx++;
+  if (qIdx >= TOTAL_Q) {
+    showResult();
+  } else {
+    showQuestion();
+  }
+}
+
+function saveHighscore() {
+  const p = getProfile();
+  if (!p) return;
+  let hs = [];
+  try { hs = JSON.parse(localStorage.getItem('m_rel_hs') || '[]'); } catch(e) {}
+  hs.push({ name: p.name, score: correct, date: Date.now() });
+  hs.sort((a,b) => b.score - a.score || b.date - a.date);
+  hs.splice(10);
+  try { localStorage.setItem('m_rel_hs', JSON.stringify(hs)); } catch(e) {}
+}
+
+// ── AUDIO ──────────────────────────────────────────────
+let audioCtx = null;
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function playSound(type) {
+  try {
+    ensureAudio();
+    if (type === 'success') {
+      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+      osc.frequency.linearRampToValueAtTime(660, audioCtx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+      osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.3);
+    } else if (type === 'fail') {
+      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.frequency.setValueAtTime(330, audioCtx.currentTime);
+      osc.frequency.linearRampToValueAtTime(220, audioCtx.currentTime + 0.2);
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+      osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.3);
+    } else if (type === 'win') {
+      [440,550,660,880].forEach((f, i) => {
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.connect(g); g.connect(audioCtx.destination);
+        o.frequency.value = f;
+        const t = audioCtx.currentTime + i * 0.13;
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.3, t + 0.05);
+        g.gain.linearRampToValueAtTime(0, t + 0.22);
+        o.start(t); o.stop(t + 0.25);
+      });
+    }
+  } catch(e) {}
+}
+
+function showResult() {
+  document.getElementById('screenGame').style.display = 'none';
+  document.getElementById('screenResult').style.display = 'flex';
+  saveHighscore();
+  if (rungPos > RUNGS) playSound('win');
+
+  const stars = correct >= 9 ? 3 : correct >= 6 ? 2 : correct >= 3 ? 1 : 0;
+  const starsRow = document.getElementById('starsRow');
+  starsRow.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const span = document.createElement('span');
+    span.className = 'star' + (i < stars ? ' earned' : '');
+    span.textContent = i < stars ? '⭐' : '☆';
+    span.style.animationDelay = (i * 200) + 'ms';
+    starsRow.appendChild(span);
+  }
+
+  document.getElementById('resCorrect').textContent = correct + '/' + TOTAL_Q;
+  document.getElementById('resCoins').textContent = '+' + coinsEarned;
+
+  const reachedTop = rungPos > RUNGS;
+  document.getElementById('resultEmoji').textContent = reachedTop ? '🌟' : stars >= 2 ? '🎉' : '💪';
+  document.getElementById('resultTitle').textContent = reachedTop ? 'Du hast den Himmel erreicht!' : stars >= 2 ? 'Super gemacht!' : 'Noch ein bisschen üben!';
+  document.getElementById('progressFill').style.width = '100%';
+
+  const msgs = {
+    3: 'Wow! Du kennst die Geschichte von Jakob & Esau perfekt! Gott würde sagen: "Ich bin bei dir!" 🌟',
+    2: 'Sehr gut! Fast alle Fragen richtig – ein paar noch üben, dann sitzt alles!',
+    1: 'Guter Start! Geh nochmal in den Trainer und übe die schwierigen Fragen.',
+    0: 'Nicht schlimm! Geh zum Bibelgeschichten-Lexikon und lies die Geschichte nochmal nach.'
+  };
+  document.getElementById('resultMsg').textContent = msgs[stars] || msgs[0];
+}
+
+loadStorage();
+updateCoinDisplay();
+</script>
+</body>
+</html>

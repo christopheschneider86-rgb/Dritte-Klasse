@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Lückentext – Jakob & Esau</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<style>
+:root{--accent:#e67e22;--accent-soft:#fef4ec;--accent-dark:#c0652d;--bg:#fffbf5;--success:#27ae60;--danger:#e74c3c;--text:#2c3e50;--muted:#7f8c8d;--radius:16px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;justify-content:center}
+.app{width:100%;max-width:680px;padding:12px;display:flex;flex-direction:column;min-height:100vh}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.back-btn{background:#ecf0f1;border:none;border-radius:12px;padding:10px 12px;cursor:pointer;color:var(--text);display:flex;align-items:center;text-decoration:none;transition:background .2s}
+.back-btn:hover{background:#bdc3c7}
+.back-btn svg{width:22px;height:22px;stroke:currentColor}
+.header-info h1{font-size:20px;font-weight:bold;color:#2c3e50;margin-bottom:3px}
+.header-info p{font-size:13px;color:var(--muted)}
+.coin-bar{display:flex;align-items:center;gap:6px;background:var(--accent-soft);border-radius:12px;padding:8px 14px;font-size:16px;font-weight:bold;color:var(--accent-dark);margin-left:auto}
+
+.progress-wrap{margin-bottom:20px}
+.progress-label{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:6px}
+.progress-bar{height:8px;background:#f0e0d0;border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#f39c12);transition:width .4s;border-radius:4px}
+
+.card{background:white;border-radius:var(--radius);box-shadow:0 4px 16px rgba(0,0,0,0.08);padding:24px;margin-bottom:16px}
+.card-label{font-size:12px;font-weight:bold;color:var(--accent);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+.sentence{font-size:22px;font-weight:bold;color:#2c3e50;line-height:1.6;text-align:center;margin-bottom:8px}
+.sentence .blank{display:inline-block;min-width:120px;border-bottom:3px solid var(--accent);padding:0 8px;text-align:center;color:var(--accent);transition:all .3s}
+.sentence .blank.filled-ok{color:var(--success);border-color:var(--success)}
+.sentence .blank.filled-bad{color:var(--danger);border-color:var(--danger)}
+.hint{font-size:14px;color:var(--muted);text-align:center;margin-bottom:20px;font-style:italic}
+
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+@media(max-width:420px){.choices{grid-template-columns:1fr}}
+.choice-btn{padding:14px 12px;border-radius:14px;border:2px solid #f5d5b0;background:white;color:#2c3e50;font-size:15px;font-weight:bold;cursor:pointer;transition:all .15s;text-align:center}
+.choice-btn:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft);transform:translateY(-1px)}
+.choice-btn:disabled{cursor:default;opacity:.9}
+.choice-btn.correct{background:#d4efdf;border-color:#27ae60;color:#1a6e40}
+.choice-btn.wrong{background:#fde8e8;border-color:#e74c3c;color:#922b21}
+
+.feedback{min-height:36px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:17px;font-weight:bold;text-align:center}
+.feedback.ok{color:var(--success)}
+.feedback.bad{color:var(--danger)}
+
+.next-btn{width:100%;padding:15px;background:var(--accent);color:white;border:none;border-radius:14px;font-size:16px;font-weight:bold;cursor:pointer;transition:background .2s;display:none}
+.next-btn:hover{background:var(--accent-dark)}
+
+/* RESULT SCREEN */
+.result-screen{display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:30px;flex:1}
+.result-emoji{font-size:72px;line-height:1}
+.result-title{font-size:26px;font-weight:bold;color:var(--accent-dark);text-align:center}
+.result-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:320px}
+.stat-box{background:white;border-radius:var(--radius);padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.07)}
+.stat-val{font-size:30px;font-weight:bold;color:var(--accent-dark)}
+.stat-lbl{font-size:12px;color:var(--muted);margin-top:4px}
+.btn-restart{background:linear-gradient(135deg,var(--accent),#f39c12);color:white;border:none;border-radius:16px;padding:15px 36px;font-size:16px;font-weight:bold;cursor:pointer;box-shadow:0 4px 14px rgba(230,126,34,0.4)}
+.btn-trainer{background:#ecf0f1;color:var(--text);border:none;border-radius:14px;padding:13px 24px;font-size:15px;font-weight:bold;cursor:pointer}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="religion_trainer.html" class="back-btn">
+      <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+    </a>
+    <div class="header-info">
+      <h1>✏️ Lückentext</h1>
+      <p>Fülle die Lücken aus!</p>
+    </div>
+    <div class="coin-bar">🪙 <span id="coinDisplay">0</span></div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quizView">
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="qLabel">Frage 1 von 14</span>
+        <span id="scoreLabel">0 richtig</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Ergänze den Satz</div>
+      <div class="sentence" id="sentenceEl"></div>
+      <div class="hint" id="hintEl"></div>
+      <div class="choices" id="choicesEl"></div>
+      <div class="feedback" id="feedbackEl"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Weiter ➔</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result-screen" id="resultView">
+    <div class="result-emoji" id="resEmoji">🎉</div>
+    <div class="result-title" id="resTitle">Toll gemacht!</div>
+    <div class="result-stats">
+      <div class="stat-box"><div class="stat-val" id="resScore">0</div><div class="stat-lbl">Richtig</div></div>
+      <div class="stat-box"><div class="stat-val" id="resCoins">+0</div><div class="stat-lbl">Münzen</div></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-restart" onclick="startQuiz()">Nochmal 🔁</button>
+      <button class="btn-trainer" onclick="window.location.href='religion_trainer.html'">Zum Trainer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SAETZE = [
+  { vor:"Jakob und Esau waren ", blank:"Zwillinge", nach:".", choices:["Brüder","Zwillinge","Freunde","Cousins"], hint:"Beide wurden am gleichen Tag geboren." },
+  { vor:"Esau kam als ", blank:"Erster", nach:" zur Welt – er war der Ältere.", choices:["Zweiter","Erster","Dritter","Letzter"], hint:"Der Ältere kommt zuerst." },
+  { vor:"Esau war stark ", blank:"behaart", nach:" und liebte die Jagd.", choices:["gebaut","behaart","gekleidet","groß"], hint:"Schau auf deine Zeichnung von Esaus Kopf!" },
+  { vor:"Jakob war das Lieblingskind von ", blank:"Rebekka", nach:".", choices:["Isaak","Laban","Rebekka","Esau"], hint:"Das Mama-Kind." },
+  { vor:"Esau verkaufte sein Erstgeburtsrecht für ein ", blank:"Linsengericht", nach:".", choices:["Wildbret","Linsengericht","Brot","Lamm"], hint:"Ein rotes, leckeres Essen aus dem Topf." },
+  { vor:"Der Erstgeborene bekommt den besonderen ", blank:"Segen", nach:" des Vaters.", choices:["Lohn","Segen","Namen","Thron"], hint:"Ein besonderes Gebet und gute Wünsche." },
+  { vor:"Rebekka wickelte ", blank:"Ziegenfelle", nach:" um Jakobs Hände.", choices:["Wolle","Tücher","Ziegenfelle","Leder"], hint:"Esau war ja sehr behaart – was ahmt das nach?" },
+  { vor:"Isaak war alt und ", blank:"blind", nach:" – er konnte nichts mehr sehen.", choices:["taub","lahm","blind","krank"], hint:"Deshalb konnte er Jakobs Trick nicht erkennen." },
+  { vor:"Der gestohlene ", blank:"Segen", nach:" konnte nicht zurückgenommen werden.", choices:["Ring","Segen","Bogen","Mantel"], hint:"Ein Segen vor Gott ist für immer bindend." },
+  { vor:"Jakob träumte von einer ", blank:"Himmelsleiter", nach:", auf der Engel auf- und niederstiegen.", choices:["Wolke","Himmelsleiter","Treppe","Brücke"], hint:"Was verbindet Erde und Himmel?" },
+  { vor:"Gott sagte zu Jakob: „Ich bin ", blank:"bei", nach:" dir!"", choices:["wütend auf","fern von","bei","stolz auf"], hint:"Das sind die tröstlichsten Worte!" },
+  { vor:"Bei Onkel Laban arbeitete Jakob insgesamt ", blank:"14", nach:" Jahre.", choices:["7","20","3","14"], hint:"7 + 7 = ?" },
+  { vor:"Laban gab Jakob in der Hochzeitsnacht zuerst ", blank:"Lea", nach:" statt Rahel.", choices:["Sara","Rahel","Lea","Rebekka"], hint:"Die ältere Schwester – Labans Trick!" },
+  { vor:"Nomaden lebten in ", blank:"Zelten", nach:", die man schnell auf- und abbauen konnte.", choices:["Häusern","Höhlen","Zelten","Burgen"], hint:"Schnell auf- und abbaubar – wie ein Camping-Haus." },
+];
+
+const STORAGE_KEY = 'm_app_v9', ACTIVE_KEY = 'm_app_active_prof';
+let profiles = {}, curProfId = null;
+let shuffled = [], qIdx = 0, correctCount = 0, coinsEarned = 0;
+
+function loadStorage() {
+  try { profiles = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) {}
+  for (const id of Object.keys(profiles)) {
+    if (!profiles[id].rel_history) profiles[id].rel_history = [];
+    if (profiles[id].coins === undefined) profiles[id].coins = 0;
+  }
+  const saved = localStorage.getItem(ACTIVE_KEY);
+  curProfId = (saved && profiles[saved]) ? saved : Object.keys(profiles)[0];
+}
+function saveStorage() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles)); } catch(e) {} }
+function getProfile() { return profiles[curProfId] || null; }
+function updateCoinDisplay() {
+  const p = getProfile();
+  document.getElementById('coinDisplay').textContent = p ? p.coins : 0;
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+function startQuiz() {
+  shuffled = shuffle(SAETZE);
+  qIdx = 0; correctCount = 0; coinsEarned = 0;
+  document.getElementById('quizView').style.display = 'block';
+  document.getElementById('resultView').style.display = 'none';
+  showQuestion();
+}
+
+function showQuestion() {
+  const s = shuffled[qIdx];
+  const total = shuffled.length;
+  document.getElementById('qLabel').textContent = `Frage ${qIdx+1} von ${total}`;
+  document.getElementById('scoreLabel').textContent = `${correctCount} richtig`;
+  document.getElementById('progressFill').style.width = (qIdx/total*100)+'%';
+
+  document.getElementById('sentenceEl').innerHTML =
+    escHtml(s.vor) + '<span class="blank" id="blankSpan">___</span>' + escHtml(s.nach);
+  document.getElementById('hintEl').textContent = '💡 ' + s.hint;
+  document.getElementById('feedbackEl').textContent = '';
+  document.getElementById('feedbackEl').className = 'feedback';
+  document.getElementById('nextBtn').style.display = 'none';
+
+  const choices = shuffle(s.choices);
+  const grid = document.getElementById('choicesEl');
+  grid.innerHTML = '';
+  choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = c;
+    btn.addEventListener('click', () => answer(c, s, btn, grid));
+    grid.appendChild(btn);
+  });
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function answer(chosen, s, clickedBtn, grid) {
+  const ok = chosen === s.blank;
+  const blank = document.getElementById('blankSpan');
+  blank.textContent = s.blank;
+  blank.className = 'blank ' + (ok ? 'filled-ok' : 'filled-bad');
+
+  grid.querySelectorAll('.choice-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === s.blank) b.classList.add('correct');
+    else if (b === clickedBtn && !ok) b.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedbackEl');
+  if (ok) {
+    correctCount++;
+    coinsEarned++;
+    fb.textContent = ['Super! ⭐','Richtig! ✅','Genau! 🎉','Toll gemacht! 🌟'][Math.floor(Math.random()*4)];
+    fb.className = 'feedback ok';
+    const p = getProfile();
+    if (p) { p.coins = (p.coins||0)+1; if(!p.rel_history) p.rel_history=[]; p.rel_history.push({ts:Date.now(),topic:'luecken',ok:true}); saveStorage(); updateCoinDisplay(); }
+  } else {
+    fb.textContent = `Nicht ganz – die Antwort ist: „${s.blank}"`;
+    fb.className = 'feedback bad';
+    const p = getProfile();
+    if (p) { if(!p.rel_history) p.rel_history=[]; p.rel_history.push({ts:Date.now(),topic:'luecken',ok:false}); saveStorage(); }
+  }
+
+  document.getElementById('nextBtn').style.display = 'block';
+}
+
+function nextQuestion() {
+  qIdx++;
+  if (qIdx >= shuffled.length) showResult();
+  else showQuestion();
+}
+
+function showResult() {
+  document.getElementById('quizView').style.display = 'none';
+  const rv = document.getElementById('resultView');
+  rv.style.display = 'flex';
+  const pct = Math.round(correctCount/shuffled.length*100);
+  document.getElementById('resScore').textContent = correctCount+'/'+shuffled.length;
+  document.getElementById('resCoins').textContent = '+'+coinsEarned;
+  document.getElementById('resEmoji').textContent = pct>=90?'🌟':pct>=60?'🎉':'💪';
+  document.getElementById('resTitle').textContent = pct>=90?'Perfekt – du kennst die Geschichte!':pct>=60?'Super gemacht!':'Noch ein bisschen üben!';
+}
+
+loadStorage();
+updateCoinDisplay();
+startQuiz();
+</script>
+</body>
+</html>

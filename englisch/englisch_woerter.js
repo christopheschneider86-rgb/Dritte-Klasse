@@ -1,0 +1,225 @@
+'use strict';
+
+const ENG_TOPICS = {
+  greeting: {
+    title_de: 'Begrüßung',
+    title_en: 'Hello & Goodbye',
+    icon: '👋',
+    sub: 'Hallo, Tschüss & Vorstellen',
+    color: '#7d3c98',
+    words: [
+      { word_en: 'hello',     word_de: 'Hallo',                  example: 'Hello! My name is Mia.' },
+      { word_en: 'hi',        word_de: 'Hallo (locker)',          example: 'Hi! How are you?' },
+      { word_en: 'goodbye',   word_de: 'Auf Wiedersehen',         example: 'Goodbye! See you tomorrow.' },
+      { word_en: 'bye',       word_de: 'Tschüss',                 example: 'Bye! Have a nice day.' },
+      { word_en: 'please',    word_de: 'Bitte',                   example: 'Can I have a pen, please?' },
+      { word_en: 'thank you', word_de: 'Danke',                   example: 'Thank you for your help.' },
+      { word_en: 'sorry',     word_de: 'Entschuldigung',          example: 'Sorry, I am late.' },
+      { word_en: 'yes',       word_de: 'Ja',                      example: 'Yes, I like apples.' },
+      { word_en: 'no',        word_de: 'Nein',                    example: 'No, I don\'t like fish.' },
+      { word_en: 'name',      word_de: 'Name',                    example: 'My name is Leo.' },
+      { word_en: 'friend',    word_de: 'Freund / Freundin',       example: 'Anna is my best friend.' },
+      { word_en: 'fine',      word_de: 'gut / prima',             example: 'I am fine, thank you.' },
+    ]
+  },
+
+  numbers: {
+    title_de: 'Zahlen & Uhrzeit',
+    title_en: 'Numbers & Time',
+    icon: '🔢',
+    sub: 'Zahlen 1–12 und die Uhr lesen',
+    color: '#2471a3',
+    words: [
+      { word_en: 'one',       word_de: 'eins',            example: 'I have one dog.' },
+      { word_en: 'two',       word_de: 'zwei',            example: 'I see two cats.' },
+      { word_en: 'three',     word_de: 'drei',            example: 'She has three books.' },
+      { word_en: 'four',      word_de: 'vier',            example: 'We need four chairs.' },
+      { word_en: 'five',      word_de: 'fünf',            example: 'There are five flowers.' },
+      { word_en: 'six',       word_de: 'sechs',           example: 'I have six pencils.' },
+      { word_en: 'seven',     word_de: 'sieben',          example: 'Seven birds are in the tree.' },
+      { word_en: 'eight',     word_de: 'acht',            example: 'I am eight years old.' },
+      { word_en: 'nine',      word_de: 'neun',            example: 'She has nine stickers.' },
+      { word_en: 'ten',       word_de: 'zehn',            example: 'Count to ten!' },
+      { word_en: 'eleven',    word_de: 'elf',             example: 'There are eleven apples.' },
+      { word_en: 'twelve',    word_de: 'zwölf',           example: 'Twelve months in a year.' },
+      { word_en: 'o\'clock',  word_de: 'Uhr (genau)',     example: 'It is three o\'clock.' },
+      { word_en: 'half past', word_de: 'halb (Uhrzeit)',  example: 'It is half past five.' },
+      { word_en: 'time',      word_de: 'Zeit / Uhrzeit',  example: 'What time is it?' },
+    ]
+  },
+
+  family: {
+    title_de: 'Familie & Freunde',
+    title_en: 'Family & Friends',
+    icon: '👨‍👩‍👧',
+    sub: 'Familienmitglieder benennen',
+    color: '#ba4a00',
+    words: [
+      { word_en: 'mother',  word_de: 'Mutter',              example: 'My mother is kind.' },
+      { word_en: 'mum',     word_de: 'Mama',                example: 'My mum bakes cakes.' },
+      { word_en: 'father',  word_de: 'Vater',               example: 'My father is tall.' },
+      { word_en: 'dad',     word_de: 'Papa',                example: 'My dad plays football.' },
+      { word_en: 'sister',  word_de: 'Schwester',           example: 'My sister is funny.' },
+      { word_en: 'brother', word_de: 'Bruder',              example: 'My brother likes football.' },
+      { word_en: 'grandma', word_de: 'Oma',                 example: 'My grandma bakes cakes.' },
+      { word_en: 'grandpa', word_de: 'Opa',                 example: 'My grandpa reads a lot.' },
+      { word_en: 'baby',    word_de: 'Baby',                example: 'The baby is sleeping.' },
+      { word_en: 'family',  word_de: 'Familie',             example: 'I love my family.' },
+      { word_en: 'friend',  word_de: 'Freund / Freundin',   example: 'Tom is my best friend.' },
+      { word_en: 'pet',     word_de: 'Haustier',            example: 'My pet is a cat.' },
+    ]
+  },
+
+  school: {
+    title_de: 'Schule & Klasse',
+    title_en: 'School & Classroom',
+    icon: '🏫',
+    sub: 'Schulmaterial und Klassenzimmer',
+    color: '#1e8449',
+    words: [
+      { word_en: 'school',        word_de: 'Schule',                  example: 'I go to school every day.' },
+      { word_en: 'class',         word_de: 'Klasse',                  example: 'My class is very nice.' },
+      { word_en: 'teacher',       word_de: 'Lehrerin / Lehrer',       example: 'The teacher is friendly.' },
+      { word_en: 'book',          word_de: 'Buch',                    example: 'My book is on the table.' },
+      { word_en: 'exercise book', word_de: 'Heft',                    example: 'My exercise book is new.' },
+      { word_en: 'pencil',        word_de: 'Bleistift',               example: 'The pencil is in my bag.' },
+      { word_en: 'pen',           word_de: 'Stift / Kuli',            example: 'I write with my pen.' },
+      { word_en: 'ruler',         word_de: 'Lineal',                  example: 'I use a ruler to draw lines.' },
+      { word_en: 'rubber',        word_de: 'Radiergummi',             example: 'I need a rubber.' },
+      { word_en: 'bag',           word_de: 'Schultasche',             example: 'The school bag is heavy.' },
+      { word_en: 'scissors',      word_de: 'Schere',                  example: 'I cut paper with scissors.' },
+      { word_en: 'desk',          word_de: 'Schulbank / Tisch',       example: 'My desk is near the window.' },
+      { word_en: 'board',         word_de: 'Tafel',                   example: 'The teacher writes on the board.' },
+      { word_en: 'chair',         word_de: 'Stuhl',                   example: 'Sit on your chair, please.' },
+    ]
+  },
+
+  feelings: {
+    title_de: 'Gefühle & Vorlieben',
+    title_en: 'Feelings & Likes',
+    icon: '😊',
+    sub: 'Gefühle ausdrücken, mögen & nicht mögen',
+    color: '#cb4335',
+    words: [
+      { word_en: 'happy',      word_de: 'glücklich / fröhlich',  example: 'I am happy today.' },
+      { word_en: 'sad',        word_de: 'traurig',                example: 'She is sad today.' },
+      { word_en: 'angry',      word_de: 'wütend',                 example: 'He is angry about the game.' },
+      { word_en: 'tired',      word_de: 'müde',                   example: 'We are tired after school.' },
+      { word_en: 'hungry',     word_de: 'hungrig',                example: 'I am hungry after sport.' },
+      { word_en: 'thirsty',    word_de: 'durstig',                example: 'She is thirsty after running.' },
+      { word_en: 'scared',     word_de: 'ängstlich',              example: 'I am scared of spiders.' },
+      { word_en: 'excited',    word_de: 'aufgeregt',              example: 'We are excited for the trip.' },
+      { word_en: 'like',       word_de: 'mögen',                  example: 'I like apples and bananas.' },
+      { word_en: 'love',       word_de: 'lieben / sehr mögen',    example: 'I love my family.' },
+      { word_en: "don't like", word_de: 'nicht mögen',            example: "I don't like spiders." },
+    ]
+  },
+
+  freetime: {
+    title_de: 'Freizeit & Können',
+    title_en: 'Free Time & Can',
+    icon: '⚽',
+    sub: 'Hobbys und Fähigkeiten mit can',
+    color: '#117a65',
+    words: [
+      { word_en: 'play',     word_de: 'spielen',              example: 'I play football with my friends.' },
+      { word_en: 'read',     word_de: 'lesen',                example: 'I read a book every evening.' },
+      { word_en: 'swim',     word_de: 'schwimmen',            example: 'I can swim very well.' },
+      { word_en: 'dance',    word_de: 'tanzen',               example: 'She dances to the music.' },
+      { word_en: 'sing',     word_de: 'singen',               example: 'We sing a song together.' },
+      { word_en: 'ride',     word_de: 'fahren (Rad/Pferd)',   example: 'I ride my bike every day.' },
+      { word_en: 'draw',     word_de: 'zeichnen',             example: 'I draw a funny picture.' },
+      { word_en: 'football', word_de: 'Fußball',              example: 'We play football at school.' },
+      { word_en: 'music',    word_de: 'Musik',                example: 'I love music.' },
+      { word_en: 'bike',     word_de: 'Fahrrad',              example: 'My bike is blue.' },
+      { word_en: 'can',      word_de: 'kann (Fähigkeit)',     example: 'I can swim and dance.' },
+      { word_en: "can't",    word_de: 'kann nicht',           example: "I can't skate yet." },
+    ]
+  },
+
+  food: {
+    title_de: 'Essen & Einkaufen',
+    title_en: 'Food & Shopping',
+    icon: '🛒',
+    sub: 'Lebensmittel und beim Einkaufen',
+    color: '#d35400',
+    words: [
+      { word_en: 'apple',  word_de: 'Apfel',              example: 'The apple is red and sweet.' },
+      { word_en: 'banana', word_de: 'Banane',             example: 'I eat a banana every day.' },
+      { word_en: 'bread',  word_de: 'Brot',               example: 'I eat bread for breakfast.' },
+      { word_en: 'milk',   word_de: 'Milch',              example: 'I drink a glass of milk.' },
+      { word_en: 'egg',    word_de: 'Ei',                 example: 'We need two eggs for the cake.' },
+      { word_en: 'water',  word_de: 'Wasser',             example: 'I drink water every day.' },
+      { word_en: 'juice',  word_de: 'Saft',               example: 'Orange juice is sweet.' },
+      { word_en: 'cake',   word_de: 'Kuchen',             example: 'My mum bakes a yummy cake.' },
+      { word_en: 'shop',   word_de: 'Laden / Geschäft',   example: 'We go to the shop.' },
+      { word_en: 'money',  word_de: 'Geld',               example: 'I have some money.' },
+      { word_en: 'eat',    word_de: 'essen',              example: 'I eat an apple every day.' },
+      { word_en: 'drink',  word_de: 'trinken',            example: 'She drinks orange juice.' },
+    ]
+  },
+
+  birthday: {
+    title_de: 'Geburtstag & Feste',
+    title_en: 'Birthday & Festivals',
+    icon: '🎂',
+    sub: 'Geburtstag feiern und Feste',
+    color: '#76448a',
+    words: [
+      { word_en: 'birthday',  word_de: 'Geburtstag',      example: 'Today is my birthday!' },
+      { word_en: 'party',     word_de: 'Party / Feier',   example: 'I have a birthday party on Saturday.' },
+      { word_en: 'cake',      word_de: 'Kuchen / Torte',  example: 'The birthday cake is delicious.' },
+      { word_en: 'present',   word_de: 'Geschenk',        example: 'I got a great present.' },
+      { word_en: 'card',      word_de: 'Karte',           example: 'I write a birthday card.' },
+      { word_en: 'balloon',   word_de: 'Luftballon',      example: 'The balloon is red and round.' },
+      { word_en: 'candle',    word_de: 'Kerze',           example: 'Blow out the candles!' },
+      { word_en: 'Christmas', word_de: 'Weihnachten',     example: 'We get presents at Christmas.' },
+      { word_en: 'Easter',    word_de: 'Ostern',          example: 'We find eggs at Easter.' },
+      { word_en: 'invite',    word_de: 'einladen',        example: 'I invite my friends to my party.' },
+    ]
+  },
+
+  animals: {
+    title_de: 'Tiere',
+    title_en: 'Animals',
+    icon: '🐾',
+    sub: 'Haustiere, Bauernhof & wilde Tiere',
+    color: '#1a5276',
+    words: [
+      { word_en: 'dog',      word_de: 'Hund',                  example: 'The dog is brown and fluffy.' },
+      { word_en: 'cat',      word_de: 'Katze',                 example: 'The cat sleeps on the sofa.' },
+      { word_en: 'bird',     word_de: 'Vogel',                 example: 'The bird sings every morning.' },
+      { word_en: 'fish',     word_de: 'Fisch',                 example: 'The fish swims in the water.' },
+      { word_en: 'horse',    word_de: 'Pferd',                 example: 'The horse runs very fast.' },
+      { word_en: 'cow',      word_de: 'Kuh',                   example: 'The cow gives us milk.' },
+      { word_en: 'pig',      word_de: 'Schwein',               example: 'The pig is pink and round.' },
+      { word_en: 'rabbit',   word_de: 'Kaninchen / Hase',      example: 'The rabbit jumps in the garden.' },
+      { word_en: 'lion',     word_de: 'Löwe',                  example: 'The lion is big and strong.' },
+      { word_en: 'elephant', word_de: 'Elefant',               example: 'The elephant has a long trunk.' },
+      { word_en: 'big',      word_de: 'groß',                  example: 'The elephant is very big.' },
+      { word_en: 'small',    word_de: 'klein',                 example: 'The rabbit is small and cute.' },
+      { word_en: 'fast',     word_de: 'schnell',               example: 'The horse is very fast.' },
+      { word_en: 'slow',     word_de: 'langsam',               example: 'The snail is very slow.' },
+    ]
+  },
+
+  songs: {
+    title_de: 'Songs & Reime',
+    title_en: 'Songs & Rhymes',
+    icon: '🎵',
+    sub: 'Lieder, Reime und Lernwörter',
+    color: '#b03a8c',
+    words: [
+      { word_en: 'song',   word_de: 'Lied',                    example: 'We sing a song in class.' },
+      { word_en: 'rhyme',  word_de: 'Reim',                    example: 'Cat and hat – that is a rhyme.' },
+      { word_en: 'story',  word_de: 'Geschichte',              example: 'Tell me a story, please.' },
+      { word_en: 'listen', word_de: 'zuhören',                 example: 'Listen carefully!' },
+      { word_en: 'look',   word_de: 'schauen / gucken',        example: 'Look at the picture.' },
+      { word_en: 'write',  word_de: 'schreiben',               example: 'Write your name here.' },
+      { word_en: 'read',   word_de: 'lesen',                   example: 'Read the sentence out loud.' },
+      { word_en: 'first',  word_de: 'zuerst / erste(r/s)',     example: 'First, listen to the song.' },
+      { word_en: 'then',   word_de: 'dann / danach',           example: 'Then, write the words.' },
+      { word_en: 'next',   word_de: 'als nächstes',            example: 'Next, read out loud.' },
+    ]
+  }
+};

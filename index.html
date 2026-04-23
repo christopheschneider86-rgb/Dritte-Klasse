@@ -7,10 +7,13 @@
 <link rel="icon" type="image/png" href="images/main.png">
 <link rel="apple-touch-icon" href="images/main.png">
 <style>
-:root{--bg:#f0f8ff;--card:#fff;--text:#2c3e50;--math:#3498db;--german:#e67e22;--hsu:#27ae60;--eng:#9b59b6;--musik:#e91e8c;--accent:#3498db;}
+:root{--bg:#f0f8ff;--card:#fff;--text:#2c3e50;--math:#3498db;--german:#e67e22;--hsu:#27ae60;--eng:#9b59b6;--musik:#e91e8c;--rel:#e67e22;--accent:#3498db;}
 .badge-musik{position:absolute;top:0;left:0;width:100%;height:8px;background:var(--musik);}
 .stat-card-musik{background:#fce4f4;border:2px solid #f0a8d8;}
 .stat-card-musik .stat-count{color:#b01570;}
+.badge-rel{position:absolute;top:0;left:0;width:100%;height:8px;background:var(--rel);}
+.stat-card-rel{background:#fef4ec;border:2px solid #f5c79a;}
+.stat-card-rel .stat-count{color:#c0652d;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px;text-align:center;}
 
@@ -127,12 +130,28 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
       <div class="news-header-icon">🎉</div>
       <div>
         <h2>Was ist neu?</h2>
-        <p>Update vom 16. April 2026</p>
+        <p>Update vom 23. April 2026</p>
       </div>
     </div>
 
     <div class="news-item">
       <div class="news-item-badge neu">NEU</div>
+      <div>
+        <div class="news-item-title">✝️ Religion-Modul</div>
+        <div class="news-item-desc">Jakob &amp; Esau – Fragen-Trainer, Bibelgeschichten-Lexikon mit Personenkarten &amp; Kapiteln, plus das Himmelsleiter-Spiel!</div>
+      </div>
+    </div>
+
+    <div class="news-item">
+      <div class="news-item-badge">UPDATE</div>
+      <div>
+        <div class="news-item-title">🇬🇧 Englisch-Modul</div>
+        <div class="news-item-desc">10 Themen mit über 120 Vokabeln – Wortkarten, Multiple Choice, Rechtschreibung und Hör-Übungen.</div>
+      </div>
+    </div>
+
+    <div class="news-item">
+      <div class="news-item-badge">UPDATE</div>
       <div>
         <div class="news-item-title">🎵 Musik-Modul</div>
         <div class="news-item-desc">Instrumente, Peter und der Wolf, Klavier-Merkspiel und das neue Orchester-Lexikon mit Eselsbrücken.</div>
@@ -223,18 +242,31 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
     </div>
   </a>
 
-  <div class="subject-card disabled">
+  <a href="englisch/englisch_trainer.html" class="subject-card">
     <div class="badge-eng"></div>
     <div class="card-icon" style="color:var(--eng);">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
     </div>
     <div class="card-title">Englisch</div>
-    <div class="card-desc">Vokabeln, einfache Sätze und Aussprache.</div>
-    <div class="status soon">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-      Kommt bald
+    <div class="card-desc">Vokabeln entdecken, üben und Quiz spielen.</div>
+    <div class="status active">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      Jetzt starten
     </div>
-  </div>
+  </a>
+
+  <a href="religion/religion_trainer.html" class="subject-card">
+    <div class="badge-rel"></div>
+    <div class="card-icon" style="color:var(--rel);">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+    </div>
+    <div class="card-title">Religion</div>
+    <div class="card-desc">Jakob &amp; Esau – Segen, Himmelsleiter &amp; Nomadenleben.</div>
+    <div class="status active">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      Jetzt starten
+    </div>
+  </a>
 
   <a href="musik/musik_trainer.html" class="subject-card">
     <div class="badge-musik"></div>
@@ -304,6 +336,8 @@ function loadProfiles(){
           if(!parsed[id].history) parsed[id].history=[];
           if(!parsed[id].hsu_history) parsed[id].hsu_history=[];
           if(!parsed[id].musik_history) parsed[id].musik_history=[];
+          if(!parsed[id].eng_history) parsed[id].eng_history=[];
+          if(!parsed[id].rel_history) parsed[id].rel_history=[];
           if(parsed[id].score===undefined) parsed[id].score=0;
           if(parsed[id].coins===undefined) parsed[id].coins=0;
         }
@@ -312,7 +346,7 @@ function loadProfiles(){
     }
   }catch(e){}
   if(!Object.keys(profiles).length){
-    profiles={'p1':{name:'Kind 1',score:0,coins:0,history:[],hsu_history:[],musik_history:[]}};
+    profiles={'p1':{name:'Kind 1',score:0,coins:0,history:[],hsu_history:[],musik_history:[],eng_history:[],rel_history:[]}};
     localStorage.setItem(STORAGE_KEY,JSON.stringify(profiles));
   }
   const saved=localStorage.getItem(ACTIVE_KEY);
@@ -383,12 +417,18 @@ function updateParentStats(){
     const matheAll   = filterHist(p.history);
     const hsuAll     = filterHist(p.hsu_history);
     const musikAll   = filterHist(p.musik_history);
+    const engAll     = filterHist(p.eng_history);
+    const relAll     = filterHist(p.rel_history);
     const matheOk    = matheAll.filter(h => h.ok).length;
     const hsuOk      = hsuAll.filter(h => h.ok).length;
     const musikOk    = musikAll.filter(h => h.ok).length;
+    const engOk      = engAll.filter(h => h.ok).length;
+    const relOk      = relAll.filter(h => h.ok).length;
     const matheCount = matheAll.length;
     const hsuCount   = hsuAll.length;
     const musikCount = musikAll.length;
+    const engCount   = engAll.length;
+    const relCount   = relAll.length;
 
     function pct(ok, tot) {
       if (!tot) return '';
@@ -421,18 +461,27 @@ function updateParentStats(){
           ${pct(musikOk, musikCount)}
         </div>
       </div>
+      <div class="stat-card stat-card-eng">
+        <div class="stat-icon">🇬🇧</div>
+        <div>
+          <div class="stat-count">${engCount}</div>
+          <div class="stat-label">Englisch-Aufgaben</div>
+          ${pct(engOk, engCount)}
+        </div>
+      </div>
+      <div class="stat-card stat-card-rel">
+        <div class="stat-icon">✝️</div>
+        <div>
+          <div class="stat-count">${relCount}</div>
+          <div class="stat-label">Religion-Aufgaben</div>
+          ${pct(relOk, relCount)}
+        </div>
+      </div>
       <div class="stat-card stat-card-german">
         <div class="stat-icon">📚</div>
         <div>
           <div class="stat-count">–</div>
           <div class="stat-label">Deutsch<br><span class="stat-soon">kommt bald</span></div>
-        </div>
-      </div>
-      <div class="stat-card stat-card-eng">
-        <div class="stat-icon">🇬🇧</div>
-        <div>
-          <div class="stat-count">–</div>
-          <div class="stat-label">Englisch<br><span class="stat-soon">kommt bald</span></div>
         </div>
       </div>`;
   }catch(e){}
@@ -450,7 +499,7 @@ function addProfile(){
   const name=prompt('Name des Kindes:');
   if(!name||!name.trim()) return;
   const id='p_'+Date.now();
-  profiles[id]={name:name.trim(),score:0,coins:0,history:[],hsu_history:[],musik_history:[]};
+  profiles[id]={name:name.trim(),score:0,coins:0,history:[],hsu_history:[],musik_history:[],eng_history:[],rel_history:[]};
   saveProfiles();
   activeProfId=id;
   localStorage.setItem(ACTIVE_KEY,id);
@@ -501,7 +550,7 @@ function render(){
 
 // ── NEWS-MODAL ──────────────────────────────────────────
 // NEWS_VERSION hochzählen wenn neue Neuigkeiten rein kommen
-const NEWS_VERSION = 'news_v3';
+const NEWS_VERSION = 'news_v5';
 function showNewsIfNew() {
   if (!localStorage.getItem(NEWS_VERSION)) {
     document.getElementById('newsOverlay').style.display = 'flex';
