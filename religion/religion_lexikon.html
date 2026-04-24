@@ -5,24 +5,13 @@
 <title>Bibelgeschichten – Religion</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <style>
-:root {
-  --bg: #fffbf5;
-  --card: #ffffff;
-  --accent: #e67e22;
-  --accent-soft: #fef4ec;
-  --accent-dark: #c0652d;
-  --gold: #f39c12;
-  --text: #2c3e50;
-  --muted: #7f8c8d;
-  --radius: 16px;
-}
+:root{--bg:#fffbf5;--card:#ffffff;--accent:#e67e22;--accent-soft:#fef4ec;--accent-dark:#c0652d;--gold:#f39c12;--text:#2c3e50;--muted:#7f8c8d;--radius:16px}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-
+body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 .topbar{background:linear-gradient(135deg,#2c1810,#4a2000,#e67e22);color:white;padding:14px 16px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.2)}
-.back-btn{background:rgba(255,255,255,0.15);border:none;border-radius:10px;padding:8px 10px;cursor:pointer;color:white;display:flex;align-items:center;text-decoration:none;transition:background .2s;flex-shrink:0;font-size:0}
+.back-btn{background:rgba(255,255,255,0.15);border:none;border-radius:10px;padding:8px 12px;cursor:pointer;color:white;display:flex;align-items:center;gap:5px;transition:background .2s;flex-shrink:0;font-size:13px;font-weight:bold}
 .back-btn:hover{background:rgba(255,255,255,0.25)}
-.back-btn svg{width:20px;height:20px}
+.back-btn svg{width:18px;height:18px;flex-shrink:0}
 .topbar-title{font-size:18px;font-weight:bold}
 .topbar-sub{font-size:12px;color:rgba(255,255,255,0.75);margin-top:2px}
 .content{max-width:900px;margin:0 auto;padding:16px}
@@ -31,7 +20,6 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 .list-heading{font-size:22px;font-weight:bold;color:var(--accent-dark);margin-bottom:6px}
 .list-sub{font-size:14px;color:var(--muted);margin-bottom:20px}
 .story-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-
 .story-card{background:white;border-radius:var(--radius);box-shadow:0 4px 16px rgba(0,0,0,0.08);cursor:pointer;overflow:hidden;border:2px solid transparent;transition:border-color .2s,transform .2s,box-shadow .2s;display:block;-webkit-user-select:none;user-select:none}
 .story-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.12)}
 .story-card:active{transform:scale(0.98)}
@@ -50,7 +38,6 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 .nav-tabs::-webkit-scrollbar{display:none}
 .nav-tab{flex-shrink:0;padding:10px 16px;border-radius:20px;border:2px solid #f5d5b0;background:white;color:var(--text);font-size:14px;font-weight:bold;cursor:pointer;transition:all .2s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
 .nav-tab.active,.nav-tab:hover{background:var(--accent);color:white;border-color:var(--accent)}
-
 .section{display:none}
 .section.active{display:block}
 .section-title{font-size:22px;font-weight:bold;color:var(--accent-dark);margin-bottom:6px;display:flex;align-items:center;gap:10px}
@@ -98,6 +85,31 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 .glossar-word{font-size:17px;font-weight:bold;color:var(--accent-dark);margin-bottom:4px}
 .glossar-def{font-size:14px;color:var(--text);line-height:1.6}
 .glossar-example{font-size:13px;color:var(--muted);margin-top:6px;font-style:italic}
+
+/* STAMMBAUM */
+.tree-wrap{display:flex;flex-direction:column;align-items:center;gap:0;padding:8px 0 24px}
+.tree-gen{display:flex;flex-direction:column;align-items:center;width:100%}
+.tree-gen-label{font-size:11px;font-weight:bold;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;background:#f5f5f5;border-radius:20px;padding:3px 12px;margin-bottom:10px}
+.tree-row{display:flex;justify-content:center;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.tree-person{display:flex;flex-direction:column;align-items:center;cursor:pointer;gap:4px}
+.tree-bubble{width:70px;height:70px;border-radius:50%;background:white;border:3px solid #f5d5b0;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 3px 10px rgba(0,0,0,0.1);transition:all .2s}
+.tree-person:hover .tree-bubble{border-color:var(--accent);background:var(--accent-soft);transform:scale(1.06)}
+.tree-person .tree-name{font-size:12px;font-weight:bold;color:var(--text);text-align:center}
+.tree-person .tree-sub{font-size:10px;color:var(--muted);text-align:center}
+.tree-ring{font-size:18px;align-self:center;padding-top:20px;color:var(--accent)}
+.tree-vline{width:2px;height:32px;background:linear-gradient(to bottom,#f5d5b0,#e67e22);margin:0 auto}
+.tree-hbranch{display:flex;align-items:flex-start;justify-content:center;width:100%;position:relative;gap:0}
+.tree-hbranch::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:45%;height:2px;background:#e67e22}
+.tree-branch-line{width:2px;height:28px;background:#e67e22;margin:0 auto}
+.tree-child-wrap{display:flex;flex-direction:column;align-items:center;flex:1;max-width:120px}
+.tree-divider{width:100%;height:1px;background:#f5d5b0;margin:16px 0}
+.tree-info-box{background:var(--accent-soft);border:2px solid #f5c79a;border-radius:14px;padding:14px 16px;margin-top:12px;font-size:14px;color:var(--accent-dark);line-height:1.6;display:none}
+.tree-info-box.show{display:block}
+.tree-info-name{font-size:17px;font-weight:bold;margin-bottom:4px}
+.tree-info-role{font-size:12px;color:var(--muted);margin-bottom:8px}
+.tree-info-fact{display:flex;gap:6px;padding:4px 0;border-bottom:1px solid #f5c79a;font-size:13px;color:var(--text)}
+.tree-info-fact:last-of-type{border:none}
+.tree-info-close{float:right;background:none;border:none;font-size:18px;cursor:pointer;color:var(--accent-dark);line-height:1}
 </style>
 </head>
 <body>
@@ -119,7 +131,7 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
     <div class="list-heading">📖 Bibelgeschichten</div>
     <div class="list-sub">Wähle eine Geschichte – lerne die Personen kennen und schau ins Wörterbuch.</div>
     <div class="story-grid">
-      <div class="story-card" data-story="jakobesau">
+      <button class="story-card" id="card-jakobesau" style="border:none;text-align:left;width:100%;padding:0;font:inherit">
         <div class="story-card-header" style="background:linear-gradient(135deg,#fef4ec,#fff9f4)">
           <span class="story-card-emoji">🍲</span>
           <div class="story-card-title">Jakob &amp; Esau</div>
@@ -129,7 +141,7 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
           <span class="story-card-tag">3. Klasse</span>
           <span class="story-card-arrow">→</span>
         </div>
-      </div>
+      </button>
       <div class="story-card soon">
         <div class="story-card-header" style="background:linear-gradient(135deg,#eaf4ff,#f0f8ff)">
           <span class="story-card-emoji">🌈</span>
@@ -152,20 +164,120 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
   <!-- STORY CONTENT -->
   <div id="view-story" style="display:none">
     <div class="nav-tabs" id="navTabs">
-      <div class="nav-tab active" data-section="personen">👥 Personen</div>
-      <div class="nav-tab" data-section="geschichte">📜 Geschichte</div>
-      <div class="nav-tab" data-section="glossar">📚 Wörterbuch</div>
+      <button class="nav-tab active" data-section="personen">👥 Personen</button>
+      <button class="nav-tab" data-section="geschichte">📜 Geschichte</button>
+      <button class="nav-tab" data-section="stammbaum">🌳 Stammbaum</button>
+      <button class="nav-tab" data-section="glossar">📚 Wörterbuch</button>
     </div>
+
     <div class="section active" id="sec-personen">
       <div class="section-title">👥 Die Personen</div>
       <div class="section-intro">Lerne alle wichtigen Figuren aus der Geschichte kennen.</div>
       <div class="person-grid" id="personGrid"></div>
     </div>
+
     <div class="section" id="sec-geschichte">
       <div class="section-title">📜 Die Geschichte in Kapiteln</div>
       <div class="section-intro">Klicke auf ein Kapitel, um es aufzuklappen.</div>
       <div id="chapterList"></div>
     </div>
+
+    <div class="section" id="sec-stammbaum">
+      <div class="section-title">🌳 Familienstammbaum</div>
+      <div class="section-intro">Tippe auf eine Person, um mehr über sie zu erfahren.</div>
+
+      <div class="tree-wrap">
+        <!-- GENERATION 1 -->
+        <div class="tree-gen">
+          <div class="tree-gen-label">Eltern</div>
+          <div class="tree-row">
+            <div class="tree-person" onclick="showTreePerson('isaak')">
+              <div class="tree-bubble">👴</div>
+              <div class="tree-name">Isaak</div>
+              <div class="tree-sub">Vater</div>
+            </div>
+            <div class="tree-ring">💍</div>
+            <div class="tree-person" onclick="showTreePerson('rebekka')">
+              <div class="tree-bubble">👩</div>
+              <div class="tree-name">Rebekka</div>
+              <div class="tree-sub">Mutter</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Connector -->
+        <div class="tree-vline"></div>
+        <div style="width:120px;height:2px;background:#e67e22;margin:0 auto"></div>
+        <div style="display:flex;width:120px;justify-content:space-between">
+          <div class="tree-vline"></div>
+          <div class="tree-vline"></div>
+        </div>
+
+        <!-- GENERATION 2 -->
+        <div class="tree-gen" style="margin-top:0">
+          <div class="tree-gen-label">Söhne</div>
+          <div class="tree-row">
+            <div class="tree-child-wrap">
+              <div class="tree-person" onclick="showTreePerson('esau')">
+                <div class="tree-bubble">🧔</div>
+                <div class="tree-name">Esau</div>
+                <div class="tree-sub">1. geboren</div>
+              </div>
+            </div>
+            <div style="width:30px"></div>
+            <div class="tree-child-wrap">
+              <div class="tree-person" onclick="showTreePerson('jakob')">
+                <div class="tree-bubble">🧑</div>
+                <div class="tree-name">Jakob</div>
+                <div class="tree-sub">2. geboren</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tree-divider"></div>
+
+        <!-- JAKOBS FRAUEN -->
+        <div class="tree-gen">
+          <div class="tree-gen-label">Jakobs Frauen – Töchter von Laban</div>
+          <div class="tree-row" style="gap:6px;align-items:flex-start">
+            <div class="tree-person" onclick="showTreePerson('laban')">
+              <div class="tree-bubble">🧓</div>
+              <div class="tree-name">Laban</div>
+              <div class="tree-sub">Onkel</div>
+            </div>
+            <div class="tree-ring" style="padding-top:20px;font-size:14px;color:var(--muted)">→</div>
+            <div class="tree-person" onclick="showTreePerson('lea')">
+              <div class="tree-bubble">👩‍🦱</div>
+              <div class="tree-name">Lea</div>
+              <div class="tree-sub">1. Frau Jakobs</div>
+            </div>
+            <div class="tree-ring">💍</div>
+            <div class="tree-person" onclick="showTreePerson('jakob')">
+              <div class="tree-bubble">🧑</div>
+              <div class="tree-name">Jakob</div>
+              <div class="tree-sub"></div>
+            </div>
+            <div class="tree-ring">💍</div>
+            <div class="tree-person" onclick="showTreePerson('rahel')">
+              <div class="tree-bubble">👰</div>
+              <div class="tree-name">Rahel</div>
+              <div class="tree-sub">2. Frau Jakobs</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Person detail box -->
+      <div class="tree-info-box" id="treeInfoBox">
+        <button class="tree-info-close" onclick="closeTreePerson()">✕</button>
+        <div class="tree-info-name" id="treeInfoName"></div>
+        <div class="tree-info-role" id="treeInfoRole"></div>
+        <div id="treeInfoFacts"></div>
+        <div class="person-highlight" id="treeInfoHighlight" style="margin-top:10px"></div>
+      </div>
+    </div>
+
     <div class="section" id="sec-glossar">
       <div class="section-title">📚 Wichtige Wörter</div>
       <div class="section-intro">Diese Begriffe solltest du kennen.</div>
@@ -178,9 +290,8 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 <script>
 const STORY_DATA = {
   jakobesau: {
-    title: "Jakob & Esau",
-    sub: "Brüder, Segen & Himmelsleiter",
-    personen: [
+    title:"Jakob & Esau", sub:"Brüder, Segen & Himmelsleiter",
+    personen:[
       { emoji:"👴", name:"Isaak", role:"Der Vater der Zwillinge", bg:"linear-gradient(135deg,#fef4ec,#fff9f4)",
         facts:[["👶","Vater von Esau und Jakob"],["🏹","Lieblingsessen: Wild vom Jagen"],["❤️","Lieblingskind: Esau"],["👁️","Wurde im Alter blind"]],
         highlight:"⚠️ Er konnte Jakobs Trick nicht durchschauen – weil er blind war!" },
@@ -197,39 +308,34 @@ const STORY_DATA = {
         facts:[["👨‍👩‍👧‍👦","Rebekkas Bruder → Jakobs Onkel"],["🐑","Hatte viele Schafe und Töchter"],["😏","War selbst sehr listig und trickste Jakob aus"]],
         highlight:"⚠️ Laban gab Jakob zuerst Lea statt Rahel – deshalb musste Jakob 14 Jahre arbeiten!" },
       { emoji:"👩‍🦱", name:"Lea", role:"Jakobs erste Frau", bg:"linear-gradient(135deg,#fef0ff,#f9ecff)",
-        facts:[["👨","Ältere Tochter von Laban"],["😢","Wurde von Laban heimlich zur Braut getauscht"],["💍","Jakob wollte eigentlich Rahel heiraten"],["🙏","Auch wenn sie weniger geliebt wurde, war sie wichtig in der Geschichte"]],
+        facts:[["👨","Ältere Tochter von Laban"],["😢","Wurde von Laban heimlich zur Braut getauscht"],["💍","Jakob wollte eigentlich Rahel heiraten"],["🙏","Auch wenn sie weniger geliebt wurde, war sie wichtig"]],
         highlight:"😔 Lea war die Frau, die Jakob nicht wollte – aber Gott sah sie und tröstete sie." },
-      { emoji:"👩‍🦰", name:"Rahel", role:"Jakobs große Liebe", bg:"linear-gradient(135deg,#eaf4ff,#f0f8ff)",
+      { emoji:"👰", name:"Rahel", role:"Jakobs große Liebe", bg:"linear-gradient(135deg,#eaf4ff,#f0f8ff)",
         facts:[["👨","Jüngere Tochter von Laban"],["💕","Jakob liebte sie – arbeitete 7 Jahre für sie"],["😭","Dann musste er noch 7 Jahre mehr arbeiten!"]],
         highlight:"💑 7 Jahre + 7 Jahre = 14 Jahre hat Jakob für Rahel gearbeitet!" }
     ],
-    kapitel: [
+    kapitel:[
       { num:"1", title:"🥚 Die Zwillinge werden geboren",
-        scenes:[{ emoji:"👶👶", caption:"Die Zwillinge",
-          text:"<b>Isaak und Rebekka</b> bekamen Zwillinge – und die waren sehr unterschiedlich!<br><br><b>Esau</b> kam als Erster zur Welt. Er war <b>stark behaart</b>, hatte <b>rote Haare</b> und <b>Sommersprossen</b>. Er wurde ein <b>Jäger</b> und war <b>Isaaks Liebling</b>.<br><br><b>Jakob</b> hielt seinen Bruder an der Ferse – deshalb heißt er „der <b>Fersenhalter</b>". Er hatte <b>zarte Haut</b>, hütete <b>Schafe</b> und war <b>Rebekkas Liebling</b>." }],
+        scenes:[{ emoji:"👶👶", caption:"Die Zwillinge", text:"<b>Isaak und Rebekka</b> bekamen Zwillinge – und die waren sehr unterschiedlich!<br><br><b>Esau</b> kam als Erster zur Welt. Er war <b>stark behaart</b>, hatte <b>rote Haare</b> und <b>Sommersprossen</b>. Er wurde ein <b>Jäger</b> und war <b>Isaaks Liebling</b>.<br><br><b>Jakob</b> hielt seinen Bruder an der Ferse – deshalb heißt er „der <b>Fersenhalter</b>". Er hatte <b>zarte Haut</b>, hütete <b>Schafe</b> und war <b>Rebekkas Liebling</b>." }],
         merke:"Esau = Älterer, Jäger, Papa-Kind | Jakob = Jüngerer, Schäfer, Mama-Kind" },
       { num:"2", title:"🍲 Das Linsengericht – ein teurer Tausch",
-        scenes:[{ emoji:"🍲", caption:"Der rote Linsentopf",
-          text:"Eines Tages kam <b>Esau erschöpft von der Jagd</b>. Er roch Jakobs rote Linsensuppe und war so hungrig: „Gib mir davon zu essen!"<br><br>Jakob sagte: „Gerne – aber dafür gibst du mir dein <b>Erstgeburtsrecht</b>!"<br><br>Esau stimmte zu. <b>Für eine Schüssel Linsensuppe</b> gab er sein Erstgeburtsrecht weg!" }],
+        scenes:[{ emoji:"🍲", caption:"Der rote Linsentopf", text:"Eines Tages kam <b>Esau erschöpft von der Jagd</b>. Er roch Jakobs rote Linsensuppe und war so hungrig: „Gib mir davon zu essen!"<br><br>Jakob sagte: „Gerne – aber dafür gibst du mir dein <b>Erstgeburtsrecht</b>!"<br><br>Esau stimmte zu. <b>Für eine Schüssel Linsensuppe</b> gab er sein Erstgeburtsrecht weg!" }],
         quote:{ text:"„Was nützt mir das Erstgeburtsrecht, wenn ich sterbe?"", who:"– Esau" },
         merke:"Das Erstgeburtsrecht bedeutete: Der Älteste bekommt den Segen des Vaters und wird Chef der Familie." },
       { num:"3", title:"🎭 Der gestohlene Segen",
-        scenes:[{ emoji:"🐑", caption:"Felle als Verkleidung",
-          text:"<b>Isaak war alt und blind geworden</b>. Er wollte Esau seinen letzten Segen geben.<br><br><b>Rebekka</b> hatte sofort einen Plan: Esaus Kleider anziehen und <b>Ziegenfelle</b> um Hände und Hals wickeln.<br><br>Isaak tastete die Hände – rau wie Esau! – und <b>gab Jakob den Segen</b>." }],
+        scenes:[{ emoji:"🐑", caption:"Felle als Verkleidung", text:"<b>Isaak war alt und blind geworden</b>. Er wollte Esau seinen letzten Segen geben.<br><br><b>Rebekka</b> hatte sofort einen Plan: Esaus Kleider anziehen und <b>Ziegenfelle</b> um Hände und Hals wickeln.<br><br>Isaak tastete die Hände – rau wie Esau! – und <b>gab Jakob den Segen</b>." }],
         quote:{ text:"Als Esau zurückkam und den Betrug entdeckte, konnte Isaak den Segen nicht zurücknehmen.", who:"Ein Segen vor Gott ist für immer bindend." },
         merke:"Esau war so wütend, dass Jakob fliehen musste – zu seinem Onkel Laban!" },
       { num:"4", title:"✨ Die Himmelsleiter – Gottes Versprechen",
-        scenes:[{ emoji:"🪜✨", caption:"Himmelsleiter im Traum",
-          text:"Auf der Flucht war Jakob ganz allein. Er legte sich hin, nahm einen <b>Stein als Kissen</b> und schlief ein.<br><br>Im <b>Traum</b> sah er eine Leiter vom Boden bis in den Himmel. <b>Engel</b> stiegen auf und ab. Gott sprach zu ihm:" }],
+        scenes:[{ emoji:"🪜✨", caption:"Himmelsleiter im Traum", text:"Auf der Flucht war Jakob ganz allein. Er legte sich hin, nahm einen <b>Stein als Kissen</b> und schlief ein.<br><br>Im <b>Traum</b> sah er eine Leiter vom Boden bis in den Himmel. <b>Engel</b> stiegen auf und ab. Gott sprach zu ihm:" }],
         quote:{ text:"„Ich bin bei dir! Ich behüte dich, wohin du auch gehst. Ich werde dich zurückbringen."", who:"– Gott zu Jakob im Traum" },
         merke:"Gottes Botschaft: „Auch wenn du Fehler gemacht hast – ich verlasse dich nicht. Ich bin bei dir!"" },
       { num:"5", title:"🐑 Bei Laban – und das Nomadenleben",
-        scenes:[{ emoji:"⛺🐑", caption:"Das Nomadenleben",
-          text:"Jakob kam zu Onkel <b>Laban</b> und verliebte sich in <b>Rahel</b>. Er arbeitete <b>7 Jahre</b>.<br><br>Aber Laban schickte in der Hochzeitsnacht heimlich seine ältere Tochter <b>Lea</b> statt Rahel! Jakob musste nochmal <b>7 Jahre</b> arbeiten. Insgesamt: <b>14 Jahre</b>!<br><br>Nach 20 Jahren brach Jakob auf. Laban holte ihn ein – sie <b>schlossen Frieden</b> mit einem Steinhaufen als Zeichen." }],
+        scenes:[{ emoji:"⛺🐑", caption:"Das Nomadenleben", text:"Jakob kam zu Onkel <b>Laban</b> und verliebte sich in <b>Rahel</b>. Er arbeitete <b>7 Jahre</b>.<br><br>Aber Laban schickte in der Hochzeitsnacht heimlich seine ältere Tochter <b>Lea</b> statt Rahel! Jakob musste nochmal <b>7 Jahre</b> arbeiten. Insgesamt: <b>14 Jahre</b>!<br><br>Nach 20 Jahren brach Jakob auf. Laban holte ihn ein – sie <b>schlossen Frieden</b> mit einem Steinhaufen als Zeichen." }],
         quote:{ text:"Jakob, Esau und ihre Familien lebten als Nomaden – in Zelten, immer in der Nähe von Wasser.", who:"" },
         merke:"Nomaden lebten in Zelten. Ihre große Familie nannte man Sippe. Alle halfen einander!" }
     ],
-    glossar: [
+    glossar:[
       { emoji:"👑", word:"Erstgeburtsrecht", def:"Das besondere Recht des ältesten Kindes. Der Erstgeborene bekommt den Segen des Vaters und wird Chef der ganzen Familie.", example:"Esau hatte das Erstgeburtsrecht – verkaufte es aber für Linsensuppe!" },
       { emoji:"🙏", word:"Segen", def:"Ein besonderes Gebet und gute Wünsche, die ein Vater seinem Kind gibt. Ein Segen kann nicht zurückgenommen werden.", example:"Isaak segnete Jakob – obwohl er dachte, er segne Esau." },
       { emoji:"🪜", word:"Himmelsleiter", def:"Eine Leiter im Traum von Jakob, die vom Boden bis in den Himmel reichte. Auf ihr stiegen Engel auf und ab – Gottes Zeichen.", example:"An der Himmelsleiter sprach Gott zu Jakob: „Ich bin bei dir!"" },
@@ -240,7 +346,17 @@ const STORY_DATA = {
   }
 };
 
-// ── NAVIGATION ─────────────────────────────────────────
+// Compact person data for tree popup
+const TREE_PERSONS = {
+  isaak:   { emoji:"👴", name:"Isaak",   role:"Vater der Zwillinge", facts:[["👶","Vater von Esau und Jakob"],["🏹","Lieblingsessen: Wild"],["❤️","Lieblingskind: Esau"],["👁️","Wurde im Alter blind"]], highlight:"⚠️ Wurde von Jakob ausgetrickst, weil er blind war!" },
+  rebekka: { emoji:"👩", name:"Rebekka", role:"Mutter der Zwillinge", facts:[["❤️","Lieblingskind: Jakob"],["🧠","Hatte den Plan mit den Ziegenfellen"]], highlight:"💡 Wollte unbedingt, dass Jakob den Segen bekommt!" },
+  esau:    { emoji:"🧔", name:"Esau",    role:"Erstgeborener Zwilling", facts:[["1️⃣","Als Erster geboren – der Ältere"],["🦱","Stark behaart, Sommersprossen"],["🏹","Jäger – liebte das wilde Leben"],["🍲","Verkaufte das Erstgeburtsrecht für Suppe"]], highlight:"😡 War so wütend, dass Jakob fliehen musste!" },
+  jakob:   { emoji:"🧑", name:"Jakob",   role:"Zweitgeborener – der Fersenhalter", facts:[["2️⃣","Als Zweiter geboren, hielt Esaus Ferse"],["🐑","Schäfer, zarte Haut – Mama-Kind"],["🎭","Verkleidete sich als Esau"],["✨","Träumte von der Himmelsleiter"]], highlight:"🌟 Gott sagte: „Ich bin bei dir!" – auch nach den Fehlern." },
+  laban:   { emoji:"🧓", name:"Laban",   role:"Onkel von Jakob", facts:[["👨‍👩‍👧‍👦","Rebekkas Bruder – Jakobs Onkel"],["😏","Sehr listig – trickste Jakob aus"],["💍","Schickte Lea statt Rahel zur Hochzeit"]], highlight:"⚠️ Jakob musste 14 Jahre für Laban arbeiten!" },
+  lea:     { emoji:"👩‍🦱", name:"Lea",     role:"Jakobs erste Frau (ältere Tochter Labans)", facts:[["👧","Ältere Tochter von Laban"],["😢","Wurde heimlich statt Rahel zur Braut"],["💍","Jakob wollte eigentlich Rahel heiraten"]], highlight:"😔 Auch wenn sie weniger geliebt wurde – Gott sah sie." },
+  rahel:   { emoji:"👰", name:"Rahel",   role:"Jakobs große Liebe (jüngere Tochter Labans)", facts:[["👧","Jüngere Tochter von Laban"],["💕","Jakob arbeitete 7 Jahre für sie"],["💑","Dann nochmal 7 Jahre – 14 Jahre insgesamt!"]], highlight:"💑 14 Jahre Arbeit aus Liebe – das ist rekordverdächtig!" }
+};
+
 let currentStory = null;
 
 function openStory(key) {
@@ -255,14 +371,7 @@ function openStory(key) {
   document.getElementById('view-list').style.display = 'none';
   document.getElementById('view-story').style.display = 'block';
   showSection('personen');
-}
-
-function closeStory() {
-  currentStory = null;
-  document.getElementById('topbarTitle').textContent = '📖 Bibelgeschichten';
-  document.getElementById('topbarSub').textContent = 'Wähle eine Geschichte zum Nachschlagen';
-  document.getElementById('view-story').style.display = 'none';
-  document.getElementById('view-list').style.display = 'block';
+  window.scrollTo(0, 0);
 }
 
 function showSection(id) {
@@ -271,9 +380,27 @@ function showSection(id) {
   document.getElementById('sec-' + id).classList.add('active');
   const tab = document.querySelector(`.nav-tab[data-section="${id}"]`);
   if (tab) tab.classList.add('active');
+  closeTreePerson();
 }
 
-// ── RENDER ─────────────────────────────────────────────
+function showTreePerson(id) {
+  const p = TREE_PERSONS[id];
+  if (!p) return;
+  const box = document.getElementById('treeInfoBox');
+  document.getElementById('treeInfoName').textContent = p.emoji + ' ' + p.name;
+  document.getElementById('treeInfoRole').textContent = p.role;
+  document.getElementById('treeInfoFacts').innerHTML = p.facts.map(f =>
+    `<div class="tree-info-fact"><span>${f[0]}</span><span>${f[1]}</span></div>`
+  ).join('');
+  document.getElementById('treeInfoHighlight').textContent = p.highlight;
+  box.classList.add('show');
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeTreePerson() {
+  document.getElementById('treeInfoBox').classList.remove('show');
+}
+
 function renderPersonen(list) {
   document.getElementById('personGrid').innerHTML = list.map(p => `
     <div class="person-card">
@@ -303,12 +430,11 @@ function renderKapitel(list) {
             <div class="scene-emoji-wrap"><span class="scene-emoji">${s.emoji}</span><div class="scene-caption">${s.caption}</div></div>
             <div class="scene-text">${s.text}</div>
           </div>`).join('')}
-        ${k.quote ? `<div class="quote-box">${k.quote.text}${k.quote.who ? `<div class="quote-who">${k.quote.who}</div>` : ''}</div>` : ''}
-        ${k.merke ? `<div class="merke-box">${k.merke}</div>` : ''}
+        ${k.quote?`<div class="quote-box">${k.quote.text}${k.quote.who?`<div class="quote-who">${k.quote.who}</div>`:''}</div>`:''}
+        ${k.merke?`<div class="merke-box">${k.merke}</div>`:''}
       </div>
     </div>`).join('');
 
-  // Bind chapter toggle events after render
   document.querySelectorAll('.chapter-header').forEach(h => {
     h.addEventListener('click', () => {
       const body = h.nextElementSibling;
@@ -333,16 +459,26 @@ function renderGlossar(list) {
     </div>`).join('');
 }
 
-// ── INIT – bind all events after DOM ready ──────────────
-document.querySelectorAll('.story-card[data-story]').forEach(card => {
-  card.addEventListener('click', () => openStory(card.getAttribute('data-story')));
-});
+// Bind story card
+document.getElementById('card-jakobesau').addEventListener('click', () => openStory('jakobesau'));
+
+// Bind nav tabs
 document.querySelectorAll('.nav-tab[data-section]').forEach(tab => {
   tab.addEventListener('click', () => showSection(tab.getAttribute('data-section')));
 });
+
+// Back button: close story view OR go back to trainer
 document.getElementById('topbarBack').addEventListener('click', () => {
-  if (currentStory) closeStory();
-  else window.location.href = 'religion_trainer.html';
+  if (currentStory) {
+    currentStory = null;
+    document.getElementById('topbarTitle').textContent = '📖 Bibelgeschichten';
+    document.getElementById('topbarSub').textContent = 'Wähle eine Geschichte zum Nachschlagen';
+    document.getElementById('view-story').style.display = 'none';
+    document.getElementById('view-list').style.display = 'block';
+    window.scrollTo(0, 0);
+  } else {
+    window.location.href = 'religion_trainer.html';
+  }
 });
 </script>
 </body>

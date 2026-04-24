@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Familienstammbaum – Jakob & Esau</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<style>
+:root{--accent:#e67e22;--accent-soft:#fef4ec;--accent-dark:#c0652d;--bg:#fffbf5;--text:#2c3e50;--muted:#7f8c8d;--radius:16px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.app{width:100%;max-width:780px;margin:0 auto;padding:12px;min-height:100vh;display:flex;flex-direction:column}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.back-btn{background:#ecf0f1;border:none;border-radius:12px;padding:10px 12px;cursor:pointer;color:var(--text);display:flex;align-items:center;text-decoration:none;transition:background .2s}
+.back-btn:hover{background:#bdc3c7}
+.back-btn svg{width:22px;height:22px;stroke:currentColor}
+.header-info h1{font-size:20px;font-weight:bold;color:#2c3e50;margin-bottom:3px}
+.header-info p{font-size:13px;color:var(--muted)}
+
+/* TREE LAYOUT */
+.tree-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:0;position:relative;padding-bottom:20px}
+
+.gen-label{font-size:11px;font-weight:bold;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;align-self:flex-start;padding-left:8px}
+
+.gen-row{display:flex;justify-content:center;align-items:flex-start;gap:16px;width:100%;position:relative}
+
+/* SVG connector layer */
+.connector-svg{position:absolute;top:0;left:0;width:100%;pointer-events:none;overflow:visible}
+
+/* Person cards */
+.person{display:flex;flex-direction:column;align-items:center;cursor:pointer;user-select:none;position:relative;z-index:2}
+.person-bubble{width:80px;height:80px;border-radius:50%;background:white;border:3px solid #f5d5b0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:28px;box-shadow:0 4px 14px rgba(0,0,0,0.1);transition:all .2s;flex-shrink:0}
+.person-bubble:hover,.person.active .person-bubble{border-color:var(--accent);background:var(--accent-soft);transform:scale(1.08)}
+.person-name{margin-top:6px;font-size:13px;font-weight:bold;color:var(--text);text-align:center;line-height:1.2}
+.person-role{font-size:11px;color:var(--muted);text-align:center}
+
+/* Marriage connector icon */
+.marriage-dot{display:flex;align-items:center;justify-content:center;font-size:18px;margin-top:28px;user-select:none}
+
+/* Spacer for vertical lines */
+.vline-space{height:40px;display:flex;justify-content:center;align-items:center;position:relative;width:100%}
+.vline-svg{width:100%;height:40px;overflow:visible}
+
+/* Detail card */
+.detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.detail-overlay.show{opacity:1;pointer-events:all}
+.detail-card{background:white;border-radius:24px 24px 0 0;width:100%;max-width:680px;padding:24px 24px 36px;transform:translateY(100%);transition:transform .3s ease;max-height:85vh;overflow-y:auto}
+.detail-overlay.show .detail-card{transform:translateY(0)}
+.detail-emoji{font-size:52px;text-align:center;margin-bottom:8px}
+.detail-name{font-size:22px;font-weight:bold;text-align:center;color:var(--accent-dark);margin-bottom:4px}
+.detail-role{font-size:14px;color:var(--muted);text-align:center;margin-bottom:16px}
+.detail-close{position:absolute;top:16px;right:16px;background:#ecf0f1;border:none;border-radius:50%;width:34px;height:34px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.detail-facts{list-style:none;display:flex;flex-direction:column;gap:10px}
+.detail-facts li{background:var(--accent-soft);border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.5;border-left:4px solid var(--accent)}
+.detail-facts li strong{color:var(--accent-dark)}
+
+/* Legend */
+.legend{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:16px;font-size:12px;color:var(--muted)}
+.legend-item{display:flex;align-items:center;gap:6px}
+.legend-line{width:28px;height:3px;border-radius:2px}
+.legend-line.eltern{background:#e67e22}
+.legend-line.ehe{background:#8e44ad;height:2px;border-top:2px dashed #8e44ad;background:none}
+.legend-line.kinder{background:#27ae60}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <a href="religion_trainer.html" class="back-btn">
+      <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+    </a>
+    <div class="header-info">
+      <h1>🌳 Familienstammbaum</h1>
+      <p>Tippe auf eine Person!</p>
+    </div>
+  </div>
+
+  <div class="tree-wrap" id="treeWrap">
+
+    <!-- GENERATION 1: Isaak & Rebekka -->
+    <div class="gen-label">Eltern</div>
+    <div class="gen-row" id="gen1">
+      <div class="person" id="p-isaak" onclick="showDetail('isaak')">
+        <div class="person-bubble">👴</div>
+        <div class="person-name">Isaak</div>
+        <div class="person-role">Vater</div>
+      </div>
+      <div class="marriage-dot" title="verheiratet">💍</div>
+      <div class="person" id="p-rebekka" onclick="showDetail('rebekka')">
+        <div class="person-bubble">👩</div>
+        <div class="person-name">Rebekka</div>
+        <div class="person-role">Mutter</div>
+      </div>
+    </div>
+
+    <div class="vline-space">
+      <svg class="vline-svg" id="vline1" viewBox="0 0 400 40" preserveAspectRatio="none"></svg>
+    </div>
+
+    <!-- GENERATION 2: Esau & Jakob -->
+    <div class="gen-label">Kinder</div>
+    <div class="gen-row" id="gen2">
+      <div class="person" id="p-esau" onclick="showDetail('esau')">
+        <div class="person-bubble">🧔</div>
+        <div class="person-name">Esau</div>
+        <div class="person-role">Erstgeborener</div>
+      </div>
+      <div style="width:60px"></div>
+      <div class="person" id="p-jakob" onclick="showDetail('jakob')">
+        <div class="person-bubble">🧑</div>
+        <div class="person-name">Jakob</div>
+        <div class="person-role">Zweitgeborener</div>
+      </div>
+    </div>
+
+    <!-- Jakob's marriages -->
+    <div class="vline-space">
+      <svg class="vline-svg" id="vline2" viewBox="0 0 400 40" preserveAspectRatio="none"></svg>
+    </div>
+
+    <!-- GENERATION 2b: Laban's family -->
+    <div class="gen-label">Onkel & seine Töchter</div>
+    <div class="gen-row" id="gen3">
+      <div class="person" id="p-laban" onclick="showDetail('laban')">
+        <div class="person-bubble">🧓</div>
+        <div class="person-name">Laban</div>
+        <div class="person-role">Onkel Jakobs</div>
+      </div>
+      <div style="width:40px"></div>
+      <div class="person" id="p-lea" onclick="showDetail('lea')">
+        <div class="person-bubble">👩‍🦰</div>
+        <div class="person-name">Lea</div>
+        <div class="person-role">Ältere Tochter</div>
+      </div>
+      <div class="marriage-dot">💍</div>
+      <div style="width:0;align-self:center;font-size:13px;color:var(--muted)">→ Jakob</div>
+      <div style="width:20px"></div>
+      <div class="person" id="p-rahel" onclick="showDetail('rahel')">
+        <div class="person-bubble">👰</div>
+        <div class="person-name">Rahel</div>
+        <div class="person-role">Jüngere Tochter</div>
+      </div>
+      <div class="marriage-dot">💍</div>
+      <div style="align-self:center;font-size:13px;color:var(--muted)">→ Jakob</div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-item"><div class="legend-line eltern"></div> Eltern–Kind</div>
+      <div class="legend-item"><span>💍</span> verheiratet</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DETAIL OVERLAY -->
+<div class="detail-overlay" id="overlay" onclick="closeDetail(event)">
+  <div class="detail-card" id="detailCard">
+    <button class="detail-close" onclick="closeDetailBtn()">✕</button>
+    <div class="detail-emoji" id="dEmoji"></div>
+    <div class="detail-name" id="dName"></div>
+    <div class="detail-role" id="dRole"></div>
+    <ul class="detail-facts" id="dFacts"></ul>
+  </div>
+</div>
+
+<script>
+const PERSONS = {
+  isaak: {
+    emoji:"👴", name:"Isaak", role:"Vater der Zwillinge",
+    facts:[
+      "<strong>Wer war er?</strong> Isaak war der Sohn Abrahams und der Vater von Jakob und Esau.",
+      "<strong>Seine Frau:</strong> Er war mit Rebekka verheiratet, die er sehr liebte.",
+      "<strong>Lieblingskind:</strong> Esau war sein Liebling, weil er ein wilder Jäger war und Isaak das Wild mochte.",
+      "<strong>Am Ende blind:</strong> Als Isaak alt wurde, konnte er nicht mehr sehen. Deshalb trickste ihn Jakob mit den Ziegenfellen aus.",
+      "<strong>Der Segen:</strong> Isaak gab Jakob aus Versehen den besonderen Vattersegen – und das konnte nicht rückgängig gemacht werden."
+    ]
+  },
+  rebekka: {
+    emoji:"👩", name:"Rebekka", role:"Mutter der Zwillinge",
+    facts:[
+      "<strong>Wer war sie?</strong> Rebekka war die Mutter von Jakob und Esau.",
+      "<strong>Lieblingskind:</strong> Jakob war ihr Liebling. Sie wollte, dass er den Segen bekommt.",
+      "<strong>Der Plan:</strong> Rebekka erfand den Trick mit den Ziegenfellen und half Jakob, Isaak auszutricksen.",
+      "<strong>Mutter-Liebe:</strong> Sie schickte Jakob auch rechtzeitig weg, damit Esau ihn nicht bestrafen konnte."
+    ]
+  },
+  esau: {
+    emoji:"🧔", name:"Esau", role:"Erstgeborener Zwilling",
+    facts:[
+      "<strong>Aussehen:</strong> Esau war stark behaart und hatte rote, raue Haut.",
+      "<strong>Was er liebte:</strong> Er war ein wilder Jäger – er liebte die Natur und das Abenteuer.",
+      "<strong>Das Erstgeburtsrecht:</strong> Esau war der Ältere und hatte deshalb besondere Rechte – aber er verkaufte sie an Jakob für ein Linsengericht!",
+      "<strong>Seine Wut:</strong> Als Esau merkte, dass Jakob auch den Segen gestohlen hatte, war er extrem wütend und wollte ihn bestrafen.",
+      "<strong>Bedeutung des Namens:</strong> Esau bedeutet so viel wie „der Behaarte"."
+    ]
+  },
+  jakob: {
+    emoji:"🧑", name:"Jakob", role:"Zweitgeborener Zwilling",
+    facts:[
+      "<strong>Aussehen:</strong> Jakob hatte zarte Haut und war glatthastig – das Gegenteil von Esau.",
+      "<strong>Was er liebte:</strong> Er blieb lieber bei den Zelten und war ein Mama-Kind.",
+      "<strong>Der Fersenhalter:</strong> Bei der Geburt hielt er Esaus Ferse – deshalb heißt er Jakob (= Fersenhalter).",
+      "<strong>Zwei Frauen:</strong> Jakob heiratete Lea und Rahel – beide Töchter seines Onkels Laban.",
+      "<strong>Die Himmelsleiter:</strong> Auf der Flucht träumte er von einer Leiter bis in den Himmel, auf der Engel auf- und niederstiegen.",
+      "<strong>Gottes Versprechen:</strong> Gott sagte zu ihm: „Ich bin bei dir!" – das tröstete ihn sehr."
+    ]
+  },
+  laban: {
+    emoji:"🧓", name:"Laban", role:"Onkel von Jakob",
+    facts:[
+      "<strong>Wer war er?</strong> Laban war der Bruder von Rebekka und damit Jakobs Onkel.",
+      "<strong>Der listige Trick:</strong> Jakob wollte Rahel heiraten und arbeitete dafür 7 Jahre. Aber Laban schickte heimlich Lea in der Hochzeitsnacht.",
+      "<strong>Nochmal 7 Jahre:</strong> Jakob musste nochmal 7 Jahre arbeiten, um auch Rahel heiraten zu dürfen – also 14 Jahre insgesamt!",
+      "<strong>Labans Ende:</strong> Nach 20 Jahren brach Jakob heimlich auf. Laban holte ihn ein, aber sie schlossen Frieden und bauten einen Steinhaufen als Zeichen."
+    ]
+  },
+  lea: {
+    emoji:"👩‍🦰", name:"Lea", role:"Ältere Tochter Labans",
+    facts:[
+      "<strong>Wer war sie?</strong> Lea war die ältere Tochter von Laban und die Schwester von Rahel.",
+      "<strong>Labans Trick:</strong> In der Hochzeitsnacht schickte Laban Lea statt Rahel zu Jakob. So wurde Lea Jakobs erste Frau.",
+      "<strong>Wie Jakob reagierte:</strong> Am nächsten Morgen merkte Jakob, dass es Lea war – er war sehr enttäuscht, aber der Trick war schon geschehen.",
+      "<strong>Teil der Familie:</strong> Lea wurde eine wichtige Frau in der Familie Jakobs."
+    ]
+  },
+  rahel: {
+    emoji:"👰", name:"Rahel", role:"Jüngere Tochter Labans",
+    facts:[
+      "<strong>Wer war sie?</strong> Rahel war die jüngere Tochter von Laban und Jakobs Lieblingsfrau.",
+      "<strong>Jakobs Liebe:</strong> Jakob verliebte sich sofort in Rahel und arbeitete 7 Jahre nur für sie – diese Zeit kam ihm wie wenige Tage vor, weil er sie so sehr liebte.",
+      "<strong>Labans Trick:</strong> Trotzdem schickte Laban zuerst Lea. Jakob musste weitere 7 Jahre arbeiten, um auch Rahel zu bekommen.",
+      "<strong>Insgesamt:</strong> Jakob wartete 14 Jahre auf Rahel – das zeigt, wie sehr er sie liebte."
+    ]
+  }
+};
+
+function showDetail(id) {
+  const p = PERSONS[id];
+  if (!p) return;
+  document.getElementById('dEmoji').textContent = p.emoji;
+  document.getElementById('dName').textContent = p.name;
+  document.getElementById('dRole').textContent = p.role;
+  const ul = document.getElementById('dFacts');
+  ul.innerHTML = p.facts.map(f => `<li>${f}</li>`).join('');
+  document.querySelectorAll('.person').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('p-' + id);
+  if (el) el.classList.add('active');
+  document.getElementById('overlay').classList.add('show');
+}
+
+function closeDetail(e) {
+  if (e.target === document.getElementById('overlay')) closeDetailBtn();
+}
+function closeDetailBtn() {
+  document.getElementById('overlay').classList.remove('show');
+  document.querySelectorAll('.person').forEach(el => el.classList.remove('active'));
+}
+</script>
+</body>
+</html>

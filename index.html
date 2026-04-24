@@ -127,50 +127,50 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 <div class="news-overlay" id="newsOverlay" style="display:none" onclick="closeNewsOnBg(event)">
   <div class="news-modal">
     <div class="news-header">
-      <div class="news-header-icon">🎉</div>
+      <div class="news-header-icon">✨</div>
       <div>
         <h2>Was ist neu?</h2>
-        <p>Update vom 23. April 2026</p>
+        <p>Update vom 24. April 2026</p>
       </div>
     </div>
 
     <div class="news-item">
       <div class="news-item-badge neu">NEU</div>
       <div>
-        <div class="news-item-title">✝️ Religion-Modul</div>
-        <div class="news-item-desc">Jakob &amp; Esau – Fragen-Trainer, Bibelgeschichten-Lexikon mit Personenkarten &amp; Kapiteln, plus das Himmelsleiter-Spiel!</div>
+        <div class="news-item-title">✝️ Religion – Großes Update</div>
+        <div class="news-item-desc">Lückentext-Modus direkt im Trainer (+2 🪙), Stammbaum in den Bibelgeschichten, und der Tipp wird jetzt nur noch angezeigt, wenn er wirklich hilft – nicht als Antwort-Spoiler!</div>
       </div>
     </div>
 
     <div class="news-item">
-      <div class="news-item-badge">UPDATE</div>
+      <div class="news-item-badge neu">NEU</div>
       <div>
-        <div class="news-item-title">🇬🇧 Englisch-Modul</div>
-        <div class="news-item-desc">10 Themen mit über 120 Vokabeln – Wortkarten, Multiple Choice, Rechtschreibung und Hör-Übungen.</div>
-      </div>
-    </div>
-
-    <div class="news-item">
-      <div class="news-item-badge">UPDATE</div>
-      <div>
-        <div class="news-item-title">🎵 Musik-Modul</div>
-        <div class="news-item-desc">Instrumente, Peter und der Wolf, Klavier-Merkspiel und das neue Orchester-Lexikon mit Eselsbrücken.</div>
+        <div class="news-item-title">🌳 Familienstammbaum</div>
+        <div class="news-item-desc">Isaak, Rebekka, Esau, Jakob, Laban, Lea &amp; Rahel – jetzt als interaktiver Stammbaum in den Bibelgeschichten. Tippe eine Person an und lerne mehr über sie!</div>
       </div>
     </div>
 
     <div class="news-item">
       <div class="news-item-badge fix">FIX</div>
       <div>
-        <div class="news-item-title">🔊 Vorlesen verbessert</div>
-        <div class="news-item-desc">Der Vorlesen-Button liest jetzt nur noch die Frage vor – kein Tipp-Text mehr dazwischen.</div>
+        <div class="news-item-title">🔧 Bibelgeschichten-Popup</div>
+        <div class="news-item-desc">Der Klick auf „Jakob &amp; Esau" im Bibelgeschichten-Popup funktioniert jetzt zuverlässig.</div>
       </div>
     </div>
 
     <div class="news-item">
-      <div class="news-item-badge fix">FIX</div>
+      <div class="news-item-badge">UPDATE</div>
       <div>
-        <div class="news-item-title">🪙 Münz-System im Merkspiel</div>
-        <div class="news-item-desc">Münzen werden jetzt korrekt nur beim Start abgezogen – nicht mehr fälschlich gutgeschrieben.</div>
+        <div class="news-item-title">🇬🇧 Englisch – Im Aufbau</div>
+        <div class="news-item-desc">Das Englisch-Modul wächst weiter – Vokabeln, Wortkarten &amp; Übungen. Neue Inhalte folgen bald!</div>
+      </div>
+    </div>
+
+    <div class="news-item">
+      <div class="news-item-badge">UPDATE</div>
+      <div>
+        <div class="news-item-title">🔊 Ton bei richtiger Antwort</div>
+        <div class="news-item-desc">Religion-Trainer spricht jetzt das Feedback vor – wie in Musik: „Super! ⭐" und „Richtig! 🎉" mit Stimme!</div>
       </div>
     </div>
 
@@ -550,7 +550,7 @@ function render(){
 
 // ── NEWS-MODAL ──────────────────────────────────────────
 // NEWS_VERSION hochzählen wenn neue Neuigkeiten rein kommen
-const NEWS_VERSION = 'news_v5';
+const NEWS_VERSION = 'news_v6';
 function showNewsIfNew() {
   if (!localStorage.getItem(NEWS_VERSION)) {
     document.getElementById('newsOverlay').style.display = 'flex';

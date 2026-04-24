@@ -109,6 +109,14 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 .btn-play{background:linear-gradient(135deg,#f1c40f,#e67e22);color:#2c3e50;font-weight:bold;border:none;border-radius:12px;padding:10px 18px;cursor:pointer;font-size:15px;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 12px rgba(241,196,15,0.4);white-space:nowrap}
 .btn-play:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(241,196,15,0.55)}
 .btn-play:active{transform:scale(0.96)}
+/* EXTRA MODI */
+.modi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:500px){.modi-grid{grid-template-columns:1fr 1fr}}
+.modi-card{background:white;border:2px solid #f5d5b0;border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;text-decoration:none;color:var(--text);transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:6px}
+.modi-card:hover{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-2px);box-shadow:0 4px 12px rgba(230,126,34,0.15)}
+.modi-card-icon{font-size:28px;line-height:1}
+.modi-card-title{font-size:13px;font-weight:bold;color:#2c3e50}
+.modi-card-sub{font-size:11px;color:var(--muted)}
 /* MÜNZEN */
 .coin-display{display:flex;align-items:center;gap:6px;font-size:20px;font-weight:bold;color:var(--accent-dark)}
 .coin-emoji{font-size:22px;line-height:1}
@@ -121,6 +129,17 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 .lexikon-frame-wrap{background:#fffbf5;border-radius:20px;width:100%;max-width:900px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.4);position:relative;max-height:90vh;overflow-y:auto}
 .lexikon-close{position:sticky;top:10px;float:right;margin:10px 10px 0 0;z-index:10;background:var(--accent);color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.3);flex-shrink:0}
 .lexikon-close:hover{background:var(--accent-dark)}
+/* MODE TOGGLE */
+.mode-bar{display:flex;border-radius:12px;overflow:hidden;border:2px solid #f5d5b0;margin-bottom:12px;flex-shrink:0}
+.mode-btn{flex:1;padding:10px 8px;text-align:center;font-size:13px;font-weight:bold;cursor:pointer;background:white;color:var(--muted);border:none;transition:all .2s;border-right:1px solid #f5d5b0}
+.mode-btn:last-child{border-right:none}
+.mode-btn.active{background:var(--accent);color:white}
+.luecke-sentence{font-size:19px;font-weight:bold;text-align:center;line-height:1.8;margin-bottom:6px;color:#2c3e50;padding:4px}
+.luecke-blank{display:inline-block;min-width:90px;border-bottom:3px solid var(--accent);padding:0 6px;text-align:center;color:var(--accent);transition:all .3s}
+.luecke-blank.ok{color:var(--success);border-color:var(--success)}
+.luecke-blank.bad{color:var(--danger);border-color:var(--danger)}
+.luecke-progress{font-size:13px;color:var(--muted);text-align:center;margin-bottom:10px}
+.luecke-hint{font-size:14px;color:var(--muted);text-align:center;margin-bottom:14px;font-style:italic}
 /* HIGHSCORE */
 .hs-entry{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;margin-bottom:7px;border:2px solid #f5d5b0;background:#fff}
 .hs-rank{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;flex-shrink:0;color:white}
@@ -130,13 +149,7 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 </head>
 <body>
 
-<!-- BIBELGESCHICHTEN LEXIKON OVERLAY -->
-<div class="lexikon-overlay" id="lexikonOverlay" onclick="closeLexikonOnBg(event)">
-  <div class="lexikon-frame-wrap">
-    <button class="lexikon-close" onclick="closeLexikon()" title="Schließen">✕</button>
-    <iframe id="lexikonFrame" src="" style="width:100%;min-height:600px;border:none;display:block" title="Bibelgeschichten"></iframe>
-  </div>
-</div>
+<!-- kein Overlay mehr – Lexikon wird direkt geöffnet -->
 
 <div class="app">
 <div class="card">
@@ -188,19 +201,37 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
       </div>
       <div>
         <div class="panel-title" id="taskTitle">Aktuelle Aufgabe</div>
+        <div class="mode-bar">
+          <button class="mode-btn active" id="modeBtn-fragen" onclick="switchMode('fragen')">📖 Fragen</button>
+          <button class="mode-btn" id="modeBtn-luecken" onclick="switchMode('luecken')">✏️ Lückentext</button>
+        </div>
         <div class="task-box">
-          <div class="question-wrapper">
-            <div class="task-question" id="tQuestion">Wähle links ein Thema!</div>
-            <button class="speaker-btn" id="readBtn" style="display:none" title="Vorlesen" onclick="speakCurrent()">
-              <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"/></svg>
-            </button>
+          <!-- FRAGEN MODE -->
+          <div id="mode-fragen">
+            <div class="question-wrapper">
+              <div class="task-question" id="tQuestion">Wähle links ein Thema!</div>
+              <button class="speaker-btn" id="readBtn" style="display:none" title="Vorlesen" onclick="speakCurrent()">
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"/></svg>
+              </button>
+            </div>
+            <div class="task-hint" id="tHint"></div>
+            <div id="tVisual"></div>
+            <div id="feedbackArea"></div>
+            <div style="margin-top:15px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
+              <button class="btn btn-primary" id="checkBtn" disabled onclick="checkAnswer()">Antwort prüfen</button>
+              <button class="btn btn-secondary" id="nextBtn" style="display:none" onclick="nextTask()">Nächste Aufgabe ➔</button>
+            </div>
           </div>
-          <div class="task-hint" id="tHint"></div>
-          <div id="tVisual"></div>
-          <div id="feedbackArea"></div>
-          <div style="margin-top:15px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
-            <button class="btn btn-primary" id="checkBtn" disabled onclick="checkAnswer()">Antwort prüfen</button>
-            <button class="btn btn-secondary" id="nextBtn" style="display:none" onclick="nextTask()">Nächste Aufgabe ➔</button>
+          <!-- LÜCKENTEXT MODE -->
+          <div id="mode-luecken" style="display:none">
+            <div class="luecke-progress" id="luecke-progress"></div>
+            <div class="luecke-sentence" id="luecke-sentence"></div>
+            <div class="luecke-hint" id="luecke-hint"></div>
+            <div class="mc-grid" id="luecke-choices"></div>
+            <div class="feedback" id="luecke-feedback"></div>
+            <div style="margin-top:12px;display:flex;justify-content:center">
+              <button class="btn btn-primary" id="luecke-next" style="display:none" onclick="nextLuecke()">Weiter ➔</button>
+            </div>
           </div>
         </div>
       </div>
@@ -258,9 +289,12 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 
 <script src="religion_fragen.js"></script>
 <script>
+/* ── STATE ── */
 let profiles = {}, curProfId = null, curTopicKey = null;
 let curQuestionPool = [], curShuffled = [], curShuffleIdx = 0, curQuestion = null;
 let selectedAnswer = null, currentView = 'practice', dashPeriod = 'today';
+let curMode = 'fragen';
+let lueckePool = [], lueckeIdx = 0, lueckeAnswered = false, lueckeSatz = null;
 
 function loadStorage() {
   try {
@@ -355,7 +389,7 @@ function shuffle(arr) {
 function showQuestion() {
   if (!curQuestionPool.length) return;
   if (curShuffleIdx >= curShuffled.length) {
-    curShuffled = shuffle([...curQuestionPool.keys()]);
+    curShuffled = shuffle([...Array(curQuestionPool.length).keys()]);
     curShuffleIdx = 0;
   }
   curQuestion = curQuestionPool[curShuffled[curShuffleIdx++]];
@@ -364,28 +398,20 @@ function showQuestion() {
   document.getElementById('tQuestion').textContent = curQuestion.q;
   document.getElementById('readBtn').style.display = 'flex';
 
+  // Hint: show before answer only if it ends with '?' (supports the question)
+  // otherwise hide until answered
   const hintEl = document.getElementById('tHint');
-  hintEl.innerHTML = curQuestion.hint
-    ? `<span style="color:var(--accent)">💡</span> ${curQuestion.hint}`
-    : '';
+  if (curQuestion.hint) {
+    hintEl.innerHTML = '<span style="color:var(--accent)">💡</span> ' + curQuestion.hint;
+    hintEl.style.display = curQuestion.hint.trimEnd().endsWith('?') ? '' : 'none';
+  } else {
+    hintEl.innerHTML = '';
+    hintEl.style.display = '';
+  }
 
-  // Visual support: try image file first, fallback to emoji card
   const visualEl = document.getElementById('tVisual');
   if (curQuestion.imgEmoji) {
-    const imgPath = `img/${curQuestion.img || ''}`;
-    if (curQuestion.img) {
-      visualEl.innerHTML = `
-        <div class="bild-karte" id="bildKarte">
-          <img class="bild-karte-img" src="${imgPath}" alt="${curQuestion.imgLabel || ''}"
-            onerror="this.parentNode.innerHTML='<span class=bild-karte-emoji>${curQuestion.imgEmoji}</span><div class=bild-karte-label>${curQuestion.imgLabel || ''}</div>'">
-        </div>`;
-    } else {
-      visualEl.innerHTML = `
-        <div class="bild-karte">
-          <span class="bild-karte-emoji">${curQuestion.imgEmoji}</span>
-          <div class="bild-karte-label">${curQuestion.imgLabel || ''}</div>
-        </div>`;
-    }
+    visualEl.innerHTML = '<div class="bild-karte"><span class="bild-karte-emoji">' + curQuestion.imgEmoji + '</span><div class="bild-karte-label">' + (curQuestion.imgLabel || '') + '</div></div>';
   } else {
     visualEl.innerHTML = '';
   }
@@ -397,20 +423,15 @@ function showQuestion() {
 
 function buildMC() {
   const choices = curQuestion.choices;
-  let html = '<div class="mc-grid">';
+  let html = '<div class="mc-grid" id="fragenMcGrid">';
   choices.forEach((c, i) => {
-    html += `<button class="mc-btn" onclick="selectMC(this,${i})">${c}</button>`;
+    html += '<button class="mc-btn fragen-mc" onclick="selectMC(this,' + i + ')">' + c + '</button>';
   });
   return html + '</div><div class="feedback" id="feedback"></div>';
 }
 
 function selectMC(btn, idx) {
-  document.querySelectorAll('.mc-btn').forEach(b => {
-    b.classList.remove('selected');
-    if (!b.disabled) {}
-  });
-  const btns = document.querySelectorAll('.mc-btn');
-  btns.forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.fragen-mc').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
   selectedAnswer = idx;
   document.getElementById('checkBtn').disabled = false;
@@ -419,45 +440,48 @@ function selectMC(btn, idx) {
 function checkAnswer() {
   if (selectedAnswer === null) return;
   const correct = curQuestion.sol;
-  const btns = document.querySelectorAll('.mc-btn');
-  btns.forEach((b, i) => {
+  document.querySelectorAll('.fragen-mc').forEach(function(b, i) {
     b.disabled = true;
     if (i === correct) b.classList.add('correct');
     else if (i === selectedAnswer && selectedAnswer !== correct) b.classList.add('wrong');
   });
   const ok = selectedAnswer === correct;
-  const feedbacks = {
-    ok: ['Super! ⭐', 'Richtig! 🎉', 'Genau! ✅', 'Klasse! 🌟', 'Toll gemacht! 👏'],
-    bad: ['Fast! Schau nochmal hin. 💪', 'Nicht ganz – die grüne Antwort ist richtig.', 'Noch üben! Du schaffst das! 🤔']
-  };
-  const pool = ok ? feedbacks.ok : feedbacks.bad;
-  document.getElementById('feedback').textContent = pool[Math.floor(Math.random()*pool.length)];
+  const msg = ok ? 'Super, Richtig! ✅' : 'Fast! Schau nochmal hin. 💪';
+  document.getElementById('feedback').textContent = msg;
   document.getElementById('feedback').className = 'feedback ' + (ok ? 'ok' : 'bad');
   document.getElementById('checkBtn').disabled = true;
   document.getElementById('nextBtn').style.display = 'flex';
+  // Reveal hidden hint after answering
+  document.getElementById('tHint').style.display = '';
+  // Audio feedback
+  if (ok) speakText('Super, Richtig!');
 
-  const p = getProfile();
-  if (p) {
-    if (!p.rel_history) p.rel_history = [];
-    p.rel_history.push({ ts: Date.now(), topic: curTopicKey, ok });
-    if (ok) p.coins = (p.coins || 0) + 1;
+  const prof = getProfile();
+  if (prof) {
+    if (!prof.rel_history) prof.rel_history = [];
+    prof.rel_history.push({ ts: Date.now(), topic: curTopicKey, ok: ok });
+    if (ok) prof.coins = (prof.coins || 0) + 1;
     saveStorage();
     updateCoinDisplay();
     renderStars();
   }
 }
 
-function nextTask() {
-  showQuestion();
+function nextTask() { showQuestion(); }
+
+function speakText(text) {
+  try {
+    window.speechSynthesis.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.lang = 'de-DE';
+    utt.rate = 0.9;
+    window.speechSynthesis.speak(utt);
+  } catch(e) {}
 }
 
 function speakCurrent() {
   if (!curQuestion) return;
-  window.speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(curQuestion.q);
-  utt.lang = 'de-DE';
-  utt.rate = 0.9;
-  window.speechSynthesis.speak(utt);
+  speakText(curQuestion.q);
 }
 
 function switchView(view) {
@@ -488,18 +512,8 @@ function updateHighscores() {
     </div>`).join('');
 }
 
-function openLexikon() {
-  const frame = document.getElementById('lexikonFrame');
-  if (!frame.src || frame.src === window.location.href) frame.src = 'religion_lexikon.html';
-  document.getElementById('lexikonOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeLexikon() {
-  document.getElementById('lexikonOverlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-function closeLexikonOnBg(e) {
-  if (e.target === document.getElementById('lexikonOverlay')) closeLexikon();
+    function openLexikon() {
+  window.location.href = 'religion_lexikon.html';
 }
 
 function updateDashboard(period, tabEl) {
@@ -551,15 +565,124 @@ function resetStats() {
   if (p) { p.rel_history = []; saveStorage(); updateDashboard(dashPeriod, null); renderStars(); }
 }
 
+// ── LÜCKENTEXT ─────────────────────────────────────────────
+const SAETZE = [
+  {vor:'Jakob und Esau waren ',blank:'Zwillinge',nach:'.',choices:['Brüder','Zwillinge','Freunde','Cousins'],hint:'Beide wurden am gleichen Tag geboren.'},
+  {vor:'Esau kam als ',blank:'Erster',nach:' zur Welt – er war der Ältere.',choices:['Zweiter','Erster','Dritter','Letzter'],hint:'Der Ältere kommt zuerst.'},
+  {vor:'Esau war stark ',blank:'behaart',nach:' und liebte die Jagd.',choices:['gebaut','behaart','gekleidet','groß'],hint:'Schau auf deine Zeichnung von Esaus Kopf!'},
+  {vor:'Jakob war das Lieblingskind von ',blank:'Rebekka',nach:'.',choices:['Isaak','Laban','Rebekka','Esau'],hint:'Das Mama-Kind gehört der Mutter.'},
+  {vor:'Esau verkaufte sein Erstgeburtsrecht für ein ',blank:'Linsengericht',nach:'.',choices:['Wildbret','Linsengericht','Brot','Lamm'],hint:'Ein rotes, leckeres Essen aus dem Topf.'},
+  {vor:'Der Erstgeborene bekommt den besonderen ',blank:'Segen',nach:' des Vaters.',choices:['Lohn','Segen','Namen','Thron'],hint:'Ein besonderes Gebet und gute Wünsche.'},
+  {vor:'Rebekka wickelte ',blank:'Ziegenfelle',nach:' um Jakobs Hände.',choices:['Wolle','Tücher','Ziegenfelle','Leder'],hint:'Esau war sehr behaart – was ahmt das nach?'},
+  {vor:'Isaak war alt und ',blank:'blind',nach:' – er konnte nichts mehr sehen.',choices:['taub','lahm','blind','krank'],hint:'Deshalb konnte er Jakobs Trick nicht erkennen.'},
+  {vor:'Der gestohlene ',blank:'Segen',nach:' konnte nicht zurückgenommen werden.',choices:['Ring','Segen','Bogen','Mantel'],hint:'Ein Segen vor Gott ist für immer bindend.'},
+  {vor:'Jakob träumte von einer ',blank:'Himmelsleiter',nach:', auf der Engel auf- und niederstiegen.',choices:['Wolke','Himmelsleiter','Treppe','Brücke'],hint:'Was verbindet Erde und Himmel?'},
+  {vor:'Gott versprach Jakob: ',blank:'Ich bin bei dir',nach:'!',choices:['Ich suche dich','Ich bin bei dir','Vergib deinem Bruder','Kehre heim'],hint:'Das tröstlichste Versprechen Gottes!'},
+  {vor:'Bei Onkel Laban arbeitete Jakob insgesamt ',blank:'14',nach:' Jahre.',choices:['7','20','3','14'],hint:'7 + 7 = ?'},
+  {vor:'Laban gab Jakob in der Hochzeitsnacht zuerst ',blank:'Lea',nach:' statt Rahel.',choices:['Sara','Rahel','Lea','Rebekka'],hint:'Die ältere Schwester – Labans Trick!'},
+  {vor:'Nomaden lebten in ',blank:'Zelten',nach:', die man schnell auf- und abbauen konnte.',choices:['Häusern','Höhlen','Zelten','Burgen'],hint:'Schnell auf- und abbaubar – wie ein Camping-Haus.'},
+  {vor:'Jakob hielt bei der Geburt Esaus ',blank:'Ferse',nach:' fest – daher sein Name.',choices:['Hand','Ferse','Schulter','Knie'],hint:'Woher kommt der Name Fersenhalter?'},
+  {vor:'Isaaks Lieblingskind war ',blank:'Esau',nach:', weil er ihm Wild brachte.',choices:['Jakob','Esau','Laban','Rahel'],hint:'Der Jäger war des Vaters Liebling.'},
+  {vor:'Die große Familie der Nomaden nannte man ',blank:'Sippe',nach:'.',choices:['Horde','Stamm','Sippe','Gruppe'],hint:'Ein Wort mit S – alle Verwandten zusammen.'},
+  {vor:'Nomaden ließen sich in der Nähe von ',blank:'Wasser',nach:' nieder, weil es lebensnotwendig war.',choices:['Wäldern','Wasser','Bergen','Städten'],hint:'In der Wüste ist das das Wertvollste!'},
+  {vor:'Auf der Himmelsleiter stiegen ',blank:'Engel',nach:' auf und nieder.',choices:['Sterne','Engel','Vögel','Wolken'],hint:'Gottes Boten verbinden Himmel und Erde.'},
+  {vor:'Laban war Rebekkas ',blank:'Bruder',nach:' – und damit Jakobs Onkel.',choices:['Vater','Sohn','Bruder','Schwager'],hint:'Rebekka und Laban hatten denselben Vater.'},
+  {vor:'Rahel war Labans ',blank:'jüngere',nach:' Tochter, Lea die ältere.',choices:['ältere','kleinste','jüngere','schönste'],hint:'Lea kam zuerst, Rahel danach.'},
+  {vor:'Jakobs Mutter half ihm, sich als ',blank:'Esau',nach:' zu verkleiden.',choices:['Laban','Esau','Isaak','Rahel'],hint:'Er sollte aussehen wie sein Bruder!'},
+];
+
+function switchMode(mode) {
+  curMode = mode;
+  document.getElementById('mode-fragen').style.display = mode === 'fragen' ? 'block' : 'none';
+  document.getElementById('mode-luecken').style.display = mode === 'luecken' ? 'block' : 'none';
+  document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('modeBtn-' + mode).classList.add('active');
+  if (mode === 'luecken') startLuecken();
+}
+
+function startLuecken() {
+  lueckePool = shuffle([...SAETZE]);
+  lueckeIdx = 0;
+  showLuecke();
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function showLuecke() {
+  if (!lueckePool.length) return;
+  if (lueckeIdx >= lueckePool.length) { lueckePool = shuffle([...SAETZE]); lueckeIdx = 0; }
+  lueckeSatz = lueckePool[lueckeIdx];
+  lueckeAnswered = false;
+  var s = lueckeSatz;
+  document.getElementById('luecke-progress').textContent = 'Satz ' + (lueckeIdx + 1) + ' von ' + lueckePool.length;
+  document.getElementById('luecke-sentence').innerHTML = esc(s.vor) + '<span class="luecke-blank" id="lueckeBlank">___</span>' + esc(s.nach);
+  document.getElementById('luecke-hint').textContent = '\uD83D\uDCA1 ' + s.hint;
+  document.getElementById('luecke-feedback').textContent = '';
+  document.getElementById('luecke-feedback').className = 'feedback';
+  document.getElementById('luecke-next').style.display = 'none';
+  var grid = document.getElementById('luecke-choices');
+  grid.innerHTML = '';
+  shuffle([...s.choices]).forEach(function(c) {
+    var btn = document.createElement('button');
+    btn.className = 'mc-btn';
+    btn.textContent = c;
+    btn.addEventListener('click', function() { answerLuecke(c, btn, grid); });
+    grid.appendChild(btn);
+  });
+}
+
+function answerLuecke(choice, clickedBtn, grid) {
+  if (lueckeAnswered) return;
+  lueckeAnswered = true;
+  var ok = (choice === lueckeSatz.blank);
+  var blank = document.getElementById('lueckeBlank');
+  blank.textContent = lueckeSatz.blank;
+  blank.className = 'luecke-blank ' + (ok ? 'ok' : 'bad');
+  grid.querySelectorAll('.mc-btn').forEach(function(b) {
+    b.disabled = true;
+    if (b.textContent === lueckeSatz.blank) b.classList.add('correct');
+    else if (b === clickedBtn && !ok) b.classList.add('wrong');
+  });
+  var fb = document.getElementById('luecke-feedback');
+  var prof = getProfile();
+  if (ok) {
+    var msg = 'Super, Richtig! ✅';
+    fb.textContent = msg;
+    fb.className = 'feedback ok';
+    speakText('Super, Richtig!');
+    if (prof) {
+      prof.coins = (prof.coins || 0) + 1;
+      if (!prof.rel_history) prof.rel_history = [];
+      prof.rel_history.push({ts: Date.now(), topic: 'luecken', ok: true});
+      saveStorage(); updateCoinDisplay(); renderStars();
+    }
+  } else {
+    fb.textContent = 'Nicht ganz – richtig ist: ' + lueckeSatz.blank;
+    fb.className = 'feedback bad';
+    if (prof) {
+      if (!prof.rel_history) prof.rel_history = [];
+      prof.rel_history.push({ts: Date.now(), topic: 'luecken', ok: false});
+      saveStorage();
+    }
+  }
+  document.getElementById('luecke-next').style.display = 'inline-flex';
+}
+
+function nextLuecke() {
+  lueckeIdx++;
+  showLuecke();
+}
+
+// ── INIT ──────────────────────────────────────────────────
 loadStorage();
-const p = getProfile();
-document.getElementById('curChildName').textContent = p ? p.name : '–';
+document.getElementById('curChildName').textContent = (getProfile() || {name: '–'}).name;
 updateCoinDisplay();
 renderStars();
 buildTiles();
-// Auto-select first topic
-const firstKey = Object.keys(RELIGION_TOPICS)[0];
-if (firstKey) selectTopic(firstKey);
+(function() {
+  var firstKey = Object.keys(RELIGION_TOPICS)[0];
+  if (firstKey) selectTopic(firstKey);
+})();
 </script>
 </body>
 </html>
