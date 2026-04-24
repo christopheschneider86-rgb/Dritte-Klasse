@@ -130,7 +130,7 @@ let W, H, scale;
 let ball = {}, leftFlipper = {}, rightFlipper = {};
 let bumpers = [];
 let lDown = false, rDown = false;
-let score = 0, lives = 3, running = false;
+let score = 0, lives = 3, running = false, ballLost = false;
 let factoidTimer = null;
 let animId = null;
 let countdownText = '';   // '' means no countdown overlay
@@ -179,10 +179,10 @@ function initPositions() {
 
 function resetBall() {
   ball = {
-    x: W*0.5 + (Math.random()-0.5)*30,
-    y: H*0.55,
-    vx: (Math.random()-0.5)*3,
-    vy: -6,
+    x: W*0.5 + (Math.random()-0.5)*20,
+    y: H*0.5,
+    vx: (Math.random()-0.5)*2,
+    vy: -4,
   };
 }
 
@@ -208,32 +208,20 @@ function startGame(fromStart) {
   document.getElementById('startScreen').style.display = 'none';
   document.getElementById('gameOverScreen').style.display = 'none';
   document.getElementById('winScreen').style.display = 'none';
-  score = 0; lives = 3;
+  score = 0; lives = 3; ballLost = false;
   updateHUD();
   bumpers.forEach(b => { b.hit = false; b.hitAnim = 0; });
   resetBall();
-  running = false;   // frozen during countdown
-  countdownText = '';
+  running = false;    // frozen during countdown
+  countdownText = '3'; // set immediately so loop keeps rendering
   if (animId) cancelAnimationFrame(animId);
-  loop();            // start drawing immediately (ball visible but frozen)
+  loop();             // start rendering with '3' visible
 
-  // 3-2-1-LOS countdown
-  const steps = ['3', '2', '1', 'LOS!'];
-  let i = 0;
-  function nextStep() {
-    countdownText = steps[i];
-    i++;
-    if (i < steps.length) {
-      setTimeout(nextStep, 1000);
-    } else {
-      // "LOS!" shown for 600ms then cleared and game starts
-      setTimeout(() => {
-        countdownText = '';
-        running = true;
-      }, 600);
-    }
-  }
-  setTimeout(nextStep, 0);
+  // 3 → 2 → 1 → LOS! → start
+  setTimeout(() => { countdownText = '2'; }, 1000);
+  setTimeout(() => { countdownText = '1'; }, 2000);
+  setTimeout(() => { countdownText = 'LOS!'; }, 3000);
+  setTimeout(() => { countdownText = ''; running = true; }, 3600);
 }
 
 function updateHUD() {
@@ -296,7 +284,7 @@ function reflectOffFlipper(f) {
     ball.vx -= 2*dot*nxn;
     ball.vy -= 2*dot*nyn;
     const speed = Math.hypot(ball.vx, ball.vy);
-    const boost = 9;
+    const boost = 6;
     if (speed < boost) { ball.vx *= boost/speed; ball.vy *= boost/speed; }
     playBeep(300, 0.08);
   }
@@ -310,11 +298,11 @@ function update() {
   moveFlipper(rightFlipper, rDown);
 
   // Gravity
-  ball.vy += 0.25;
+  ball.vy += 0.17;
 
   // Clamp max speed
   const sp = Math.hypot(ball.vx, ball.vy);
-  if (sp > 15) { ball.vx *= 15/sp; ball.vy *= 15/sp; }
+  if (sp > 10) { ball.vx *= 10/sp; ball.vy *= 10/sp; }
 
   ball.x += ball.vx;
   ball.y += ball.vy;
@@ -381,7 +369,7 @@ function update() {
       ball.vx = (ball.vx - 2*dot*nx)*1.1;
       ball.vy = (ball.vy - 2*dot*ny)*1.1;
       const spd = Math.hypot(ball.vx, ball.vy);
-      if (spd < 7) { ball.vx *= 7/spd; ball.vy *= 7/spd; }
+      if (spd < 5) { ball.vx *= 5/spd; ball.vy *= 5/spd; }
       if (!b.hit) {
         b.hit = true;
         b.hitAnim = 1;
@@ -410,7 +398,8 @@ function update() {
   }
 
   // Ball lost
-  if (ball.y > H + 30) {
+  if (ball.y > H + 30 && !ballLost) {
+    ballLost = true;
     lives--;
     updateHUD();
     playBeep(150, 0.15);
@@ -421,7 +410,7 @@ function update() {
         document.getElementById('gameOverScreen').style.display = 'flex';
       }, 400);
     } else {
-      setTimeout(resetBall, 600);
+      setTimeout(() => { resetBall(); ballLost = false; }, 700);
     }
   }
 }

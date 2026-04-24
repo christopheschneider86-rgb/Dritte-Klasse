@@ -117,6 +117,17 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 .modi-card-icon{font-size:28px;line-height:1}
 .modi-card-title{font-size:13px;font-weight:bold;color:#2c3e50}
 .modi-card-sub{font-size:11px;color:var(--muted)}
+/* HIMMELSLEITER visual */
+.leiter-wrap{display:flex;gap:14px;align-items:flex-start}
+.leiter-svg-col{display:flex;flex-direction:column;align-items:center;flex-shrink:0;padding-top:4px}
+.leiter-goal{font-size:22px;line-height:1;margin-bottom:0}
+.leiter-coins-label{font-size:10px;font-weight:bold;color:var(--accent);white-space:nowrap;margin-bottom:4px}
+.leiter-col{flex:1;min-width:0}
+.leiter-rung{display:flex;align-items:center;height:26px;position:relative}
+.leiter-rail{width:6px;height:26px;background:#c8b08a;border-radius:3px;flex-shrink:0}
+.leiter-step{flex:1;height:6px;border-radius:3px;background:#e0e0e0;transition:background .25s;position:relative;overflow:visible}
+.leiter-step.done{background:var(--accent)}
+.leiter-figure-span{position:absolute;top:50%;left:50%;transform:translate(-50%,-75%);font-size:20px;line-height:1;pointer-events:none}
 /* MÜNZEN */
 .coin-display{display:flex;align-items:center;gap:6px;font-size:20px;font-weight:bold;color:var(--accent-dark)}
 .coin-emoji{font-size:22px;line-height:1}
@@ -204,6 +215,7 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
         <div class="mode-bar">
           <button class="mode-btn active" id="modeBtn-fragen" onclick="switchMode('fragen')">📖 Fragen</button>
           <button class="mode-btn" id="modeBtn-luecken" onclick="switchMode('luecken')">✏️ Lückentext</button>
+          <button class="mode-btn" id="modeBtn-leiter" onclick="switchMode('leiter')">🪜 Himmelsleiter</button>
         </div>
         <div class="task-box">
           <!-- FRAGEN MODE -->
@@ -233,6 +245,28 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
               <button class="btn btn-primary" id="luecke-next" style="display:none" onclick="nextLuecke()">Weiter ➔</button>
             </div>
           </div>
+          <!-- HIMMELSLEITER MODE -->
+          <div id="mode-leiter" style="display:none">
+            <div class="leiter-wrap">
+              <!-- Ladder visual -->
+              <div class="leiter-svg-col" id="leiterLadderCol">
+                <div class="leiter-goal">🌟</div>
+                <div class="leiter-coins-label">+15 🪙</div>
+                <div id="leiterLadderRungs"></div>
+              </div>
+              <!-- Question area -->
+              <div class="leiter-col">
+                <div class="luecke-progress" id="leiter-progress" style="margin-bottom:8px">Wähle links ein Thema!</div>
+                <div class="task-question" id="leiterQuestion" style="font-size:18px;font-weight:bold;color:#2c3e50;text-align:left;margin-bottom:10px;line-height:1.4"></div>
+                <div class="mc-grid" id="leiterMcGrid"></div>
+                <div class="feedback" id="leiter-feedback"></div>
+                <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+                  <button class="btn btn-primary" id="leiterNextBtn" style="display:none" onclick="leiterNext()">Weiter ➔</button>
+                  <button class="btn btn-secondary" id="leiterRetryBtn" style="display:none" onclick="startLeiter()">🔄 Nochmal</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -240,15 +274,17 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
     <!-- SPIEL-BANNER -->
     <div class="game-banner">
       <div class="game-banner-left">
-        <div class="game-banner-icon">🪜</div>
+        <div class="game-banner-icon" style="overflow:hidden;padding:0">
+          <img src="../images/religion_flipper.png" style="width:100%;height:100%;object-fit:cover;border-radius:12px" onerror="this.parentElement.innerHTML='⚡'">
+        </div>
         <div>
-          <div class="game-banner-title">✨ Die Himmelsleiter</div>
-          <div class="game-banner-sub">Fragen beantworten +1 🪙 · Spiel kostet 10 Münzen</div>
+          <div class="game-banner-title">⚡ Bibelflipper</div>
+          <div class="game-banner-sub">Triff alle Bumper · Spiel kostet 10 🪙</div>
         </div>
       </div>
       <div class="game-banner-right">
         <div class="coin-badge-big">🪙 <span id="coinBannerText">0</span></div>
-        <button class="btn-play" onclick="window.location.href='religion_leiter.html'">Spielen →</button>
+        <button class="btn-play" onclick="window.location.href='religion_flipper.html'">Spielen →</button>
       </div>
     </div>
   </div>
@@ -295,6 +331,7 @@ let curQuestionPool = [], curShuffled = [], curShuffleIdx = 0, curQuestion = nul
 let selectedAnswer = null, currentView = 'practice', dashPeriod = 'today';
 let curMode = 'fragen';
 let lueckePool = [], lueckeIdx = 0, lueckeAnswered = false, lueckeSatz = null;
+let leiterRound = [], leiterIdx = 0, leiterAllCorrect = true;
 
 function loadStorage() {
   try {
@@ -375,7 +412,8 @@ function selectTopic(key) {
   curQuestionPool = topic.questions;
   curShuffled = shuffle([...curQuestionPool.keys()]);
   curShuffleIdx = 0;
-  showQuestion();
+  if (curMode === 'leiter') startLeiter();
+  else showQuestion();
 }
 
 function shuffle(arr) {
@@ -595,9 +633,11 @@ function switchMode(mode) {
   curMode = mode;
   document.getElementById('mode-fragen').style.display = mode === 'fragen' ? 'block' : 'none';
   document.getElementById('mode-luecken').style.display = mode === 'luecken' ? 'block' : 'none';
+  document.getElementById('mode-leiter').style.display = mode === 'leiter' ? 'block' : 'none';
   document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('active'); });
   document.getElementById('modeBtn-' + mode).classList.add('active');
   if (mode === 'luecken') startLuecken();
+  if (mode === 'leiter') startLeiter();
 }
 
 function startLuecken() {
@@ -671,6 +711,135 @@ function answerLuecke(choice, clickedBtn, grid) {
 function nextLuecke() {
   lueckeIdx++;
   showLuecke();
+}
+
+// ── HIMMELSLEITER ─────────────────────────────────────────
+function drawLeiterLadder(doneCount, total, failed) {
+  // Rungs numbered 1(bottom)..total(top). Draw top→bottom on screen.
+  // Figure stands ON rung #doneCount (orange + emoji). Rungs below are orange. Rungs above grey.
+  // doneCount=0 → figure at base (shown after all rungs). doneCount=total → figure at top rung.
+  var html = '';
+  for (var rung = total; rung >= 1; rung--) {
+    var isDone    = rung <= doneCount;
+    var isFigure  = (rung === doneCount) && doneCount > 0;
+    html += '<div class="leiter-rung">';
+    html += '<div class="leiter-rail"></div>';
+    if (isFigure && !failed) {
+      html += '<div class="leiter-step done"><span class="leiter-figure-span">🧑</span></div>';
+    } else if (isFigure && failed) {
+      // Show figure falling (red tint on rung)
+      html += '<div class="leiter-step" style="background:#e74c3c"><span class="leiter-figure-span">😵</span></div>';
+    } else {
+      html += '<div class="leiter-step' + (isDone ? ' done' : '') + '"></div>';
+    }
+    html += '<div class="leiter-rail"></div>';
+    html += '</div>';
+  }
+  // doneCount=0: figure at base below all rungs
+  if (doneCount === 0) {
+    html += '<div style="text-align:center;font-size:20px;line-height:1;margin-top:2px">' + (failed ? '😵' : '🧑') + '</div>';
+  }
+  document.getElementById('leiterLadderRungs').innerHTML = html;
+}
+
+function startLeiter() {
+  if (!curQuestionPool || !curQuestionPool.length) {
+    document.getElementById('leiter-progress').textContent = 'Wähle links ein Thema!';
+    document.getElementById('leiterQuestion').textContent = '';
+    document.getElementById('leiterMcGrid').innerHTML = '';
+    document.getElementById('leiter-feedback').textContent = '';
+    drawLeiterLadder(0, 10, false);
+    return;
+  }
+  var allIdx = shuffle([...Array(curQuestionPool.length).keys()]);
+  leiterRound = allIdx.slice(0, Math.min(10, allIdx.length)).map(function(i) { return curQuestionPool[i]; });
+  leiterIdx = 0;
+  leiterAllCorrect = true;
+  showLeiterFrage();
+}
+
+function showLeiterFrage() {
+  var q = leiterRound[leiterIdx];
+  document.getElementById('leiter-progress').textContent = 'Stufe ' + (leiterIdx + 1) + ' von ' + leiterRound.length + ' · alle richtig = +15 🪙';
+  document.getElementById('leiterQuestion').textContent = q.q;
+  document.getElementById('leiter-feedback').textContent = '';
+  document.getElementById('leiter-feedback').className = 'feedback';
+  document.getElementById('leiterNextBtn').style.display = 'none';
+  document.getElementById('leiterRetryBtn').style.display = 'none';
+  drawLeiterLadder(leiterIdx, leiterRound.length, false);
+  var grid = document.getElementById('leiterMcGrid');
+  grid.innerHTML = '';
+  var shuffledChoices = shuffle([...q.choices]);
+  shuffledChoices.forEach(function(c) {
+    var btn = document.createElement('button');
+    btn.className = 'mc-btn';
+    btn.textContent = c;
+    btn.addEventListener('click', function() { answerLeiter(c, btn, grid, q); });
+    grid.appendChild(btn);
+  });
+}
+
+function answerLeiter(choice, clickedBtn, grid, q) {
+  grid.querySelectorAll('.mc-btn').forEach(function(b) { b.disabled = true; });
+  var correctText = q.choices[q.sol];
+  var ok = (choice === correctText);
+  grid.querySelectorAll('.mc-btn').forEach(function(b) {
+    if (b.textContent === correctText) b.classList.add('correct');
+    else if (b === clickedBtn && !ok) b.classList.add('wrong');
+  });
+  var fb = document.getElementById('leiter-feedback');
+  if (ok) {
+    leiterIdx++;
+    speakText('Super, Richtig!');
+    fb.textContent = 'Super, Richtig! ✅';
+    fb.className = 'feedback ok';
+    drawLeiterLadder(leiterIdx, leiterRound.length, false);
+    if (leiterIdx >= leiterRound.length) {
+      setTimeout(leiterFinish, 900);
+    } else {
+      document.getElementById('leiterNextBtn').style.display = 'inline-flex';
+    }
+  } else {
+    // Wrong answer: show failure state, then auto-restart from beginning
+    leiterAllCorrect = false;
+    drawLeiterLadder(leiterIdx, leiterRound.length, true);
+    fb.textContent = '❌ Falsch! Richtig wäre: ' + correctText + ' – wieder von vorne!';
+    fb.className = 'feedback bad';
+    document.getElementById('leiter-progress').textContent = 'Von vorne! Alle müssen richtig sein.';
+    // Disable further interaction, restart after delay
+    setTimeout(startLeiter, 2200);
+  }
+}
+
+function leiterNext() {
+  document.getElementById('leiterNextBtn').style.display = 'none';
+  showLeiterFrage();
+}
+
+function leiterFinish() {
+  document.getElementById('leiterMcGrid').innerHTML = '';
+  document.getElementById('leiterNextBtn').style.display = 'none';
+  document.getElementById('leiterQuestion').textContent = '';
+  var fb = document.getElementById('leiter-feedback');
+  if (leiterAllCorrect) {
+    document.getElementById('leiter-progress').textContent = '🎉 Alle Stufen geschafft!';
+    drawLeiterLadder(leiterRound.length, leiterRound.length, false);
+    fb.textContent = '🎉 Perfekt! Alle ' + leiterRound.length + ' richtig! +15 🪙';
+    fb.className = 'feedback ok';
+    speakText('Perfekt, alle richtig!');
+    var prof = getProfile();
+    if (prof) {
+      prof.coins = (prof.coins || 0) + 15;
+      if (!prof.rel_history) prof.rel_history = [];
+      prof.rel_history.push({ts: Date.now(), topic: 'leiter', ok: true});
+      saveStorage(); updateCoinDisplay(); renderStars();
+    }
+  } else {
+    document.getElementById('leiter-progress').textContent = 'Nicht alle richtig – nochmal versuchen!';
+    fb.textContent = '💪 Noch nicht alle richtig – kein Münzen. Nochmal!';
+    fb.className = 'feedback bad';
+  }
+  document.getElementById('leiterRetryBtn').style.display = 'inline-flex';
 }
 
 // ── INIT ──────────────────────────────────────────────────
