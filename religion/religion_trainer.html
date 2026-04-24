@@ -277,7 +277,7 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
       </div>
     </div>
 
-    <!-- SPIEL-BANNER -->
+    <!-- SPIEL-BANNER FLIPPER -->
     <div class="game-banner">
       <div class="game-banner-left">
         <div class="game-banner-icon" style="overflow:hidden;padding:0">
@@ -285,7 +285,7 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
         </div>
         <div>
           <div class="game-banner-title">⚡ Bibelflipper</div>
-          <div class="game-banner-sub">Triff alle Bumper · Spiel kostet 10 🪙</div>
+          <div class="game-banner-sub">Bumper sammeln · Punkte unbegrenzt · 10 🪙</div>
         </div>
       </div>
       <div class="game-banner-right">
@@ -293,15 +293,36 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
         <button class="btn-play" onclick="window.location.href='religion_flipper.html'">Spielen →</button>
       </div>
     </div>
+    <!-- SPIEL-BANNER TOWER -->
+    <div class="game-banner" style="margin-top:10px;background:linear-gradient(135deg,#0f2027 0%,#203a43 50%,#2c5364 100%)">
+      <div class="game-banner-left">
+        <div class="game-banner-icon" style="overflow:hidden;padding:0">
+          <img src="../images/religion_tower.png" style="width:100%;height:100%;object-fit:cover;border-radius:12px" onerror="this.parentElement.innerHTML='🏛️'">
+        </div>
+        <div>
+          <div class="game-banner-title">🏛️ Himmelsbau</div>
+          <div class="game-banner-sub">Blöcke stapeln bis zum Himmel · 10 🪙</div>
+        </div>
+      </div>
+      <div class="game-banner-right">
+        <div class="coin-badge-big" style="border-color:rgba(100,200,255,0.4);color:#7dd3fc">🪙 <span id="coinBannerText2">0</span></div>
+        <button class="btn-play" style="background:linear-gradient(135deg,#3b82f6,#06b6d4)" onclick="window.location.href='religion_tower.html'">Spielen →</button>
+      </div>
+    </div>
   </div>
 
   <!-- BESTENLISTE -->
   <div id="view-highscore" class="view-container">
-    <div class="panel-title" style="margin-top:10px">🏆 Himmelsleiter – Bestenliste</div>
+    <div class="panel-title" style="margin-top:10px">🏆 Spielstände</div>
     <div class="dashboard-box">
-      <div id="hs-list" style="min-height:100px"></div>
-      <div style="text-align:center;margin-top:20px">
-        <button class="btn-play" onclick="window.location.href='religion_leiter.html'" style="display:inline-flex;align-items:center;gap:8px;font-size:15px">🪜 Jetzt spielen</button>
+      <div class="filter-tabs" style="margin-bottom:16px">
+        <div class="filter-tab active" id="hsTab-flipper" onclick="switchHsTab('flipper',this)">⚡ Flipper</div>
+        <div class="filter-tab" id="hsTab-tower" onclick="switchHsTab('tower',this)">🏛️ Himmelsbau</div>
+        <div class="filter-tab" id="hsTab-leiter" onclick="switchHsTab('leiter',this)">🪜 Himmelsleiter</div>
+      </div>
+      <div id="hs-list" style="min-height:80px"></div>
+      <div style="text-align:center;margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn-play" id="hsBtnPlay" onclick="window.location.href='religion_flipper.html'" style="display:inline-flex;align-items:center;gap:8px;font-size:14px">⚡ Flipper spielen</button>
       </div>
     </div>
   </div>
@@ -377,6 +398,7 @@ function updateCoinDisplay() {
   const c = p ? p.coins : 0;
   document.getElementById('coinText').textContent = c;
   document.getElementById('coinBannerText').textContent = c;
+  document.getElementById('coinBannerText2').textContent = c;
 }
 
 function renderStars() {
@@ -538,22 +560,54 @@ function switchView(view) {
   if (hsBtn) hsBtn.textContent = view === 'highscore' ? 'Üben' : 'Bestenliste';
 }
 
+let curHsTab = 'flipper';
+function switchHsTab(tab, el) {
+  curHsTab = tab;
+  document.querySelectorAll('#view-highscore .filter-tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const playBtn = document.getElementById('hsBtnPlay');
+  if (tab === 'flipper') { playBtn.textContent = '⚡ Flipper spielen'; playBtn.onclick = () => window.location.href='religion_flipper.html'; }
+  else if (tab === 'tower') { playBtn.textContent = '🏛️ Himmelsbau spielen'; playBtn.onclick = () => window.location.href='religion_tower.html'; }
+  else { playBtn.textContent = '🪜 Himmelsleiter spielen'; playBtn.onclick = () => window.location.href='religion_leiter.html'; }
+  updateHighscores();
+}
+
 function updateHighscores() {
-  let hs = [];
-  try { hs = JSON.parse(localStorage.getItem('m_rel_hs') || '[]'); } catch(e) {}
   const list = document.getElementById('hs-list');
-  if (!hs.length) {
-    list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:30px 0;font-size:15px">Noch keine Einträge.<br>Los spielen! 🪜</p>';
-    return;
-  }
   const medals = ['🥇','🥈','🥉'];
   const rankBg = ['#f39c12','#95a5a6','#e67e22'];
-  list.innerHTML = hs.map((e, i) => `
-    <div class="hs-entry" style="background:${i===0?'#fef9e7':i===1?'#f8f9fa':i===2?'#fff8f0':'#fff'};border-color:${rankBg[i]||'#f5d5b0'}">
-      <div class="hs-rank" style="background:${rankBg[i]||'#bdc3c7'}">${i < 3 ? medals[i] : i+1}</div>
-      <div class="hs-name">${e.name}</div>
-      <div class="hs-score" style="color:${i===0?'var(--accent)':'#2c3e50'}"><strong>${e.score}/10</strong> richtig</div>
-    </div>`).join('');
+
+  if (curHsTab === 'flipper') {
+    let hs = [];
+    try { hs = JSON.parse(localStorage.getItem('m_rel_flipper_hs') || '[]'); } catch(e) {}
+    if (!hs.length) { list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:30px 0;font-size:15px">Noch kein Highscore.<br>Flipper starten! ⚡</p>'; return; }
+    list.innerHTML = hs.map((e, i) => `
+      <div class="hs-entry" style="background:${i===0?'#fef9e7':i===1?'#f8f9fa':'#fff'};border-color:${rankBg[i]||'#f5d5b0'}">
+        <div class="hs-rank" style="background:${rankBg[i]||'#bdc3c7'}">${i < 3 ? medals[i] : i+1}</div>
+        <div class="hs-name">${e.name}</div>
+        <div class="hs-score" style="color:${i===0?'var(--accent)':'#2c3e50'}"><strong>${e.score}</strong> Punkte</div>
+      </div>`).join('');
+  } else if (curHsTab === 'tower') {
+    let hs = [];
+    try { hs = JSON.parse(localStorage.getItem('m_rel_tower_hs') || '[]'); } catch(e) {}
+    if (!hs.length) { list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:30px 0;font-size:15px">Noch kein Highscore.<br>Himmelsbau starten! 🏛️</p>'; return; }
+    list.innerHTML = hs.map((e, i) => `
+      <div class="hs-entry" style="background:${i===0?'#eff8ff':i===1?'#f8f9fa':'#fff'};border-color:${i===0?'#3b82f6':i===1?'#95a5a6':i===2?'#06b6d4':'#f5d5b0'}">
+        <div class="hs-rank" style="background:${i===0?'#3b82f6':i===1?'#95a5a6':i===2?'#06b6d4':'#bdc3c7'}">${i < 3 ? medals[i] : i+1}</div>
+        <div class="hs-name">${e.name}</div>
+        <div class="hs-score" style="color:${i===0?'#3b82f6':'#2c3e50'}"><strong>${e.score}</strong> Blöcke</div>
+      </div>`).join('');
+  } else {
+    let hs = [];
+    try { hs = JSON.parse(localStorage.getItem('m_rel_hs') || '[]'); } catch(e) {}
+    if (!hs.length) { list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:30px 0;font-size:15px">Noch kein Highscore.<br>Himmelsleiter spielen! 🪜</p>'; return; }
+    list.innerHTML = hs.map((e, i) => `
+      <div class="hs-entry" style="background:${i===0?'#fef9e7':i===1?'#f8f9fa':'#fff'};border-color:${rankBg[i]||'#f5d5b0'}">
+        <div class="hs-rank" style="background:${rankBg[i]||'#bdc3c7'}">${i < 3 ? medals[i] : i+1}</div>
+        <div class="hs-name">${e.name}</div>
+        <div class="hs-score" style="color:${i===0?'var(--accent)':'#2c3e50'}"><strong>${e.score}/10</strong> richtig</div>
+      </div>`).join('');
+  }
 }
 
     function openLexikon() {

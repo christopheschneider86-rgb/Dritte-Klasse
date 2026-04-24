@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Himmelsbau – Religion</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<style>
+:root{--accent:#3b82f6;--accent2:#06b6d4;--bg:#0f172a;--text:#fff}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:none}
+body{background:var(--bg);color:var(--text);font-family:Segoe UI,Roboto,Arial,sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;overflow:hidden}
+.topbar{width:100%;max-width:420px;display:flex;align-items:center;justify-content:space-between;padding:10px 14px;flex-shrink:0}
+.back-btn{background:rgba(255,255,255,.12);border:none;border-radius:10px;padding:8px 10px;cursor:pointer;color:#fff;display:flex;align-items:center;text-decoration:none}
+.back-btn svg{width:20px;height:20px;stroke:currentColor;fill:none}
+.hud{display:flex;gap:10px;align-items:center;font-size:14px;font-weight:bold}
+.hud-item{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.1);padding:6px 12px;border-radius:10px}
+#gameCanvas{display:block;max-width:420px;width:100%;cursor:pointer;touch-action:none}
+/* Factoid */
+.factoid{position:fixed;left:50%;top:80px;transform:translateX(-50%);background:rgba(255,255,255,.95);color:#1e293b;border-radius:14px;padding:10px 16px;font-size:13px;font-weight:bold;max-width:320px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.4);pointer-events:none;opacity:0;transition:opacity .3s;z-index:10;line-height:1.5}
+.factoid.show{opacity:1}
+/* Overlay screens */
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(15,23,42,.93);z-index:20;padding:24px;text-align:center}
+.screen h2{font-size:26px;font-weight:bold}
+.screen p{font-size:15px;color:rgba(255,255,255,.7);max-width:300px;line-height:1.6}
+.score-big{font-size:56px;font-weight:bold;background:linear-gradient(135deg,#3b82f6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.btn-big{background:linear-gradient(135deg,#3b82f6,#06b6d4);color:#fff;border:none;border-radius:16px;padding:14px 36px;font-size:17px;font-weight:bold;cursor:pointer;box-shadow:0 4px 16px rgba(59,130,246,.5)}
+.btn-sec{background:rgba(255,255,255,.12);color:#fff;border:none;border-radius:14px;padding:12px 24px;font-size:14px;font-weight:bold;cursor:pointer;text-decoration:none;display:inline-block}
+.coin-info{font-size:13px;color:#7dd3fc;font-weight:bold;background:rgba(255,255,255,.08);padding:8px 16px;border-radius:10px}
+.perfect-badge{font-size:13px;font-weight:bold;color:#f1c40f;background:rgba(241,196,15,.15);border:1px solid rgba(241,196,15,.3);border-radius:10px;padding:6px 14px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="religion_trainer.html" class="back-btn">
+    <svg viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+  </a>
+  <div class="hud">
+    <div class="hud-item">⭐ <span id="scoreEl">0</span></div>
+    <div class="hud-item">🪙 <span id="coinEl">?</span></div>
+  </div>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<div class="factoid" id="factoid"></div>
+
+<!-- START SCREEN -->
+<div class="screen" id="startScreen">
+  <div style="font-size:60px">🏛️</div>
+  <h2>Himmelsbau</h2>
+  <p>Stapele Blöcke so hoch wie möglich – bis zum Himmel wie Jakobs Traum!</p>
+  <div style="font-size:13px;color:rgba(255,255,255,.45)">Tippen oder Leertaste zum Ablegen</div>
+  <div class="coin-info">🪙 Kosten: 10 Münzen · Dein Guthaben: <span id="startCoinCount">?</span> 🪙</div>
+  <button class="btn-big" onclick="startGame()">Spielen! ▶</button>
+  <a href="religion_trainer.html" class="btn-sec">Zurück</a>
+</div>
+
+<!-- GAME OVER SCREEN -->
+<div class="screen" id="gameOverScreen" style="display:none">
+  <div style="font-size:56px">😔</div>
+  <h2>Abgestürzt!</h2>
+  <div class="score-big" id="goScore">0</div>
+  <p id="goMsg">Blöcke gestapelt – Jakob wäre stolz!</p>
+  <div class="perfect-badge" id="goPerfect" style="display:none">✨ <span id="goPerfectCount">0</span>× Perfekt gestapelt!</div>
+  <button class="btn-big" onclick="startGame()">Nochmal 🔁</button>
+  <a href="religion_trainer.html" class="btn-sec">Zum Trainer</a>
+</div>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const STORAGE_KEY = 'm_app_v9', ACTIVE_KEY = 'm_app_active_prof';
+
+// ─── STORAGE ─────────────────────────────────────────────────────────────────
+function getProfile() {
+  try {
+    const profiles = JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');
+    const id = localStorage.getItem(ACTIVE_KEY);
+    return (id && profiles[id]) ? profiles[id] : null;
+  } catch(e) { return null; }
+}
+function addCoins(n) {
+  try {
+    const profiles = JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');
+    const id = localStorage.getItem(ACTIVE_KEY);
+    if (id && profiles[id]) {
+      profiles[id].coins = (profiles[id].coins||0) + n;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
+      document.getElementById('coinEl').textContent = profiles[id].coins;
+    }
+  } catch(e) {}
+}
+function saveTowerHighscore(score) {
+  try {
+    const profile = getProfile();
+    const name = profile ? profile.name : 'Unbekannt';
+    let hs = JSON.parse(localStorage.getItem('m_rel_tower_hs') || '[]');
+    hs.push({ name, score });
+    hs.sort((a,b) => b.score - a.score);
+    hs = hs.slice(0, 10);
+    localStorage.setItem('m_rel_tower_hs', JSON.stringify(hs));
+  } catch(e) {}
+}
+function updateCoinDisplay() {
+  const p = getProfile();
+  const c = p ? (p.coins||0) : 0;
+  document.getElementById('coinEl').textContent = c;
+  document.getElementById('startCoinCount').textContent = c;
+}
+
+// ─── BIBLE FACTS (shown every 5 blocks) ───────────────────────────────────────
+const FACTS = [
+  '🍲 Esau tauschte sein Erstgeburtsrecht für ein Linsengericht!',
+  '🪜 Jakob träumte von einer Leiter bis in den Himmel – Engel stiegen auf und nieder.',
+  '🧔 Esau war stark behaart und liebte die Jagd.',
+  '🐑 Jakob hütete Schafe und war das Mama-Kind von Rebekka.',
+  '🙏 Der Segen des Vaters konnte nicht zurückgenommen werden.',
+  '🏕️ Jakob, Esau und ihre Familie lebten als Nomaden in Zelten.',
+  '⭐ Gott versprach Jakob: „Ich bin bei dir!"',
+  '🤝 Laban war Rebekkas Bruder und Jakobs Onkel.',
+  '💍 Jakob arbeitete 14 Jahre für seinen Onkel, um Rahel heiraten zu dürfen.',
+  '🪨 Jakobs Sippe schloss mit einem Steinhaufen Frieden mit Laban.',
+];
+
+// ─── BLOCK COLORS ────────────────────────────────────────────────────────────
+const BLOCK_COLORS = [
+  '#3b82f6','#06b6d4','#8b5cf6','#ec4899','#f59e0b',
+  '#10b981','#ef4444','#f97316','#6366f1','#14b8a6',
+];
+
+// ─── GAME STATE ──────────────────────────────────────────────────────────────
+let W, H;
+const BLOCK_H = 28;
+const MIN_BLOCK_W = 30;
+const SNAP_THRESHOLD = 6;   // px – within this range = perfect snap
+
+let stack = [];        // [{x, y, w, colorIdx}]
+let mover = null;      // {x, y, w, colorIdx, dir, speed}
+let cameraY = 0;       // world-Y of canvas top edge
+let score = 0;
+let perfectCount = 0;
+let running = false;
+let animId = null;
+let fallingPieces = []; // cut-off pieces that fall away [{x,y,w,vy,colorIdx}]
+let factoidTimer = null;
+let gameOver = false;
+
+function resize() {
+  const maxW = Math.min(window.innerWidth, 420);
+  const maxH = window.innerHeight - 52;
+  canvas.width = maxW;
+  canvas.height = Math.min(maxH, 680);
+  W = canvas.width;
+  H = canvas.height;
+}
+
+function initGame() {
+  score = 0; perfectCount = 0; gameOver = false; fallingPieces = [];
+  cameraY = 0;
+  const baseW = Math.min(240, W * 0.65);
+  const baseX = (W - baseW) / 2;
+  // World-Y: 0 is top, positive is down. Stack sits near bottom.
+  const worldBaseY = H - BLOCK_H * 2;
+  stack = [
+    { x: baseX, y: worldBaseY, w: baseW, colorIdx: 0 }
+  ];
+  spawnMover();
+  document.getElementById('scoreEl').textContent = 0;
+}
+
+function getSpeed() {
+  // Speed grows with score: starts at 1.8, max 5.5
+  return Math.min(1.8 + score * 0.12, 5.5);
+}
+
+function spawnMover() {
+  const prev = stack[stack.length - 1];
+  const colorIdx = (prev.colorIdx + 1) % BLOCK_COLORS.length;
+  // New mover has same width as top block (it shrinks with misses)
+  mover = {
+    x: 0,
+    y: prev.y - BLOCK_H - 2,  // world-Y, one block above top
+    w: prev.w,
+    colorIdx,
+    dir: 1,
+    speed: getSpeed(),
+  };
+  // Ensure camera scrolls to show the mover
+  updateCamera();
+}
+
+function updateCamera() {
+  if (!mover) return;
+  // Target: mover is at ~25% from top of canvas
+  const targetTop = mover.y - H * 0.25;
+  cameraY = Math.max(0, targetTop);
+}
+
+function drop() {
+  if (!running || !mover || gameOver) return;
+
+  const prev = stack[stack.length - 1];
+  const mb = mover;
+
+  // Overlap calculation
+  const ol = Math.max(prev.x, mb.x);
+  const or_ = Math.min(prev.x + prev.w, mb.x + mb.w);
+  const overlapW = or_ - ol;
+
+  if (overlapW <= MIN_BLOCK_W / 2) {
+    // Missed – game over
+    endGame();
+    return;
+  }
+
+  const isPerfect = (mb.x >= prev.x - SNAP_THRESHOLD && mb.x + mb.w <= prev.x + prev.w + SNAP_THRESHOLD
+                  && overlapW >= prev.w - SNAP_THRESHOLD);
+
+  const newX = isPerfect ? prev.x : ol;
+  const newW = isPerfect ? prev.w : overlapW;
+
+  // Cut-off piece
+  if (!isPerfect) {
+    // Left overhang
+    if (mb.x < ol) {
+      fallingPieces.push({ x: mb.x, y: mb.y, w: ol - mb.x, vy: -1, colorIdx: mb.colorIdx });
+    }
+    // Right overhang
+    if (mb.x + mb.w > or_) {
+      fallingPieces.push({ x: or_, y: mb.y, w: (mb.x + mb.w) - or_, vy: -1, colorIdx: mb.colorIdx });
+    }
+  }
+
+  // Add to stack
+  stack.push({ x: newX, y: mb.y, w: newW, colorIdx: mb.colorIdx });
+  score++;
+  document.getElementById('scoreEl').textContent = score;
+  addCoins(1);
+
+  if (isPerfect) {
+    perfectCount++;
+    showFactoid('✨ Perfekt! Genau getroffen!');
+    playBeep(1200, 0.1);
+    setTimeout(() => playBeep(1500, 0.08), 130);
+  } else {
+    playBeep(500 + Math.min(score * 10, 300), 0.08);
+  }
+
+  // Show bible fact every 5 blocks
+  if (score % 5 === 0 && !isPerfect) {
+    const fact = FACTS[(score / 5 - 1) % FACTS.length];
+    setTimeout(() => showFactoid(fact), 400);
+  }
+
+  spawnMover();
+}
+
+function endGame() {
+  running = false;
+  gameOver = true;
+  saveTowerHighscore(score);
+  playBeep(200, 0.3);
+  setTimeout(() => {
+    document.getElementById('goScore').textContent = score;
+    const msgs = [
+      'Blöcke gestapelt – Jakob wäre stolz!',
+      'Fast bis zum Himmel! Noch ein Versuch?',
+      'Engel hätten das auch nicht besser gemacht!',
+      'Der Turm zu Babel wäre neidisch!',
+    ];
+    document.getElementById('goMsg').textContent = msgs[Math.floor(Math.random() * msgs.length)];
+    if (perfectCount > 0) {
+      document.getElementById('goPerfect').style.display = 'block';
+      document.getElementById('goPerfectCount').textContent = perfectCount;
+    } else {
+      document.getElementById('goPerfect').style.display = 'none';
+    }
+    document.getElementById('gameOverScreen').style.display = 'flex';
+  }, 400);
+}
+
+function startGame() {
+  const profile = getProfile();
+  const coins = profile ? (profile.coins || 0) : 0;
+  if (coins < 10) {
+    alert('Nicht genug Münzen! (10 🪙 benötigt)\nDu hast: ' + coins + ' 🪙');
+    return;
+  }
+  addCoins(-10);
+
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('gameOverScreen').style.display = 'none';
+
+  initGame();
+  running = true;
+  if (animId) cancelAnimationFrame(animId);
+  loop();
+}
+
+// ─── DRAW ─────────────────────────────────────────────────────────────────────
+function draw() {
+  // Background
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#0f172a');
+  grad.addColorStop(0.5, '#1e3a5f');
+  grad.addColorStop(1, '#0f2c4a');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Stars (fixed positions)
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  [[30,20],[80,50],[130,15],[190,40],[240,10],[300,60],[360,25],[410,45],
+   [50,100],[170,80],[280,90],[380,70],[20,130],[140,110]].forEach(([sx,sy]) => {
+    ctx.beginPath(); ctx.arc(sx, sy, 1.2, 0, Math.PI*2); ctx.fill();
+  });
+
+  // Draw all stack blocks
+  stack.forEach(b => {
+    const sy = b.y - cameraY;
+    if (sy > H + 10 || sy + BLOCK_H < -10) return;
+    drawBlock(b.x, sy, b.w, BLOCK_H, BLOCK_COLORS[b.colorIdx], false);
+  });
+
+  // Draw falling cut pieces
+  fallingPieces.forEach(fp => {
+    const sy = fp.y - cameraY;
+    if (sy > H + 60 || sy < -60) return;
+    ctx.globalAlpha = 0.7;
+    drawBlock(fp.x, sy, fp.w, BLOCK_H, BLOCK_COLORS[fp.colorIdx], false);
+    ctx.globalAlpha = 1;
+  });
+
+  // Draw moving block
+  if (mover && running) {
+    const sy = mover.y - cameraY;
+    drawBlock(mover.x, sy, mover.w, BLOCK_H, BLOCK_COLORS[mover.colorIdx], true);
+
+    // Dashed guide line showing top-of-stack alignment
+    const prev = stack[stack.length - 1];
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    ctx.moveTo(prev.x, prev.y - BLOCK_H - 2 - cameraY);
+    ctx.lineTo(prev.x + prev.w, prev.y - BLOCK_H - 2 - cameraY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Height indicator (star + text at top when high up)
+  if (score > 3) {
+    ctx.fillStyle = 'rgba(241,196,15,0.85)';
+    ctx.font = `bold ${14}px Segoe UI,sans-serif`;
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'top';
+    ctx.fillText('⭐ ' + score + ' Blöcke', W - 8, 8);
+  }
+}
+
+function drawBlock(x, y, w, h, color, isMoving) {
+  // Main face
+  ctx.fillStyle = color;
+  ctx.fillRect(x, y, w, h);
+
+  // Top highlight
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.fillRect(x, y, w, 5);
+
+  // Left shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.2)';
+  ctx.fillRect(x, y + 5, 4, h - 5);
+
+  // Glow outline on moving block
+  if (isMoving) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x + 1, y + 1, w - 2, h - 2);
+  }
+}
+
+// ─── UPDATE ──────────────────────────────────────────────────────────────────
+function update() {
+  if (!running || !mover) return;
+
+  // Move mover
+  mover.x += mover.speed * mover.dir;
+  const maxX = W - mover.w;
+  if (mover.x >= maxX) { mover.x = maxX; mover.dir = -1; }
+  if (mover.x <= 0) { mover.x = 0; mover.dir = 1; }
+
+  // Update falling pieces
+  fallingPieces.forEach(fp => { fp.y += fp.vy; fp.vy += 0.4; });
+  fallingPieces = fallingPieces.filter(fp => fp.y - cameraY < H + 100);
+}
+
+function loop() {
+  update();
+  draw();
+  if (running) animId = requestAnimationFrame(loop);
+}
+
+// ─── INPUT ───────────────────────────────────────────────────────────────────
+canvas.addEventListener('click', drop);
+canvas.addEventListener('touchstart', e => { e.preventDefault(); drop(); }, { passive: false });
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' || e.code === 'ArrowDown' || e.code === 'Enter') {
+    e.preventDefault(); drop();
+  }
+});
+
+// ─── AUDIO ───────────────────────────────────────────────────────────────────
+let audioCtx = null;
+function playBeep(freq, dur) {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+    osc.start(); osc.stop(audioCtx.currentTime + dur);
+  } catch(e) {}
+}
+
+// ─── FACTOID ─────────────────────────────────────────────────────────────────
+function showFactoid(text) {
+  const el = document.getElementById('factoid');
+  el.textContent = text;
+  el.classList.add('show');
+  clearTimeout(factoidTimer);
+  factoidTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+resize();
+window.addEventListener('resize', () => { resize(); });
+updateCoinDisplay();
+</script>
+</body>
+</html>

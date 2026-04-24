@@ -125,12 +125,24 @@ function addCoins(n) {
   } catch(e) {}
 }
 
+function saveFlipperHighscore(finalScore) {
+  try {
+    const profile = getProfile();
+    const name = profile ? profile.name : 'Unbekannt';
+    let hs = JSON.parse(localStorage.getItem('m_rel_flipper_hs') || '[]');
+    hs.push({ name, score: finalScore });
+    hs.sort((a, b) => b.score - a.score);
+    hs = hs.slice(0, 10);
+    localStorage.setItem('m_rel_flipper_hs', JSON.stringify(hs));
+  } catch(e) {}
+}
+
 // ─── GAME STATE ──────────────────────────────────────────────────────────────
 let W, H, scale;
 let ball = {}, leftFlipper = {}, rightFlipper = {};
 let bumpers = [];
 let lDown = false, rDown = false;
-let score = 0, lives = 3, running = false, ballLost = false;
+let score = 0, lives = 3, running = false, ballLost = false, round = 0;
 let factoidTimer = null;
 let animId = null;
 let countdownText = '';   // '' means no countdown overlay
@@ -208,7 +220,7 @@ function startGame(fromStart) {
   document.getElementById('startScreen').style.display = 'none';
   document.getElementById('gameOverScreen').style.display = 'none';
   document.getElementById('winScreen').style.display = 'none';
-  score = 0; lives = 3; ballLost = false;
+  score = 0; lives = 3; ballLost = false; round = 0;
   updateHUD();
   bumpers.forEach(b => { b.hit = false; b.hitAnim = 0; });
   resetBall();
@@ -412,15 +424,14 @@ function update() {
     }
   });
 
-  // Win condition
+  // All bumpers hit: reset for next round (game continues!)
   if (allHit) {
-    running = false;
-    addCoins(10);
-    setTimeout(() => {
-      document.getElementById('winScore').textContent = score;
-      document.getElementById('winScreen').style.display = 'flex';
-    }, 500);
-    return;
+    round++;
+    addCoins(5);
+    showFactoid('🎉 Runde ' + round + ' komplett! +5 🪙 · Weiter geht\'s!');
+    playBeep(880, 0.2);
+    setTimeout(() => playBeep(1100, 0.15), 220);
+    bumpers.forEach(b => { b.hit = false; b.hitAnim = 0; });
   }
 
   // Ball lost
@@ -431,6 +442,7 @@ function update() {
     playBeep(150, 0.15);
     if (lives <= 0) {
       running = false;
+      saveFlipperHighscore(score);
       setTimeout(() => {
         document.getElementById('goScore').textContent = score;
         document.getElementById('gameOverScreen').style.display = 'flex';
