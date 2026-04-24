@@ -160,7 +160,13 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 </head>
 <body>
 
-<!-- kein Overlay mehr – Lexikon wird direkt geöffnet -->
+<!-- LEXIKON OVERLAY (iframe) -->
+<div class="lexikon-overlay" id="lexikonOverlay" onclick="closeLexikonOnBg(event)">
+  <div class="lexikon-frame-wrap" id="lexikonFrameWrap">
+    <button class="lexikon-close" onclick="closeLexikon()" title="Schließen">✕</button>
+    <iframe id="lexikonFrame" src="" style="width:100%;min-height:600px;border:none;display:block" title="Bibelgeschichten"></iframe>
+  </div>
+</div>
 
 <div class="app">
 <div class="card">
@@ -551,7 +557,20 @@ function updateHighscores() {
 }
 
     function openLexikon() {
-  window.location.href = 'religion_lexikon.html';
+  const overlay = document.getElementById('lexikonOverlay');
+  const frame   = document.getElementById('lexikonFrame');
+  if (!frame.src || frame.src === window.location.href) {
+    frame.src = 'religion_lexikon.html';
+  }
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLexikon() {
+  document.getElementById('lexikonOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeLexikonOnBg(e) {
+  if (e.target === document.getElementById('lexikonOverlay')) closeLexikon();
 }
 
 function updateDashboard(period, tabEl) {

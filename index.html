@@ -130,31 +130,39 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
       <div class="news-header-icon">✨</div>
       <div>
         <h2>Was ist neu?</h2>
-        <p>Update vom 24. April 2026</p>
+        <p>Update vom 24. April 2026 – v7</p>
       </div>
     </div>
 
     <div class="news-item">
       <div class="news-item-badge neu">NEU</div>
       <div>
-        <div class="news-item-title">✝️ Religion – Großes Update</div>
-        <div class="news-item-desc">Lückentext-Modus direkt im Trainer (+2 🪙), Stammbaum in den Bibelgeschichten, und der Tipp wird jetzt nur noch angezeigt, wenn er wirklich hilft – nicht als Antwort-Spoiler!</div>
+        <div class="news-item-title">⚡ Bibelflipper</div>
+        <div class="news-item-desc">Spiel kostet 10 🪙 – triff alle 5 Bumper und lerne Fakten über Jakob &amp; Esau! Seitenwände, 3-Sekunden-Countdown, 3 Herzen als Leben und +10 🪙 beim Sieg.</div>
       </div>
     </div>
 
     <div class="news-item">
       <div class="news-item-badge neu">NEU</div>
       <div>
-        <div class="news-item-title">🌳 Familienstammbaum</div>
-        <div class="news-item-desc">Isaak, Rebekka, Esau, Jakob, Laban, Lea &amp; Rahel – jetzt als interaktiver Stammbaum in den Bibelgeschichten. Tippe eine Person an und lerne mehr über sie!</div>
+        <div class="news-item-title">🪜 Himmelsleiter-Modus im Trainer</div>
+        <div class="news-item-desc">Dritter Modus im Religion-Trainer: Alle 10 Fragen hintereinander richtig beantworten und die Figur klettert die Leiter hoch – bei Fehler geht's von vorne los. +15 🪙 bei Perfekt!</div>
       </div>
     </div>
 
     <div class="news-item">
       <div class="news-item-badge fix">FIX</div>
       <div>
-        <div class="news-item-title">🔧 Bibelgeschichten-Popup</div>
-        <div class="news-item-desc">Der Klick auf „Jakob &amp; Esau" im Bibelgeschichten-Popup funktioniert jetzt zuverlässig.</div>
+        <div class="news-item-title">🔧 Bibelgeschichten – jetzt wirklich behoben</div>
+        <div class="news-item-desc">Klick auf „Jakob &amp; Esau" öffnet jetzt zuverlässig die Geschichte mit Personen, Kapiteln, Stammbaum und Wörterbuch. Zurück-Button funktioniert auch.</div>
+      </div>
+    </div>
+
+    <div class="news-item">
+      <div class="news-item-badge neu">NEU</div>
+      <div>
+        <div class="news-item-title">✝️ Religion – Lückentext &amp; mehr</div>
+        <div class="news-item-desc">Lückentext-Modus direkt im Trainer (+1 🪙), interaktiver Stammbaum in den Bibelgeschichten, Tipp nur wenn hilfreich (kein Spoiler).</div>
       </div>
     </div>
 
@@ -163,14 +171,6 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
       <div>
         <div class="news-item-title">🇬🇧 Englisch – Im Aufbau</div>
         <div class="news-item-desc">Das Englisch-Modul wächst weiter – Vokabeln, Wortkarten &amp; Übungen. Neue Inhalte folgen bald!</div>
-      </div>
-    </div>
-
-    <div class="news-item">
-      <div class="news-item-badge">UPDATE</div>
-      <div>
-        <div class="news-item-title">🔊 Ton bei richtiger Antwort</div>
-        <div class="news-item-desc">Religion-Trainer spricht jetzt das Feedback vor – wie in Musik: „Super! ⭐" und „Richtig! 🎉" mit Stimme!</div>
       </div>
     </div>
 
@@ -550,7 +550,7 @@ function render(){
 
 // ── NEWS-MODAL ──────────────────────────────────────────
 // NEWS_VERSION hochzählen wenn neue Neuigkeiten rein kommen
-const NEWS_VERSION = 'news_v6';
+const NEWS_VERSION = 'news_v7';
 function showNewsIfNew() {
   if (!localStorage.getItem(NEWS_VERSION)) {
     document.getElementById('newsOverlay').style.display = 'flex';

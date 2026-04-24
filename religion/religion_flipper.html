@@ -153,8 +153,8 @@ function resize() {
 function initPositions() {
   // Flippers
   const fy = H - 60;
-  leftFlipper  = { x: W*0.28, y: fy, angle: 0.5, target: 0.5 };
-  rightFlipper = { x: W*0.72, y: fy, angle: Math.PI - 0.5, target: Math.PI - 0.5 };
+  leftFlipper  = { x: W*0.28, y: fy, angle: 0.5, target: 0.5, angularVel: 0 };
+  rightFlipper = { x: W*0.72, y: fy, angle: Math.PI - 0.5, target: Math.PI - 0.5, angularVel: 0 };
 
   // Guide walls: from bottom-corner area up to flipper pivot
   guideWalls = [
@@ -162,8 +162,8 @@ function initPositions() {
     { ax: W,  ay: H - 100, bx: rightFlipper.x, by: rightFlipper.y },
   ];
 
-  // Bumpers arranged in a triangle
-  const bx = W/2, by = H*0.28;
+  // Bumpers arranged in a pattern – move lower so ball can reach them
+  const bx = W/2, by = H*0.38;
   bumpers = BUMPERS.map((b, i) => {
     const angle = (i / BUMPERS.length) * Math.PI * 2 - Math.PI/2;
     const r = W * 0.24;
@@ -246,14 +246,15 @@ document.addEventListener('keyup', e => {
 
 // ─── PHYSICS ──────────────────────────────────────────────────────────────────
 function moveFlipper(f, up) {
-  const speed = 0.18;
+  const prevAngle = f.angle;
   if (f === leftFlipper) {
     f.target = up ? -0.5 : 0.5;
   } else {
     f.target = up ? Math.PI + 0.5 : Math.PI - 0.5;
   }
   const diff = f.target - f.angle;
-  f.angle += diff * speed;
+  f.angle += diff * 0.25;          // snappier swing
+  f.angularVel = f.angle - prevAngle;
 }
 
 function flipperPoint(f, t) {
@@ -272,21 +273,36 @@ function distPointSeg(px, py, ax, ay, bx, by) {
   return Math.hypot(px - (ax+t*dx), py - (ay+t*dy));
 }
 
-function reflectOffFlipper(f) {
+function reflectOffFlipper(f, t) {
   const p0 = flipperPoint(f, 0);
   const p1 = flipperPoint(f, 1);
-  const nx = -(p1.y - p0.y);
-  const ny = p1.x - p0.x;
-  const len = Math.hypot(nx, ny);
-  const nxn = nx/len, nyn = ny/len;
-  const dot = ball.vx*nxn + ball.vy*nyn;
+
+  // Flipper surface normal (perpendicular, pointing away from table surface)
+  const fDx = p1.x - p0.x, fDy = p1.y - p0.y;
+  const fLen = Math.hypot(fDx, fDy);
+  let nxn = -fDy / fLen, nyn = fDx / fLen;
+  if (nyn > 0) { nxn = -nxn; nyn = -nyn; } // ensure normal points upward
+
+  // Tip velocity from angular velocity: v = ω × arm (tangential)
+  const arm = (t || 0) * FLIPPER_LEN;
+  const tipVx = -f.angularVel * arm * Math.sin(f.angle);
+  const tipVy =  f.angularVel * arm * Math.cos(f.angle);
+
+  // Reflect relative velocity, then add tip momentum
+  const relVx = ball.vx - tipVx * 0.5;
+  const relVy = ball.vy - tipVy * 0.5;
+  const dot = relVx * nxn + relVy * nyn;
   if (dot < 0) {
-    ball.vx -= 2*dot*nxn;
-    ball.vy -= 2*dot*nyn;
-    const speed = Math.hypot(ball.vx, ball.vy);
-    const boost = 6;
-    if (speed < boost) { ball.vx *= boost/speed; ball.vy *= boost/speed; }
-    playBeep(300, 0.08);
+    ball.vx -= 2 * dot * nxn;
+    ball.vy -= 2 * dot * nyn;
+    ball.vx += tipVx * 0.8;
+    ball.vy += tipVy * 0.8;
+
+    // Minimum launch speed grows from base → tip (tip hits go higher)
+    const minSpd = 5 + (t || 0) * 11; // 5 at pivot, 16 at tip
+    const spd = Math.hypot(ball.vx, ball.vy);
+    if (spd < minSpd) { ball.vx *= minSpd / spd; ball.vy *= minSpd / spd; }
+    playBeep(300 + Math.round((t || 0) * 200), 0.09);
   }
 }
 
@@ -302,7 +318,7 @@ function update() {
 
   // Clamp max speed
   const sp = Math.hypot(ball.vx, ball.vy);
-  if (sp > 10) { ball.vx *= 10/sp; ball.vy *= 10/sp; }
+  if (sp > 16) { ball.vx *= 16/sp; ball.vy *= 16/sp; }
 
   ball.x += ball.vx;
   ball.y += ball.vy;
@@ -312,15 +328,25 @@ function update() {
   if (ball.x + BALL_R > W) { ball.x = W-BALL_R; ball.vx = -Math.abs(ball.vx)*0.85; }
   if (ball.y - BALL_R < 0) { ball.y = BALL_R; ball.vy = Math.abs(ball.vy)*0.85; }
 
-  // Flipper collisions
+  // Flipper collisions – find closest point t along flipper, use for physics
   [leftFlipper, rightFlipper].forEach(f => {
     const p0 = flipperPoint(f, 0);
     const p1 = flipperPoint(f, 1);
-    const d = distPointSeg(ball.x, ball.y, p0.x, p0.y, p1.x, p1.y);
-    if (d < BALL_R + FLIPPER_THICK/2) {
-      // Push out
-      ball.y = f.y - BALL_R - FLIPPER_THICK;
-      reflectOffFlipper(f);
+    const dx = p1.x - p0.x, dy = p1.y - p0.y;
+    const len2 = dx*dx + dy*dy;
+    const t = Math.max(0, Math.min(1, ((ball.x - p0.x)*dx + (ball.y - p0.y)*dy) / len2));
+    const cx = p0.x + t*dx, cy = p0.y + t*dy;
+    const dist = Math.hypot(ball.x - cx, ball.y - cy);
+    if (dist < BALL_R + FLIPPER_THICK/2) {
+      // Push ball out along the normal from the closest point
+      const overlap = BALL_R + FLIPPER_THICK/2 - dist + 1;
+      if (dist > 0.01) {
+        ball.x += (ball.x - cx) / dist * overlap;
+        ball.y += (ball.y - cy) / dist * overlap;
+      } else {
+        ball.y -= overlap;
+      }
+      reflectOffFlipper(f, t);
     }
   });
 
@@ -474,16 +500,14 @@ function draw() {
     ctx.lineWidth = 3;
     ctx.stroke();
 
-    // Emoji
-    ctx.font = `${Math.round(20 + glow*4)}px serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(b.label, b.x, b.y);
-
-    // Name label
-    ctx.font = `bold 10px Segoe UI,sans-serif`;
-    ctx.fillStyle = b.hit ? '#fff' : 'rgba(255,255,255,.5)';
-    ctx.fillText(b.name, b.x, b.y + BUMPER_R + 12);
+    // Hit indicator: small ✓ when bumper already hit
+    if (b.hit) {
+      ctx.font = `bold ${Math.round(16 + glow*3)}px Segoe UI,sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#fff';
+      ctx.fillText('✓', b.x, b.y);
+    }
   });
 
   // Flippers

@@ -467,7 +467,10 @@ document.querySelectorAll('.nav-tab[data-section]').forEach(tab => {
   tab.addEventListener('click', () => showSection(tab.getAttribute('data-section')));
 });
 
-// Back button: close story view OR go back to trainer
+// Detect iframe context
+const inIframe = window.self !== window.top;
+
+// Back button: close story view OR close iframe / navigate back
 document.getElementById('topbarBack').addEventListener('click', () => {
   if (currentStory) {
     currentStory = null;
@@ -476,6 +479,9 @@ document.getElementById('topbarBack').addEventListener('click', () => {
     document.getElementById('view-story').style.display = 'none';
     document.getElementById('view-list').style.display = 'block';
     window.scrollTo(0, 0);
+  } else if (inIframe) {
+    // Close the overlay in the parent trainer
+    try { window.parent.closeLexikon(); } catch(e) {}
   } else {
     window.location.href = 'religion_trainer.html';
   }
