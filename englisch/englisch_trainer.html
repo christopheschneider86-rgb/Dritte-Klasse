@@ -56,8 +56,8 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
 .chip-bad{background:var(--danger-soft);color:#922b21}
 
 /* ── MAIN LAYOUT ── */
-.main-layout{display:grid;grid-template-columns:200px 1fr;gap:16px;align-items:start}
-@media(max-width:860px){.main-layout{grid-template-columns:1fr}}
+.main-layout{display:grid;grid-template-columns:250px 1fr;gap:16px;align-items:start}
+@media(max-width:960px){.main-layout{grid-template-columns:1fr}}
 
 /* ── TOPIC TILES ── */
 .panel-title{font-size:15px;font-weight:bold;color:#2c3e50;margin-bottom:12px;display:flex;align-items:center;gap:6px}
@@ -67,7 +67,7 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
 .tile:hover,.tile.active{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-1px);box-shadow:0 3px 8px rgba(142,68,173,0.15)}
 .tile-icon{font-size:22px;flex-shrink:0}
 .tile-text{min-width:0}
-.tile-title{font-size:13px;font-weight:bold;color:#2c3e50;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile-title{font-size:13px;font-weight:bold;color:#2c3e50;line-height:1.3}
 .tile-sub{font-size:10px;color:var(--muted);margin-top:1px}
 @media(max-width:860px){.tile{flex-direction:column;text-align:center;padding:10px 8px;gap:4px}.tile-text{width:100%}.tile-title{white-space:normal;font-size:12px}}
 
@@ -176,6 +176,24 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
 .bonus-box{margin-top:4px;margin-bottom:12px;background:linear-gradient(135deg,#fff9e6,#fef3cd);border:2px solid #f1c40f;border-radius:14px;padding:14px;text-align:center;animation:bonusPop .35s ease}
 @keyframes bonusPop{from{transform:scale(0.85);opacity:0}to{transform:scale(1);opacity:1}}
 .bonus-coins{font-size:22px;font-weight:bold;color:#7d5a00;margin-top:4px}
+
+/* ── VERB FORMS (auf Wortkarte Rückseite) ── */
+.fc-forms{background:rgba(255,255,255,0.75);border-radius:10px;padding:8px 12px;margin-top:8px;font-size:12px;display:flex;flex-direction:column;gap:4px;width:100%;max-width:280px;text-align:left}
+.fc-form-row{color:#2c3e50;line-height:1.4}
+.fc-form-row b{color:var(--accent-dark)}
+.fc-form-note{font-size:11px;color:var(--muted);font-style:italic;white-space:pre-line;line-height:1.4}
+
+/* ── WORD TILE TYPE BADGES ── */
+.word-tile-type{display:inline-block;margin-top:4px;font-size:10px;font-weight:bold;padding:2px 7px;border-radius:10px}
+.wtt-verb{background:#fde8e8;color:#c0392b}
+.wtt-modal{background:#fff7ed;color:#c2410c}
+.wtt-noun{background:#dbeafe;color:#1d4ed8}
+.wtt-adjective{background:#d5f5e3;color:#1a6e40}
+.wtt-number{background:#fef9e7;color:#7d5a00}
+.wtt-phrase{background:#ede0f7;color:#6c3483}
+.wtt-adverb{background:#ecfeff;color:#0e7490}
+.wtt-pronoun{background:#f0fdf4;color:#15803d}
+.wtt-grammar{background:#f1f5f9;color:#334155}
 
 /* ── DIVIDER ── */
 .divider{height:1px;background:#ede0f7;margin:12px 0}
@@ -290,12 +308,7 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
         <!-- ── MULTIPLE CHOICE MODE ── -->
         <div id="modeMC" class="mode-area hidden">
           <div class="task-box">
-            <div class="question-row">
-              <button class="speaker-btn" onclick="speakCurrent()" title="Wort anhören">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
-              </button>
-              <div class="task-question" id="mcQuestion"></div>
-            </div>
+            <div class="task-question" id="mcQuestion"></div>
             <div class="task-hint" id="mcHint"></div>
           </div>
           <div class="mc-grid" id="mcGrid"></div>
@@ -360,7 +373,7 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
 /* ─── STORAGE ─── */
 const STORAGE_KEY  = 'm_app_v9';
 const ACTIVE_KEY   = 'm_app_active_prof';
-const COINS_CORRECT = 2;
+const COINS_CORRECT = 1;
 
 let activeProfId = null;
 let currentTopic = null;
@@ -368,10 +381,11 @@ let currentWords  = [];
 let currentWord   = null;
 let currentMode   = 'flashcard';
 let flashcardFront = true;
-let answered      = false;
-let sessionOk     = 0;
-let sessionWrong  = 0;
-let wordGridOpen  = false;
+let answered             = false;
+let sessionOk            = 0;
+let sessionWrong         = 0;
+let wordGridOpen         = false;
+let currentSpellingAnswer = '';
 
 /* ─── PROFILE LOAD ─── */
 function loadProfile() {
@@ -477,14 +491,23 @@ function selectTopic(key) {
 }
 
 /* ─── WORD GRID (Entdecken) ─── */
+const TYPE_LABELS = {
+  verb:'Verb', modal:'Modal', noun:'Nomen', adjective:'Adjektiv',
+  number:'Zahl', phrase:'Phrase', adverb:'Adverb',
+  pronoun:'Pronomen', grammar:'Grammatik'
+};
+
 function renderWordGrid() {
   const grid = document.getElementById('wordGrid');
   grid.innerHTML = '';
   currentWords.forEach(w => {
+    const typeClass  = w.type ? `wtt-${w.type}` : '';
+    const typeLabel  = w.type ? `<span class="word-tile-type ${typeClass}">${TYPE_LABELS[w.type] || w.type}</span>` : '';
     const div = document.createElement('div');
     div.className = 'word-tile';
     div.innerHTML = `<div class="word-tile-en">${w.word_en}</div>
       <div class="word-tile-de">${w.word_de}</div>
+      ${typeLabel}
       <div class="word-tile-speaker">🔊</div>`;
     div.addEventListener('click', () => speakText(w.word_en));
     grid.appendChild(div);
@@ -579,7 +602,23 @@ function flipCard() {
     document.getElementById('fcLabel').textContent = 'Englisch 🇬🇧';
     document.getElementById('fcWord').textContent  = currentWord.word_en;
     const extra = document.getElementById('fcExtra');
+
+    // Verb forms table
+    let formsHtml = '';
+    if (currentWord.forms) {
+      const f = currentWord.forms;
+      formsHtml = '<div class="fc-forms">';
+      if (f.base)             formsHtml += `<span class="fc-form-row"><b>Grundform:</b> ${f.base}</span>`;
+      if (f.he_she_it)        formsHtml += `<span class="fc-form-row"><b>he/she/it:</b> ${f.he_she_it}</span>`;
+      if (f.neg)              formsHtml += `<span class="fc-form-row"><b>Verneinung:</b> ${f.neg}</span>`;
+      if (f.neg_he_she_it)    formsHtml += `<span class="fc-form-row"><b>he/she/it (neg.):</b> ${f.neg_he_she_it}</span>`;
+      if (f.past)             formsHtml += `<span class="fc-form-row"><b>Simple Past:</b> ${f.past}</span>`;
+      if (f.note)             formsHtml += `<span class="fc-form-note">${f.note}</span>`;
+      formsHtml += '</div>';
+    }
+
     extra.innerHTML = `<div class="fc-example">${currentWord.example}</div>
+      ${formsHtml}
       <button class="fc-speak-btn" onclick="event.stopPropagation();speakCurrent()">🔊 Anhören</button>`;
     speakCurrent();
   } else {
@@ -590,9 +629,9 @@ function flipCard() {
 function markFlashcard(knew) {
   if (!currentWord) return;
   saveHistory(currentTopic, 'flashcard', knew);
+  // Wortkarten sind zum Lernen → keine Münzen
   if (knew) {
     sessionOk++;
-    addCoins(COINS_CORRECT);
     showFeedback(true, null);
   } else {
     sessionWrong++;
@@ -645,11 +684,37 @@ function checkMC(btn, choice) {
 }
 
 /* ─── SPELLING ─── */
+function getSpellingTask(word) {
+  if ((word.type === 'verb' || word.type === 'modal') && word.forms) {
+    const f = word.forms;
+    const tasks = [];
+    if (f.base)
+      tasks.push({ question: `Schreibe die Grundform (Infinitiv) von „${word.word_de}".`,
+        hint: '💡 Grundform = der Infinitiv, z. B. „play", „swim"', answer: f.base });
+    if (f.he_she_it)
+      tasks.push({ question: `Wie heißt „${word.word_de}" für he / she / it?`,
+        hint: '💡 Bei he/she/it kommt meist -s oder -es ans Ende.', answer: f.he_she_it });
+    if (f.past)
+      tasks.push({ question: `Schreibe die Simple-Past-Form von „${word.word_de}".`,
+        hint: '💡 Simple Past = Vergangenheit (gestern, yesterday …)', answer: f.past });
+    if (f.neg)
+      tasks.push({ question: `Schreibe die Verneinung (I) von „${word.word_de}".`,
+        hint: '💡 Verneinung mit don\'t / doesn\'t', answer: f.neg });
+    if (tasks.length > 0)
+      return tasks[Math.floor(Math.random() * tasks.length)];
+  }
+  return {
+    question: `Schreibe das englische Wort für „${word.word_de}".`,
+    hint: '💡 Drücke „Vorhören" um das Wort zu hören. Achte auf die genaue Schreibweise!',
+    answer: word.word_en
+  };
+}
+
 function renderSpelling() {
-  document.getElementById('spellingQuestion').textContent =
-    `Schreibe das englische Wort für „${currentWord.word_de}".`;
-  document.getElementById('spellingHint').textContent =
-    `Beispiel: ${currentWord.example}`;
+  const task = getSpellingTask(currentWord);
+  currentSpellingAnswer = task.answer;
+  document.getElementById('spellingQuestion').textContent = task.question;
+  document.getElementById('spellingHint').textContent     = task.hint;
   const inp = document.getElementById('spellingInput');
   inp.value    = '';
   inp.disabled = false;
@@ -663,8 +728,8 @@ function checkSpelling() {
   if (!answer) { inp.focus(); return; }
   answered     = true;
   inp.disabled = true;
-  const correct = answer === currentWord.word_en.toLowerCase();
-  registerAnswer(correct, 'spelling');
+  const correct = answer === currentSpellingAnswer.toLowerCase();
+  registerAnswer(correct, 'spelling', currentSpellingAnswer);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -706,7 +771,8 @@ function checkListening(btn, choice) {
 }
 
 /* ─── REGISTER ANSWER (MC / Spelling / Listening) ─── */
-function registerAnswer(correct, mode) {
+function registerAnswer(correct, mode, correctStr) {
+  const correctDisplay = correctStr || currentWord.word_en;
   saveHistory(currentTopic, mode, correct);
   if (correct) {
     sessionOk++;
@@ -715,7 +781,7 @@ function registerAnswer(correct, mode) {
     showBonus();
   } else {
     sessionWrong++;
-    showFeedback(false, currentWord.word_en);
+    showFeedback(false, correctDisplay);
   }
   updateScoreDisplay();
   document.getElementById('nextBtn').classList.remove('hidden');
