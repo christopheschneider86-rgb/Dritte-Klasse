@@ -96,6 +96,22 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 .stats-tab:hover{color:var(--accent);}
 .stats-tab.active{background:white;color:var(--accent);box-shadow:0 2px 6px rgba(0,0,0,0.08);}
 
+/* ─── SPIELE-BESTENLISTE ─── */
+.game-hs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:12px;}
+.game-hs-card{background:#f8f9fa;border-radius:14px;padding:14px 16px;border:2px solid #e8ecf0;}
+.game-hs-card-title{font-size:14px;font-weight:bold;color:#2c3e50;margin-bottom:2px;}
+.game-hs-card-sub{font-size:11px;color:#95a5a6;margin-bottom:8px;}
+.game-hs-card-nosub{margin-bottom:8px;}
+.game-hs-entry{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #eef0f2;font-size:13px;}
+.game-hs-entry:last-child{border-bottom:none;}
+.game-hs-rank{font-size:15px;width:22px;text-align:center;flex-shrink:0;}
+.game-hs-name{flex:1;color:#2c3e50;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.game-hs-score{color:#7f8c8d;font-size:12px;white-space:nowrap;flex-shrink:0;}
+.game-hs-empty{color:#bdc3c7;font-size:12px;font-style:italic;text-align:center;padding:10px 0;}
+.game-tab{flex:1;text-align:center;padding:8px 4px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:12px;color:#95a5a6;transition:all .15s;border:none;background:transparent;font-family:inherit;}
+.game-tab:hover{color:var(--accent);}
+.game-tab.active{background:white;color:var(--accent);box-shadow:0 2px 6px rgba(0,0,0,0.08);}
+
 /* ─── TIPS ─── */
 .footer-tips{margin-top:28px;background:white;padding:20px;border-radius:15px;max-width:600px;text-align:left;box-shadow:0 4px 12px rgba(0,0,0,0.05);}
 .footer-tips h3{font-size:16px;margin-bottom:15px;display:flex;align-items:center;gap:8px;}
@@ -291,6 +307,22 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
     <button class="stats-tab" id="tab-all" onclick="setStatsPeriod('all',this)">Gesamt</button>
   </div>
   <div class="stats-grid" id="statsGrid"></div>
+</div>
+
+<!-- SPIELE-BESTENLISTE -->
+<div class="parent-stats" id="gameStats" style="margin-top:16px;">
+  <div class="parent-stats-title">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+    Spiele-Bestenliste
+  </div>
+  <div class="stats-filter" style="margin-bottom:16px;">
+    <button class="game-tab active" onclick="setGameTab('all',this)">Alle</button>
+    <button class="game-tab" onclick="setGameTab('mathe',this)">📐 Mathe</button>
+    <button class="game-tab" onclick="setGameTab('hsu',this)">🌍 HSU</button>
+    <button class="game-tab" onclick="setGameTab('musik',this)">🎵 Musik</button>
+    <button class="game-tab" onclick="setGameTab('rel',this)">✝️ Religion</button>
+  </div>
+  <div class="game-hs-grid" id="gameHsGrid"></div>
 </div>
 
 <div class="footer-tips">
@@ -556,10 +588,65 @@ function closeNewsOnBg(e) {
   if (e.target === document.getElementById('newsOverlay')) closeNews();
 }
 
+// ── SPIELE-BESTENLISTE ──────────────────────────────────
+const GAMES_HS = [
+  { key:'m_jump_hs_addsub', name:'Mathe-Hüpfer', sub:'+ und –',   icon:'🐸', subj:'mathe', unit:'Pkt' },
+  { key:'m_jump_hs_muldiv', name:'Mathe-Hüpfer', sub:'× und ÷',   icon:'🐸', subj:'mathe', unit:'Pkt' },
+  { key:'m_jump_hs_mixed',  name:'Mathe-Hüpfer', sub:'Gemischt',  icon:'🐸', subj:'mathe', unit:'Pkt' },
+  { key:'m_tier_hs',        name:'Tier-Entdecker', sub:'',         icon:'🦊', subj:'hsu',   unit:'Level' },
+  { key:'m_musik_hs',       name:'Musik-Merkspiel', sub:'',        icon:'🎹', subj:'musik', unit:'Level' },
+  { key:'m_rel_flipper_hs', name:'Bibelflipper',  sub:'',          icon:'⚡', subj:'rel',   unit:'Pkt' },
+  { key:'m_rel_tower_hs',   name:'Himmelsbau',    sub:'',          icon:'🏛️', subj:'rel',   unit:'Blöcke' },
+  { key:'m_rel_hs',         name:'Himmelsleiter', sub:'',          icon:'🪜', subj:'rel',   unit:'richtig' },
+];
+
+let gameHsTab = 'all';
+
+function setGameTab(tab, el) {
+  gameHsTab = tab;
+  document.querySelectorAll('.game-tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  updateGameBestenliste();
+}
+
+function updateGameBestenliste() {
+  const grid = document.getElementById('gameHsGrid');
+  if (!grid) return;
+  const medals = ['🥇','🥈','🥉'];
+  const filtered = gameHsTab === 'all' ? GAMES_HS : GAMES_HS.filter(g => g.subj === gameHsTab);
+
+  grid.innerHTML = filtered.map(game => {
+    let entries = [];
+    try { entries = JSON.parse(localStorage.getItem(game.key) || '[]'); } catch(e) {}
+    entries = entries.slice(0, 3);
+
+    const rows = entries.length > 0
+      ? entries.map((e, i) => `
+          <div class="game-hs-entry">
+            <span class="game-hs-rank">${medals[i] || (i+1)+'.'}</span>
+            <span class="game-hs-name">${e.name || '–'}</span>
+            <span class="game-hs-score">${e.score} ${game.unit}</span>
+          </div>`).join('')
+      : '<div class="game-hs-empty">Noch kein Eintrag</div>';
+
+    const subHtml = game.sub
+      ? `<div class="game-hs-card-sub">${game.sub}</div>`
+      : `<div class="game-hs-card-nosub"></div>`;
+
+    return `
+      <div class="game-hs-card">
+        <div class="game-hs-card-title">${game.icon} ${game.name}</div>
+        ${subHtml}
+        ${rows}
+      </div>`;
+  }).join('');
+}
+
 loadProfiles();
 render();
 updateCoinDisplay();
 updateParentStats();
+updateGameBestenliste();
 showNewsIfNew();
 </script>
 </body>

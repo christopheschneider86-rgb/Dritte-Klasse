@@ -72,19 +72,15 @@ body{background:var(--bg);color:var(--text);font-family:Segoe UI,Roboto,Arial,sa
   <div style="font-size:56px">😢</div>
   <h2>Game Over</h2>
   <div class="score-big" id="goScore">0</div>
-  <p>Nicht schlecht – aber Jakob hätte weitergemacht!</p>
+  <p id="goRounds">Nicht schlecht – aber Jakob hätte weitergemacht!</p>
+  <div id="goHsRow" style="font-size:13px;color:rgba(255,255,255,.6);background:rgba(255,255,255,.08);padding:8px 16px;border-radius:10px;display:none">🏆 Dein Rekord: <strong id="goHsBest">0</strong> Punkte</div>
   <button class="btn-big" onclick="startGame(false)">Nochmal 🔁</button>
   <a href="religion_trainer.html" class="btn-sec">Zum Trainer</a>
 </div>
 
-<!-- WIN SCREEN -->
-<div class="screen" id="winScreen" style="display:none">
-  <div style="font-size:56px">🌟</div>
-  <h2>Fantastisch!</h2>
-  <div class="score-big" id="winScore">0</div>
-  <p>Du hast alle Bumper getroffen wie ein echter Hirt!</p>
-  <button class="btn-big" onclick="startGame(false)">Nochmal 🔁</button>
-  <a href="religion_trainer.html" class="btn-sec">Zum Trainer</a>
+<!-- ROUND COMPLETE BANNER (shown briefly, not blocking) -->
+<div id="roundBanner" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#f1c40f,#e67e22);color:#2c3e50;border-radius:20px;padding:18px 32px;font-size:22px;font-weight:bold;text-align:center;z-index:15;box-shadow:0 8px 28px rgba(0,0,0,.5);pointer-events:none">
+  🎉 Runde <span id="roundNum">1</span> komplett! +5 🪙
 </div>
 
 <script>
@@ -134,6 +130,13 @@ function saveFlipperHighscore(finalScore) {
     hs.sort((a, b) => b.score - a.score);
     hs = hs.slice(0, 10);
     localStorage.setItem('m_rel_flipper_hs', JSON.stringify(hs));
+    // Show best score on game-over screen
+    const best = hs[0] ? hs[0].score : finalScore;
+    const hsRow = document.getElementById('goHsRow');
+    if (hsRow) {
+      document.getElementById('goHsBest').textContent = best;
+      hsRow.style.display = 'block';
+    }
   } catch(e) {}
 }
 
@@ -428,10 +431,15 @@ function update() {
   if (allHit) {
     round++;
     addCoins(5);
-    showFactoid('🎉 Runde ' + round + ' komplett! +5 🪙 · Weiter geht\'s!');
     playBeep(880, 0.2);
     setTimeout(() => playBeep(1100, 0.15), 220);
+    setTimeout(() => playBeep(1320, 0.12), 440);
     bumpers.forEach(b => { b.hit = false; b.hitAnim = 0; });
+    // Show round banner briefly
+    const banner = document.getElementById('roundBanner');
+    document.getElementById('roundNum').textContent = round;
+    banner.style.display = 'block';
+    setTimeout(() => { banner.style.display = 'none'; }, 1800);
   }
 
   // Ball lost
@@ -445,6 +453,10 @@ function update() {
       saveFlipperHighscore(score);
       setTimeout(() => {
         document.getElementById('goScore').textContent = score;
+        const roundMsg = round > 0
+          ? round + (round === 1 ? ' Runde komplett!' : ' Runden komplett!') + ' Gut gespielt!'
+          : 'Nicht schlecht – aber Jakob hätte weitergemacht!';
+        document.getElementById('goRounds').textContent = roundMsg;
         document.getElementById('gameOverScreen').style.display = 'flex';
       }, 400);
     } else {
