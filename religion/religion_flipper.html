@@ -80,7 +80,7 @@ body{background:var(--bg);color:var(--text);font-family:Segoe UI,Roboto,Arial,sa
 
 <!-- ROUND COMPLETE BANNER (shown briefly, not blocking) -->
 <div id="roundBanner" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#f1c40f,#e67e22);color:#2c3e50;border-radius:20px;padding:18px 32px;font-size:22px;font-weight:bold;text-align:center;z-index:15;box-shadow:0 8px 28px rgba(0,0,0,.5);pointer-events:none">
-  🎉 Runde <span id="roundNum">1</span> komplett! +5 🪙
+  🎉 Runde <span id="roundNum">1</span> komplett!
 </div>
 
 <script>
@@ -222,7 +222,6 @@ function startGame(fromStart) {
 
   document.getElementById('startScreen').style.display = 'none';
   document.getElementById('gameOverScreen').style.display = 'none';
-  document.getElementById('winScreen').style.display = 'none';
   score = 0; lives = 3; ballLost = false; round = 0;
   updateHUD();
   bumpers.forEach(b => { b.hit = false; b.hitAnim = 0; });
@@ -417,7 +416,7 @@ function update() {
         score += 100;
         updateHUD();
         playBeep(600, 0.12);
-        showFactoid(b.label + ' ' + b.name + ': ' + b.fact);
+        // factoid deaktiviert
       } else {
         score += 10;
         updateHUD();
@@ -430,7 +429,6 @@ function update() {
   // All bumpers hit: reset for next round (game continues!)
   if (allHit) {
     round++;
-    addCoins(5);
     playBeep(880, 0.2);
     setTimeout(() => playBeep(1100, 0.15), 220);
     setTimeout(() => playBeep(1320, 0.12), 440);

@@ -51,7 +51,7 @@ body{background:var(--bg);color:var(--text);font-family:Segoe UI,Roboto,Arial,sa
   <p>Stapele Blöcke so hoch wie möglich – bis zum Himmel wie Jakobs Traum!</p>
   <div style="font-size:13px;color:rgba(255,255,255,.45)">Tippen oder Leertaste zum Ablegen</div>
   <div class="coin-info">🪙 Kosten: 10 Münzen · Dein Guthaben: <span id="startCoinCount">?</span> 🪙</div>
-  <button class="btn-big" onclick="startGame()">Spielen! ▶</button>
+  <button class="btn-big" onclick="startGame(true)">Spielen! ▶</button>
   <a href="religion_trainer.html" class="btn-sec">Zurück</a>
 </div>
 
@@ -62,7 +62,7 @@ body{background:var(--bg);color:var(--text);font-family:Segoe UI,Roboto,Arial,sa
   <div class="score-big" id="goScore">0</div>
   <p id="goMsg">Blöcke gestapelt – Jakob wäre stolz!</p>
   <div class="perfect-badge" id="goPerfect" style="display:none">✨ <span id="goPerfectCount">0</span>× Perfekt gestapelt!</div>
-  <button class="btn-big" onclick="startGame()">Nochmal 🔁</button>
+  <button class="btn-big" onclick="startGame(false)">Nochmal 🔁</button>
   <a href="religion_trainer.html" class="btn-sec">Zum Trainer</a>
 </div>
 
@@ -154,6 +154,11 @@ function resize() {
   H = canvas.height;
 }
 
+function getZoom() {
+  // Zoom out as tower grows: starts at 1.0, minimum 0.42
+  return Math.max(0.42, 1 - Math.max(0, score - 5) * 0.022);
+}
+
 function initGame() {
   score = 0; perfectCount = 0; gameOver = false; fallingPieces = [];
   cameraY = 0;
@@ -185,15 +190,6 @@ function spawnMover() {
     dir: 1,
     speed: getSpeed(),
   };
-  // Ensure camera scrolls to show the mover
-  updateCamera();
-}
-
-function updateCamera() {
-  if (!mover) return;
-  // Target: mover is at ~25% from top of canvas
-  const targetTop = mover.y - H * 0.25;
-  cameraY = Math.max(0, targetTop);
 }
 
 function drop() {
@@ -235,7 +231,6 @@ function drop() {
   stack.push({ x: newX, y: mb.y, w: newW, colorIdx: mb.colorIdx });
   score++;
   document.getElementById('scoreEl').textContent = score;
-  addCoins(1);
 
   if (isPerfect) {
     perfectCount++;
@@ -279,14 +274,17 @@ function endGame() {
   }, 400);
 }
 
-function startGame() {
-  const profile = getProfile();
-  const coins = profile ? (profile.coins || 0) : 0;
-  if (coins < 10) {
-    alert('Nicht genug Münzen! (10 🪙 benötigt)\nDu hast: ' + coins + ' 🪙');
-    return;
+function startGame(fromStart) {
+  if (fromStart) {
+    const profile = getProfile();
+    const coins = profile ? (profile.coins || 0) : 0;
+    if (coins < 10) {
+      alert('Nicht genug Münzen! (10 🪙 benötigt)\nDu hast: ' + coins + ' 🪙');
+      return;
+    }
+    addCoins(-10);
+    updateCoinDisplay();
   }
-  addCoins(-10);
 
   document.getElementById('startScreen').style.display = 'none';
   document.getElementById('gameOverScreen').style.display = 'none';
@@ -299,7 +297,9 @@ function startGame() {
 
 // ─── DRAW ─────────────────────────────────────────────────────────────────────
 function draw() {
-  // Background
+  const zoom = getZoom();
+
+  // Background (full canvas, not zoomed)
   const grad = ctx.createLinearGradient(0, 0, 0, H);
   grad.addColorStop(0, '#0f172a');
   grad.addColorStop(0.5, '#1e3a5f');
@@ -307,39 +307,46 @@ function draw() {
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
 
-  // Stars (fixed positions)
+  // Stars – fixed positions, drawn before zoom transform
   ctx.fillStyle = 'rgba(255,255,255,0.5)';
   [[30,20],[80,50],[130,15],[190,40],[240,10],[300,60],[360,25],[410,45],
    [50,100],[170,80],[280,90],[380,70],[20,130],[140,110]].forEach(([sx,sy]) => {
     ctx.beginPath(); ctx.arc(sx, sy, 1.2, 0, Math.PI*2); ctx.fill();
   });
 
+  // ── Zoom-Transform: anchor at bottom-center ───────────────────────────────
+  // Blocks grow upward → anchoring at (W/2, H) keeps base visible at bottom.
+  // visual_x = (worldX - W/2)*zoom + W/2
+  // visual_y = (screenY - H)*zoom + H   where screenY = worldY - cameraY
+  ctx.save();
+  ctx.translate(W / 2, H);
+  ctx.scale(zoom, zoom);
+  ctx.translate(-W / 2, -H);
+
   // Draw all stack blocks
   stack.forEach(b => {
     const sy = b.y - cameraY;
-    if (sy > H + 10 || sy + BLOCK_H < -10) return;
     drawBlock(b.x, sy, b.w, BLOCK_H, BLOCK_COLORS[b.colorIdx], false);
   });
 
   // Draw falling cut pieces
   fallingPieces.forEach(fp => {
     const sy = fp.y - cameraY;
-    if (sy > H + 60 || sy < -60) return;
     ctx.globalAlpha = 0.7;
     drawBlock(fp.x, sy, fp.w, BLOCK_H, BLOCK_COLORS[fp.colorIdx], false);
     ctx.globalAlpha = 1;
   });
 
-  // Draw moving block
+  // Draw moving block + guide line
   if (mover && running) {
     const sy = mover.y - cameraY;
     drawBlock(mover.x, sy, mover.w, BLOCK_H, BLOCK_COLORS[mover.colorIdx], true);
 
-    // Dashed guide line showing top-of-stack alignment
+    // Dashed guide line at top of stack
     const prev = stack[stack.length - 1];
     ctx.strokeStyle = 'rgba(255,255,255,0.15)';
     ctx.lineWidth = 1;
-    ctx.setLineDash([4,4]);
+    ctx.setLineDash([4, 4]);
     ctx.beginPath();
     ctx.moveTo(prev.x, prev.y - BLOCK_H - 2 - cameraY);
     ctx.lineTo(prev.x + prev.w, prev.y - BLOCK_H - 2 - cameraY);
@@ -347,10 +354,23 @@ function draw() {
     ctx.setLineDash([]);
   }
 
-  // Height indicator (star + text at top when high up)
+  ctx.restore();
+  // ── End zoom transform ────────────────────────────────────────────────────
+
+  // Zoom indicator (shows when zoomed out)
+  if (score > 5) {
+    const pct = Math.round(zoom * 100);
+    ctx.fillStyle = 'rgba(96,165,250,0.75)';
+    ctx.font = 'bold 12px Segoe UI,sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText('🔭 ' + pct + '%', 8, 8);
+  }
+
+  // Block counter (top right)
   if (score > 3) {
     ctx.fillStyle = 'rgba(241,196,15,0.85)';
-    ctx.font = `bold ${14}px Segoe UI,sans-serif`;
+    ctx.font = 'bold 14px Segoe UI,sans-serif';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'top';
     ctx.fillText('⭐ ' + score + ' Blöcke', W - 8, 8);
