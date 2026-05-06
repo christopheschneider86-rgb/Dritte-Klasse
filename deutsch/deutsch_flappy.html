@@ -179,6 +179,8 @@ let gameMode     = 'alle';
 let gameRunning  = false;
 let gamePaused   = false;
 let animId       = null;
+let countdown = 0;  // remaining frames; 0 = playing normally
+const CD_FRAMES = 180; // 3 seconds at 60fps
 
 // Bird
 let bird = {};
@@ -336,6 +338,7 @@ function startGame(mode){
   hideOverlays();
   updateHeaderCoins();
   gameRunning = true;
+  countdown = CD_FRAMES;
   gamePaused  = false;
   if(animId) cancelAnimationFrame(animId);
   animId = requestAnimationFrame(loop);
@@ -349,6 +352,7 @@ function retryGame(){
 /* ── Input ── */
 function flap(){
   if(!gameRunning || gamePaused) return;
+  if (countdown > 0) { countdown = 0; return; } // tap skips countdown
   bird.vy = JUMP_V;
 }
 
@@ -378,6 +382,16 @@ function loop(){
 
 /* ── Update ── */
 function update(){
+  if (countdown > 0) {
+    countdown--;
+    // gentle float: bird hovers in place
+    bird.vy += GRAVITY * 0.05;
+    bird.y = Math.max(100, Math.min(canvas.height - 120, bird.y + bird.vy));
+    // drift clouds gently
+    for (const c of clouds) { c.x -= 0.5; if (c.x + c.rx < 0) c.x = canvas.width + c.rx; }
+    return; // skip all physics/collision during countdown
+  }
+
   // Bird physics
   bird.vy += GRAVITY;
   bird.y  += bird.vy;
@@ -463,19 +477,33 @@ function update(){
   if(flashTimer > 0) flashTimer--;
 }
 
-function loseLife(){
+function loseLife() {
   lives--;
-  if(lives <= 0){
+  if (lives <= 0) {
     lives = 0;
     gameRunning = false;
     cancelAnimationFrame(animId);
-    draw(); // final frame
+    draw();
     showGameOver();
     return;
   }
-  bird.invincible = 90; // 1.5s at 60fps
-  // Push bird back to center-ish
-  bird.vy = JUMP_V * 0.5;
+  // Reposition bird to a safe spot — but KEEP pipes and score
+  bird.x = canvas.width / 3;
+  bird.y = canvas.height / 2;
+  bird.vy = 0;
+  bird.angle = 0;
+  bird.invincible = 120; // 2s at 60fps
+  bird.flash = false;
+
+  // Remove pipes that overlap with bird's new position to give breathing room
+  pipes = pipes.filter(p => p.x > canvas.width / 2 + PIPE_W);
+  // If too few pipes, spawn one far away
+  if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width * 0.8) {
+    spawnPipe();
+  }
+
+  // Show mini countdown so player can react
+  countdown = 90; // 1.5s
 }
 
 /* ── Draw ── */
@@ -543,6 +571,26 @@ function draw(){
     ctx.shadowColor='rgba(0,0,0,0.4)';
     ctx.shadowBlur=6;
     ctx.fillText('✓ ' + flashWord, W/2, H/2 - 60);
+    ctx.restore();
+  }
+
+  if (countdown > 0) {
+    const secs = Math.ceil(countdown / 60);
+    const label = secs > 0 ? String(secs) : 'LOS!';
+    const alpha = Math.min(1, (countdown % 60) / 20 + 0.3);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.font = 'bold 96px Segoe UI,Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    ctx.shadowColor = 'rgba(0,0,0,0.5)';
+    ctx.shadowBlur = 12;
+    ctx.fillText(label, W / 2, H / 2 - 20);
+    ctx.font = 'bold 18px Segoe UI,Arial';
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.fillText('Tippe zum Starten!', W / 2, H / 2 + 55);
     ctx.restore();
   }
 }

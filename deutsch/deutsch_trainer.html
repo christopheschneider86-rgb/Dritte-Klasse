@@ -90,17 +90,6 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
 .task-hint{font-size:13px;color:var(--muted);line-height:1.4}
 .task-tipp{display:inline-block;margin-top:8px;background:var(--accent-soft);color:var(--accent-dark);border-radius:10px;padding:4px 10px;font-size:12px;font-weight:bold}
 
-.flashcard{border-radius:16px;padding:28px 20px;text-align:center;cursor:pointer;transition:transform .1s ease,box-shadow .15s ease;min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;user-select:none;margin-bottom:12px;border:2px solid var(--accent)}
-.flashcard.front-visible{background:var(--accent-soft)}
-.flashcard.back-visible{background:#e8f8f5;border-color:var(--success)}
-.flashcard:active{transform:scale(0.97)}
-.fc-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:bold}
-.fc-emoji{font-size:52px;line-height:1}
-.fc-word{font-size:2rem;font-weight:bold;color:#2c3e50;line-height:1.2}
-.fc-example{font-size:13px;color:var(--muted);font-style:italic;max-width:36ch;line-height:1.5}
-.fc-tipp{font-size:12px;color:var(--accent-dark);font-weight:bold;margin-top:2px}
-.fc-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-
 .mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 @media(max-width:480px){.mc-grid{grid-template-columns:1fr}}
 .mc-btn{padding:14px 12px;border-radius:12px;border:2px solid #f0b27a;background:white;color:#2c3e50;font-size:15px;font-weight:bold;cursor:pointer;transition:all .12s;font-family:inherit;min-height:48px}
@@ -165,6 +154,15 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
 .hs-empty{font-size:13px;color:var(--muted);padding:10px 0;text-align:center}
 
 .next-row{display:flex;justify-content:flex-end;margin-top:4px}
+
+.such-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+@media(max-width:480px){.such-grid{grid-template-columns:repeat(2,1fr)}}
+.such-btn{padding:12px 8px;border-radius:12px;border:2px solid #f0b27a;background:white;font-size:14px;font-weight:bold;cursor:pointer;min-height:52px;transition:all .12s;font-family:inherit;width:100%}
+.such-btn.selected{border-color:var(--accent);background:var(--accent-soft);transform:scale(1.04)}
+.such-btn.such-ok{border-color:var(--success)!important;background:var(--success-soft)!important;color:#1a6e40}
+.such-btn.such-miss{border-color:#f39c12!important;background:#fef9e7!important;color:#7d5a00}
+.such-btn.such-wrong{border-color:var(--danger)!important;background:var(--danger-soft)!important;color:#922b21}
+.such-btn:disabled{cursor:default}
 </style>
 </head>
 <body>
@@ -206,6 +204,7 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
       <div class="panel-title">📖 Themen</div>
       <div class="tile-grid" id="tileGrid"></div>
       <div id="regelBox" class="regel-box hidden"></div>
+      <button class="btn btn-secondary btn-full" id="lexikonBtn" onclick="openLexikon()" style="margin-top:12px;font-size:13px">📖 Regelkarte &amp; Tipps</button>
     </div>
 
     <div class="card" id="exercisePanel">
@@ -213,7 +212,7 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
       <div id="viewDefault" class="view-container active">
         <div class="default-hint">
           <div class="default-icon">📚</div>
-          <p><b>Wähle links ein Thema aus</b><br>und übe Rechtschreibung mit Wortkarten, Schreiben, Lückentext oder Auswählen.</p>
+          <p><b>Wähle links ein Thema aus</b><br>und übe Rechtschreibung mit Schreiben, Wörter suchen, Lückentext oder Auswählen.</p>
         </div>
       </div>
 
@@ -229,39 +228,19 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
         </div>
 
         <div class="mode-tabs">
-          <button class="mode-tab active" id="tab-flashcard" onclick="setMode('flashcard')">🃏 Wortkarten</button>
-          <button class="mode-tab" id="tab-spelling" onclick="setMode('spelling')">✏️ Schreiben</button>
+          <button class="mode-tab active" id="tab-spelling" onclick="setMode('spelling')">✏️ Schreiben</button>
+          <button class="mode-tab" id="tab-such" onclick="setMode('such')">🔍 Wörter suchen</button>
           <button class="mode-tab" id="tab-gap" onclick="setMode('gap')">🔤 Lückentext</button>
           <button class="mode-tab" id="tab-mc" onclick="setMode('mc')">✅ Auswählen</button>
         </div>
 
-        <!-- FLASHCARD -->
-        <div id="modeFlashcard" class="mode-area">
-          <div id="flashcard" class="flashcard front-visible" onclick="flipCard()">
-            <div class="fc-label" id="fcLabel">Welches Wort ist das? → Tippe zum Umdrehen</div>
-            <div class="fc-emoji" id="fcEmoji"></div>
-            <div class="fc-example" id="fcExample"></div>
-            <div class="fc-word hidden" id="fcWord"></div>
-            <div class="fc-tipp hidden" id="fcTipp"></div>
-          </div>
-          <div class="fc-actions">
-            <button class="btn btn-danger" onclick="markFlashcard(false)">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
-              Noch üben
-            </button>
-            <button class="btn btn-success" onclick="markFlashcard(true)">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-              Gewusst!
-            </button>
-          </div>
-        </div>
-
         <!-- SPELLING -->
-        <div id="modeSpelling" class="mode-area hidden">
+        <div id="modeSpelling" class="mode-area">
           <div class="task-box" id="spellingTaskBox">
             <div class="task-emoji" id="spellingEmoji"></div>
             <div class="task-question" id="spellingQuestion"></div>
             <div class="task-hint">Schreibe das vollständige Wort</div>
+            <button class="btn btn-secondary" onclick="speak(currentWord && currentWord.wort ? currentWord.wort : '')" style="margin-top:6px">🔊 Wort anhören</button>
           </div>
           <div id="spellingFeedback" class="hidden"></div>
           <div id="spellingBonus" class="hidden"></div>
@@ -269,11 +248,26 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
             <div class="spelling-row">
               <input type="text" id="spellingInput" class="spelling-input" placeholder="Wort eingeben…"
                 autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false">
-              <button class="btn btn-primary" onclick="checkSpelling()">Prüfen</button>
+              <button class="btn btn-primary" id="spellingPruefBtn" onclick="checkSpelling()">Prüfen</button>
             </div>
           </div>
           <div class="next-row">
             <button class="btn btn-secondary" id="spellingNextBtn" onclick="nextWord('spelling')" style="display:none">Weiter →</button>
+          </div>
+        </div>
+
+        <!-- WOERTER SUCHEN -->
+        <div id="modeSuch" class="mode-area hidden">
+          <div class="task-box" style="margin-bottom:14px">
+            <div class="task-question">🔍 Welche Wörter schreibt man mit <span id="suchRegel"></span>?</div>
+            <div class="task-hint">Tippe auf alle richtigen Wörter, dann drücke Prüfen.</div>
+          </div>
+          <div id="suchGrid" class="such-grid"></div>
+          <div id="suchFeedback" class="hidden"></div>
+          <div id="suchBonus" class="hidden"></div>
+          <div style="display:flex;gap:10px;margin-top:6px">
+            <button class="btn btn-primary" id="suchPruefenBtn" onclick="checkSuch()">Prüfen</button>
+            <button class="btn btn-secondary" id="suchNextBtn" onclick="nextWord('such')" style="display:none">Weiter →</button>
           </div>
         </div>
 
@@ -282,7 +276,8 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
           <div class="task-box" id="gapTaskBox">
             <div class="task-emoji" id="gapEmoji"></div>
             <div class="task-question" id="gapDisplay"></div>
-            <div class="task-tipp" id="gapTipp"></div>
+            <div class="task-tipp hidden" id="gapTipp"></div>
+            <button class="btn btn-secondary" onclick="speak(currentWord && currentWord.wort ? currentWord.wort : '')" style="margin-top:6px">🔊 Wort anhören</button>
           </div>
           <div id="gapFeedback" class="hidden"></div>
           <div id="gapBonus" class="hidden"></div>
@@ -290,7 +285,7 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
             <div class="spelling-row">
               <input type="text" id="gapInput" class="gap-input" placeholder="…"
                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-              <button class="btn btn-primary" onclick="checkGap()">Prüfen</button>
+              <button class="btn btn-primary" id="gapPruefBtn" onclick="checkGap()">Prüfen</button>
             </div>
           </div>
           <div class="next-row">
@@ -303,6 +298,7 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
           <div class="task-box" id="mcTaskBox">
             <div class="task-emoji" id="mcEmoji"></div>
             <div class="task-question" id="mcQuestion"></div>
+            <button class="btn btn-secondary" onclick="speak(currentWord && currentWord.wort ? currentWord.wort : '')" style="margin-top:6px">🔊 Wort anhören</button>
           </div>
           <div id="mcFeedback" class="hidden"></div>
           <div id="mcBonus" class="hidden"></div>
@@ -332,6 +328,16 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
     </div>
   </div>
 
+</div><!--/app-->
+
+<div id="lexikonOverlay" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.5)">
+  <div style="position:absolute;inset:16px;background:white;border-radius:20px;overflow:hidden;display:flex;flex-direction:column">
+    <div style="padding:12px 16px;background:var(--accent);display:flex;align-items:center;justify-content:space-between">
+      <span style="color:white;font-weight:bold;font-size:16px">📖 Regelkarte</span>
+      <button onclick="closeLexikon()" style="background:rgba(255,255,255,0.2);border:none;color:white;border-radius:8px;padding:6px 12px;cursor:pointer;font-weight:bold">✕ Schließen</button>
+    </div>
+    <iframe id="lexikonFrame" src="" style="flex:1;border:none" title="Regelkarte"></iframe>
+  </div>
 </div>
 
 <script src="deutsch_woerter.js"></script>
@@ -346,14 +352,64 @@ const HS_KEY = 'm_de_flappy_hs';
 const RICHTIG = ['Super!', 'Toll gemacht!', 'Richtig!', 'Klasse!', 'Prima!'];
 const FALSCH = ['Fast!', 'Nicht ganz.', 'Noch üben!', 'Weiter versuchen!'];
 
+const NEGATIV = {
+  ie: ['Kind','springen','Film','Wind','Bild','gibt','Milch','nimmt'],
+  doppel: ['Mal','Weg','Tag','Wal','Salz','Ofen','Schal','tragen'],
+  ck: ['Hafen','Dach','Buch','Haken','Bach','Loch','Fach','Zweig'],
+  tz: ['Holz','Pelz','Pilz','kurz','März','schwarz','Arzt','Salz'],
+  gemischt: ['Kind','Mal','Hafen','Holz','springen','Weg','Dach','Pilz']
+};
+
 let sessionOk = 0;
 let sessionWrong = 0;
 let activeThema = null;
 let currentWord = null;
-let currentMode = 'flashcard';
-let fcFlipped = false;
+let currentMode = 'spelling';
 let answeredThisRound = false;
 
+// Wörter suchen state
+let suchItems = [];
+let suchSelected = new Set();
+let suchAnswered = false;
+
+// --- Profile helpers (correct localStorage format) ---
+function getProfs() {
+  try { return JSON.parse(localStorage.getItem('m_app_v9') || '{}'); } catch(e) { return {}; }
+}
+function getActiveId() { return localStorage.getItem('m_app_active_prof') || null; }
+function getProf() {
+  const id = getActiveId(), profs = getProfs();
+  return (id && profs[id]) ? profs[id] : null;
+}
+function saveProf(prof) {
+  const id = getActiveId(); if (!id) return;
+  const profs = getProfs(); profs[id] = prof;
+  localStorage.setItem('m_app_v9', JSON.stringify(profs));
+}
+function addCoins(n) {
+  const prof = getProf(); if (!prof) return;
+  prof.coins = (prof.coins || 0) + n;
+  saveProf(prof);
+  document.getElementById('coinCount').textContent = prof.coins;
+}
+function saveHistory(thema, modus, ok) {
+  const prof = getProf(); if (!prof) return;
+  if (!Array.isArray(prof.de_history)) prof.de_history = [];
+  prof.de_history.push({ ts: Date.now(), thema, modus, ok });
+  if (prof.de_history.length > 500) prof.de_history = prof.de_history.slice(-500);
+  saveProf(prof);
+}
+
+// --- Speech synthesis ---
+function speak(text) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'de-DE'; utt.rate = 0.85;
+  window.speechSynthesis.speak(utt);
+}
+
+// --- Utility ---
 function rnd(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -367,56 +423,16 @@ function shuffle(arr) {
   return a;
 }
 
-function loadProfile() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const data = JSON.parse(raw);
-    const activeId = localStorage.getItem(ACTIVE_KEY);
-    if (!data.profiles || !activeId) return null;
-    return data.profiles.find(p => String(p.id) === String(activeId)) || null;
-  } catch(e) { return null; }
-}
-
-function saveProfile(prof) {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
-    const data = JSON.parse(raw);
-    const idx = data.profiles.findIndex(p => String(p.id) === String(prof.id));
-    if (idx >= 0) {
-      data.profiles[idx] = prof;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
-  } catch(e) {}
-}
-
-function addCoins(n) {
-  const prof = loadProfile();
-  if (!prof) return;
-  prof.coins = (prof.coins || 0) + n;
-  saveProfile(prof);
-  document.getElementById('coinCount').textContent = prof.coins;
-}
-
-function saveHistory(thema, modus, ok) {
-  const prof = loadProfile();
-  if (!prof) return;
-  if (!Array.isArray(prof.de_history)) prof.de_history = [];
-  prof.de_history.push({ ts: Date.now(), thema, modus, ok });
-  if (prof.de_history.length > 500) prof.de_history = prof.de_history.slice(-500);
-  saveProfile(prof);
-}
-
 function updateScoreBar() {
   document.getElementById('scoreOk').textContent = '✓ ' + sessionOk + ' richtig';
   document.getElementById('scoreWrong').textContent = '✗ ' + sessionWrong + ' falsch';
 }
 
-function showBonus(containerId) {
+function showBonus(containerId, coins) {
+  const c = coins !== undefined ? coins : COINS_CORRECT;
   const el = document.getElementById(containerId);
   el.className = 'bonus-box';
-  el.innerHTML = '<div>🌟 Gut gemacht!</div><div class="bonus-coins">+' + COINS_CORRECT + ' 🪙</div>';
+  el.innerHTML = '<div>🌟 Gut gemacht!</div><div class="bonus-coins">+' + c + ' 🪙</div>';
 }
 
 function showFeedbackEl(containerId, ok, correctAns) {
@@ -451,6 +467,17 @@ function pickWord() {
   return rnd(woerter);
 }
 
+// --- Lexikon overlay ---
+function openLexikon() {
+  document.getElementById('lexikonFrame').src = 'deutsch_lexikon.html';
+  document.getElementById('lexikonOverlay').style.display = 'block';
+}
+function closeLexikon() {
+  document.getElementById('lexikonFrame').src = '';
+  document.getElementById('lexikonOverlay').style.display = 'none';
+}
+
+// --- Highscores ---
 function updateHighscores() {
   const list = document.getElementById('hsList');
   try {
@@ -470,6 +497,7 @@ function updateHighscores() {
   }
 }
 
+// --- Tile / topic ---
 function buildTiles() {
   const grid = document.getElementById('tileGrid');
   grid.innerHTML = '';
@@ -508,7 +536,7 @@ function selectThema(key) {
 
 function setMode(mode) {
   currentMode = mode;
-  ['flashcard', 'spelling', 'gap', 'mc'].forEach(m => {
+  ['spelling', 'such', 'gap', 'mc'].forEach(m => {
     document.getElementById('tab-' + m).classList.toggle('active', m === mode);
     document.getElementById('mode' + m.charAt(0).toUpperCase() + m.slice(1)).classList.toggle('hidden', m !== mode);
   });
@@ -518,54 +546,17 @@ function setMode(mode) {
 function nextWord(mode) {
   currentWord = pickWord();
   answeredThisRound = false;
-  if (!currentWord) return;
+  if (!currentWord && mode !== 'such') return;
 
-  if (mode === 'flashcard') loadFlashcard();
-  else if (mode === 'spelling') loadSpelling();
+  if (mode === 'spelling') loadSpelling();
+  else if (mode === 'such') loadSuch();
   else if (mode === 'gap') loadGap();
   else if (mode === 'mc') loadMc();
 }
 
-function loadFlashcard() {
-  fcFlipped = false;
-  const card = document.getElementById('flashcard');
-  card.className = 'flashcard front-visible';
-  document.getElementById('fcLabel').textContent = 'Welches Wort ist das? → Tippe zum Umdrehen';
-  document.getElementById('fcEmoji').textContent = currentWord.emoji;
-
-  const masked = maskWord(currentWord.beispiel, currentWord.wort);
-  document.getElementById('fcExample').textContent = masked;
-  document.getElementById('fcExample').classList.remove('hidden');
-
-  document.getElementById('fcWord').textContent = currentWord.wort;
-  document.getElementById('fcWord').classList.add('hidden');
-  document.getElementById('fcTipp').textContent = '💡 ' + currentWord.tipp;
-  document.getElementById('fcTipp').classList.add('hidden');
-}
-
-function flipCard() {
-  if (fcFlipped) return;
-  fcFlipped = true;
-  const card = document.getElementById('flashcard');
-  card.className = 'flashcard back-visible';
-  document.getElementById('fcLabel').textContent = currentWord.wort;
-  document.getElementById('fcEmoji').textContent = currentWord.emoji;
-  document.getElementById('fcExample').textContent = currentWord.beispiel;
-  document.getElementById('fcWord').textContent = currentWord.wort;
-  document.getElementById('fcWord').classList.remove('hidden');
-  document.getElementById('fcTipp').textContent = '💡 ' + currentWord.tipp;
-  document.getElementById('fcTipp').classList.remove('hidden');
-}
-
-function markFlashcard(knew) {
-  if (!currentWord) return;
-  saveHistory(activeThema, 'flashcard', knew);
-  if (knew) { sessionOk++; } else { sessionWrong++; }
-  updateScoreBar();
-  loadFlashcard();
-}
-
+// --- SPELLING mode ---
 function loadSpelling() {
+  if (!currentWord) return;
   document.getElementById('spellingEmoji').textContent = currentWord.emoji;
   const masked = maskWord(currentWord.beispiel, currentWord.wort);
   document.getElementById('spellingQuestion').textContent = masked;
@@ -574,7 +565,9 @@ function loadSpelling() {
   document.getElementById('spellingInput').value = '';
   document.getElementById('spellingInput').disabled = false;
   document.getElementById('spellingNextBtn').style.display = 'none';
+  document.getElementById('spellingPruefBtn').style.display = '';
   document.getElementById('spellingInput').focus();
+  setTimeout(() => speak(currentWord.wort), 400);
 }
 
 function checkSpelling() {
@@ -584,10 +577,12 @@ function checkSpelling() {
   const ok = val.toLowerCase() === currentWord.wort.toLowerCase();
   answeredThisRound = true;
   document.getElementById('spellingInput').disabled = true;
+  document.getElementById('spellingPruefBtn').style.display = 'none';
   showFeedbackEl('spellingFeedback', ok, ok ? null : currentWord.wort);
   if (ok) {
-    showBonus('spellingBonus');
-    addCoins(COINS_CORRECT);
+    const coins = activeThema === 'gemischt' ? COINS_CORRECT * 2 : COINS_CORRECT;
+    showBonus('spellingBonus', coins);
+    addCoins(coins);
     sessionOk++;
   } else {
     document.getElementById('spellingBonus').className = 'hidden';
@@ -598,16 +593,86 @@ function checkSpelling() {
   document.getElementById('spellingNextBtn').style.display = '';
 }
 
+// --- WOERTER SUCHEN mode ---
+function loadSuch() {
+  suchAnswered = false;
+  suchSelected.clear();
+  const thema = DEUTSCH_THEMEN[activeThema];
+  const all = thema.woerter;
+  const correct = shuffle(all).slice(0, 4).map(w => ({ wort: w.wort, isCorrect: true }));
+  const negPool = shuffle(NEGATIV[activeThema] || NEGATIV.gemischt);
+  const neg = negPool.slice(0, 4).map(w => ({ wort: w, isCorrect: false }));
+  suchItems = shuffle([...correct, ...neg]);
+
+  const regelText = { ie:'ie', doppel:'Doppelkonsonanten', ck:'ck', tz:'tz', gemischt:'der richtigen Rechtschreibregel' };
+  document.getElementById('suchRegel').textContent = regelText[activeThema] || '';
+  document.getElementById('suchFeedback').className = 'hidden';
+  document.getElementById('suchBonus').className = 'hidden';
+  document.getElementById('suchNextBtn').style.display = 'none';
+  document.getElementById('suchPruefenBtn').style.display = '';
+
+  const grid = document.getElementById('suchGrid');
+  grid.innerHTML = '';
+  suchItems.forEach((item, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'such-btn';
+    btn.textContent = item.wort;
+    btn.dataset.idx = i;
+    btn.addEventListener('click', () => {
+      if (suchAnswered) return;
+      if (suchSelected.has(i)) { suchSelected.delete(i); btn.classList.remove('selected'); }
+      else { suchSelected.add(i); btn.classList.add('selected'); }
+    });
+    grid.appendChild(btn);
+  });
+}
+
+function checkSuch() {
+  if (suchAnswered) return;
+  suchAnswered = true;
+  const btns = document.querySelectorAll('.such-btn');
+  let correctHits = 0;
+  const totalCorrect = suchItems.filter(it => it.isCorrect).length;
+  suchItems.forEach((item, i) => {
+    const btn = btns[i];
+    btn.disabled = true;
+    btn.classList.remove('selected');
+    if (item.isCorrect && suchSelected.has(i)) { btn.classList.add('such-ok'); correctHits++; }
+    else if (item.isCorrect && !suchSelected.has(i)) btn.classList.add('such-miss');
+    else if (!item.isCorrect && suchSelected.has(i)) btn.classList.add('such-wrong');
+  });
+  const allCorrect = correctHits === totalCorrect && suchSelected.size === totalCorrect;
+  const ok = correctHits >= Math.ceil(totalCorrect / 2);
+  const coins = allCorrect ? (activeThema === 'gemischt' ? 3 : 2) : (ok ? 1 : 0);
+  const fb = document.getElementById('suchFeedback');
+  fb.className = 'feedback ' + (allCorrect ? 'feedback-ok' : (ok ? 'feedback-ok' : 'feedback-bad'));
+  fb.innerHTML = '<span class="feedback-icon">' + (allCorrect ? '🌟' : (ok ? '✅' : '❌')) + '</span><div>' + correctHits + ' von ' + totalCorrect + ' Wörtern gefunden.' + (allCorrect ? ' Perfekt!' : '') + '</div>';
+  if (coins > 0) {
+    addCoins(coins);
+    const ba = document.getElementById('suchBonus');
+    ba.className = 'bonus-box';
+    ba.innerHTML = '<div>🌟 Gut gemacht!</div><div class="bonus-coins">+' + coins + ' 🪙</div>';
+  }
+  saveHistory(activeThema, 'such', allCorrect);
+  if (allCorrect) sessionOk++; else sessionWrong++;
+  updateScoreBar();
+  document.getElementById('suchNextBtn').style.display = '';
+}
+
+// --- GAP FILL mode ---
 function loadGap() {
+  if (!currentWord) return;
   document.getElementById('gapEmoji').textContent = currentWord.emoji;
   document.getElementById('gapDisplay').innerHTML = buildGapDisplay(currentWord.wort, currentWord.loch);
   document.getElementById('gapTipp').textContent = '💡 ' + currentWord.tipp;
+  document.getElementById('gapTipp').classList.add('hidden');
   document.getElementById('gapFeedback').className = 'hidden';
   document.getElementById('gapBonus').className = 'hidden';
   document.getElementById('gapInput').value = '';
   document.getElementById('gapInput').disabled = false;
   document.getElementById('gapInput').placeholder = currentWord.loch.length + ' Buchstabe' + (currentWord.loch.length > 1 ? 'n' : '');
   document.getElementById('gapNextBtn').style.display = 'none';
+  document.getElementById('gapPruefBtn').style.display = '';
   document.getElementById('gapInput').focus();
 }
 
@@ -618,10 +683,13 @@ function checkGap() {
   const ok = val.toLowerCase() === currentWord.loch.toLowerCase();
   answeredThisRound = true;
   document.getElementById('gapInput').disabled = true;
+  document.getElementById('gapPruefBtn').style.display = 'none';
+  document.getElementById('gapTipp').classList.remove('hidden');
   showFeedbackEl('gapFeedback', ok, ok ? null : currentWord.loch);
   if (ok) {
-    showBonus('gapBonus');
-    addCoins(COINS_CORRECT);
+    const coins = activeThema === 'gemischt' ? COINS_CORRECT * 2 : COINS_CORRECT;
+    showBonus('gapBonus', coins);
+    addCoins(coins);
     sessionOk++;
   } else {
     document.getElementById('gapBonus').className = 'hidden';
@@ -630,59 +698,51 @@ function checkGap() {
   saveHistory(activeThema, 'gap', ok);
   updateScoreBar();
   document.getElementById('gapNextBtn').style.display = '';
+  speak(currentWord.wort);
 }
 
+// --- MULTIPLE CHOICE mode ---
 function generateDistractors(word) {
   const loch = word.loch;
   const thema = word.thema || activeThema;
-  let variants = [];
-
-  if (thema === 'ie') {
-    variants = ['i', 'ih', 'y', 'ii'].filter(v => v !== loch);
-  } else if (thema === 'doppel') {
-    if (loch.length >= 2) {
-      variants.push(loch[0]);
-    }
-    variants.push(loch + loch[0]);
-    variants.push(loch.replace(loch[0], loch[0].toUpperCase()));
-  } else if (thema === 'ck') {
-    variants = ['k', 'kk', 'c'];
-  } else if (thema === 'tz') {
-    variants = ['z', 'ts', 'ss'];
-  } else {
-    variants = ['i', 'e', 'k', 'z'];
-  }
-
-  variants = [...new Set(variants.filter(v => v !== loch))];
-
   const makeFake = (v) => {
     const idx = word.wort.toLowerCase().indexOf(loch.toLowerCase());
-    if (idx === -1) return word.wort + v;
+    if (idx === -1) return word.wort;
     return word.wort.slice(0, idx) + v + word.wort.slice(idx + loch.length);
   };
-
-  let distractors = variants.slice(0, 3).map(makeFake);
-
-  const pool = DEUTSCH_THEMEN[activeThema].woerter.filter(w => w.wort !== word.wort);
-  if (pool.length > 0 && distractors.length < 3) {
-    distractors.push(rnd(pool).wort);
+  let variants = [];
+  if (thema === 'ie') {
+    variants = ['i', 'ih', 'y'];
+  } else if (thema === 'doppel') {
+    variants = [loch[0], loch[0]+'t', loch[0]+'n'].filter(v => v !== loch);
+  } else if (thema === 'ck') {
+    variants = ['k', 'kk', 'g'];
+  } else if (thema === 'tz') {
+    variants = ['z', 'ts', 'zz'];
+  } else {
+    variants = ['i', 'k', 'z'];
   }
-
-  if (distractors.length > 3) distractors = distractors.slice(0, 3);
-
-  while (distractors.length < 3 && pool.length > 0) {
-    const candidate = rnd(pool).wort;
-    if (!distractors.includes(candidate) && candidate !== word.wort) {
-      distractors.push(candidate);
-    } else {
-      break;
-    }
+  let distractors = variants.map(makeFake);
+  // Deduplicate case-insensitively, remove the correct word
+  const seen = new Set([word.wort.toLowerCase()]);
+  distractors = distractors.filter(d => {
+    const key = d.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  // Pad with Negativwörter if needed
+  const negPool = (NEGATIV[thema] || NEGATIV.gemischt).filter(n => !seen.has(n.toLowerCase()));
+  while (distractors.length < 3 && negPool.length > 0) {
+    const n = negPool.splice(Math.floor(Math.random() * negPool.length), 1)[0];
+    distractors.push(n);
+    seen.add(n.toLowerCase());
   }
-
-  return distractors;
+  return distractors.slice(0, 3);
 }
 
 function loadMc() {
+  if (!currentWord) return;
   document.getElementById('mcEmoji').textContent = currentWord.emoji;
   const masked = maskWord(currentWord.beispiel, currentWord.wort);
   document.getElementById('mcQuestion').textContent = masked.replace(/_+/, '????');
@@ -717,8 +777,9 @@ function checkMc(chosen, btn) {
 
   showFeedbackEl('mcFeedback', ok, ok ? null : currentWord.wort);
   if (ok) {
-    showBonus('mcBonus');
-    addCoins(COINS_CORRECT);
+    const coins = activeThema === 'gemischt' ? COINS_CORRECT * 2 : COINS_CORRECT;
+    showBonus('mcBonus', coins);
+    addCoins(coins);
     sessionOk++;
   } else {
     document.getElementById('mcBonus').className = 'hidden';
@@ -727,8 +788,10 @@ function checkMc(chosen, btn) {
   saveHistory(activeThema, 'mc', ok);
   updateScoreBar();
   document.getElementById('mcNextBtn').style.display = '';
+  speak(currentWord.wort);
 }
 
+// --- Keyboard input ---
 document.getElementById('spellingInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') checkSpelling();
 });
@@ -736,8 +799,9 @@ document.getElementById('gapInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') checkGap();
 });
 
+// --- Init ---
 function init() {
-  const prof = loadProfile();
+  const prof = getProf();
   if (prof) {
     document.getElementById('profileName').textContent = prof.name || '–';
     document.getElementById('coinCount').textContent = prof.coins || 0;
