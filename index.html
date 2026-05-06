@@ -79,7 +79,7 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 .stat-card{border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;text-align:left;}
 .stat-card-math{background:#eaf4ff;border:2px solid #c5dff0;}
 .stat-card-hsu{background:#eaf6ea;border:2px solid #b8e0b8;}
-.stat-card-german{background:#fef0e4;border:2px solid #f5cba0;opacity:.6;}
+.stat-card-german{background:#fef0e4;border:2px solid #f5cba0;}
 .stat-card-eng{background:#f4ecfd;border:2px solid #d9b8f5;opacity:.6;}
 .stat-icon{font-size:28px;line-height:1;flex-shrink:0;}
 .stat-count{font-size:28px;font-weight:bold;line-height:1.1;}
@@ -146,7 +146,15 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
       <div class="news-header-icon">✨</div>
       <div>
         <h2>Was ist neu?</h2>
-        <p>Update vom 24. April 2026 – v9</p>
+        <p>Update vom 6. Mai 2026 – v10</p>
+      </div>
+    </div>
+
+    <div class="news-item">
+      <div class="news-item-badge neu">NEU</div>
+      <div>
+        <div class="news-item-title">📚 Deutsch-Modul ist da!</div>
+        <div class="news-item-desc">ie, Doppelkonsonanten, ck und tz – alle Themen für die Probe! Wortkarten, Schreiben, Lückentext und Auswählen. Plus: Deutsch-Vogel Flappy-Bird-Spiel (–10 🪙).</div>
       </div>
     </div>
 
@@ -224,18 +232,18 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
     </div>
   </a>
 
-  <div class="subject-card disabled">
+  <a href="deutsch/deutsch_trainer.html" class="subject-card">
     <div class="badge-german"></div>
-    <div class="card-icon" style="color:var(--german);">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+    <div class="card-icon">
+      <img src="images/icon_deutsch.png" style="width:48px;height:48px;border-radius:10px;object-fit:cover;" onerror="this.outerHTML='<svg fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;48&quot; height=&quot;48&quot; style=&quot;color:var(--german);&quot;><path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253&quot;></path></svg>'">
     </div>
     <div class="card-title">Deutsch</div>
-    <div class="card-desc">Rechtschreibung, Grammatik und Leseverständnis.</div>
-    <div class="status soon">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-      Kommt bald
+    <div class="card-desc">ie, Doppelkonsonanten, ck und tz – Rechtschreibproben üben.</div>
+    <div class="status active">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      Jetzt starten
     </div>
-  </div>
+  </a>
 
   <a href="hsu/hsu_trainer_3_klasse.html" class="subject-card">
     <div class="badge-hsu"></div>
@@ -321,6 +329,7 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
     <button class="game-tab" onclick="setGameTab('hsu',this)">🌍 HSU</button>
     <button class="game-tab" onclick="setGameTab('musik',this)">🎵 Musik</button>
     <button class="game-tab" onclick="setGameTab('rel',this)">✝️ Religion</button>
+    <button class="game-tab" onclick="setGameTab('de',this)">📚 Deutsch</button>
   </div>
   <div class="game-hs-grid" id="gameHsGrid"></div>
 </div>
@@ -362,6 +371,7 @@ function loadProfiles(){
           if(!parsed[id].musik_history) parsed[id].musik_history=[];
           if(!parsed[id].eng_history) parsed[id].eng_history=[];
           if(!parsed[id].rel_history) parsed[id].rel_history=[];
+          if(!parsed[id].de_history) parsed[id].de_history=[];
           if(parsed[id].score===undefined) parsed[id].score=0;
           if(parsed[id].coins===undefined) parsed[id].coins=0;
         }
@@ -370,7 +380,7 @@ function loadProfiles(){
     }
   }catch(e){}
   if(!Object.keys(profiles).length){
-    profiles={'p1':{name:'Kind 1',score:0,coins:0,history:[],hsu_history:[],musik_history:[],eng_history:[],rel_history:[]}};
+    profiles={'p1':{name:'Kind 1',score:0,coins:0,history:[],hsu_history:[],musik_history:[],eng_history:[],rel_history:[],de_history:[]}};
     localStorage.setItem(STORAGE_KEY,JSON.stringify(profiles));
   }
   const saved=localStorage.getItem(ACTIVE_KEY);
@@ -443,16 +453,19 @@ function updateParentStats(){
     const musikAll   = filterHist(p.musik_history);
     const engAll     = filterHist(p.eng_history);
     const relAll     = filterHist(p.rel_history);
+    const deAll      = filterHist(p.de_history);
     const matheOk    = matheAll.filter(h => h.ok).length;
     const hsuOk      = hsuAll.filter(h => h.ok).length;
     const musikOk    = musikAll.filter(h => h.ok).length;
     const engOk      = engAll.filter(h => h.ok).length;
     const relOk      = relAll.filter(h => h.ok).length;
+    const deOk       = deAll.filter(h => h.ok).length;
     const matheCount = matheAll.length;
     const hsuCount   = hsuAll.length;
     const musikCount = musikAll.length;
     const engCount   = engAll.length;
     const relCount   = relAll.length;
+    const deCount    = deAll.length;
 
     function pct(ok, tot) {
       if (!tot) return '';
@@ -504,8 +517,9 @@ function updateParentStats(){
       <div class="stat-card stat-card-german">
         <div class="stat-icon">📚</div>
         <div>
-          <div class="stat-count">–</div>
-          <div class="stat-label">Deutsch<br><span class="stat-soon">kommt bald</span></div>
+          <div class="stat-count">${deCount}</div>
+          <div class="stat-label">Deutsch-Aufgaben</div>
+          ${pct(deOk, deCount)}
         </div>
       </div>`;
   }catch(e){}
@@ -523,7 +537,7 @@ function addProfile(){
   const name=prompt('Name des Kindes:');
   if(!name||!name.trim()) return;
   const id='p_'+Date.now();
-  profiles[id]={name:name.trim(),score:0,coins:0,history:[],hsu_history:[],musik_history:[],eng_history:[],rel_history:[]};
+  profiles[id]={name:name.trim(),score:0,coins:0,history:[],hsu_history:[],musik_history:[],eng_history:[],rel_history:[],de_history:[]};
   saveProfiles();
   activeProfId=id;
   localStorage.setItem(ACTIVE_KEY,id);
@@ -574,7 +588,7 @@ function render(){
 
 // ── NEWS-MODAL ──────────────────────────────────────────
 // NEWS_VERSION hochzählen wenn neue Neuigkeiten rein kommen
-const NEWS_VERSION = 'news_v9';
+const NEWS_VERSION = 'news_v10';
 function showNewsIfNew() {
   if (!localStorage.getItem(NEWS_VERSION)) {
     document.getElementById('newsOverlay').style.display = 'flex';
@@ -598,6 +612,7 @@ const GAMES_HS = [
   { key:'m_rel_flipper_hs', name:'Bibelflipper',  sub:'',          icon:'⚡', subj:'rel',   unit:'Pkt' },
   { key:'m_rel_tower_hs',   name:'Himmelsbau',    sub:'',          icon:'🏛️', subj:'rel',   unit:'Blöcke' },
   { key:'m_rel_hs',         name:'Himmelsleiter', sub:'',          icon:'🪜', subj:'rel',   unit:'richtig' },
+  { key:'m_de_flappy_hs',  name:'Deutsch-Vogel', sub:'',          icon:'🐦', subj:'de',    unit:'Pkt' },
 ];
 
 let gameHsTab = 'all';
