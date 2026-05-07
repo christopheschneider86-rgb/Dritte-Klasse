@@ -89,8 +89,18 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
 .mini-stat-lbl{font-size:11px;color:#7f8c8d;margin-top:1px;}
 
 /* Save bar */
-.save-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 0 0;border-top:1px solid #e8ecf0;margin-top:16px;flex-wrap:wrap;gap:10px;}
-.save-status{font-size:13px;color:#27ae60;font-weight:bold;display:none;}
+.save-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 0 0;border-top:1px solid #e8ecf0;margin-top:16px;gap:10px;}
+.save-status{font-size:13px;color:#27ae60;font-weight:bold;visibility:hidden;opacity:0;transition:opacity .3s;}
+.save-status.show{visibility:visible;opacity:1;}
+
+/* Import/Export */
+.io-row{display:flex;gap:10px;flex-wrap:wrap;}
+.io-btn{flex:1;min-width:140px;padding:12px 16px;border-radius:12px;border:none;font-size:14px;font-weight:bold;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;}
+.io-btn-export{background:#eaf6ea;color:#1a6e40;border:2px solid #b8e0b8;}
+.io-btn-export:hover{background:#d0f0d0;}
+.io-btn-import{background:#eaf4ff;color:#1b6fab;border:2px solid #c5dff0;}
+.io-btn-import:hover{background:#d6ecff;}
+.io-info{font-size:12px;color:#95a5a6;margin-top:8px;line-height:1.5;}
 </style>
 </head>
 <body>
@@ -147,6 +157,23 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
     <div class="save-bar">
       <span class="save-status" id="saveStatus">✅ Gespeichert!</span>
       <button class="btn btn-primary" style="width:auto;padding:10px 24px" onclick="saveSettings()">💾 Speichern</button>
+    </div>
+  </div>
+
+  <!-- ── Import / Export ── -->
+  <div class="section">
+    <div class="section-title">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+      Daten exportieren &amp; importieren
+    </div>
+    <div class="io-row">
+      <button class="io-btn io-btn-export" onclick="exportData()">📤 Exportieren</button>
+      <button class="io-btn io-btn-import" onclick="document.getElementById('importFile').click()">📥 Importieren</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+    </div>
+    <div class="io-info">
+      <b>Export:</b> Alle Profile, Münzen, Lernfortschritte, Highscores und Einstellungen als JSON-Datei speichern.<br>
+      <b>Import:</b> Gespeicherte JSON-Datei wiederherstellen (z.B. nach Gerätewechsel oder Cache-Löschung).
     </div>
   </div>
 
@@ -402,9 +429,14 @@ function saveSettings(){
   const spiele   = spieleEl ? spieleEl.checked : true;
   settings[selectedChildId] = { faecher, spiele };
   saveSettingsData(settings);
+  showSaveStatus();
+}
+
+function showSaveStatus(){
   const st = document.getElementById('saveStatus');
-  st.style.display='block';
-  setTimeout(()=>st.style.display='none', 2500);
+  st.classList.add('show');
+  clearTimeout(st._hideTimer);
+  st._hideTimer = setTimeout(()=>st.classList.remove('show'), 2500);
 }
 
 // ── All stats ──
@@ -451,6 +483,57 @@ function resetAllData(){
   localStorage.removeItem(SETTINGS_KEY);
   alert('Alle Daten wurden gelöscht. Die App startet neu.');
   window.location.href='index.html';
+}
+
+// ── Import / Export ──
+const ALL_LS_KEYS = [
+  'm_app_v9','m_app_active_prof','m_settings_v1','m_parent_pw',
+  'm_jump_hs_addsub','m_jump_hs_muldiv','m_jump_hs_mixed',
+  'm_tier_hs','m_musik_hs','m_rel_flipper_hs','m_rel_tower_hs','m_rel_hs','m_de_flappy_hs',
+];
+
+function exportData(){
+  const data = { _version:1, _exported: new Date().toISOString(), keys:{} };
+  ALL_LS_KEYS.forEach(k => {
+    const v = localStorage.getItem(k);
+    if(v !== null) data.keys[k] = v;
+  });
+  // Also grab any news keys
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k && k.startsWith('news_v')) data.keys[k]=localStorage.getItem(k);
+  }
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'ZaboKids_Backup_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const data = JSON.parse(e.target.result);
+      if(!data || !data.keys || data._version!==1){
+        alert('❌ Ungültige Backup-Datei. Bitte nur ZaboKids-Exporte verwenden.');
+        return;
+      }
+      if(!confirm('⚠️ Alle aktuellen Daten auf diesem Gerät werden durch die Backup-Daten ersetzt.\n\nFortfahren?')) return;
+      Object.entries(data.keys).forEach(([k,v])=>localStorage.setItem(k,v));
+      alert('✅ Import erfolgreich! Die Seite wird neu geladen.');
+      window.location.reload();
+    }catch(err){
+      alert('❌ Fehler beim Lesen der Datei: '+err.message);
+    }
+  };
+  reader.readAsText(file);
+  // Reset file input so same file can be re-imported
+  event.target.value='';
 }
 
 // ── Auto-focus password input ──

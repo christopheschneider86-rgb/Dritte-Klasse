@@ -58,6 +58,9 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 .subject-card{background:white;border-radius:20px;padding:25px;box-shadow:0 6px 16px rgba(0,0,0,0.06);text-decoration:none;color:inherit;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden;}
 .subject-card:hover{transform:translateY(-5px);box-shadow:0 12px 24px rgba(0,0,0,0.1);}
 .subject-card.disabled{opacity:.65;cursor:not-allowed;pointer-events:none;}
+.subject-card.locked{opacity:.72;cursor:not-allowed;}
+.subject-card.locked:hover{transform:none;box-shadow:0 6px 16px rgba(0,0,0,0.06);}
+.subject-card.locked::after{content:'🔒';position:absolute;top:14px;right:14px;font-size:18px;}
 .card-icon{width:48px;height:48px;margin:0 auto 15px;}
 .card-title{font-size:22px;font-weight:bold;margin-bottom:8px;}
 .card-desc{font-size:14px;color:#7f8c8d;}
@@ -141,6 +144,15 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 .hero-action-btn{display:flex;align-items:center;gap:7px;padding:9px 18px;border-radius:20px;border:none;background:white;color:#2c3e50;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.09);transition:all .18s;text-decoration:none;font-family:inherit;}
 .hero-action-btn:hover{background:#f0f8ff;box-shadow:0 4px 14px rgba(0,0,0,0.13);transform:translateY(-1px);}
 
+/* ─── PERMISSION MODAL ─── */
+.perm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1100;display:flex;align-items:center;justify-content:center;padding:20px;}
+.perm-modal{background:white;border-radius:24px;padding:28px 24px;max-width:340px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);text-align:center;}
+.perm-lock{font-size:52px;line-height:1;margin-bottom:12px;}
+.perm-title{font-size:18px;font-weight:bold;color:#2c3e50;margin-bottom:8px;}
+.perm-sub{font-size:14px;color:#7f8c8d;margin-bottom:20px;line-height:1.5;}
+.perm-close-btn{width:100%;padding:12px;background:#3498db;color:white;border:none;border-radius:12px;font-size:15px;font-weight:bold;cursor:pointer;font-family:inherit;}
+.perm-close-btn:hover{background:#2980b9;}
+
 /* ─── INFO MODAL ─── */
 .info-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
 .info-modal{background:white;border-radius:24px;padding:28px 24px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
@@ -164,7 +176,7 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
       <div class="news-header-icon">✨</div>
       <div>
         <h2>Was ist neu?</h2>
-        <p>Update vom 7. Mai 2026 – v11</p>
+        <p>Update vom 7. Mai 2026 – v12</p>
       </div>
     </div>
 
@@ -185,10 +197,17 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
     </div>
     
     <div class="news-item">
+      <div class="news-item-badge neu">NEU</div>
+      <div>
+        <div class="news-item-title">📤 Backup & Restore</div>
+        <div class="news-item-desc">Im Elternbereich: alle Profile, Münzen und Highscores als JSON exportieren und auf neuem Gerät importieren.</div>
+      </div>
+    </div>
+    <div class="news-item">
       <div class="news-item-badge fix">FIX</div>
       <div>
-        <div class="news-item-title">🔒 Elternbereich – Korrekturen</div>
-        <div class="news-item-desc">Kind umbenennen funktioniert jetzt (✏️-Button). Berechtigungen werden beim Tab-Wechsel automatisch gespeichert.</div>
+        <div class="news-item-title">🔒 Berechtigungen greifen jetzt</div>
+        <div class="news-item-desc">Gesperrte Fächer zeigen ein 🔒 und öffnen eine „Keine Berechtigung"-Meldung. Kind umbenennen (✏️) funktioniert. Speichern-Button springt nicht mehr.</div>
       </div>
     </div>
 
@@ -218,7 +237,7 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 <div class="info-overlay" id="infoOverlay" style="display:none" onclick="if(event.target===this)closeInfo()">
   <div class="info-modal">
     <h2>ℹ️ App-Info</h2>
-    <div class="info-row"><span class="info-label">Version</span><span class="info-value">v11 – Mai 2026</span></div>
+    <div class="info-row"><span class="info-label">Version</span><span class="info-value">v12 – Mai 2026</span></div>
     <div class="info-row"><span class="info-label">Daten</span><span class="info-value">Lokal auf diesem Gerät</span></div>
     <div class="info-row"><span class="info-label">Entwickler</span><span class="info-value">ZaboChris</span></div>
     <div class="info-row" style="flex-direction:column;align-items:flex-start;gap:6px">
@@ -230,6 +249,16 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
         Diese App speichert keine persönlichen Daten auf externen Servern. Einstellungen werden ausschließlich lokal im Browser gespeichert (localStorage). Es werden keine Cookies, kein Tracking und keine Analysen eingesetzt.
     </div>
     <button class="info-close-btn" onclick="closeInfo()">Schließen</button>
+  </div>
+</div>
+
+<!-- Permission denied modal -->
+<div class="perm-overlay" id="permOverlay" style="display:none" onclick="if(event.target===this)closePermModal()">
+  <div class="perm-modal">
+    <div class="perm-lock">🔒</div>
+    <div class="perm-title">Keine Berechtigung</div>
+    <div class="perm-sub" id="permModalText">Dieser Bereich wurde von deinen Eltern gesperrt.<br><b>Elternfreigabe erforderlich.</b></div>
+    <button class="perm-close-btn" onclick="closePermModal()">OK, verstanden</button>
   </div>
 </div>
 
@@ -252,7 +281,7 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 </div>
 
 <div class="grid">
-  <a href="mathe/mathe_trainer_3_klasse.html" class="subject-card" id="mathCard">
+  <a href="mathe/mathe_trainer_3_klasse.html" class="subject-card" id="mathCard" data-fach="mathe" onclick="return checkPerm(event,'mathe')">
     <div class="badge-math"></div>
     <div class="card-icon">
       <img src="images/icon_mathe.png" style="width:48px;height:48px;border-radius:10px;object-fit:cover;" onerror="this.outerHTML='<svg fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;48&quot; height=&quot;48&quot; style=&quot;color:var(--math);&quot;><path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z&quot;></path></svg>'">
@@ -265,7 +294,7 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
     </div>
   </a>
 
-  <a href="deutsch/deutsch_trainer.html" class="subject-card">
+  <a href="deutsch/deutsch_trainer.html" class="subject-card" data-fach="deutsch" onclick="return checkPerm(event,'deutsch')">
     <div class="badge-german"></div>
     <div class="card-icon">
       <img src="images/icon_deutsch.png" style="width:48px;height:48px;border-radius:10px;object-fit:cover;" onerror="this.outerHTML='<svg fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;48&quot; height=&quot;48&quot; style=&quot;color:var(--german);&quot;><path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253&quot;></path></svg>'">
@@ -278,7 +307,7 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
     </div>
   </a>
 
-  <a href="hsu/hsu_trainer_3_klasse.html" class="subject-card">
+  <a href="hsu/hsu_trainer_3_klasse.html" class="subject-card" data-fach="hsu" onclick="return checkPerm(event,'hsu')">
     <div class="badge-hsu"></div>
     <div class="card-icon">
       <img src="images/icon_hsu.png" style="width:48px;height:48px;border-radius:10px;object-fit:cover;" onerror="this.outerHTML='<svg fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;48&quot; height=&quot;48&quot; style=&quot;color:var(--hsu);&quot;><path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z&quot;></path></svg>'">
@@ -291,7 +320,7 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
     </div>
   </a>
 
-  <a href="englisch/englisch_trainer.html" class="subject-card">
+  <a href="englisch/englisch_trainer.html" class="subject-card" data-fach="englisch" onclick="return checkPerm(event,'englisch')">
     <div class="badge-eng"></div>
     <div class="card-icon">
       <img src="images/icon_englisch.png" style="width:48px;height:48px;border-radius:10px;object-fit:cover;" onerror="this.outerHTML='<svg fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;48&quot; height=&quot;48&quot; style=&quot;color:var(--eng);&quot;><path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129&quot;></path></svg>'">
@@ -304,7 +333,7 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
     </div>
   </a>
 
-  <a href="religion/religion_trainer.html" class="subject-card">
+  <a href="religion/religion_trainer.html" class="subject-card" data-fach="religion" onclick="return checkPerm(event,'religion')">
     <div class="badge-rel"></div>
     <div class="card-icon">
       <img src="images/icon_religion.png" style="width:48px;height:48px;border-radius:10px;object-fit:cover;" onerror="this.outerHTML='<svg fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;48&quot; height=&quot;48&quot; style=&quot;color:var(--rel);&quot;><path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M12 6v6m0 0v6m0-6h6m-6 0H6&quot;/></svg>'">
@@ -317,7 +346,7 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
     </div>
   </a>
 
-  <a href="musik/musik_trainer.html" class="subject-card">
+  <a href="musik/musik_trainer.html" class="subject-card" data-fach="musik" onclick="return checkPerm(event,'musik')">
     <div class="badge-musik"></div>
     <div class="card-icon">
       <img src="images/icon_musik.png" style="width:48px;height:48px;border-radius:10px;object-fit:cover;" onerror="this.outerHTML='<svg fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;48&quot; height=&quot;48&quot; style=&quot;color:var(--musik);&quot;><path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3&quot;></path></svg>'">
@@ -370,8 +399,59 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 </div>
 
 <script>
-const STORAGE_KEY='m_app_v9', ACTIVE_KEY='m_app_active_prof';
+const STORAGE_KEY='m_app_v9', ACTIVE_KEY='m_app_active_prof', SETTINGS_KEY='m_settings_v1';
 let profiles={}, activeProfId=null;
+
+// ── Permission helpers ──
+function getChildSettings(profId){
+  try{
+    const s=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}');
+    return s[profId] || null; // null = no restrictions set
+  }catch(e){ return null; }
+}
+function isFachAllowed(fach){
+  const s=getChildSettings(activeProfId);
+  if(!s||!s.faecher) return true; // no settings = all allowed
+  return s.faecher.includes(fach);
+}
+function isSpieleAllowed(){
+  const s=getChildSettings(activeProfId);
+  if(!s) return true;
+  return s.spiele !== false;
+}
+function checkPerm(event, fach){
+  if(isFachAllowed(fach)) return true;
+  event.preventDefault();
+  showPermModal(fach);
+  return false;
+}
+function showPermModal(fach){
+  const names={mathe:'Mathematik',deutsch:'Deutsch',hsu:'HSU',englisch:'Englisch',religion:'Religion',musik:'Musik'};
+  document.getElementById('permModalText').innerHTML=
+    'Das Fach <b>'+(names[fach]||fach)+'</b> wurde von deinen Eltern gesperrt.<br><br>🔒 <b>Elternfreigabe erforderlich</b>';
+  document.getElementById('permOverlay').style.display='flex';
+}
+function closePermModal(){
+  document.getElementById('permOverlay').style.display='none';
+}
+// Apply visual lock state to cards
+function applyPermissions(){
+  document.querySelectorAll('.subject-card[data-fach]').forEach(card=>{
+    const fach=card.dataset.fach;
+    const locked=!isFachAllowed(fach);
+    card.classList.toggle('locked',locked);
+    const statusEl=card.querySelector('.status');
+    if(statusEl){
+      if(locked){
+        statusEl.className='status soon';
+        statusEl.innerHTML='<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg> Gesperrt';
+      } else {
+        statusEl.className='status active';
+        statusEl.innerHTML='<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Jetzt starten';
+      }
+    }
+  });
+}
 
 function loadProfiles(){
   try{
@@ -419,6 +499,7 @@ function setActive(id){
   localStorage.setItem(ACTIVE_KEY,id);
   render();
   updateCoinDisplay();
+  applyPermissions();
 }
 
 function getInitials(name){
@@ -442,7 +523,7 @@ function render(){
 
 // ── NEWS-MODAL ──────────────────────────────────────────
 // NEWS_VERSION hochzählen wenn neue Neuigkeiten rein kommen
-const NEWS_VERSION = 'news_v10';
+const NEWS_VERSION = 'news_v12';
 function showNewsIfNew() {
   if (!localStorage.getItem(NEWS_VERSION)) {
     document.getElementById('newsOverlay').style.display = 'flex';
@@ -522,6 +603,7 @@ function checkUpdate() {
 loadProfiles();
 render();
 updateCoinDisplay();
+applyPermissions();
 updateGameBestenliste();
 showNewsIfNew();
 </script>
