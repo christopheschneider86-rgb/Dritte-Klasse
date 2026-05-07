@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <title>Deutsch-Vogel – Flappy Bird</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<link rel="icon" type="image/png" href="../images/deutsch_vogel.png">
+<link rel="apple-touch-icon" href="../images/deutsch_vogel.png">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#b3e5fc;min-height:100vh;display:flex;flex-direction:column;align-items:center;touch-action:manipulation;user-select:none}
@@ -34,6 +36,15 @@ canvas{display:block;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.18);t
 .record-display{font-size:14px;color:#666;margin-bottom:4px}
 .new-record{font-size:20px;color:#e67e22;margin:8px 0;font-weight:bold}
 .link-btn{background:none;border:none;color:#e67e22;font-size:14px;cursor:pointer;text-decoration:underline;padding:6px}
+/* Difficulty selector */
+.diff-selector{margin-bottom:14px;text-align:left}
+.diff-label{font-size:11px;font-weight:bold;color:#95a5a6;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;text-align:center}
+.diff-row{display:flex;gap:8px}
+.diff-btn{flex:1;padding:10px 8px;border-radius:12px;border:2px solid #f0b27a;background:white;cursor:pointer;font-size:13px;font-weight:bold;color:#2c3e50;transition:all .15s;font-family:inherit;line-height:1.3}
+.diff-btn.active{border-color:#e67e22;background:#fef4e8;color:#c0652d;box-shadow:0 2px 6px rgba(230,126,34,.2)}
+.diff-btn:hover:not(.active){border-color:#f39c12;background:#fffbf5}
+.diff-desc{font-size:11px;font-weight:normal;color:#999;display:block;margin-top:2px}
+.diff-btn.active .diff-desc{color:#e67e22}
 /* Sound toggle */
 .sound-toggle{position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.8);border:none;border-radius:20px;padding:6px 12px;font-size:13px;cursor:pointer;font-weight:bold;color:#2c3e50}
 </style>
@@ -65,6 +76,20 @@ canvas{display:block;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.18);t
       <div class="how-item"><span class="how-icon">❤️</span><span>Du hast <b>3 Leben</b> – nach einem Treffer geht's weiter!</span></div>
       <div class="how-item"><span class="how-icon">📚</span><span>Achte auf die <b>orangenen Buchstaben</b> beim Fliegen</span></div>
       <div class="how-item"><span class="how-icon">⬆️</span><span>Je mehr Lücken du passierst, desto schneller wird's!</span></div>
+    </div>
+
+    <div class="diff-selector">
+      <div class="diff-label">Schwierigkeitsgrad</div>
+      <div class="diff-row">
+        <button class="diff-btn" id="diffEasy" onclick="setDiff('easy')">
+          🌸 Leicht
+          <span class="diff-desc">Größere Lücken, langsamer</span>
+        </button>
+        <button class="diff-btn active" id="diffNormal" onclick="setDiff('normal')">
+          🏆 Normal
+          <span class="diff-desc">Standard, wird schneller</span>
+        </button>
+      </div>
     </div>
 
     <div id="startBtnArea">
@@ -229,7 +254,21 @@ let gameRunning  = false;
 let gamePaused   = false;
 let animId       = null;
 let countdown    = 0;
-const CD_FRAMES  = 180; // 3s at 60fps
+let waitingForTap= false; // true after countdown: bird frozen until player taps
+const CD_FRAMES  = 180;   // 3 s at 60 fps
+
+/* ── Difficulty ── */
+let difficulty = 'normal';
+const DIFF = {
+  easy:   { gapH: 200, pipeSpeed: 1.5 },
+  normal: { gapH: 160, pipeSpeed: 2.0 },
+};
+
+function setDiff(d){
+  difficulty = d;
+  document.getElementById('diffEasy').classList.toggle('active',   d === 'easy');
+  document.getElementById('diffNormal').classList.toggle('active', d === 'normal');
+}
 
 let bird = {};
 function resetBird(){
@@ -345,13 +384,14 @@ function spawnPipe(){
 function startGame(){
   if(!deductCoins(10)){ showStartScreen(); return; }
 
+  const cfg   = DIFF[difficulty];
   wordPool    = buildWordPool();
   wordIdx     = 0;
   score       = 0;
   lives       = 3;
-  pipeSpeed   = 2;
+  pipeSpeed   = cfg.pipeSpeed;
   pipesPassed = 0;
-  gapH        = 160;
+  gapH        = cfg.gapH;
   flashWord   = '';
   flashTimer  = 0;
   groundOffset= 0;
@@ -361,12 +401,13 @@ function startGame(){
   spawnPipe();
   hideOverlays();
   updateHeaderCoins();
-  gameRunning = true;
-  countdown   = CD_FRAMES;
-  gamePaused  = false;
+  gameRunning   = true;
+  countdown     = CD_FRAMES;
+  waitingForTap = false;
+  gamePaused    = false;
   if(animId) cancelAnimationFrame(animId);
   animId = requestAnimationFrame(loop);
-  startBgMusic();
+  // startBgMusic() called later when player actually taps
 }
 
 function retryGame(){
@@ -377,15 +418,36 @@ function retryGame(){
 /* ── Input ── */
 function flap(){
   if(!gameRunning||gamePaused) return;
-  if(countdown>0){ countdown=0; playLOS(); return; }
+
+  // Skip the countdown (tap during countdown → jump to waitingForTap)
+  if(countdown>0){
+    countdown=0;
+    waitingForTap=true;
+    playLOS();
+    return;
+  }
+
+  // First tap after countdown → actually start the game
+  if(waitingForTap){
+    waitingForTap=false;
+    bird.vy=JUMP_V;
+    bird.y=canvas.height/2;
+    bird.angle=0;
+    startBgMusic();
+    playFlap();
+    const ctx2=getAudioCtx();
+    if(ctx2&&ctx2.state==='suspended') ctx2.resume();
+    return;
+  }
+
+  // Normal jump
   bird.vy=JUMP_V;
   playFlap();
-  // Resume audio ctx if suspended (iOS)
   const ctx2=getAudioCtx();
   if(ctx2&&ctx2.state==='suspended') ctx2.resume();
 }
 
-canvas.addEventListener('click',    flap);
+canvas.addEventListener('mousedown',  e=>{ e.preventDefault(); flap(); });
 canvas.addEventListener('touchstart', e=>{ e.preventDefault(); flap(); }, {passive:false});
 document.addEventListener('keydown', e=>{
   if(e.code==='Space'||e.code==='ArrowUp'||e.code==='Enter') flap();
@@ -410,14 +472,21 @@ function loop(){
 
 /* ── Update ── */
 function update(){
+  // ── Countdown phase: bird completely frozen ──
   if(countdown>0){
     countdown--;
-    // Beep on each second change
     if(countdown===120||countdown===60) playBeep(660);
-    if(countdown===0){ playLOS(); startBgMusic(); }
-    // Gentle hover
-    bird.vy+=GRAVITY*0.05;
-    bird.y=Math.max(100,Math.min(canvas.height-120,bird.y+bird.vy));
+    if(countdown===0){ playLOS(); waitingForTap=true; }
+    bird.vy=0;
+    bird.y=canvas.height/2+Math.sin(Date.now()/500)*8; // gentle idle bob
+    for(const c of clouds){ c.x-=0.4; if(c.x+c.rx<0) c.x=canvas.width+c.rx; }
+    return;
+  }
+
+  // ── Waiting-for-tap phase: bird still frozen ──
+  if(waitingForTap){
+    bird.vy=0;
+    bird.y=canvas.height/2+Math.sin(Date.now()/500)*8;
     for(const c of clouds){ c.x-=0.4; if(c.x+c.rx<0) c.x=canvas.width+c.rx; }
     return;
   }
@@ -443,8 +512,8 @@ function update(){
 
     if(!p.passed&&p.x+PIPE_W<bird.x-BIRD_R){
       p.passed=true; pipesPassed++; score++;
-      if(pipesPassed%3===0) pipeSpeed=Math.min(4.5,pipeSpeed+0.15);
-      if(pipesPassed%5===0) gapH=Math.max(110,gapH-2);
+      if(pipesPassed%3===0 && difficulty==='normal') pipeSpeed=Math.min(4.5,pipeSpeed+0.15);
+      if(pipesPassed%5===0 && difficulty==='normal') gapH=Math.max(120,gapH-2);
       flashWord=p.word; flashTimer=FLASH_DUR;
       playScore();
     }
@@ -470,17 +539,19 @@ function update(){
 function loseLife(){
   lives--;
   playHit();
+  stopBgMusic();
   if(lives<=0){
     lives=0; gameRunning=false;
     cancelAnimationFrame(animId);
     draw(); showGameOver(); return;
   }
-  // Reposition bird, clear nearby pipes
+  // Reposition bird, clear nearby pipes, restart countdown
   bird.x=canvas.width/3; bird.y=canvas.height/2;
   bird.vy=0; bird.angle=0; bird.invincible=120; bird.flash=false;
   pipes=pipes.filter(p=>p.x>canvas.width/2+PIPE_W);
   if(!pipes.length||pipes[pipes.length-1].x<canvas.width*0.8) spawnPipe();
-  countdown=90; // 1.5s recovery
+  countdown=CD_FRAMES; // 3 s countdown, then waitingForTap
+  waitingForTap=false;
 }
 
 /* ── Draw ── */
@@ -527,18 +598,30 @@ function draw(){
     ctx.restore();
   }
 
-  // Countdown
+  // Countdown (3…2…1)
   if(countdown>0){
     const secs=Math.ceil(countdown/60);
-    const label=secs>0?String(secs):'LOS!';
-    const alpha=Math.min(1,(countdown%60)/20+0.3);
+    const progress=countdown%60; // 0–59 within each second
+    const alpha=Math.min(1, progress/18+0.25);
+    const scale=1+Math.max(0,(progress-42)/18)*0.3; // pop when new second
     ctx.save(); ctx.globalAlpha=alpha;
+    ctx.translate(W/2,H/2-20); ctx.scale(scale,scale);
     ctx.font='bold 96px Segoe UI,Arial'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillStyle='rgba(255,255,255,0.95)'; ctx.shadowColor='rgba(0,0,0,0.5)'; ctx.shadowBlur=12;
-    ctx.fillText(label, W/2, H/2-20);
-    ctx.font='bold 18px Segoe UI,Arial'; ctx.shadowBlur=0;
-    ctx.fillStyle='rgba(255,255,255,0.8)';
-    ctx.fillText('Tippe zum Starten!', W/2, H/2+55);
+    ctx.fillStyle='rgba(255,255,255,0.95)'; ctx.shadowColor='rgba(0,0,0,0.5)'; ctx.shadowBlur=14;
+    ctx.fillText(String(secs),0,0);
+    ctx.restore();
+  }
+  // Waiting-for-tap message (after countdown ends)
+  if(countdown===0 && waitingForTap){
+    const pulse=0.75+Math.sin(Date.now()/280)*0.25;
+    ctx.save(); ctx.globalAlpha=pulse;
+    ctx.font='bold 26px Segoe UI,Arial'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillStyle='#fff'; ctx.shadowColor='rgba(0,0,0,0.55)'; ctx.shadowBlur=10;
+    ctx.fillText('👆 Tippe zum Starten!', W/2, H/2-30);
+    ctx.globalAlpha=pulse*0.75;
+    ctx.font='15px Segoe UI,Arial'; ctx.shadowBlur=0;
+    ctx.fillStyle='rgba(255,255,255,0.85)';
+    ctx.fillText('Klicken oder Leertaste drücken', W/2, H/2+12);
     ctx.restore();
   }
 }
