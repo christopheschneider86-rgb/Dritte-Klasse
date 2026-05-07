@@ -135,6 +135,24 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 .news-item-desc{font-size:13px;color:#7f8c8d;line-height:1.4;}
 .news-close-btn{width:100%;margin-top:20px;padding:13px;background:#3498db;color:white;border:none;border-radius:14px;font-size:15px;font-weight:bold;cursor:pointer;font-family:inherit;}
 .news-close-btn:hover{background:#2980b9;}
+
+/* ─── HERO ACTION ROW ─── */
+.hero-action-row{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+.hero-action-btn{display:flex;align-items:center;gap:7px;padding:9px 18px;border-radius:20px;border:none;background:white;color:#2c3e50;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.09);transition:all .18s;text-decoration:none;font-family:inherit;}
+.hero-action-btn:hover{background:#f0f8ff;box-shadow:0 4px 14px rgba(0,0,0,0.13);transform:translateY(-1px);}
+
+/* ─── INFO MODAL ─── */
+.info-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.info-modal{background:white;border-radius:24px;padding:28px 24px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
+.info-modal h2{font-size:20px;font-weight:bold;color:#2c3e50;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:14px;}
+.info-row:last-of-type{border-bottom:none;}
+.info-label{color:#666;}
+.info-value{font-weight:bold;color:#2c3e50;}
+.info-close-btn{width:100%;margin-top:18px;padding:13px;background:#3498db;color:white;border:none;border-radius:14px;font-size:15px;font-weight:bold;cursor:pointer;font-family:inherit;}
+.info-close-btn:hover{background:#2980b9;}
+.update-btn{background:#eaf4ff;border:2px solid #c5dff0;border-radius:10px;padding:7px 14px;font-size:13px;font-weight:bold;color:#1b6fab;cursor:pointer;border:none;font-family:inherit;margin-top:8px;width:100%;}
+.update-btn:hover{background:#d6ecff;}
 </style>
 </head>
 <body>
@@ -198,6 +216,30 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
   <img src="images/main.png" alt="Logo" class="hero-icon" onerror="this.style.display='none'">
   <h1>Lern-Abenteuer</h1>
   <p>Spielerisch lernen für die 3. Klasse. Profil auswählen und starte dein Training!</p>
+  <div class="hero-action-row">
+    <a href="einstellungen.html" class="hero-action-btn">⚙️ Einstellungen</a>
+    <button class="hero-action-btn" onclick="openInfo()">ℹ️ Info</button>
+  </div>
+</div>
+
+<!-- Info Modal -->
+<div class="info-overlay" id="infoOverlay" style="display:none" onclick="if(event.target===this)closeInfo()">
+  <div class="info-modal">
+    <h2>ℹ️ App-Info</h2>
+    <div class="info-row"><span class="info-label">Version</span><span class="info-value">v10 – Mai 2026</span></div>
+    <div class="info-row"><span class="info-label">Fächer</span><span class="info-value">Mathe, Deutsch, HSU, Englisch, Religion, Musik</span></div>
+    <div class="info-row"><span class="info-label">Daten</span><span class="info-value">Lokal auf diesem Gerät</span></div>
+    <div class="info-row"><span class="info-label">Entwickler</span><span class="info-value">ZaboKids 2026</span></div>
+    <div class="info-row" style="flex-direction:column;align-items:flex-start;gap:6px">
+      <span class="info-label">Update prüfen</span>
+      <button class="update-btn" onclick="checkUpdate()">🔄 Auf Updates prüfen</button>
+      <span id="updateStatus" style="font-size:12px;color:#27ae60;display:none">✅ Du hast die neueste Version!</span>
+    </div>
+    <div style="margin-top:12px;padding:10px;background:#f9f9f9;border-radius:10px;font-size:12px;color:#95a5a6;line-height:1.5">
+      Diese App dient ausschließlich dem Lernzweck für die 3. Klasse. Alle Daten werden lokal gespeichert und nicht übertragen.
+    </div>
+    <button class="info-close-btn" onclick="closeInfo()">Schließen</button>
+  </div>
 </div>
 
 <!-- PROFIL-VERWALTUNG -->
@@ -247,8 +289,8 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 
   <a href="hsu/hsu_trainer_3_klasse.html" class="subject-card">
     <div class="badge-hsu"></div>
-    <div class="card-icon" style="color:var(--hsu);">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    <div class="card-icon">
+      <img src="images/icon_hsu.png" style="width:48px;height:48px;border-radius:10px;object-fit:cover;" onerror="this.outerHTML='<svg fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;48&quot; height=&quot;48&quot; style=&quot;color:var(--hsu);&quot;><path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z&quot;></path></svg>'">
     </div>
     <div class="card-title">HSU</div>
     <div class="card-desc">Wald, Wasser, Feuerwehr, Ritter, Orientierung & mehr.</div>
@@ -260,8 +302,8 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 
   <a href="englisch/englisch_trainer.html" class="subject-card">
     <div class="badge-eng"></div>
-    <div class="card-icon" style="color:var(--eng);">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+    <div class="card-icon">
+      <img src="images/icon_englisch.png" style="width:48px;height:48px;border-radius:10px;object-fit:cover;" onerror="this.outerHTML='<svg fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;48&quot; height=&quot;48&quot; style=&quot;color:var(--eng);&quot;><path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129&quot;></path></svg>'">
     </div>
     <div class="card-title">Englisch</div>
     <div class="card-desc">Vokabeln entdecken, üben und Quiz spielen.</div>
@@ -273,8 +315,8 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 
   <a href="religion/religion_trainer.html" class="subject-card">
     <div class="badge-rel"></div>
-    <div class="card-icon" style="color:var(--rel);">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+    <div class="card-icon">
+      <img src="images/icon_religion.png" style="width:48px;height:48px;border-radius:10px;object-fit:cover;" onerror="this.outerHTML='<svg fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;48&quot; height=&quot;48&quot; style=&quot;color:var(--rel);&quot;><path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M12 6v6m0 0v6m0-6h6m-6 0H6&quot;/></svg>'">
     </div>
     <div class="card-title">Religion</div>
     <div class="card-desc">Jakob &amp; Esau – Segen, Himmelsleiter &amp; Nomadenleben.</div>
@@ -286,8 +328,8 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
 
   <a href="musik/musik_trainer.html" class="subject-card">
     <div class="badge-musik"></div>
-    <div class="card-icon" style="color:var(--musik);">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+    <div class="card-icon">
+      <img src="images/icon_musik.png" style="width:48px;height:48px;border-radius:10px;object-fit:cover;" onerror="this.outerHTML='<svg fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;48&quot; height=&quot;48&quot; style=&quot;color:var(--musik);&quot;><path stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot; stroke-width=&quot;2&quot; d=&quot;M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3&quot;></path></svg>'">
     </div>
     <div class="card-title">Musik</div>
     <div class="card-desc">Peter und der Wolf, Instrumente kennenlernen & Klavier-Merkspiel.</div>
@@ -655,6 +697,14 @@ function updateGameBestenliste() {
         ${rows}
       </div>`;
   }).join('');
+}
+
+// ── INFO MODAL ──────────────────────────────────────────
+function openInfo() { document.getElementById('infoOverlay').style.display='flex'; }
+function closeInfo() { document.getElementById('infoOverlay').style.display='none'; }
+function checkUpdate() {
+  document.getElementById('updateStatus').style.display='block';
+  setTimeout(()=>{ document.getElementById('updateStatus').style.display='none'; }, 4000);
 }
 
 loadProfiles();

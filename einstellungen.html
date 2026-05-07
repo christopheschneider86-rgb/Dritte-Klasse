@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Einstellungen – ZaboKids</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<link rel="icon" type="image/png" href="images/main.png">
+<style>
+:root{--bg:#f0f8ff;--card:#fff;--accent:#3498db;--accent-dark:#2980b9;--text:#2c3e50;--muted:#7f8c8d;--radius:16px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px;}
+
+.page-header{width:100%;max-width:680px;display:flex;align-items:center;gap:14px;margin-bottom:24px;}
+.back-btn{background:#fff;border:none;border-radius:12px;padding:10px 14px;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,0.1);font-size:14px;font-weight:bold;text-decoration:none;transition:background .2s;}
+.back-btn:hover{background:#ecf0f1}
+.page-title{font-size:22px;font-weight:bold;color:var(--text);}
+
+.section{background:#fff;border-radius:var(--radius);box-shadow:0 4px 16px rgba(0,0,0,0.07);padding:22px;margin-bottom:16px;width:100%;max-width:680px;}
+.section-title{font-size:13px;font-weight:bold;color:#95a5a6;text-transform:uppercase;letter-spacing:.6px;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.section-title svg{width:16px;height:16px;stroke:#3498db;}
+
+/* Password lock screen */
+#lockScreen{width:100%;max-width:380px;text-align:center;}
+.lock-icon{font-size:60px;margin-bottom:16px;}
+.lock-title{font-size:22px;font-weight:bold;color:var(--text);margin-bottom:8px;}
+.lock-sub{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5;}
+.pw-input{width:100%;padding:14px 16px;border-radius:12px;border:2px solid #d6ecff;font-size:18px;font-family:inherit;background:white;color:var(--text);text-align:center;letter-spacing:3px;margin-bottom:12px;transition:border-color .15s;}
+.pw-input:focus{outline:none;border-color:var(--accent);}
+.pw-error{color:#e74c3c;font-size:13px;margin-bottom:10px;min-height:18px;}
+.btn{padding:12px 20px;border-radius:12px;font-size:15px;font-weight:bold;border:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;}
+.btn-primary{background:var(--accent);color:white;width:100%;}
+.btn-primary:hover{background:var(--accent-dark);}
+.btn-secondary{background:#ecf0f1;color:var(--text);width:100%;}
+.btn-secondary:hover{background:#d5dbdb;}
+.divider{height:1px;background:#e8ecf0;margin:14px 0;}
+.pw-request-link{font-size:13px;color:var(--muted);margin-top:10px;}
+.pw-request-link a{color:var(--accent);text-decoration:none;font-weight:bold;}
+.pw-request-link a:hover{text-decoration:underline;}
+
+/* Content (after unlock) */
+#content{width:100%;max-width:680px;display:none;}
+
+/* Profile selector */
+.profile-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.profile-tab{padding:8px 16px;border-radius:20px;border:2px solid #d6ecff;background:white;cursor:pointer;font-size:13px;font-weight:bold;color:var(--muted);transition:all .15s;font-family:inherit;}
+.profile-tab.active{background:var(--accent);color:white;border-color:var(--accent);box-shadow:0 2px 8px rgba(52,152,219,.3);}
+
+/* Toggles */
+.toggle-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+.toggle-item{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;background:#f8f9fa;border:2px solid #e8ecf0;gap:10px;}
+.toggle-label{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:bold;color:var(--text);}
+.toggle-label span{font-size:18px;}
+.toggle-switch{position:relative;width:46px;height:26px;flex-shrink:0;}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;background:#ccc;border-radius:13px;cursor:pointer;transition:background .2s;}
+.toggle-track:before{content:'';position:absolute;width:20px;height:20px;left:3px;top:3px;background:white;border-radius:50%;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.toggle-switch input:checked + .toggle-track{background:var(--accent);}
+.toggle-switch input:checked + .toggle-track:before{transform:translateX(20px);}
+.toggle-item.locked{opacity:.45;}
+
+/* Add child */
+.add-child-row{display:flex;gap:10px;margin-top:12px;}
+.name-input{flex:1;padding:11px 14px;border-radius:12px;border:2px solid #d6ecff;font-size:15px;font-family:inherit;background:white;color:var(--text);transition:border-color .15s;}
+.name-input:focus{outline:none;border-color:var(--accent);}
+.add-btn{padding:11px 18px;border-radius:12px;border:none;background:var(--accent);color:white;font-size:14px;font-weight:bold;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.add-btn:hover{background:var(--accent-dark);}
+
+/* Child list */
+.child-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:#f8f9fa;border:2px solid #e8ecf0;margin-bottom:8px;}
+.child-avatar{width:36px;height:36px;border-radius:50%;background:#d6ecff;color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;flex-shrink:0;}
+.child-name{flex:1;font-weight:bold;font-size:15px;color:var(--text);}
+.child-coins{font-size:13px;color:#f39c12;font-weight:bold;}
+.del-child-btn{background:none;border:none;cursor:pointer;color:#bdc3c7;font-size:18px;padding:4px;border-radius:6px;transition:color .15s;}
+.del-child-btn:hover{color:#e74c3c;}
+
+/* Stats mini */
+.mini-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:12px;}
+.mini-stat{border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;}
+.mini-stat-icon{font-size:24px;}
+.mini-stat-val{font-size:20px;font-weight:bold;line-height:1.1;}
+.mini-stat-lbl{font-size:11px;color:#7f8c8d;margin-top:1px;}
+
+/* Save bar */
+.save-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 0 0;border-top:1px solid #e8ecf0;margin-top:16px;flex-wrap:wrap;gap:10px;}
+.save-status{font-size:13px;color:#27ae60;font-weight:bold;display:none;}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <a class="back-btn" href="index.html">&#8592; Zurück</a>
+  <div class="page-title">⚙️ Einstellungen</div>
+</div>
+
+<!-- ─── LOCK SCREEN ─── -->
+<div id="lockScreen">
+  <div class="lock-icon">🔒</div>
+  <div class="lock-title">Elternbereich</div>
+  <div class="lock-sub">Diese Seite ist für Eltern. Bitte gib das Passwort ein, um fortzufahren.</div>
+  <input type="password" class="pw-input" id="pwInput" placeholder="Passwort" maxlength="20"
+    autocomplete="off" onkeydown="if(event.key==='Enter')tryUnlock()">
+  <div class="pw-error" id="pwError"></div>
+  <button class="btn btn-primary" onclick="tryUnlock()">🔓 Entsperren</button>
+  <div class="divider"></div>
+  <button class="btn btn-secondary" onclick="requestPassword()" style="margin-bottom:10px">📧 Passwort anfordern</button>
+  <div class="pw-request-link">Passwort vergessen? <a href="#" onclick="requestPassword();return false">Per E-Mail anfordern</a></div>
+</div>
+
+<!-- ─── MAIN CONTENT (after unlock) ─── -->
+<div id="content">
+
+  <!-- ── Kinder verwalten ── -->
+  <div class="section">
+    <div class="section-title">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Kinder verwalten
+    </div>
+    <div id="childList"></div>
+    <div class="add-child-row">
+      <input type="text" class="name-input" id="newChildName" placeholder="Name des Kindes" maxlength="30"
+        onkeydown="if(event.key==='Enter')addChild()">
+      <button class="add-btn" onclick="addChild()">+ Kind hinzufügen</button>
+    </div>
+  </div>
+
+  <!-- ── Fächer & Spiel-Berechtigungen ── -->
+  <div class="section">
+    <div class="section-title">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+      Berechtigungen pro Kind
+    </div>
+
+    <div class="profile-tabs" id="permTabs"></div>
+
+    <div id="permContent">
+      <div style="color:#95a5a6;font-size:14px;text-align:center;padding:20px 0">Bitte wähle oben ein Kind aus.</div>
+    </div>
+
+    <div class="save-bar">
+      <span class="save-status" id="saveStatus">✅ Gespeichert!</span>
+      <button class="btn btn-primary" style="width:auto;padding:10px 24px" onclick="saveSettings()">💾 Speichern</button>
+    </div>
+  </div>
+
+  <!-- ── Statistiken ── -->
+  <div class="section">
+    <div class="section-title">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      Lernstatistiken – Alle Kinder
+    </div>
+    <div id="allStats"></div>
+  </div>
+
+  <!-- ── Passwort ändern ── -->
+  <div class="section">
+    <div class="section-title">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+      Passwort
+    </div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:12px">Das Standard-Passwort lautet <b>ZaboKids</b>. Du kannst es hier ändern.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <input type="password" class="name-input" id="newPw1" placeholder="Neues Passwort" maxlength="30">
+      <input type="password" class="name-input" id="newPw2" placeholder="Wiederholen" maxlength="30">
+    </div>
+    <div class="pw-error" id="changePwError"></div>
+    <button class="btn btn-primary" style="width:auto;padding:10px 24px" onclick="changePassword()">🔑 Passwort ändern</button>
+  </div>
+
+  <!-- ── Daten zurücksetzen ── -->
+  <div class="section">
+    <div class="section-title">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      Daten
+    </div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:12px">Alle Lernfortschritte und Münzen werden unwiderruflich gelöscht.</div>
+    <button class="btn" style="background:#fde8e8;color:#c0392b;border:2px solid #fca5a5;width:auto;padding:10px 20px" onclick="resetAllData()">🗑️ Alle Daten zurücksetzen</button>
+  </div>
+
+</div><!-- /content -->
+
+<script>
+'use strict';
+
+const STORAGE_KEY  = 'm_app_v9';
+const ACTIVE_KEY   = 'm_app_active_prof';
+const SETTINGS_KEY = 'm_settings_v1';
+const PW_KEY       = 'm_parent_pw';
+const DEFAULT_PW   = 'ZaboKids';
+
+// ── Subject config ──
+const FAECHER = [
+  { key:'mathe',   label:'Mathematik', icon:'📐' },
+  { key:'deutsch', label:'Deutsch',    icon:'📚' },
+  { key:'hsu',     label:'HSU',        icon:'🌍' },
+  { key:'englisch',label:'Englisch',   icon:'🇬🇧' },
+  { key:'religion',label:'Religion',   icon:'✝️' },
+  { key:'musik',   label:'Musik',      icon:'🎵' },
+];
+
+// ── Helpers ──
+function getProfiles(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); }catch(e){ return {}; }
+}
+function saveProfiles(p){ localStorage.setItem(STORAGE_KEY,JSON.stringify(p)); }
+function getSettings(){
+  try{ return JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}'); }catch(e){ return {}; }
+}
+function saveSettingsData(s){ localStorage.setItem(SETTINGS_KEY,JSON.stringify(s)); }
+function getStoredPw(){ return localStorage.getItem(PW_KEY)||DEFAULT_PW; }
+function getInitials(name){ return name.trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2)||'?'; }
+
+// ── Lock / Unlock ──
+function tryUnlock(){
+  const val = document.getElementById('pwInput').value;
+  if(val === getStoredPw()){
+    document.getElementById('lockScreen').style.display='none';
+    document.getElementById('content').style.display='block';
+    document.getElementById('pwError').textContent='';
+    renderAll();
+  } else {
+    document.getElementById('pwError').textContent='❌ Falsches Passwort. Bitte versuche es erneut.';
+    document.getElementById('pwInput').value='';
+    document.getElementById('pwInput').focus();
+  }
+}
+
+function requestPassword(){
+  const subject = encodeURIComponent('ZaboKids Passwort anfordern');
+  const body    = encodeURIComponent(
+    'Hallo,\n\nichich benötige das Elternbereich-Passwort für die ZaboKids Lern-App.\n\nBitte sende es mir zu.\n\nVielen Dank!'
+  );
+  window.location.href = 'mailto:christophe.schneider86@googlemail.com?subject='+subject+'&body='+body;
+}
+
+// ── Render all sections ──
+function renderAll(){
+  renderChildList();
+  renderPermTabs();
+  renderAllStats();
+}
+
+// ── Child list ──
+let selectedChildId = null;
+
+function renderChildList(){
+  const profs = getProfiles();
+  const list  = document.getElementById('childList');
+  const keys  = Object.keys(profs);
+  if(!keys.length){ list.innerHTML='<div style="color:#95a5a6;font-size:14px;text-align:center;padding:12px 0">Noch keine Kinder angelegt.</div>'; return; }
+  list.innerHTML = keys.map(id => {
+    const p = profs[id];
+    return '<div class="child-row">' +
+      '<div class="child-avatar">'+getInitials(p.name||'?')+'</div>' +
+      '<div class="child-name">'+(p.name||'–')+'</div>' +
+      '<div class="child-coins">🪙 '+(p.coins||0)+'</div>' +
+      '<button class="del-child-btn" onclick="deleteChild(\''+id+'\')" title="Kind löschen">✕</button>' +
+    '</div>';
+  }).join('');
+}
+
+function addChild(){
+  const nameEl = document.getElementById('newChildName');
+  const name   = (nameEl.value||'').trim();
+  if(!name){ nameEl.focus(); return; }
+  const profs  = getProfiles();
+  const id     = 'p_'+Date.now();
+  profs[id]    = {name,score:0,coins:0,history:[],hsu_history:[],musik_history:[],eng_history:[],rel_history:[],de_history:[]};
+  saveProfiles(profs);
+  nameEl.value = '';
+  // If no active profile, set this as active
+  if(!localStorage.getItem(ACTIVE_KEY)) localStorage.setItem(ACTIVE_KEY,id);
+  renderAll();
+}
+
+function deleteChild(id){
+  const profs = getProfiles();
+  const name  = profs[id]?.name||'dieses Kind';
+  if(!confirm('Profil "'+name+'" und alle Lernfortschritte wirklich löschen?\nDiese Aktion kann nicht rückgängig gemacht werden.')) return;
+  const keys = Object.keys(profs);
+  if(keys.length<=1){ alert('Mindestens ein Kind muss vorhanden sein.'); return; }
+  delete profs[id];
+  saveProfiles(profs);
+  if(localStorage.getItem(ACTIVE_KEY)===id){
+    localStorage.setItem(ACTIVE_KEY,Object.keys(profs)[0]);
+  }
+  if(selectedChildId===id) selectedChildId=null;
+  renderAll();
+}
+
+// ── Permission tabs & toggles ──
+function renderPermTabs(){
+  const profs = getProfiles();
+  const tabs  = document.getElementById('permTabs');
+  const keys  = Object.keys(profs);
+  if(!keys.length){ tabs.innerHTML=''; return; }
+  if(!selectedChildId||!profs[selectedChildId]) selectedChildId=keys[0];
+  tabs.innerHTML = keys.map(id =>
+    '<button class="profile-tab'+(id===selectedChildId?' active':'')+'" onclick="selectPermChild(\''+id+'\')">'
+    +getInitials(profs[id].name||'?')+' '+(profs[id].name||'–')+'</button>'
+  ).join('');
+  renderPermContent();
+}
+
+function selectPermChild(id){
+  selectedChildId=id;
+  document.querySelectorAll('.profile-tab').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  renderPermContent();
+}
+
+function renderPermContent(){
+  const profs    = getProfiles();
+  const settings = getSettings();
+  const p        = profs[selectedChildId];
+  if(!p){ document.getElementById('permContent').innerHTML=''; return; }
+  const childSettings = settings[selectedChildId]||{ faecher:FAECHER.map(f=>f.key), spiele:true };
+
+  const fRows = FAECHER.map(f => {
+    const enabled = childSettings.faecher ? childSettings.faecher.includes(f.key) : true;
+    return toggleRow('fach_'+f.key, f.icon+' '+f.label, enabled);
+  }).join('');
+
+  const gEnabled = childSettings.spiele !== false;
+
+  document.getElementById('permContent').innerHTML =
+    '<div style="font-size:13px;font-weight:bold;color:#666;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;">Fächer</div>' +
+    '<div class="toggle-grid">' + fRows + '</div>' +
+    '<div style="height:1px;background:#e8ecf0;margin:16px 0"></div>' +
+    '<div style="font-size:13px;font-weight:bold;color:#666;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;">Spiele</div>' +
+    '<div class="toggle-grid">' + toggleRow('spiele_alle','🎮 Alle Spiele', gEnabled) + '</div>';
+}
+
+function toggleRow(id, label, checked){
+  return '<div class="toggle-item">' +
+    '<div class="toggle-label"><span>'+label+'</span></div>' +
+    '<label class="toggle-switch"><input type="checkbox" id="'+id+'"'+(checked?' checked':'')+' onchange="onToggleChange()">' +
+    '<span class="toggle-track"></span></label></div>';
+}
+
+function onToggleChange(){
+  // Live preview — actual save happens on "Speichern" click
+}
+
+function saveSettings(){
+  if(!selectedChildId) return;
+  const settings = getSettings();
+  const faecher  = FAECHER.filter(f => {
+    const el = document.getElementById('fach_'+f.key);
+    return el && el.checked;
+  }).map(f=>f.key);
+  const spieleEl = document.getElementById('spiele_alle');
+  const spiele   = spieleEl ? spieleEl.checked : true;
+  settings[selectedChildId] = { faecher, spiele };
+  saveSettingsData(settings);
+  const st = document.getElementById('saveStatus');
+  st.style.display='block';
+  setTimeout(()=>st.style.display='none', 2500);
+}
+
+// ── All stats ──
+function renderAllStats(){
+  const profs = getProfiles();
+  const keys  = Object.keys(profs);
+  const el    = document.getElementById('allStats');
+  if(!keys.length){ el.innerHTML='<div style="color:#95a5a6;font-size:14px">Keine Daten.</div>'; return; }
+  const SUBJ = [
+    {key:'history',label:'Mathe',icon:'📐',bg:'#eaf4ff',col:'#1b6fab'},
+    {key:'de_history',label:'Deutsch',icon:'📚',bg:'#fef0e4',col:'#c0652d'},
+    {key:'hsu_history',label:'HSU',icon:'🌍',bg:'#eaf6ea',col:'#1a6e40'},
+    {key:'eng_history',label:'Englisch',icon:'🇬🇧',bg:'#f4ecfd',col:'#7b2dbd'},
+    {key:'rel_history',label:'Religion',icon:'✝️',bg:'#fef4ec',col:'#c0652d'},
+    {key:'musik_history',label:'Musik',icon:'🎵',bg:'#fce4f4',col:'#b01570'},
+  ];
+
+  el.innerHTML = keys.map(id => {
+    const p = profs[id];
+    const boxes = SUBJ.map(s => {
+      const hist  = Array.isArray(p[s.key]) ? p[s.key] : [];
+      const ok    = hist.filter(h=>h.ok).length;
+      const total = hist.length;
+      const pct   = total ? Math.round(ok/total*100) : 0;
+      return '<div class="mini-stat" style="background:'+s.bg+';border:2px solid '+s.col+'30">' +
+        '<div class="mini-stat-icon">'+s.icon+'</div>' +
+        '<div><div class="mini-stat-val" style="color:'+s.col+'">'+total+'</div>' +
+        '<div class="mini-stat-lbl">'+s.label+(total?'<br>'+pct+'% ✓':'')+'</div></div></div>';
+    }).join('');
+    return '<div style="margin-bottom:16px">' +
+      '<div style="font-size:15px;font-weight:bold;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:8px">' +
+      '<div style="width:32px;height:32px;border-radius:50%;background:#d6ecff;color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:13px">'+getInitials(p.name||'?')+'</div>' +
+      (p.name||'–')+'<span style="font-size:13px;color:#f39c12;font-weight:normal">🪙 '+(p.coins||0)+'</span></div>' +
+      '<div class="mini-stats">'+boxes+'</div></div>';
+  }).join('');
+}
+
+// ── Change password ──
+function changePassword(){
+  const p1  = document.getElementById('newPw1').value;
+  const p2  = document.getElementById('newPw2').value;
+  const err = document.getElementById('changePwError');
+  if(!p1){ err.textContent='Bitte ein neues Passwort eingeben.'; return; }
+  if(p1.length < 4){ err.textContent='Passwort muss mindestens 4 Zeichen lang sein.'; return; }
+  if(p1!==p2){ err.textContent='Die Passwörter stimmen nicht überein.'; return; }
+  localStorage.setItem(PW_KEY, p1);
+  err.style.color='#27ae60';
+  err.textContent='✅ Passwort erfolgreich geändert!';
+  document.getElementById('newPw1').value='';
+  document.getElementById('newPw2').value='';
+  setTimeout(()=>{ err.textContent=''; err.style.color=''; },3000);
+}
+
+// ── Reset all data ──
+function resetAllData(){
+  if(!confirm('ACHTUNG: Alle Lernfortschritte, Münzen und Profile werden gelöscht.\nWirklich fortfahren?')) return;
+  if(!confirm('Bist du sicher? Diese Aktion kann NICHT rückgängig gemacht werden!')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(ACTIVE_KEY);
+  localStorage.removeItem(SETTINGS_KEY);
+  alert('Alle Daten wurden gelöscht. Die App startet neu.');
+  window.location.href='index.html';
+}
+
+// ── Auto-focus password input ──
+document.getElementById('pwInput').focus();
+</script>
+</body>
+</html>
