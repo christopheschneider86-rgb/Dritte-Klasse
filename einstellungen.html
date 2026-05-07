@@ -70,8 +70,16 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
 .child-avatar{width:36px;height:36px;border-radius:50%;background:#d6ecff;color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;flex-shrink:0;}
 .child-name{flex:1;font-weight:bold;font-size:15px;color:var(--text);}
 .child-coins{font-size:13px;color:#f39c12;font-weight:bold;}
+.rename-child-btn{background:none;border:none;cursor:pointer;color:#bdc3c7;font-size:16px;padding:4px 6px;border-radius:6px;transition:color .15s;}
+.rename-child-btn:hover{color:var(--accent);}
 .del-child-btn{background:none;border:none;cursor:pointer;color:#bdc3c7;font-size:18px;padding:4px;border-radius:6px;transition:color .15s;}
 .del-child-btn:hover{color:#e74c3c;}
+.rename-row{display:none;align-items:center;gap:8px;margin-top:6px;padding:8px 14px;background:#f0f8ff;border-radius:10px;border:2px solid #d6ecff;}
+.rename-row.active{display:flex;}
+.rename-input{flex:1;padding:8px 12px;border-radius:8px;border:2px solid #d6ecff;font-size:14px;font-family:inherit;background:white;color:var(--text);}
+.rename-input:focus{outline:none;border-color:var(--accent);}
+.rename-save-btn{padding:8px 14px;border-radius:8px;border:none;background:var(--accent);color:white;font-size:13px;font-weight:bold;cursor:pointer;font-family:inherit;}
+.rename-cancel-btn{padding:8px 14px;border-radius:8px;border:none;background:#ecf0f1;color:var(--text);font-size:13px;font-weight:bold;cursor:pointer;font-family:inherit;}
 
 /* Stats mini */
 .mini-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:12px;}
@@ -234,13 +242,51 @@ function renderChildList(){
   if(!keys.length){ list.innerHTML='<div style="color:#95a5a6;font-size:14px;text-align:center;padding:12px 0">Noch keine Kinder angelegt.</div>'; return; }
   list.innerHTML = keys.map(id => {
     const p = profs[id];
-    return '<div class="child-row">' +
-      '<div class="child-avatar">'+getInitials(p.name||'?')+'</div>' +
-      '<div class="child-name">'+(p.name||'–')+'</div>' +
-      '<div class="child-coins">🪙 '+(p.coins||0)+'</div>' +
-      '<button class="del-child-btn" onclick="deleteChild(\''+id+'\')" title="Kind löschen">✕</button>' +
+    return '<div id="childrow_'+id+'">' +
+      '<div class="child-row">' +
+        '<div class="child-avatar">'+getInitials(p.name||'?')+'</div>' +
+        '<div class="child-name">'+(p.name||'–')+'</div>' +
+        '<div class="child-coins">🪙 '+(p.coins||0)+'</div>' +
+        '<button class="rename-child-btn" onclick="toggleRename(\''+id+'\')" title="Kind umbenennen">✏️</button>' +
+        '<button class="del-child-btn" onclick="deleteChild(\''+id+'\')" title="Kind löschen">✕</button>' +
+      '</div>' +
+      '<div class="rename-row" id="renamerow_'+id+'">' +
+        '<input class="rename-input" id="renameinput_'+id+'" type="text" placeholder="Neuer Name" maxlength="30" value="'+(p.name||'')+'" onkeydown="if(event.key===\'Enter\')saveRename(\''+id+'\');else if(event.key===\'Escape\')cancelRename(\''+id+'\')">' +
+        '<button class="rename-save-btn" onclick="saveRename(\''+id+'\')">✓ Speichern</button>' +
+        '<button class="rename-cancel-btn" onclick="cancelRename(\''+id+'\')">✕</button>' +
+      '</div>' +
     '</div>';
   }).join('');
+}
+
+function toggleRename(id){
+  const row = document.getElementById('renamerow_'+id);
+  if(!row) return;
+  const isActive = row.classList.contains('active');
+  // Close all open rename rows
+  document.querySelectorAll('.rename-row.active').forEach(r=>r.classList.remove('active'));
+  if(!isActive){
+    row.classList.add('active');
+    const inp = document.getElementById('renameinput_'+id);
+    if(inp){ inp.focus(); inp.select(); }
+  }
+}
+
+function cancelRename(id){
+  const row = document.getElementById('renamerow_'+id);
+  if(row) row.classList.remove('active');
+}
+
+function saveRename(id){
+  const inp = document.getElementById('renameinput_'+id);
+  if(!inp) return;
+  const newName = (inp.value||'').trim();
+  if(!newName){ inp.focus(); return; }
+  const profs = getProfiles();
+  if(!profs[id]) return;
+  profs[id].name = newName;
+  saveProfiles(profs);
+  renderAll();
 }
 
 function addChild(){
@@ -280,17 +326,36 @@ function renderPermTabs(){
   if(!keys.length){ tabs.innerHTML=''; return; }
   if(!selectedChildId||!profs[selectedChildId]) selectedChildId=keys[0];
   tabs.innerHTML = keys.map(id =>
-    '<button class="profile-tab'+(id===selectedChildId?' active':'')+'" onclick="selectPermChild(\''+id+'\')">'
+    '<button class="profile-tab'+(id===selectedChildId?' active':'')+'" data-child-id="'+id+'" onclick="selectPermChild(\''+id+'\')">'
     +getInitials(profs[id].name||'?')+' '+(profs[id].name||'–')+'</button>'
   ).join('');
   renderPermContent();
 }
 
 function selectPermChild(id){
+  // Auto-save current child's settings before switching
+  if(selectedChildId && selectedChildId !== id) autoSaveCurrentPerms();
   selectedChildId=id;
-  document.querySelectorAll('.profile-tab').forEach(t=>t.classList.remove('active'));
-  event.target.classList.add('active');
+  document.querySelectorAll('.profile-tab').forEach(t=>{
+    t.classList.toggle('active', t.dataset.childId===id);
+  });
   renderPermContent();
+}
+
+function autoSaveCurrentPerms(){
+  if(!selectedChildId) return;
+  const settings = getSettings();
+  const faecher  = FAECHER.filter(f => {
+    const el = document.getElementById('fach_'+f.key);
+    return el && el.checked;
+  }).map(f=>f.key);
+  const spieleEl = document.getElementById('spiele_alle');
+  const spiele   = spieleEl ? spieleEl.checked : true;
+  // Only save if we actually found DOM elements (i.e., something was rendered)
+  if(faecher.length > 0 || document.getElementById('fach_'+FAECHER[0].key) !== null){
+    settings[selectedChildId] = { faecher, spiele };
+    saveSettingsData(settings);
+  }
 }
 
 function renderPermContent(){
