@@ -164,7 +164,7 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
       <div class="news-header-icon">✨</div>
       <div>
         <h2>Was ist neu?</h2>
-        <p>Update vom 6. Mai 2026 – v10</p>
+        <p>Update vom 7. Mai 2026 – v11</p>
       </div>
     </div>
 
@@ -179,31 +179,23 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
     <div class="news-item">
       <div class="news-item-badge neu">NEU</div>
       <div>
-        <div class="news-item-title">🏛️ Himmelsbau – neues Spiel!</div>
-        <div class="news-item-desc">Blöcke so präzise wie möglich stapeln – je genauer, desto mehr bleibt übrig! Bibel-Fakten erscheinen alle 5 Blöcke. Kosten: 10 🪙.</div>
+        <div class="news-item-title">🔒 Elternbereich</div>
+        <div class="news-item-desc">Neuer passwortgeschützter Bereich für Eltern: Kinder verwalten (hinzufügen, löschen, umbenennen), Fächer- und Spielberechtigungen pro Kind, und vollständige Lernstatistiken.</div>
       </div>
     </div>
-
+    
     <div class="news-item">
-      <div class="news-item-badge neu">NEU</div>
+      <div class="news-item-badge fix">FIX</div>
       <div>
-        <div class="news-item-title">⚡ Bibelflipper – endloser Spielspaß</div>
-        <div class="news-item-desc">Alle 5 Bumper getroffen? Sie werden automatisch zurückgesetzt – das Spiel läuft weiter und der Score summiert sich! +5 🪙 pro Runde. Highscore wird gespeichert.</div>
-      </div>
-    </div>
-
-    <div class="news-item">
-      <div class="news-item-badge neu">NEU</div>
-      <div>
-        <div class="news-item-title">🏆 Bestenliste mit 3 Spielen</div>
-        <div class="news-item-desc">Die Bestenliste zeigt jetzt Highscores für Bibelflipper, Himmelsbau und Himmelsleiter – getrennt und vergleichbar.</div>
+        <div class="news-item-title">🔒 Elternbereich</div>
+        <div class="news-item-desc">Bugliste fürs nächste Update: Kind umbennenen, Berechtigungen werden nicht gespeichert, Export/Import kommt.</div>
       </div>
     </div>
 
     <div class="news-item">
       <div class="news-item-badge">UPDATE</div>
       <div>
-        <div class="news-item-title">🇬🇧 Englisch – Im Aufbau</div>
+        <div class="news-item-title">🇬🇧 Englisch</div>
         <div class="news-item-desc">Das Englisch-Modul wächst weiter – Vokabeln, Wortkarten &amp; Übungen. Neue Inhalte folgen bald!</div>
       </div>
     </div>
@@ -227,16 +219,15 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
   <div class="info-modal">
     <h2>ℹ️ App-Info</h2>
     <div class="info-row"><span class="info-label">Version</span><span class="info-value">v10 – Mai 2026</span></div>
-    <div class="info-row"><span class="info-label">Fächer</span><span class="info-value">Mathe, Deutsch, HSU, Englisch, Religion, Musik</span></div>
     <div class="info-row"><span class="info-label">Daten</span><span class="info-value">Lokal auf diesem Gerät</span></div>
-    <div class="info-row"><span class="info-label">Entwickler</span><span class="info-value">ZaboKids 2026</span></div>
+    <div class="info-row"><span class="info-label">Entwickler</span><span class="info-value">ZaboChris</span></div>
     <div class="info-row" style="flex-direction:column;align-items:flex-start;gap:6px">
       <span class="info-label">Update prüfen</span>
       <button class="update-btn" onclick="checkUpdate()">🔄 Auf Updates prüfen</button>
       <span id="updateStatus" style="font-size:12px;color:#27ae60;display:none">✅ Du hast die neueste Version!</span>
     </div>
     <div style="margin-top:12px;padding:10px;background:#f9f9f9;border-radius:10px;font-size:12px;color:#95a5a6;line-height:1.5">
-      Diese App dient ausschließlich dem Lernzweck für die 3. Klasse. Alle Daten werden lokal gespeichert und nicht übertragen.
+        Diese App speichert keine persönlichen Daten auf externen Servern. Einstellungen werden ausschließlich lokal im Browser gespeichert (localStorage). Es werden keine Cookies, kein Tracking und keine Analysen eingesetzt.
     </div>
     <button class="info-close-btn" onclick="closeInfo()">Schließen</button>
   </div>
@@ -447,13 +438,6 @@ function render(){
       <span>${p.name}</span>`;
     list.appendChild(chip);
   }
-  // Hint to go to Elternbereich for management
-  const hint=document.createElement('a');
-  hint.href='einstellungen.html';
-  hint.className='add-chip';
-  hint.title='Kinder verwalten im Elternbereich';
-  hint.innerHTML=`<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg> Verwalten`;
-  list.appendChild(hint);
 }
 
 // ── NEWS-MODAL ──────────────────────────────────────────
