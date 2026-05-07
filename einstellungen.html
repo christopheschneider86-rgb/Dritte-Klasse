@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Einstellungen – ZaboKids</title>
+<title>Elternbereich – ZaboKids</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <link rel="icon" type="image/png" href="images/main.png">
 <style>
@@ -89,14 +89,14 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
 
 <div class="page-header">
   <a class="back-btn" href="index.html">&#8592; Zurück</a>
-  <div class="page-title">⚙️ Einstellungen</div>
+  <div class="page-title">🔒 Elternbereich</div>
 </div>
 
 <!-- ─── LOCK SCREEN ─── -->
 <div id="lockScreen">
   <div class="lock-icon">🔒</div>
-  <div class="lock-title">Elternbereich</div>
-  <div class="lock-sub">Diese Seite ist für Eltern. Bitte gib das Passwort ein, um fortzufahren.</div>
+  <div class="lock-title">🔒 Elternbereich</div>
+  <div class="lock-sub">Dieser Bereich ist für Eltern. Bitte gib das Passwort ein, um fortzufahren.</div>
   <input type="password" class="pw-input" id="pwInput" placeholder="Passwort" maxlength="20"
     autocomplete="off" onkeydown="if(event.key==='Enter')tryUnlock()">
   <div class="pw-error" id="pwError"></div>
@@ -149,21 +149,6 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
       Lernstatistiken – Alle Kinder
     </div>
     <div id="allStats"></div>
-  </div>
-
-  <!-- ── Passwort ändern ── -->
-  <div class="section">
-    <div class="section-title">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-      Passwort
-    </div>
-    <div style="font-size:13px;color:var(--muted);margin-bottom:12px">Das Standard-Passwort lautet <b>ZaboKids</b>. Du kannst es hier ändern.</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-      <input type="password" class="name-input" id="newPw1" placeholder="Neues Passwort" maxlength="30">
-      <input type="password" class="name-input" id="newPw2" placeholder="Wiederholen" maxlength="30">
-    </div>
-    <div class="pw-error" id="changePwError"></div>
-    <button class="btn btn-primary" style="width:auto;padding:10px 24px" onclick="changePassword()">🔑 Passwort ändern</button>
   </div>
 
   <!-- ── Daten zurücksetzen ── -->
@@ -390,22 +375,6 @@ function renderAllStats(){
       (p.name||'–')+'<span style="font-size:13px;color:#f39c12;font-weight:normal">🪙 '+(p.coins||0)+'</span></div>' +
       '<div class="mini-stats">'+boxes+'</div></div>';
   }).join('');
-}
-
-// ── Change password ──
-function changePassword(){
-  const p1  = document.getElementById('newPw1').value;
-  const p2  = document.getElementById('newPw2').value;
-  const err = document.getElementById('changePwError');
-  if(!p1){ err.textContent='Bitte ein neues Passwort eingeben.'; return; }
-  if(p1.length < 4){ err.textContent='Passwort muss mindestens 4 Zeichen lang sein.'; return; }
-  if(p1!==p2){ err.textContent='Die Passwörter stimmen nicht überein.'; return; }
-  localStorage.setItem(PW_KEY, p1);
-  err.style.color='#27ae60';
-  err.textContent='✅ Passwort erfolgreich geändert!';
-  document.getElementById('newPw1').value='';
-  document.getElementById('newPw2').value='';
-  setTimeout(()=>{ err.textContent=''; err.style.color=''; },3000);
 }
 
 // ── Reset all data ──

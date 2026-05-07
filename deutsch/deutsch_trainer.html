@@ -1151,24 +1151,30 @@ function checkMc(chosen, btn) {
 }
 
 // ── Keyboard input ──
-// Input-field Enter: check answer (before answered) OR advance (after answered)
+// Input-field Enter: ONLY submit the answer.
+// stopPropagation() keeps the event from also hitting the global listener below,
+// so check and advance are always two separate key-presses.
 document.getElementById('spellingInput').addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
-  if (!answeredThisRound) checkSpelling();
-  else nextWord('spelling');
+  if (!answeredThisRound) {
+    e.stopPropagation(); // prevent global from seeing this same event
+    checkSpelling();
+  }
+  // When already answered (input disabled, focus gone) the global listener
+  // handles the second Enter → nextWord()
 });
 document.getElementById('gapInput').addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
-  if (!answeredThisRound) checkGap();
-  else nextWord('gap');
+  if (!answeredThisRound) {
+    e.stopPropagation();
+    checkGap();
+  }
 });
 
-// Global Enter: advance to next word after answering (for mc mode or unfocused inputs)
+// Global Enter: advance to next word.
+// Fires when no active input owns the event (input disabled after answer, mc/gap focus gone).
 document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
-  const focused = document.activeElement;
-  // Let the per-input listeners handle focused spelling/gap inputs
-  if (focused && (focused.id === 'spellingInput' || focused.id === 'gapInput') && !focused.disabled) return;
   if (answeredThisRound && currentMode && activeThema) nextWord(currentMode);
 });
 
