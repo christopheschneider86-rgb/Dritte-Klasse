@@ -221,7 +221,7 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
       </div>
       <div class="game-banner-right">
         <div class="coin-badge-big">🪙 <span id="coinBannerText">0</span></div>
-        <button class="btn-play" onclick="window.location.href='musik_merker.html'">Spielen →</button>
+        <button class="btn-play" onclick="if(canPlayGames())window.location.href='musik_merker.html'">Spielen →</button>
       </div>
     </div>
   </div>
@@ -252,7 +252,7 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
     <div class="dashboard-box">
       <div id="hs-list" style="min-height:100px"></div>
       <div style="text-align:center;margin-top:20px">
-        <button class="btn-play" onclick="window.location.href='musik_merker.html'" style="display:inline-flex;align-items:center;gap:8px">
+        <button class="btn-play" onclick="if(canPlayGames())window.location.href='musik_merker.html'" style="display:inline-flex;align-items:center;gap:8px">
           <img src="../images/musik_merker.png" style="width:22px;height:22px;border-radius:5px" onerror="this.style.display='none'">
           Jetzt spielen
         </button>
@@ -601,6 +601,20 @@ function closeLexikonOnBg(e) {
 // ── START ──────────────────────────────────────────────
 loadStorage();
 initUI();
+
+function canPlayGames(){
+  try{
+    const pid=localStorage.getItem('m_app_active_prof');
+    const s=JSON.parse(localStorage.getItem('m_settings_v1')||'{}');
+    if(s[pid]&&s[pid].spiele===false){
+      const t=document.getElementById('permToast');
+      if(t){t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3000);}
+      return false;
+    }
+  }catch(e){}
+  return true;
+}
 </script>
+<div id="permToast" style="display:none;position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#2c3e50;color:white;padding:13px 22px;border-radius:14px;font-size:14px;font-weight:bold;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.35);text-align:center;pointer-events:none">🔒 Spiele sind gesperrt – Elternfreigabe erforderlich</div>
 </body>
 </html>

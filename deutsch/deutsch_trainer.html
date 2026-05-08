@@ -363,7 +363,7 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
       <div class="game-banner-title">Deutsch-Vogel</div>
       <div class="game-banner-sub">Flappy Bird Rechtschreib-Spiel · –10 🪙</div>
     </div>
-    <a href="deutsch_flappy.html">Spielen →</a>
+    <a href="deutsch_flappy.html" onclick="if(!canPlayGames())return false">Spielen →</a>
   </div>
 
   <div class="highscores">
@@ -1190,6 +1190,20 @@ function init() {
 }
 
 init();
+
+function canPlayGames(){
+  try{
+    const pid=localStorage.getItem('m_app_active_prof');
+    const s=JSON.parse(localStorage.getItem('m_settings_v1')||'{}');
+    if(s[pid]&&s[pid].spiele===false){
+      const t=document.getElementById('permToast');
+      if(t){t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3000);}
+      return false;
+    }
+  }catch(e){}
+  return true;
+}
 </script>
+<div id="permToast" style="display:none;position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#2c3e50;color:white;padding:13px 22px;border-radius:14px;font-size:14px;font-weight:bold;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.35);text-align:center;pointer-events:none">🔒 Spiele sind gesperrt – Elternfreigabe erforderlich</div>
 </body>
 </html>

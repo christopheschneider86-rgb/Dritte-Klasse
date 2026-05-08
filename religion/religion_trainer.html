@@ -282,7 +282,7 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
       </div>
       <div class="game-banner-right">
         <div class="coin-badge-big">🪙 <span id="coinBannerText">0</span></div>
-        <button class="btn-play" onclick="window.location.href='religion_flipper.html'">Spielen →</button>
+        <button class="btn-play" onclick="if(canPlayGames())window.location.href='religion_flipper.html'">Spielen →</button>
       </div>
     </div>
     <!-- SPIEL-BANNER TOWER -->
@@ -298,7 +298,7 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
       </div>
       <div class="game-banner-right">
         <div class="coin-badge-big" style="border-color:rgba(100,200,255,0.4);color:#7dd3fc">🪙 <span id="coinBannerText2">0</span></div>
-        <button class="btn-play" style="background:linear-gradient(135deg,#3b82f6,#06b6d4)" onclick="window.location.href='religion_tower.html'">Spielen →</button>
+        <button class="btn-play" style="background:linear-gradient(135deg,#3b82f6,#06b6d4)" onclick="if(canPlayGames())window.location.href='religion_tower.html'">Spielen →</button>
       </div>
     </div>
   </div>
@@ -310,11 +310,10 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
       <div class="filter-tabs" style="margin-bottom:16px">
         <div class="filter-tab active" id="hsTab-flipper" onclick="switchHsTab('flipper',this)">⚡ Flipper</div>
         <div class="filter-tab" id="hsTab-tower" onclick="switchHsTab('tower',this)">🏛️ Himmelsbau</div>
-        <div class="filter-tab" id="hsTab-leiter" onclick="switchHsTab('leiter',this)">🪜 Himmelsleiter</div>
       </div>
       <div id="hs-list" style="min-height:80px"></div>
       <div style="text-align:center;margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-        <button class="btn-play" id="hsBtnPlay" onclick="window.location.href='religion_flipper.html'" style="display:inline-flex;align-items:center;gap:8px;font-size:14px">⚡ Flipper spielen</button>
+        <button class="btn-play" id="hsBtnPlay" onclick="if(canPlayGames())window.location.href='religion_flipper.html'" style="display:inline-flex;align-items:center;gap:8px;font-size:14px">⚡ Flipper spielen</button>
       </div>
     </div>
   </div>
@@ -558,9 +557,8 @@ function switchHsTab(tab, el) {
   document.querySelectorAll('#view-highscore .filter-tab').forEach(t => t.classList.remove('active'));
   if (el) el.classList.add('active');
   const playBtn = document.getElementById('hsBtnPlay');
-  if (tab === 'flipper') { playBtn.textContent = '⚡ Flipper spielen'; playBtn.onclick = () => window.location.href='religion_flipper.html'; }
-  else if (tab === 'tower') { playBtn.textContent = '🏛️ Himmelsbau spielen'; playBtn.onclick = () => window.location.href='religion_tower.html'; }
-  else { playBtn.textContent = '🪜 Himmelsleiter spielen'; playBtn.onclick = () => window.location.href='religion_leiter.html'; }
+  if (tab === 'flipper') { playBtn.textContent = '⚡ Flipper spielen'; playBtn.onclick = () => { if(canPlayGames()) window.location.href='religion_flipper.html'; }; }
+  else if (tab === 'tower') { playBtn.textContent = '🏛️ Himmelsbau spielen'; playBtn.onclick = () => { if(canPlayGames()) window.location.href='religion_tower.html'; }; }
   updateHighscores();
 }
 
@@ -588,16 +586,6 @@ function updateHighscores() {
         <div class="hs-rank" style="background:${i===0?'#3b82f6':i===1?'#95a5a6':i===2?'#06b6d4':'#bdc3c7'}">${i < 3 ? medals[i] : i+1}</div>
         <div class="hs-name">${e.name}</div>
         <div class="hs-score" style="color:${i===0?'#3b82f6':'#2c3e50'}"><strong>${e.score}</strong> Blöcke</div>
-      </div>`).join('');
-  } else {
-    let hs = [];
-    try { hs = JSON.parse(localStorage.getItem('m_rel_hs') || '[]'); } catch(e) {}
-    if (!hs.length) { list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:30px 0;font-size:15px">Noch kein Highscore.<br>Himmelsleiter spielen! 🪜</p>'; return; }
-    list.innerHTML = hs.map((e, i) => `
-      <div class="hs-entry" style="background:${i===0?'#fef9e7':i===1?'#f8f9fa':'#fff'};border-color:${rankBg[i]||'#f5d5b0'}">
-        <div class="hs-rank" style="background:${rankBg[i]||'#bdc3c7'}">${i < 3 ? medals[i] : i+1}</div>
-        <div class="hs-name">${e.name}</div>
-        <div class="hs-score" style="color:${i===0?'var(--accent)':'#2c3e50'}"><strong>${e.score}/10</strong> richtig</div>
       </div>`).join('');
   }
 }
@@ -917,6 +905,20 @@ buildTiles();
   var firstKey = Object.keys(RELIGION_TOPICS)[0];
   if (firstKey) selectTopic(firstKey);
 })();
+
+function canPlayGames(){
+  try{
+    const pid=localStorage.getItem('m_app_active_prof');
+    const s=JSON.parse(localStorage.getItem('m_settings_v1')||'{}');
+    if(s[pid]&&s[pid].spiele===false){
+      const t=document.getElementById('permToast');
+      if(t){t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3000);}
+      return false;
+    }
+  }catch(e){}
+  return true;
+}
 </script>
+<div id="permToast" style="display:none;position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#2c3e50;color:white;padding:13px 22px;border-radius:14px;font-size:14px;font-weight:bold;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.35);text-align:center;pointer-events:none">🔒 Spiele sind gesperrt – Elternfreigabe erforderlich</div>
 </body>
 </html>

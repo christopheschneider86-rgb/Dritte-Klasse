@@ -528,7 +528,19 @@ function switchView(v) {
   if (v === 'dashboard') updateDashboard(dashPeriod);
   if (v === 'highscore') updateHighscores();
 }
-function openGame() { window.location.href = '../tier_entdecker.html'; }
+function canPlayGames(){
+  try{
+    const pid=localStorage.getItem('m_app_active_prof');
+    const s=JSON.parse(localStorage.getItem('m_settings_v1')||'{}');
+    if(s[pid]&&s[pid].spiele===false){
+      const t=document.getElementById('permToast');
+      if(t){t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3000);}
+      return false;
+    }
+  }catch(e){}
+  return true;
+}
+function openGame() { if(canPlayGames()) window.location.href = '../tier_entdecker.html'; }
 
 // ── HIGHSCORE ──────────────────────────────────────────
 function updateHighscores() {
@@ -602,5 +614,6 @@ function resetStats() {
 loadStorage();
 initUI();
 </script>
+<div id="permToast" style="display:none;position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#2c3e50;color:white;padding:13px 22px;border-radius:14px;font-size:14px;font-weight:bold;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.35);text-align:center;pointer-events:none">🔒 Spiele sind gesperrt – Elternfreigabe erforderlich</div>
 </body>
 </html>
