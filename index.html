@@ -230,6 +230,7 @@ body{font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:v
   <div class="hero-action-row">
     <a href="einstellungen.html" class="hero-action-btn">🔒 Elternbereich</a>
     <button class="hero-action-btn" onclick="openInfo()">ℹ️ Info</button>
+    <button class="hero-action-btn" onclick="reportBug()">🐛 Bug melden</button>
   </div>
 </div>
 
@@ -546,7 +547,6 @@ const GAMES_HS = [
   { key:'m_musik_hs',       name:'Musik-Merkspiel', sub:'',        icon:'🎹', subj:'musik', unit:'Level' },
   { key:'m_rel_flipper_hs', name:'Bibelflipper',  sub:'',          icon:'⚡', subj:'rel',   unit:'Pkt' },
   { key:'m_rel_tower_hs',   name:'Himmelsbau',    sub:'',          icon:'🏛️', subj:'rel',   unit:'Blöcke' },
-  { key:'m_rel_hs',         name:'Himmelsleiter', sub:'',          icon:'🪜', subj:'rel',   unit:'richtig' },
   { key:'m_de_flappy_hs',  name:'Deutsch-Vogel', sub:'',          icon:'🐦', subj:'de',    unit:'Pkt' },
 ];
 
@@ -590,6 +590,25 @@ function updateGameBestenliste() {
         ${rows}
       </div>`;
   }).join('');
+}
+
+// ── BUG MELDEN ──────────────────────────────────────────
+function reportBug() {
+  const subject = encodeURIComponent('🐛 Bug-Meldung – ZaboKids Lern-App');
+  const body = encodeURIComponent(
+    'Hallo,\n\n' +
+    'ich habe einen Fehler in der ZaboKids Lern-App gefunden:\n\n' +
+    '📍 Wo ist der Fehler aufgetreten?\n' +
+    '(z.B. Deutsch-Trainer > Lückentext)\n\n' +
+    '📝 Was ist passiert?\n' +
+    '(kurze Beschreibung)\n\n' +
+    '🔁 Wie kann man den Fehler wiederholen?\n' +
+    '1. \n2. \n3. \n\n' +
+    '📱 Gerät & Browser:\n' +
+    '(z.B. iPad, Safari)\n\n' +
+    'Danke für die Rückmeldung! 🙏'
+  );
+  window.location.href = 'mailto:christophe.schneider86@googlemail.com?subject=' + subject + '&body=' + body;
 }
 
 // ── INFO MODAL ──────────────────────────────────────────
