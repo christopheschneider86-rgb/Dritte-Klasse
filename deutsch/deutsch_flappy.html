@@ -17,7 +17,7 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#b3e5fc
 canvas{display:block;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.18);touch-action:none}
 /* Overlay cards */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
-.overlay.hidden{display:none}
+.overlay.hidden,.hidden{display:none}
 .card{background:#fff;border-radius:20px;padding:24px 20px;width:100%;max-width:360px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.22)}
 .card h2{font-size:24px;color:#1a5276;margin-bottom:6px}
 .card .subtitle{font-size:14px;color:#666;margin-bottom:16px}
@@ -261,7 +261,7 @@ const CD_FRAMES  = 180;   // 3 s at 60 fps
 let difficulty = 'normal';
 const DIFF = {
   easy:   { gapH: 200, pipeSpeed: 1.5 },
-  normal: { gapH: 185, pipeSpeed: 1.7 },
+  normal: { gapH: 195, pipeSpeed: 1.6 },
 };
 
 function setDiff(d){
@@ -512,8 +512,8 @@ function update(){
 
     if(!p.passed&&p.x+PIPE_W<bird.x-BIRD_R){
       p.passed=true; pipesPassed++; score++;
-      if(pipesPassed%6===0 && difficulty==='normal') pipeSpeed=Math.min(2.5,pipeSpeed+0.1);
-      if(pipesPassed%8===0 && difficulty==='normal') gapH=Math.max(155,gapH-3);
+      if(pipesPassed%8===0 && difficulty==='normal') pipeSpeed=Math.min(2.2,pipeSpeed+0.08);
+      if(pipesPassed%10===0 && difficulty==='normal') gapH=Math.max(165,gapH-3);
       flashWord=p.word; flashTimer=FLASH_DUR;
       playScore();
     }
