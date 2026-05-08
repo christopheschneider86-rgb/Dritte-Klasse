@@ -129,9 +129,12 @@ body{
 .topic-name{font-weight:bold;font-size:14px;color:#2c3e50;}
 .topic-stats{font-size:13px;color:var(--muted);}
 
-/* MÜNZEN */
-.coin-display{display:flex;align-items:center;gap:6px;font-size:20px;font-weight:bold;color:#7d5a00;}
-.coin-emoji{font-size:22px;line-height:1;}
+/* HEADER ACTION ROW */
+.coin-badge{display:flex;align-items:center;gap:6px;background:#fef9e7;border:2px solid #f39c12;border-radius:12px;padding:7px 13px;font-weight:bold;font-size:15px;color:#7d5a00;white-space:nowrap;}
+.icon-btn{background:#ecf0f1;border:none;border-radius:10px;padding:7px 10px;cursor:pointer;font-size:17px;min-height:38px;min-width:38px;display:flex;align-items:center;justify-content:center;transition:background .18s;flex-shrink:0;font-family:inherit;}
+.icon-btn:hover{background:#bdc3c7;}
+.icon-btn.active{background:var(--accent);color:white;}
+.icon-btn-row{display:flex;align-items:center;gap:6px;}
 
 /* SPIEL-BANNER */
 .game-banner{display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding:14px 18px;border-radius:16px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:white;gap:12px;flex-wrap:wrap;}
@@ -171,25 +174,16 @@ body{
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
         <span id="curChildName">…</span>
       </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn btn-outline" id="hsBtnEl" onclick="switchView(currentView==='highscore'?'practice':'highscore')" style="padding:10px 14px;font-size:14px;">
-          🏆 <span id="hsBtnText">Bestenliste</span>
-        </button>
-        <button class="btn btn-outline" onclick="switchView(currentView==='dashboard'?'practice':'dashboard')">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-          <span id="dashBtnText">Eltern-Stats</span>
-        </button>
+      <div class="icon-btn-row">
+        <div class="coin-badge">🪙 <span id="coinText">0</span></div>
+        <button class="icon-btn" id="hsBtnEl" onclick="switchView(currentView==='highscore'?'practice':'highscore')" title="Bestenliste">🏆</button>
+        <button class="icon-btn" id="dashBtnEl" onclick="switchView(currentView==='dashboard'?'practice':'dashboard')" title="Eltern-Stats">📊</button>
       </div>
     </div>
 
     <!-- ÜBUNGS-MODUS -->
     <div id="view-practice" class="view-container active">
       <div class="score-bar">
-        <div class="coin-display">
-          <span class="coin-emoji">🪙</span>
-          <span id="coinText">0</span>
-          <span style="font-size:14px;font-weight:normal;color:#a07030;margin-left:2px;">Münzen</span>
-        </div>
         <div class="stars" id="starsText"></div>
       </div>
       <div class="main-layout">
@@ -588,8 +582,8 @@ function switchView(v){
   ['practice','dashboard','highscore'].forEach(name=>{
     document.getElementById('view-'+name).className='view-container'+(name===v?' active':'');
   });
-  document.getElementById('dashBtnText').textContent=v==='dashboard'?'Üben':'Eltern-Stats';
-  document.getElementById('hsBtnText').textContent=v==='highscore'?'Üben':'Bestenliste';
+  const _hb=document.getElementById('hsBtnEl'); if(_hb) _hb.classList.toggle('active',v==='highscore');
+  const _db=document.getElementById('dashBtnEl'); if(_db) _db.classList.toggle('active',v==='dashboard');
   if(v==='dashboard') updateDashboard(dashPeriod);
   if(v==='highscore') updateHighscores(hsMode);
 }
