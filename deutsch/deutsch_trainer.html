@@ -137,7 +137,8 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
 .divider{height:1px;background:#f0d9c0;margin:12px 0}
 
 .game-banner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;background:linear-gradient(135deg,#e67e22,#c0652d);border-radius:var(--radius);padding:18px 22px;margin-top:16px;box-shadow:0 4px 14px rgba(230,126,34,0.3)}
-.game-banner-icon{font-size:28px}
+.game-banner-icon{font-size:28px;width:56px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.game-banner-icon img{width:56px;height:56px;object-fit:contain;border-radius:10px}
 .game-banner-text{flex:1;min-width:0}
 .game-banner-title{font-size:17px;font-weight:bold;color:white}
 .game-banner-sub{font-size:12px;color:rgba(255,255,255,0.85);margin-top:2px}
@@ -358,7 +359,7 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
   </div>
 
   <div class="game-banner">
-    <div class="game-banner-icon">🐦</div>
+    <div class="game-banner-icon"><img src="../images/deutsch_vogel.png" alt="Deutsch-Vogel" onerror="this.outerHTML='🐦'"></div>
     <div class="game-banner-text">
       <div class="game-banner-title">Deutsch-Vogel</div>
       <div class="game-banner-sub">Flappy Bird Rechtschreib-Spiel · –10 🪙</div>
