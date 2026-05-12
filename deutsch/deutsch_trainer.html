@@ -178,6 +178,16 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
 .such-btn.such-wrong{border-color:var(--danger)!important;background:var(--danger-soft)!important;color:#922b21}
 .such-btn:disabled{cursor:default}
 
+/* Fehler-finden Modus */
+.fehler-text{font-size:16px;line-height:2.4;color:#2c3e50;padding:16px;background:#fffaf5;border-radius:14px;border:2px solid #f0b27a;margin-bottom:14px;cursor:default}
+.fehler-wort{cursor:pointer;padding:2px 3px;border-radius:5px;transition:background .12s;border-bottom:2px solid transparent}
+.fehler-wort:hover:not(:disabled){background:#fef4e8;border-bottom-color:#f0b27a}
+.fehler-wort.fw-sel{background:#ffeaa7;border-bottom-color:#e17055;font-weight:bold}
+.fehler-wort.fw-ok{background:var(--success-soft);color:#1a6e40;border-bottom-color:var(--success)}
+.fehler-wort.fw-missed{background:#fff3cd;color:#7d5a00;border-bottom:2px dashed #f39c12}
+.fehler-wort.fw-false{background:var(--danger-soft);color:#922b21;border-bottom-color:var(--danger)}
+.fehler-counter{font-size:13px;color:var(--muted);margin-bottom:8px}
+
 /* Word Search Grid (Gemischt) */
 .ws-grid{display:grid;gap:2px;touch-action:none;user-select:none;-webkit-user-select:none}
 .ws-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:bold;border-radius:5px;cursor:pointer;background:white;border:1px solid #e0d0c0;transition:background .1s}
@@ -252,11 +262,12 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
           <div class="word-count-badge" id="wordCountBadge"></div>
         </div>
 
-        <div class="mode-tabs">
+        <div class="mode-tabs" id="modeTabs">
           <button class="mode-tab active" id="tab-spelling" onclick="setMode('spelling')">✏️ Schreiben</button>
           <button class="mode-tab" id="tab-such" onclick="setMode('such')">🔍 Wörter suchen</button>
           <button class="mode-tab" id="tab-gap" onclick="setMode('gap')">🔤 Lückentext</button>
           <button class="mode-tab" id="tab-mc" onclick="setMode('mc')">✅ Auswählen</button>
+          <button class="mode-tab" id="tab-fehler" onclick="setMode('fehler')" style="display:none">🔎 Fehler finden</button>
         </div>
 
         <!-- SPELLING -->
@@ -351,6 +362,22 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
           <div class="mc-grid" id="mcGrid"></div>
           <div class="next-row">
             <button class="btn btn-secondary" id="mcNextBtn" onclick="nextWord('mc')" style="display:none">Weiter →</button>
+          </div>
+        </div>
+
+        <!-- FEHLER FINDEN -->
+        <div id="modeFehler" class="mode-area hidden">
+          <div class="task-box" style="margin-bottom:10px">
+            <div class="task-question">🔎 Finde alle <b>8 Rechtschreibfehler</b>!</div>
+            <div class="task-hint">Klicke auf die falsch geschriebenen Wörter. Für jedes richtige Wort, das du fälschlich anklickst: –1 🪙</div>
+          </div>
+          <div class="fehler-counter" id="fehlerCounter">0 von 8 markiert</div>
+          <div id="fehlerTextDisplay"></div>
+          <div id="fehlerFeedback" class="hidden"></div>
+          <div id="fehlerBonus" class="hidden"></div>
+          <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap">
+            <button class="btn btn-primary" id="fehlerPruefBtn" onclick="checkFehlerFinden()">Prüfen</button>
+            <button class="btn btn-secondary" id="fehlerNextBtn" onclick="loadFehlerFinden()" style="display:none">Neuer Text →</button>
           </div>
         </div>
 
@@ -667,23 +694,33 @@ function selectThema(key) {
   regelBox.textContent = thema.regel;
   regelBox.classList.remove('hidden');
 
-  document.getElementById('topicIcon').textContent       = thema.icon;
-  document.getElementById('topicTitle').textContent      = thema.titel;
-  document.getElementById('topicSub').textContent        = 'Rechtschreibregel';
-  document.getElementById('wordCountBadge').textContent  = thema.woerter.length + ' Wörter';
+  const isFehler = key === 'fehler';
+  document.getElementById('topicIcon').textContent      = thema.icon;
+  document.getElementById('topicTitle').textContent     = thema.titel;
+  document.getElementById('topicSub').textContent       = isFehler ? 'Texte lesen & Fehler entdecken' : 'Rechtschreibregel';
+  document.getElementById('wordCountBadge').textContent = isFehler ? '5 Texte' : thema.woerter.length + ' Wörter';
+
+  // Fehler-Thema: nur Fehler-Tab anzeigen; sonst normale Tabs
+  document.getElementById('modeTabs').style.display = isFehler ? 'none' : '';
+  document.getElementById('tab-fehler').style.display = 'none'; // immer verborgen in Tabs-Leiste
 
   document.getElementById('viewDefault').classList.remove('active');
   document.getElementById('viewTopic').classList.add('active');
 
-  setMode(currentMode);
+  if (isFehler) {
+    setMode('fehler');
+  } else {
+    setMode(currentMode === 'fehler' ? 'spelling' : currentMode);
+  }
 }
 
 function setMode(mode) {
   currentMode = mode;
-  ['spelling','such','gap','mc'].forEach(m => {
-    document.getElementById('tab-' + m).classList.toggle('active', m === mode);
+  ['spelling','such','gap','mc','fehler'].forEach(m => {
+    const tab = document.getElementById('tab-' + m);
+    if (tab) tab.classList.toggle('active', m === mode);
     const el = document.getElementById('mode' + m.charAt(0).toUpperCase() + m.slice(1));
-    el.classList.toggle('hidden', m !== mode);
+    if (el) el.classList.toggle('hidden', m !== mode);
   });
   nextWord(mode);
 }
@@ -691,12 +728,13 @@ function setMode(mode) {
 function nextWord(mode) {
   currentWord = pickWord();
   answeredThisRound = false;
-  if (!currentWord && mode !== 'such') return;
+  if (!currentWord && mode !== 'such' && mode !== 'fehler') return;
 
   if      (mode === 'spelling') loadSpelling();
   else if (mode === 'such')     loadSuch();
   else if (mode === 'gap')      loadGap();
   else if (mode === 'mc')       loadMc();
+  else if (mode === 'fehler')   loadFehlerFinden();
 }
 
 // ── SPELLING mode ──
@@ -1178,6 +1216,127 @@ document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   if (answeredThisRound && currentMode && activeThema) nextWord(currentMode);
 });
+
+// ── FEHLER FINDEN Modus ──
+let fehlerWords    = []; // { text, isWrong, richtig }
+let fehlerSelected = new Set(); // indices in fehlerWords
+let fehlerAnswered = false;
+
+function tokenizeText(text) {
+  const tokens = [];
+  const re = /([A-Za-zÄäÖöÜüß]+)|([^A-Za-zÄäÖöÜüß]+)/g;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    tokens.push(m[1] ? { type: 'word', text: m[1] } : { type: 'punct', text: m[2] });
+  }
+  return tokens;
+}
+
+function loadFehlerFinden() {
+  fehlerAnswered = false;
+  fehlerSelected.clear();
+  fehlerWords = [];
+
+  const entry = FEHLER_TEXTE[Math.floor(Math.random() * FEHLER_TEXTE.length)];
+  const wrongMap = new Map();
+  entry.fehler.forEach(f => wrongMap.set(f.falsch.toLowerCase(), f.richtig));
+
+  const tokens = tokenizeText(entry.text);
+  let html = '<div class="fehler-text">';
+  tokens.forEach(tok => {
+    if (tok.type === 'word') {
+      const idx      = fehlerWords.length;
+      const isWrong  = wrongMap.has(tok.text.toLowerCase());
+      const richtig  = isWrong ? wrongMap.get(tok.text.toLowerCase()) : null;
+      fehlerWords.push({ text: tok.text, isWrong, richtig });
+      html += '<span class="fehler-wort" data-idx="' + idx + '" onclick="toggleFehlerWort(' + idx + ')">' + tok.text + '</span>';
+    } else {
+      html += tok.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+  });
+  html += '</div>';
+
+  document.getElementById('fehlerTextDisplay').innerHTML = html;
+  document.getElementById('fehlerFeedback').className    = 'hidden';
+  document.getElementById('fehlerBonus').className       = 'hidden';
+  document.getElementById('fehlerPruefBtn').style.display = '';
+  document.getElementById('fehlerNextBtn').style.display = 'none';
+  document.getElementById('fehlerCounter').textContent   = '0 von 8 markiert';
+}
+
+function toggleFehlerWort(idx) {
+  if (fehlerAnswered) return;
+  const span = document.querySelector('.fehler-wort[data-idx="' + idx + '"]');
+  if (!span) return;
+  if (fehlerSelected.has(idx)) {
+    fehlerSelected.delete(idx);
+    span.classList.remove('fw-sel');
+  } else {
+    fehlerSelected.add(idx);
+    span.classList.add('fw-sel');
+  }
+  document.getElementById('fehlerCounter').textContent = fehlerSelected.size + ' von 8 markiert';
+}
+
+function checkFehlerFinden() {
+  if (fehlerAnswered) return;
+  fehlerAnswered = true;
+
+  let correctFound = 0;
+  let falsePositives = 0;
+
+  fehlerWords.forEach((word, idx) => {
+    const span = document.querySelector('.fehler-wort[data-idx="' + idx + '"]');
+    if (!span) return;
+    span.classList.remove('fw-sel');
+    if (word.isWrong && fehlerSelected.has(idx)) {
+      span.classList.add('fw-ok');
+      span.title = '✓ Richtig: ' + word.richtig;
+      correctFound++;
+    } else if (word.isWrong && !fehlerSelected.has(idx)) {
+      span.classList.add('fw-missed');
+      span.title = 'Übersehen! Richtig: ' + word.richtig;
+    } else if (!word.isWrong && fehlerSelected.has(idx)) {
+      span.classList.add('fw-false');
+      falsePositives++;
+    }
+  });
+
+  const allCorrect = correctFound === 8 && falsePositives === 0;
+  const coins      = (allCorrect ? 10 : 0) - falsePositives;
+  const ok         = correctFound >= 6;
+
+  const fb = document.getElementById('fehlerFeedback');
+  fb.className = 'feedback ' + (ok ? 'feedback-ok' : 'feedback-bad');
+  let msg = correctFound + ' von 8 Fehlern gefunden.';
+  if (falsePositives > 0) msg += ' ' + falsePositives + ' richtige Wörter fälschlich markiert (–' + falsePositives + ' 🪙).';
+  if (allCorrect) msg = 'Perfekt! Alle 8 Fehler gefunden!';
+  fb.innerHTML = '<span class="feedback-icon">' + (allCorrect ? '🌟' : (ok ? '✅' : '❌')) + '</span><div>' + msg + '</div>';
+
+  const ba = document.getElementById('fehlerBonus');
+  if (coins > 0) {
+    ba.className = 'bonus-box';
+    ba.style.cssText = '';
+    ba.innerHTML = '<div>' + (allCorrect ? '🎉 Perfekt!' : '👍 Gut gemacht!') + '</div><div class="bonus-coins">+' + coins + ' 🪙</div>';
+    addCoins(coins);
+  } else if (coins < 0) {
+    ba.className = 'bonus-box';
+    ba.style.background = 'linear-gradient(135deg,#fde8e8,#fca5a5)';
+    ba.style.borderColor = '#e74c3c';
+    ba.innerHTML = '<div>Leider Abzug</div><div class="bonus-coins">' + coins + ' 🪙</div>';
+    addCoins(coins);
+  } else {
+    ba.className = 'hidden';
+  }
+
+  if (allCorrect) sessionOk++; else sessionWrong++;
+  saveHistory(activeThema, 'fehler', allCorrect);
+  updateScoreBar();
+
+  document.getElementById('fehlerPruefBtn').style.display = 'none';
+  document.getElementById('fehlerNextBtn').style.display  = '';
+  document.getElementById('fehlerCounter').textContent = correctFound + ' von 8 Fehlern gefunden';
+}
 
 // ── Init ──
 function init() {

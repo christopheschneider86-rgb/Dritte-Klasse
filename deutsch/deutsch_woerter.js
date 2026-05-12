@@ -184,6 +184,14 @@ DEUTSCH_THEMEN.gemischt = {
   ].sort(() => 0.5 - Math.random())
 };
 
+DEUTSCH_THEMEN.fehler = {
+  titel: 'Fehler finden',
+  icon: '🔎',
+  farbe: '#c0392b',
+  regel: 'Lies den Text genau und klicke alle falsch geschriebenen Wörter an!',
+  woerter: [],
+};
+
 // Negativwörter: Wörter, bei denen die Regel NICHT gilt (für Übungen als Distractoren)
 const DEUTSCH_NEGATIV = {
   ie: [
@@ -212,3 +220,77 @@ const DEUTSCH_NEGATIV = {
     'Fisch', 'Land', 'Werk', 'Tanz', 'Wald', 'Ofen', 'Gras'
   ]
 };
+
+// Texte für den Modus "Fehler finden" – je 8 falsch geschriebene Wörter pro Text
+const FEHLER_TEXTE = [
+  {
+    titel: 'Ein Tag im Wald',
+    text: 'Gestern war Anna mit ihrer Familie im Wald. Es war ein schöner Tag und vile Vögel sangen in den Bäumen. Plötzlich sahen sie ein Tir, das auf der Wise stand. Das Reh trank Waser aus einem kleinen Bach. Dann begann es zu renen. „Wie schnell!", rief Anna. Sie gingen über eine Brüke. Auf der anderen Seite wollten sie spilen. Eine kleine Kaze kam aus dem Gebüsch und miaute laut.',
+    fehler: [
+      { falsch: 'vile',   richtig: 'viele'   },
+      { falsch: 'Tir',    richtig: 'Tier'    },
+      { falsch: 'Wise',   richtig: 'Wiese'   },
+      { falsch: 'Waser',  richtig: 'Wasser'  },
+      { falsch: 'renen',  richtig: 'rennen'  },
+      { falsch: 'Brüke',  richtig: 'Brücke'  },
+      { falsch: 'spilen', richtig: 'spielen' },
+      { falsch: 'Kaze',   richtig: 'Katze'   },
+    ]
+  },
+  {
+    titel: 'Das Fußballspiel',
+    text: 'Am Samstag spielte Luca Fußball auf dem Schulhof. Die Sone schien warm auf den Platz. Alle Spieler wollten schnel komen. Luca schoss den Bal mit Kraft ins Tor. Beim Stand von 2:2 hatte er großes Glük. Jezt lag sein Team vorne! Nach dem Spiel aß er ein Stük Brot mit Buter. Das schmeckte lecker.',
+    fehler: [
+      { falsch: 'Sone',   richtig: 'Sonne'  },
+      { falsch: 'schnel', richtig: 'schnell' },
+      { falsch: 'komen',  richtig: 'kommen' },
+      { falsch: 'Bal',    richtig: 'Ball'   },
+      { falsch: 'Glük',   richtig: 'Glück'  },
+      { falsch: 'Jezt',   richtig: 'Jetzt'  },
+      { falsch: 'Stük',   richtig: 'Stück'  },
+      { falsch: 'Buter',  richtig: 'Butter' },
+    ]
+  },
+  {
+    titel: 'Der Morgen',
+    text: 'Es ist Montagmorgen. Lisa zieht ihre Jake und ihre Müze an, denn es ist kalt. In der Schule schreibt die Klasse einen Brif an den Bürgermeister. Die Lehrerin zählt bis siben, denn so viele Kinder fehlen. In der Pause sehen die Kinder, wie Vögel durch die Luft fligen. Am Abend liegt Lisas Buch im Keler. Endlich liegt sie in ihrem Bet und singt leise ein Lid.',
+    fehler: [
+      { falsch: 'Jake',  richtig: 'Jacke'   },
+      { falsch: 'Müze',  richtig: 'Mütze'   },
+      { falsch: 'Brif',  richtig: 'Brief'   },
+      { falsch: 'siben', richtig: 'sieben'  },
+      { falsch: 'fligen',richtig: 'fliegen' },
+      { falsch: 'Keler', richtig: 'Keller'  },
+      { falsch: 'Bet',   richtig: 'Bett'    },
+      { falsch: 'Lid',   richtig: 'Lied'    },
+    ]
+  },
+  {
+    titel: 'Das Abenteuer',
+    text: 'Tim und Mia suchten nach einem verborgenen Schaz. Sie gingen tif in den Wald hinein. Eine Bine summte an Mias Ohr vorbei. Sie mussten imer aufpassen, nicht zu falen. Sie kamen zu einer Eke des alten Hauses. „Lass uns hier sizen und nachdenken", sagte Mia. Da hörten sie ein lautes Knacken. Ein Bliz leuchtete am Himmel auf.',
+    fehler: [
+      { falsch: 'Schaz', richtig: 'Schatz'  },
+      { falsch: 'tif',   richtig: 'tief'    },
+      { falsch: 'Bine',  richtig: 'Biene'   },
+      { falsch: 'imer',  richtig: 'immer'   },
+      { falsch: 'falen', richtig: 'fallen'  },
+      { falsch: 'Eke',   richtig: 'Ecke'    },
+      { falsch: 'sizen', richtig: 'sitzen'  },
+      { falsch: 'Bliz',  richtig: 'Blitz'   },
+    ]
+  },
+  {
+    titel: 'Ein Wintertag',
+    text: 'An einem kalten Wintertag zog Felix seine dicke Soke an. Er wollte wider Schnee schaufeln. Sein Rüken tat noch weh vom letzten Mal. Papa machte dabei einen lustigen Wiz und alle lachten. Danach half Felix, das Gartenhaus zu puzen. Er sah ein Bild von einem großen Schif an der Wand. Papa holte einen Hamer aus der Kiste und reparierte ein Brett. Abends packte Mama den alten Kofer aus.',
+    fehler: [
+      { falsch: 'Soke',  richtig: 'Socke'  },
+      { falsch: 'wider', richtig: 'wieder' },
+      { falsch: 'Rüken', richtig: 'Rücken' },
+      { falsch: 'Wiz',   richtig: 'Witz'   },
+      { falsch: 'puzen', richtig: 'putzen' },
+      { falsch: 'Schif', richtig: 'Schiff' },
+      { falsch: 'Hamer', richtig: 'Hammer' },
+      { falsch: 'Kofer', richtig: 'Koffer' },
+    ]
+  },
+];
