@@ -280,6 +280,48 @@ const FEHLER_TEXTE = [
     ]
   },
   {
+    titel: 'Ein Tag am See',
+    text: 'Im sommer fuhren Lena und ihr Bruder Tom an den See. Sie packten Ihre Badesachen in eine große Tasche. Am Ufer bauten sie eine Burg aus Sand. Tom fand einen bunten stein im Wasser. Mama schmierte auf seinen Rücen Sonnencreme. Papa angelte Am Steg. Abends leuchtete der Himel noch lange rot. Sie fuhren glücklich nach hause.',
+    fehler: [
+      { falsch: 'sommer',       richtig: 'Sommer'       },
+      { falsch: 'Ihre',         richtig: 'ihre'         },
+      { falsch: 'stein',        richtig: 'Stein'        },
+      { falsch: 'Rücen',        richtig: 'Rücken'       },
+      { falsch: 'Am',           richtig: 'am'           },
+      { falsch: 'Himel',        richtig: 'Himmel'       },
+      { falsch: 'hause',        richtig: 'Hause'        },
+      { falsch: 'Sonnencreme',  richtig: 'sonnencreme'  },
+    ]
+  },
+  {
+    titel: 'Der Bauernhof',
+    text: 'Am wochenende besuchte die Klasse einen Bauernhof. Die kinder durften Die Kühe füttern. Ein kleines Kalb leckte Annas Hand ab. Der bauer zeigte ihnen, wie man Butter macht. Auf dem Hof gab es auch Hühner. Jonas warf Ihnen Brotkrümel hin. Im Stall roch es nach Stroh. Abends fuhren alle müde im Bus nach hause.',
+    fehler: [
+      { falsch: 'wochenende',   richtig: 'Wochenende'   },
+      { falsch: 'kinder',       richtig: 'Kinder'       },
+      { falsch: 'Die',          richtig: 'die'          },
+      { falsch: 'bauer',        richtig: 'Bauer'        },
+      { falsch: 'Ihnen',        richtig: 'ihnen'        },
+      { falsch: 'hause',        richtig: 'Hause'        },
+      { falsch: 'Kalb',         richtig: 'kalb'         },
+      { falsch: 'müde',         richtig: 'Müde'         },
+    ]
+  },
+  {
+    titel: 'Das Geburtstagsfest',
+    text: 'Am samstag feierte Mia ihren zehnten Geburtstag. Ihre Freundinnen kamen Mit bunten Luftballons. Mama hatte einen großen Kuchen mit Erdbeeren gebacken. Auf dem tisch standen Kerzen und ein Blumenstrauß. Mia blies die Kerzen aus und Alle klatschten. Papa fotografierte den Moment mit seiner neuen Kamera. Danach spielten die Kinder im Garten fangen. Zum Schluss bekam Mia ein neues farbset als Geschenk.',
+    fehler: [
+      { falsch: 'samstag',      richtig: 'Samstag'      },
+      { falsch: 'Mit',          richtig: 'mit'          },
+      { falsch: 'tisch',        richtig: 'Tisch'        },
+      { falsch: 'Alle',         richtig: 'alle'         },
+      { falsch: 'fangen',       richtig: 'Fangen'       },
+      { falsch: 'farbset',      richtig: 'Farbset'      },
+      { falsch: 'Geburtstag',   richtig: 'geburtstag'   },
+      { falsch: 'Freundinnen',  richtig: 'freundinnen'  },
+    ]
+  },
+  {
     titel: 'Ein Wintertag',
     text: 'An einem kalten Wintertag zog Felix seine dicke Soke an. Er wollte wider Schnee schaufeln. Sein Rüken tat noch weh vom letzten Mal. Papa machte dabei einen lustigen Wiz und alle lachten. Danach half Felix, das Gartenhaus zu puzen. Er sah ein Bild von einem großen Schif an der Wand. Papa holte einen Hamer aus der Kiste und reparierte ein Brett. Abends packte Mama den alten Kofer aus.',
     fehler: [
