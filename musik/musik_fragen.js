@@ -585,6 +585,226 @@ const MUSIK_TOPICS = {
     ],
   },
 
+  nationalhymne: {
+    icon: '🇩🇪',
+    title: 'Deutsche Nationalhymne',
+    sub: 'Haydn, Melodie, Text & Geschichte',
+    questions: [
+      // KOMPONIST (JOSEPH HAYDN)
+      {
+        tag: 'Komponist',
+        q: 'Wie hieß der Komponist der Melodie der deutschen Nationalhymne?',
+        choices: ['Wolfgang Amadeus Mozart', 'Joseph Haydn', 'Ludwig van Beethoven', 'Sergej Prokofjew'],
+        sol: 1,
+        hint: '💡 Er lebte von 1732 bis 1809 und arbeitete lange für Fürst Esterházy.',
+      },
+      {
+        tag: 'Komponist',
+        q: 'Wann und wo wurde Joseph Haydn geboren?',
+        choices: ['1732 in Wien', '1756 in Salzburg', '1732 in Rohrau', '1800 in Berlin'],
+        sol: 2,
+        hint: '💡 Rohrau ist ein kleines österreichisches Dorf nahe der ungarischen Grenze.',
+      },
+      {
+        tag: 'Komponist',
+        q: 'Welchen Beruf hatten Joseph Haydns Eltern?',
+        choices: ['Musiker', 'Wagenbauer', 'Bäcker', 'Lehrer'],
+        sol: 1,
+        hint: '💡 Sie waren rechtschaffene Handwerksleute und bauten Fortbewegungsmittel.',
+      },
+      {
+        tag: 'Komponist',
+        q: 'Wohin kam Joseph Haydn mit acht Jahren, weil er eine so schöne Stimme hatte?',
+        choices: ['Zum berühmten Wiener Domchor', 'Nach London', 'In eine Musikschule in Paris', 'Nach München'],
+        sol: 0,
+        hint: '💡 Der Stephansdom ist die bekannteste Kirche in Wien.',
+      },
+      {
+        tag: 'Komponist',
+        q: 'Warum musste Haydn den Domchor mit 17 Jahren verlassen?',
+        choices: ['Er wollte lieber komponieren', 'Er kam in den Stimmbruch', 'Er zog nach England', 'Er wurde krank'],
+        sol: 1,
+        hint: '💡 Wenn Jungen erwachsen werden, verändert sich ihre Stimme.',
+      },
+      {
+        tag: 'Komponist',
+        q: 'Wie verdiente der junge Haydn nach dem Domchor sein erstes Geld?',
+        choices: ['Als Bäcker', 'Als Wagenbauer', 'Als Musiklehrer und durch eigene Kompositionen', 'Als Sänger in der Oper'],
+        sol: 2,
+        hint: '💡 Er gab Musikunterricht und schrieb eigene kleine Stücke.',
+      },
+      {
+        tag: 'Komponist',
+        q: 'Bei wem bekam Haydn schließlich eine feste Anstellung als Kapellmeister?',
+        choices: ['Beim Kaiser von Österreich', 'Bei Fürst Esterházy', 'Beim englischen König', 'Beim König von Preußen'],
+        sol: 1,
+        hint: '💡 Der Fürst war so reich, dass er gleich zwei Schlösser besaß.',
+      },
+      {
+        tag: 'Komponist',
+        q: 'Was gehörte zu Haydns Aufgaben bei Fürst Esterházy?',
+        choices: ['Er musste das Schloss putzen', 'Er probte mit Chor und Orchester und komponierte ständig neue Musik', 'Er musste nur singen', 'Er baute Instrumente'],
+        sol: 1,
+        hint: '💡 Der Fürst wollte nicht mit ständigen Wiederholungen gelangweilt werden.',
+      },
+      {
+        tag: 'Komponist',
+        q: 'Wie alt wurde Joseph Haydn?',
+        choices: ['Er starb mit 40 Jahren', 'Er starb mit 60 Jahren in England', 'Er starb mit 77 Jahren in Wien', 'Er wurde über 90 Jahre alt'],
+        sol: 2,
+        hint: '💡 Er lebte ein langes, erfolgreiches Musikerleben (1732 - 1809).',
+      },
+
+      // MELODIE
+      {
+        tag: 'Melodie',
+        q: 'Für wen komponierte Joseph Haydn die Melodie ursprünglich?',
+        choices: ['Für den englischen König', 'Zum Geburtstag des Kaisers von Österreich', 'Für Fürst Esterházy', 'Für den König von Deutschland'],
+        sol: 1,
+        hint: '💡 Die Melodie hieß am Anfang "Österreichische Kaiserhymne".',
+      },
+      {
+        tag: 'Melodie',
+        q: 'Aus welchen zwei musikalischen Teilen setzte Haydn die Melodie zusammen?',
+        choices: ['Aus einer Oper und einem Tanz', 'Aus einem kroatischen Volkslied und einem feierlichen Kirchenlied', 'Aus einem Kinderlied und einem Marsch', 'Aus englischer und deutscher Musik'],
+        sol: 1,
+        hint: '💡 Er verband ein einfaches Volkslied mit etwas sehr Feierlichem.',
+      },
+      {
+        tag: 'Melodie',
+        q: 'In welchem Jahr wurde die Kaiserhymne zum ersten Mal aufgeführt?',
+        choices: ['1732', '1797', '1841', '1952'],
+        sol: 1,
+        hint: '💡 Zum Geburtstag des Kaisers im Februar 1797.',
+      },
+      {
+        tag: 'Melodie',
+        q: 'Für welche Instrumentengruppe arbeitete Haydn die Melodie später um?',
+        choices: ['Für ein Streichquartett (Kaiserquartett)', 'Für ein Blasorchester', 'Für ein großes Klavierkonzert', 'Für eine Rockband'],
+        sol: 0,
+        hint: '💡 Ein Quartett besteht aus vier Instrumenten.',
+      },
+      {
+        tag: 'Melodie',
+        q: 'Welche Instrumente gehören zu einem Streichquartett?',
+        choices: ['Klavier, Gitarre, Bass, Schlagzeug', 'Zwei Geigen, eine Bratsche, ein Cello', 'Geige, Querflöte, Oboe, Fagott', 'Vier Geigen'],
+        sol: 1,
+        hint: '💡 Das Kaiserquartett wird von vier Streichinstrumenten gespielt, das größte davon ist das Cello.',
+      },
+      {
+        tag: 'Melodie',
+        q: 'Wie wird die Melodie als Kaiserquartett (von Haydn) gespielt?',
+        choices: ['Mit Gesang, schwungvoll', 'Ohne Gesang, feierlich, ruhig', 'Laut und schnell', 'Nur gesungen, ohne Instrumente'],
+        sol: 1,
+        hint: '💡 Ein Streichquartett hat keine Sänger, die Stimmung ist feierlich und ruhig.',
+      },
+      {
+        tag: 'Melodie',
+        q: 'Wie wird die Melodie heute als deutsche Nationalhymne gespielt (z. B. im Stadion)?',
+        choices: ['Ohne Gesang, ruhig', 'Nur mit Geigen', 'Mit Gesang, feierlich, schwungvoll', 'Ganz leise'],
+        sol: 2,
+        hint: '💡 Die Menschen singen mit und die Musik hat Schwung!',
+      },
+
+      // TEXT & GESCHICHTE
+      {
+        tag: 'Text',
+        q: 'Wer dichtete den Text zur deutschen Nationalhymne?',
+        choices: ['Joseph Haydn', 'Heinrich Hoffmann von Fallersleben', 'Johann Wolfgang von Goethe', 'Ein unbekannter Soldat'],
+        sol: 1,
+        hint: '💡 Er schrieb auch Kinderlieder wie "Kuckuck, Kuckuck" und "Ein Männlein steht im Walde".',
+      },
+      {
+        tag: 'Geschichte',
+        q: 'In welchem Jahr schrieb Hoffmann von Fallersleben den neuen Text zur Melodie?',
+        choices: ['1797', '1841', '1922', '1952'],
+        sol: 1,
+        hint: '💡 Es war 1841. Er nannte sein Werk das "Lied der Deutschen".',
+      },
+      {
+        tag: 'Geschichte',
+        q: 'Warum schrieb Hoffmann von Fallersleben das "Lied der Deutschen"?',
+        choices: ['Weil ihn der Kaiser darum gebeten hatte', 'Weil er Geld brauchte', 'Weil das deutschsprachige Gebiet aus 39 Kleinstaaten bestand und er sich ein einiges Deutschland wünschte', 'Weil er die Melodie nicht mochte'],
+        sol: 2,
+        hint: '💡 Damals gab es überall Grenzen und Zölle in Deutschland. Die Menschen wünschten sich "Einigkeit".',
+      },
+      {
+        tag: 'Geschichte',
+        q: 'Wann wurde das "Lied der Deutschen" erstmals zur deutschen Nationalhymne erklärt?',
+        choices: ['1841', '1922', '1933', '1952'],
+        sol: 1,
+        hint: '💡 Es dauerte 81 Jahre! Erst 1922 (in der Weimarer Republik) wurde es die offizielle Hymne.',
+      },
+      {
+        tag: 'Geschichte',
+        q: 'Warum wird heute nicht mehr das ganze Lied als Nationalhymne gesungen?',
+        choices: ['Weil es zu lang ist', 'Weil die Melodie für drei Strophen nicht passt', 'Weil die 1. Strophe zwischen 1933 und 1945 (von den Nationalsozialisten) missbraucht wurde', 'Weil man den Text vergessen hat'],
+        sol: 2,
+        hint: '💡 Die 1. Strophe wurde genutzt, um den Menschen einzureden, sie seien besser als andere und dürften Krieg führen.',
+      },
+      {
+        tag: 'Text',
+        q: 'Welche Strophe des "Liedes der Deutschen" wird heute als Nationalhymne gesungen?',
+        choices: ['Die 1. Strophe', 'Die 2. Strophe', 'Die 3. Strophe', 'Alle drei Strophen'],
+        sol: 2,
+        hint: '💡 Seit 1952 singen wir nur noch diese eine Strophe.',
+      },
+      {
+        tag: 'Text',
+        q: 'Mit welchen drei Worten beginnt die 3. Strophe (die heutige Nationalhymne)?',
+        choices: ['Deutschland, Deutschland über...', 'Einigkeit und Recht und Freiheit', 'Blüh im Glanze dieses Glückes', 'Kuckuck, Kuckuck ruft\'s aus...'],
+        sol: 1,
+        hint: '💡 Diese Begriffe sind auch heute noch wichtig für das Wohlergehen unseres Landes!',
+      },
+      
+      // WAHR / FALSCH
+      {
+        tag: 'Wahr/Falsch',
+        q: 'Joseph Haydn hatte eigene Kinder.',
+        hint: '💡 Falsch! Er war zwar 40 Jahre verheiratet, aber die Ehe blieb kinderlos.',
+        isYesNo: true,
+        sol: 0,
+      },
+      {
+        tag: 'Wahr/Falsch',
+        q: 'Joseph Haydn reiste mit 60 Jahren nach England.',
+        hint: '💡 Richtig! Dort hörte er auch eine Hymne für den englischen König, die ihn inspirierte.',
+        isYesNo: true,
+        sol: 1,
+      },
+      {
+        tag: 'Wahr/Falsch',
+        q: 'Ein Streichquartett besteht aus vier Geigen.',
+        hint: '💡 Falsch! Es besteht aus zwei Geigen, einer Bratsche und einem Cello.',
+        isYesNo: true,
+        sol: 0,
+      },
+      {
+        tag: 'Wahr/Falsch',
+        q: 'Heinrich Hoffmann von Fallersleben schrieb auch bekannte Kinderlieder.',
+        hint: '💡 Richtig! Zum Beispiel "Kuckuck, Kuckuck" oder "Ein Männlein steht im Walde".',
+        isYesNo: true,
+        sol: 1,
+      },
+      {
+        tag: 'Wahr/Falsch',
+        q: 'Das "Lied der Deutschen" bestand ursprünglich aus drei Strophen.',
+        hint: '💡 Richtig! Es hatte drei Strophen, von denen heute aber nur noch die dritte gesungen wird.',
+        isYesNo: true,
+        sol: 1,
+      },
+      
+      // PUZZLE
+      {
+        tag: 'Puzzle',
+        q: 'Bringe den Text der Nationalhymne in die richtige Reihenfolge!',
+        hint: '💡 Dieses Puzzle wird in einem eigenen Fenster gespielt.',
+        isPuzzle: true,
+      },
+    ],
+  },
+
+
   // ── HIER KOMMEN NEUE THEMEN DAZU (z.B. wenn neue Schulaufgabe ansteht) ──
   // beispiel_thema: {
   //   icon: '🎸',

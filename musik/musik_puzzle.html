@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Melodie-Puzzle – Musik 3. Klasse</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<link rel="icon" type="image/png" href="../images/icon_musik.png">
+<style>
+:root{
+  --bg:#fdf0f8;--card:#fff;--accent:#e91e8c;--accent-soft:#fce4f4;--accent-dark:#b01570;
+  --success:#27ae60;--danger:#e74c3c;
+  --text:#222;--muted:#666;--radius:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.app{max-width:900px;margin:0 auto;padding:14px}
+
+/* ── HEADER ── */
+.header{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,var(--accent-dark),var(--accent));color:#fff;border-radius:var(--radius);padding:16px 20px;margin-bottom:18px;box-shadow:0 4px 16px rgba(233,30,140,0.3)}
+.back-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;border-radius:10px;padding:8px 14px;cursor:pointer;font-size:13px;font-weight:bold;text-decoration:none;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.back-btn:hover{background:rgba(255,255,255,0.3)}
+.header-icon{font-size:36px;line-height:1}
+.header-text h1{font-size:20px;font-weight:bold}
+.header-text p{font-size:13px;opacity:.8;margin-top:2px}
+.coin-badge{margin-left:auto;background:rgba(255,255,255,0.2);border:1px solid rgba(255,200,0,0.4);border-radius:20px;padding:6px 14px;font-size:15px;font-weight:bold;color:#f1c40f;display:flex;align-items:center;gap:6px}
+
+/* ── PUZZLE BEREICH ── */
+.puzzle-container{background:#fff;border-radius:20px;padding:24px;box-shadow:0 8px 24px rgba(0,0,0,0.06);text-align:center}
+.puzzle-title{font-size:20px;font-weight:bold;color:#2c3e50;margin-bottom:8px}
+.puzzle-sub{font-size:15px;color:var(--muted);margin-bottom:24px}
+
+.drop-zones{display:flex;flex-direction:column;gap:10px;margin-bottom:30px;max-width:500px;margin-left:auto;margin-right:auto}
+.drop-zone{background:#f8f9fa;border:2px dashed #d5d8dc;border-radius:12px;min-height:56px;display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative}
+.drop-zone.drag-over{background:var(--accent-soft);border-color:var(--accent);border-style:solid}
+.drop-zone-number{position:absolute;left:-30px;font-size:18px;font-weight:bold;color:#bdc3c7;width:20px;text-align:right}
+
+.pieces-pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;min-height:60px;padding:15px;background:#f0f4f8;border-radius:14px;margin-bottom:24px}
+
+.piece{background:var(--accent);color:#fff;font-weight:bold;font-size:15px;padding:12px 18px;border-radius:10px;cursor:grab;user-select:none;box-shadow:0 4px 10px rgba(233,30,140,0.3);transition:transform .1s}
+.piece:active{cursor:grabbing;transform:scale(0.95)}
+.piece.selected{box-shadow:0 0 0 4px #f1c40f, 0 4px 10px rgba(233,30,140,0.3);transform:scale(1.05)}
+
+.btn-check{background:linear-gradient(135deg,#f1c40f,#e67e22);color:#2c3e50;font-weight:bold;border:none;border-radius:12px;padding:14px 24px;cursor:pointer;font-size:16px;box-shadow:0 4px 12px rgba(241,196,15,0.4);transition:transform .1s;font-family:inherit}
+.btn-check:hover{transform:translateY(-2px)}
+.btn-check:active{transform:scale(0.95)}
+
+.feedback{margin-top:20px;font-size:18px;font-weight:bold;min-height:28px}
+.feedback.ok{color:var(--success)}
+.feedback.bad{color:var(--danger)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <a href="musik_trainer.html" class="back-btn">← Trainer</a>
+    <div class="header-icon">🧩</div>
+    <div class="header-text">
+      <h1>Melodie-Puzzle</h1>
+      <p>Bringe den Text in die richtige Reihenfolge!</p>
+    </div>
+    <div class="coin-badge">🪙 <span id="coinText">0</span></div>
+  </div>
+
+  <div class="puzzle-container">
+    <div class="puzzle-title">Die deutsche Nationalhymne</div>
+    <div class="puzzle-sub">Ziehe die Textzeilen (oder tippe sie an) in die richtige Reihenfolge.</div>
+
+    <div class="drop-zones" id="dropZones">
+      <div class="drop-zone" data-index="0"><div class="drop-zone-number">1.</div></div>
+      <div class="drop-zone" data-index="1"><div class="drop-zone-number">2.</div></div>
+      <div class="drop-zone" data-index="2"><div class="drop-zone-number">3.</div></div>
+      <div class="drop-zone" data-index="3"><div class="drop-zone-number">4.</div></div>
+    </div>
+
+    <div class="pieces-pool" id="piecesPool">
+      <!-- Pieces go here -->
+    </div>
+
+    <button class="btn-check" onclick="checkPuzzle()">Lösung prüfen</button>
+    <div id="feedbackArea" class="feedback"></div>
+  </div>
+
+</div>
+
+<script>
+// ── STORAGE & COINS ──────────────────────────────────────
+const STORAGE_KEY = 'm_app_v9';
+let profiles = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+let curProfId = localStorage.getItem('m_app_active_prof');
+if (!curProfId || !profiles[curProfId]) {
+  curProfId = 'default';
+  profiles[curProfId] = { name: 'Gast', coins: 0 };
+}
+
+function updateCoins() {
+  document.getElementById('coinText').innerText = profiles[curProfId].coins || 0;
+}
+updateCoins();
+
+// ── PUZZLE LOGIK ─────────────────────────────────────────
+const lines = [
+  { id: 'p1', text: 'Einigkeit und Recht und Freiheit' },
+  { id: 'p2', text: 'für das deutsche Vaterland!' },
+  { id: 'p3', text: 'Danach lasst uns alle streben' },
+  { id: 'p4', text: 'brüderlich mit Herz und Hand!' }
+];
+
+let selectedPiece = null;
+
+function initPuzzle() {
+  const pool = document.getElementById('piecesPool');
+  pool.innerHTML = '';
+  // Mischen
+  const shuffled = [...lines].sort(() => Math.random() - 0.5);
+  
+  shuffled.forEach(line => {
+    const p = document.createElement('div');
+    p.className = 'piece';
+    p.draggable = true;
+    p.id = line.id;
+    p.textContent = line.text;
+    
+    // Drag Events
+    p.addEventListener('dragstart', dragStart);
+    p.addEventListener('dragend', dragEnd);
+    
+    // Touch / Klick Events (Alternative zum Draggen)
+    p.addEventListener('click', () => handlePieceClick(p));
+    
+    pool.appendChild(p);
+  });
+
+  const zones = document.querySelectorAll('.drop-zone');
+  zones.forEach(z => {
+    z.innerHTML = `<div class="drop-zone-number">${parseInt(z.dataset.index)+1}.</div>`;
+    z.addEventListener('dragover', dragOver);
+    z.addEventListener('dragleave', dragLeave);
+    z.addEventListener('drop', drop);
+    z.addEventListener('click', () => handleZoneClick(z));
+  });
+  
+  document.getElementById('piecesPool').addEventListener('click', (e) => {
+    if(e.target === document.getElementById('piecesPool') && selectedPiece) {
+      document.getElementById('piecesPool').appendChild(selectedPiece);
+      selectedPiece.classList.remove('selected');
+      selectedPiece = null;
+    }
+  });
+}
+
+// ── DRAG & DROP ──────────────────────────────────────────
+let draggedPiece = null;
+function dragStart(e) {
+  draggedPiece = this;
+  setTimeout(() => this.style.opacity = '0.5', 0);
+}
+function dragEnd() {
+  this.style.opacity = '1';
+  draggedPiece = null;
+}
+function dragOver(e) {
+  e.preventDefault();
+  this.classList.add('drag-over');
+}
+function dragLeave() {
+  this.classList.remove('drag-over');
+}
+function drop() {
+  this.classList.remove('drag-over');
+  if (draggedPiece) {
+    if(this.querySelector('.piece')) {
+      // Wenn schon ein Teil drin ist, tauschen wir oder schieben es zurück
+      document.getElementById('piecesPool').appendChild(this.querySelector('.piece'));
+    }
+    this.appendChild(draggedPiece);
+  }
+}
+
+// ── KLICK / TAP LOGIK (für Touch-Geräte) ────────────────
+function handlePieceClick(piece) {
+  if (selectedPiece === piece) {
+    // Deselect
+    selectedPiece.classList.remove('selected');
+    selectedPiece = null;
+  } else {
+    if (selectedPiece) selectedPiece.classList.remove('selected');
+    selectedPiece = piece;
+    selectedPiece.classList.add('selected');
+  }
+}
+function handleZoneClick(zone) {
+  if (selectedPiece) {
+    if(zone.querySelector('.piece')) {
+      document.getElementById('piecesPool').appendChild(zone.querySelector('.piece'));
+    }
+    zone.appendChild(selectedPiece);
+    selectedPiece.classList.remove('selected');
+    selectedPiece = null;
+  } else if (zone.querySelector('.piece')) {
+    // Klick auf eine Zone mit Teil (aber ohne aktuelles selectedPiece) -> Teil zurücklegen oder markieren
+    handlePieceClick(zone.querySelector('.piece'));
+  }
+}
+
+// ── PRÜFEN ───────────────────────────────────────────────
+function checkPuzzle() {
+  const zones = document.querySelectorAll('.drop-zone');
+  let isCorrect = true;
+  let allFilled = true;
+
+  zones.forEach((z, idx) => {
+    const piece = z.querySelector('.piece');
+    if (!piece) {
+      allFilled = false;
+      return;
+    }
+    if (piece.id !== lines[idx].id) {
+      isCorrect = false;
+    }
+  });
+
+  const fb = document.getElementById('feedbackArea');
+  if (!allFilled) {
+    fb.innerHTML = '<div class="feedback bad">❌ Bitte fülle alle Lücken aus!</div>';
+    return;
+  }
+
+  if (isCorrect) {
+    fb.innerHTML = '<div class="feedback ok">🎉 Super gemacht! +5 🪙</div>';
+    profiles[curProfId].coins = (profiles[curProfId].coins || 0) + 5;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
+    updateCoins();
+    
+    // Knopf ändern zu "Nochmal" oder "Zurück"
+    const btn = document.querySelector('.btn-check');
+    btn.textContent = 'Nochmal spielen';
+    btn.onclick = () => {
+      fb.innerHTML = '';
+      btn.textContent = 'Lösung prüfen';
+      btn.onclick = checkPuzzle;
+      initPuzzle();
+    };
+  } else {
+    fb.innerHTML = '<div class="feedback bad">❌ Nicht ganz richtig. Versuche es nochmal!</div>';
+  }
+}
+
+// Start
+initPuzzle();
+</script>
+</body>
+</html>

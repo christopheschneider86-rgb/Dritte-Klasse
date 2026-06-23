@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Komponisten-Lexikon – Musik 3. Klasse</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<link rel="icon" type="image/png" href="../images/icon_musik.png">
+<link rel="apple-touch-icon" href="../images/icon_musik.png">
+<style>
+:root{
+  --bg:#fdf0f8;--card:#fff;--accent:#e91e8c;--accent-soft:#fce4f4;--accent-dark:#b01570;
+  --text:#222;--muted:#666;--radius:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.app{max-width:900px;margin:0 auto;padding:14px}
+
+/* ── HEADER ── */
+.header{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,var(--accent-dark),var(--accent));color:#fff;border-radius:var(--radius);padding:16px 20px;margin-bottom:18px;box-shadow:0 4px 16px rgba(233,30,140,0.3)}
+.back-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;border-radius:10px;padding:8px 14px;cursor:pointer;font-size:13px;font-weight:bold;text-decoration:none;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.back-btn:hover{background:rgba(255,255,255,0.3)}
+.header-icon{font-size:36px;line-height:1}
+.header-text h1{font-size:20px;font-weight:bold}
+.header-text p{font-size:13px;opacity:.8;margin-top:2px}
+
+/* ── KOMPONISTEN-GRID ── */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-bottom:24px}
+.comp-card{background:#fff;border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,0.07);overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;border:2px solid transparent;display:flex;flex-direction:column}
+.comp-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.12)}
+.comp-card.open{border-color:var(--accent)}
+.comp-card-top{padding:16px;text-align:center;background:#fef9e7;}
+.comp-card-top-icon{font-size:60px;margin-bottom:10px;}
+.comp-name{font-size:18px;font-weight:bold;color:#2c3e50;margin-bottom:2px}
+.comp-dates{font-size:13px;color:#7f8c8d;font-weight:bold;margin-bottom:6px}
+.comp-kurz{font-size:14px;color:var(--muted);line-height:1.4;padding:0 10px}
+
+/* Aufklappbereich */
+.comp-detail{display:none;padding:16px;border-top:2px solid #f5f5f5}
+.comp-card.open .comp-detail{display:block}
+.detail-section{margin-bottom:14px}
+.detail-label{font-size:12px;font-weight:bold;text-transform:uppercase;color:var(--accent);letter-spacing:.5px;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.detail-text{font-size:14px;color:#2c3e50;line-height:1.5}
+.highlight-box{background:#fdf0f8;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 12px;font-size:13px;color:#b01570;line-height:1.5;margin-top:5px}
+
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <a href="musik_trainer.html" class="back-btn" id="backBtn">← Trainer</a>
+    <div class="header-icon">🎼</div>
+    <div class="header-text">
+      <h1>Komponisten-Lexikon</h1>
+      <p>Berühmte Musiker und ihre Werke</p>
+    </div>
+  </div>
+
+  <div id="content" class="comp-grid">
+    <!-- Hier werden die Karten generiert -->
+  </div>
+
+</div>
+
+<script>
+const KOMPONISTEN = [
+  {
+    id: 'haydn',
+    name: 'Joseph Haydn',
+    icon: '🎻',
+    dates: '* 1732 in Rohrau – † 1809 in Wien',
+    kurz: 'Erfand das Streichquartett und komponierte die Melodie der deutschen Nationalhymne.',
+    leben: 'Haydns Eltern waren Wagenbauer in einem kleinen österreichischen Dorf. Weil er so schön singen konnte, kam er schon mit 8 Jahren in den Wiener Domchor. Nach dem Stimmbruch verdiente er sein Geld als Musiklehrer.',
+    beruf: 'Kapellmeister bei Fürst Esterházy',
+    berufText: 'Der Fürst war sehr reich und Haydn arbeitete fast 30 Jahre lang für ihn. Er musste das Orchester leiten und ständig neue Musikstücke erfinden, damit dem Fürsten nicht langweilig wurde!',
+    werk: 'Die Kaiserhymne',
+    werkText: 'Er komponierte eine feierliche Hymne zum Geburtstag des Kaisers von Österreich (aus einem Volkslied und einem Kirchenlied). Heute ist diese Melodie unsere <strong>deutsche Nationalhymne</strong>.',
+    funFact: 'Haydn war 40 Jahre lang verheiratet, hatte aber keine eigenen Kinder. Er wurde sehr alt für die damalige Zeit (77 Jahre) und reiste sogar nach England.'
+  },
+  {
+    id: 'prokofjew',
+    name: 'Sergei Prokofjew',
+    icon: '🎹',
+    dates: '* 1891 in der Ukraine – † 1953 in Moskau',
+    kurz: 'Ein berühmter Komponist aus Russland, der "Peter und der Wolf" schrieb.',
+    leben: 'Prokofjew zeigte schon als kleines Kind ein unglaubliches Talent für Musik und komponierte mit 9 Jahren seine erste Oper.',
+    beruf: 'Pianist und Komponist',
+    berufText: 'Er reiste um die ganze Welt, lebte in Amerika, Frankreich und kehrte später nach Russland zurück. Er schrieb viele Konzerte, Opern und Ballette.',
+    werk: 'Peter und der Wolf (1936)',
+    werkText: 'Er schrieb dieses musikalische Märchen extra für Kinder! Sein Ziel war es, dass Kinder die Instrumente eines Orchesters kennenlernen und erkennen können.',
+    funFact: 'Prokofjew war nicht nur ein genialer Musiker, sondern auch ein ausgezeichneter Schachspieler!'
+  }
+];
+
+function renderCard(comp) {
+  return `
+    <div class="comp-card" id="card_${comp.id}" onclick="toggleCard('${comp.id}')">
+      <div class="comp-card-top">
+        <div class="comp-card-top-icon">${comp.icon}</div>
+        <div class="comp-name">${comp.name}</div>
+        <div class="comp-dates">${comp.dates}</div>
+        <div class="comp-kurz">${comp.kurz}</div>
+      </div>
+      <div class="comp-detail">
+        <div class="detail-section">
+          <div class="detail-label">👶 Leben</div>
+          <div class="detail-text">${comp.leben}</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">💼 Wichtigster Job</div>
+          <div class="detail-text"><strong>${comp.beruf}</strong><br>${comp.berufText}</div>
+        </div>
+        <div class="detail-section">
+          <div class="detail-label">🏆 Bekanntestes Werk</div>
+          <div class="detail-text"><strong>${comp.werk}</strong><br>${comp.werkText}</div>
+        </div>
+        <div class="highlight-box">
+          <strong>💡 Wusstest du schon?</strong><br>${comp.funFact}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+document.getElementById('content').innerHTML = KOMPONISTEN.map(renderCard).join('');
+
+function toggleCard(id) {
+  const card = document.getElementById('card_' + id);
+  // Optional: Andere zuklappen
+  // document.querySelectorAll('.comp-card').forEach(c => { if(c.id !== 'card_'+id) c.classList.remove('open') });
+  card.classList.toggle('open');
+}
+
+// Wenn als Overlay geöffnet (im iframe oder eingebunden), Back-Button anpassen
+if (window.parent !== window) {
+  document.getElementById('backBtn').style.display = 'none';
+}
+</script>
+</body>
+</html>

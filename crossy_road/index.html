@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Talha - Crossy Road Game Clone</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="https://i.ibb.co/M6KTWnf/pic.jpg" />
+
+    <!-- 👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻-->
+    <!-- Also uploaded the demo of this code in a gif : https://c.tenor.com/x8v1oNUOmg4AAAAd/tenor.gif-->
+    <!-- 👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻-->
+
+    <!-- 👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻-->
+    <!-- More html-css-js Games Calculators Games Cards Elements Projects on https://www.github.com/he-is-talha -->
+    <!-- 👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻-->
+  </head>
+  <body>
+    <style>
+      .app-header {
+        position: absolute; top: 15px; left: 15px; z-index: 3000;
+        display: flex; gap: 15px; align-items: center;
+      }
+      .back-btn {
+        background: #e74c3c; color: white; padding: 10px 15px; border-radius: 12px; text-decoration: none; font-size: 14px; font-family: sans-serif;
+      }
+      .coin-display {
+        background: #f1c40f; color: #7d5a00; padding: 10px 15px; border-radius: 12px; font-size: 14px; font-weight: bold; font-family: sans-serif;
+      }
+      #startScreen {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85);
+        display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000;
+        color: white; font-family: sans-serif; text-align: center;
+      }
+      #startScreen h1 { font-family: "Press Start 2P", cursive; margin-bottom: 20px; color: #f1c40f; font-size: 32px;}
+      #startScreen p { margin-bottom: 30px; font-size: 18px; line-height: 1.5; }
+      #btnStart { background: #2ecc71; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 12px; cursor: pointer; font-weight: bold; font-family: inherit;}
+      #btnStart:hover { background: #27ae60; }
+      #msgError { color: #e74c3c; margin-top: 15px; font-weight: bold; display: none; }
+    </style>
+    
+    <div class="app-header">
+      <a href="../index.html" class="back-btn">← Zurück</a>
+      <div class="coin-display" id="coinDisplay">🪙 0</div>
+    </div>
+
+    <div id="startScreen">
+      <h1>Crossy Road</h1>
+      <p>Hilf dem Huhn über die Straße!<br>Pass auf die Autos auf!</p>
+      <button id="btnStart">Spielen (10 🪙)</button>
+      <div id="msgError">Du hast nicht genug Münzen! Lerne mehr, um Münzen zu sammeln.</div>
+    </div>
+
+    <div id="counter">0</div>
+
+    <div id="controlls">
+      <div>
+        <button id="forward">
+          <svg width="30" height="30" viewBox="0 0 10 10">
+            <g transform="rotate(0, 5,5)">
+              <path d="M5,4 L7,6 L3,6 L5,4" />
+            </g>
+          </svg>
+        </button>
+        <button id="left">
+          <svg width="30" height="30" viewBox="0 0 10 10">
+            <g transform="rotate(-90, 5,5)">
+              <path d="M5,4 L7,6 L3,6 L5,4" />
+            </g>
+          </svg>
+        </button>
+        <button id="backward">
+          <svg width="30" height="30" viewBox="0 0 10 10">
+            <g transform="rotate(180, 5,5)">
+              <path d="M5,4 L7,6 L3,6 L5,4" />
+            </g>
+          </svg>
+        </button>
+        <button id="right">
+          <svg width="30" height="30" viewBox="0 0 10 10">
+            <g transform="rotate(90, 5,5)">
+              <path d="M5,4 L7,6 L3,6 L5,4" />
+            </g>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="end">
+      <div id="endScore" style="font-size:28px; color:white; margin-bottom:20px; font-weight:bold; font-family:'Press Start 2P', cursive;">Score: 0</div>
+      <button id="retry" style="background:#f1c40f; color:#7d5a00; border:none; padding:15px 30px; font-size:18px; border-radius:12px; cursor:pointer; font-weight:bold; font-family:inherit;">Zurück zum Start</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/99/three.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+      const STORAGE_KEY = 'm_app_v9';
+      const ACTIVE_KEY = 'm_app_active_prof';
+      const profiles = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+      let curProfId = localStorage.getItem(ACTIVE_KEY);
+      if(!curProfId || !profiles[curProfId]){
+        curProfId = 'default';
+        profiles[curProfId] = { name: 'Gast', coins: 50 };
+      }
+      
+      function updateCoins() {
+        document.getElementById('coinDisplay').innerText = `🪙 ${profiles[curProfId].coins || 0}`;
+      }
+      updateCoins();
+
+      document.getElementById('btnStart').addEventListener('click', () => {
+        let coins = profiles[curProfId].coins || 0;
+        if(coins >= 10) {
+          profiles[curProfId].coins -= 10;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
+          updateCoins();
+          document.getElementById('startScreen').style.display = 'none';
+          window.gameStarted = true;
+        } else {
+          document.getElementById('msgError').style.display = 'block';
+        }
+      });
+
+      // Highscore
+      window.onGameOver = function(score) {
+        document.getElementById('endScore').innerText = 'Score: ' + score;
+        let hs = [];
+        try { hs = JSON.parse(localStorage.getItem('m_crossy_hs') || '[]'); } catch(e) {}
+        hs.push({ name: profiles[curProfId].name, score: score });
+        hs.sort((a,b) => b.score - a.score);
+        hs = hs.slice(0, 3);
+        localStorage.setItem('m_crossy_hs', JSON.stringify(hs));
+      };
+    </script>
+  </body>
+</html>
