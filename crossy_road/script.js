@@ -711,7 +711,7 @@ function animate(timestamp) {
       if (chickenMaxX > carMinX && chickenMinX < carMaxX) {
         if(endDOM.style.visibility !== "visible") {
            endDOM.style.visibility = "visible";
-           if(window.onGameOver) window.onGameOver(stepStart);
+           if(window.onGameOver) window.onGameOver(currentLane);
         }
       }
     });

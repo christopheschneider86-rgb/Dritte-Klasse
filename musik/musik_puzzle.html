@@ -99,12 +99,21 @@ function updateCoins() {
 updateCoins();
 
 // ── PUZZLE LOGIK ─────────────────────────────────────────
-const lines = [
-  { id: 'p1', text: 'Einigkeit und Recht und Freiheit' },
-  { id: 'p2', text: 'für das deutsche Vaterland!' },
-  { id: 'p3', text: 'Danach lasst uns alle streben' },
-  { id: 'p4', text: 'brüderlich mit Herz und Hand!' }
+const puzzleBlocks = [
+  [
+    { id: 'p1', text: 'Einigkeit und Recht und Freiheit' },
+    { id: 'p2', text: 'für das deutsche Vaterland!' },
+    { id: 'p3', text: 'Danach lasst uns alle streben' },
+    { id: 'p4', text: 'brüderlich mit Herz und Hand!' }
+  ],
+  [
+    { id: 'p1', text: 'Einigkeit und Recht und Freiheit' },
+    { id: 'p2', text: 'sind des Glückes Unterpfand:' },
+    { id: 'p3', text: 'Blüh im Glanze dieses Glückes,' },
+    { id: 'p4', text: 'blühe, deutsches Vaterland!' }
+  ]
 ];
+let lines = [];
 
 let selectedPiece = null;
 
@@ -112,6 +121,7 @@ function initPuzzle() {
   const pool = document.getElementById('piecesPool');
   pool.innerHTML = '';
   // Mischen
+  lines = puzzleBlocks[Math.floor(Math.random() * puzzleBlocks.length)];
   const shuffled = [...lines].sort(() => Math.random() - 0.5);
   
   shuffled.forEach(line => {
