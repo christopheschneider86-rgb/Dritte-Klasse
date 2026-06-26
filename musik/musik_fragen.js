@@ -654,6 +654,20 @@ const MUSIK_TOPICS = {
         sol: 2,
         hint: '💡 Er lebte ein langes, erfolgreiches Musikerleben (1732 - 1809).',
       },
+      {
+        tag: 'Komponist',
+        q: 'Welchen Spitznamen gaben ihm seine Musiker oft, weil er so gutmütig war?',
+        choices: ['Onkel Haydn', 'Papa Haydn', 'Opa Haydn', 'Meister Haydn'],
+        sol: 1,
+        hint: '💡 Er kümmerte sich sehr gut um die Musiker in seinem Orchester.',
+      },
+      {
+        tag: 'Komponist',
+        q: 'Als was wird Joseph Haydn in der Musikgeschichte oft bezeichnet?',
+        choices: ['Vater der Sinfonie', 'König des Pop', 'Kaiser der Oper', 'Erfinder des Klaviers'],
+        sol: 0,
+        hint: '💡 Er komponierte über 100 große Werke für Orchester, die man "Sinfonien" nennt.',
+      },
 
       // MELODIE
       {
@@ -704,6 +718,20 @@ const MUSIK_TOPICS = {
         choices: ['Ohne Gesang, ruhig', 'Nur mit Geigen', 'Mit Gesang, feierlich, schwungvoll', 'Ganz leise'],
         sol: 2,
         hint: '💡 Die Menschen singen mit und die Musik hat Schwung!',
+      },
+      {
+        tag: 'Melodie',
+        q: 'In welchem Tempo (Geschwindigkeit) sollte die Nationalhymne gesungen werden?',
+        choices: ['Sehr schnell und fröhlich', 'Ruhig, feierlich und nicht zu schnell', 'Als wäre es ein Tanz', 'Ganz langsam wie zum Einschlafen'],
+        sol: 1,
+        hint: '💡 Eine Nationalhymne ist ein wichtiges, ernstes Lied für ein ganzes Land.',
+      },
+      {
+        tag: 'Melodie',
+        q: 'Wer wird durch diese Melodie besonders geehrt?',
+        choices: ['Das Land und seine Bewohner', 'Der Komponist', 'Der Sänger', 'Ein König'],
+        sol: 0,
+        hint: '💡 Wenn sie heute gespielt wird, steht sie für ganz Deutschland.',
       },
 
       // TEXT & GESCHICHTE
@@ -756,6 +784,27 @@ const MUSIK_TOPICS = {
         sol: 1,
         hint: '💡 Diese Begriffe sind auch heute noch wichtig für das Wohlergehen unseres Landes!',
       },
+      {
+        tag: 'Geschichte',
+        q: 'Wo befand sich August Heinrich Hoffmann von Fallersleben, als er den Text dichtete?',
+        choices: ['In Wien', 'In Berlin', 'Auf der Insel Helgoland', 'In seinem Garten'],
+        sol: 2,
+        hint: '💡 Es war auf einer kleinen Nordsee-Insel im Urlaub.',
+      },
+      {
+        tag: 'Text',
+        q: 'Welche Zeile folgt direkt auf "Einigkeit und Recht und Freiheit"?',
+        choices: ['Für das deutsche Vaterland', 'Danach lasst uns alle streben', 'Blüh im Glanze dieses Glückes', 'Brüderlich mit Herz und Hand'],
+        sol: 0,
+        hint: '💡 Sie reimt sich auf "Herz und Hand" in der vierten Zeile.',
+      },
+      {
+        tag: 'Text',
+        q: 'Warum reimt sich im Lied vieles (z.B. Pfand auf Vaterland)?',
+        choices: ['Weil es ein Gedicht ist', 'Weil der Dichter keine anderen Wörter wusste', 'Weil es sich so lustiger anhört', 'Das war Zufall'],
+        sol: 0,
+        hint: '💡 Liedertexte sind meistens wie Gedichte geschrieben, damit sie sich besser singen lassen.',
+      },
       
       // WAHR / FALSCH
       {
@@ -792,6 +841,27 @@ const MUSIK_TOPICS = {
         hint: '💡 Richtig! Es hatte drei Strophen, von denen heute aber nur noch die dritte gesungen wird.',
         isYesNo: true,
         sol: 1,
+      },
+      {
+        tag: 'Wahr/Falsch',
+        q: 'Die Melodie der deutschen Nationalhymne wurde zuerst für den deutschen Kaiser komponiert.',
+        hint: '💡 Falsch! Haydn komponierte sie für den österreichischen Kaiser ("Kaiserhymne").',
+        isYesNo: true,
+        sol: 0,
+      },
+      {
+        tag: 'Wahr/Falsch',
+        q: 'August Heinrich Hoffmann von Fallersleben schrieb den Text auf der Insel Helgoland.',
+        hint: '💡 Richtig! Im Jahr 1841 im Urlaub an der Nordsee.',
+        isYesNo: true,
+        sol: 1,
+      },
+      {
+        tag: 'Wahr/Falsch',
+        q: 'Joseph Haydn und Hoffmann von Fallersleben haben das Lied gemeinsam an einem Tisch geschrieben.',
+        hint: '💡 Falsch! Haydn war schon lange tot, als Hoffmann von Fallersleben den Text schrieb.',
+        isYesNo: true,
+        sol: 0,
       },
       
       // PUZZLE
