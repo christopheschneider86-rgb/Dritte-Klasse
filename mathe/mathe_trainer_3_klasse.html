@@ -220,6 +220,14 @@ body{
             <div class="subtype-label" id="subtypeLabel">Aufgabenart wählen</div>
             <div class="subtype-chips" id="subtypeChips"></div>
           </div>
+          <!-- DRAGON TIP -->
+          <div id="dragonTip" style="display:none; margin-top:15px; background:#e8f8f5; border:2px solid #1abc9c; border-radius:12px; padding:12px; align-items:center; gap:10px;">
+            <div style="font-size:30px;">🐉</div>
+            <div>
+              <div style="font-weight:bold; color:#16a085; font-size:14px;">Tipp vom Mathe-Drachen</div>
+              <div id="dragonTipText" style="color:#2c3e50; font-size:13px; line-height:1.4;"></div>
+            </div>
+          </div>
         </div>
         <div>
           <div class="panel-title" id="taskTitle">Aktuelle Aufgabe</div>
@@ -383,6 +391,9 @@ const tasks = {
     window.drop=function(e){e.preventDefault();const d=e.dataTransfer.getData("text")||window.draggedItem?.id;if(!d)return;const el=document.getElementById(d);if(e.target.classList.contains('drop-zone')&&e.target.children.length===0){e.target.appendChild(el);}else if(e.target.id==='drag-pool'){e.target.appendChild(el);}updateCheckBtn();};
     window.clickMove=function(e){const el=e.target;if(el.parentElement.id==='drag-pool'){const zones=document.querySelectorAll('.drop-zone');for(let z of zones){if(z.children.length===0){z.appendChild(el);break;}}}else{document.getElementById('drag-pool').appendChild(el);}updateCheckBtn();};
     return{q:"Ordne die Gewichte der Größe nach!",hint:"Ziehe die Kästchen nach unten (oder tippe sie an). Kleinste zuerst!",html:`<div style="font-size:16px;margin-bottom:10px;color:var(--muted)">Ziehe die Gewichte hier heraus:</div><div id="drag-pool" style="display:flex;gap:10px;justify-content:center;min-height:50px;background:#fef9e7;padding:10px;border-radius:10px;margin-bottom:20px;" ondrop="drop(event)" ondragover="allowDrop(event)">${pick.map((x,i)=>`<div class="drag-item" draggable="true" ondragstart="drag(event)" onclick="clickMove(event)" id="drag_${i}" data-val="${x.v}" style="background:#fff;border:2px solid #bdc3c7;border-radius:6px;padding:8px 12px;cursor:grab;font-weight:bold;">${x.t}</div>`).join('')}</div><div style="font-size:16px;margin-bottom:10px;color:var(--muted)">In die richtige Reihenfolge (klein -> groß):</div><div style="display:flex;gap:10px;justify-content:center;">${pick.map((_,i)=>`<div class="drop-zone" id="dz_${i}" ondrop="drop(event)" ondragover="allowDrop(event)" style="width:80px;height:45px;border:2px dashed #95a5a6;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#ecf0f1;"></div>`).join('')}</div><input type="hidden" id="inp_0">`,ids:['inp_0'],sol:['ok'],isFloat:false,checkOverride:()=>{let ok=true;const zones=document.querySelectorAll('.drop-zone');for(let i=0;i<zones.length;i++){if(zones[i].children.length===0) return false;const v=parseInt(zones[i].children[0].getAttribute('data-val'));if(v!==sorted[i].v) ok=false;}return ok;}};}}},
+  geld_rechnen:{hj:2,title:"Geld",sub:"Rechnen mit Komma",subtypes:[{key:'add',label:'➕ Addieren'},{key:'sub',label:'➖ Subtrahieren'}],gen(st){let a_euro=randInt(1,9), a_cent=randInt(1,9)*10;let b_euro=randInt(1,5), b_cent=randInt(1,9)*10;let a=a_euro+a_cent/100;let b=b_euro+b_cent/100;if(st==='add'){let sum=a+b;return{q:`${a.toFixed(2).replace('.',',')} € + ${b.toFixed(2).replace('.',',')} € = ?`,hint:"Tipp: Addiere erst die Euro, dann die Cent.",html:`<div style="font-size:24px;"><input type="text" class="std-input" id="inp_1" style="width:120px;"> €</div>`,ids:['inp_1'],sol:[sum],isFloat:true};}else{if(a<b){let t=a;a=b;b=t;}let diff=a-b;return{q:`${a.toFixed(2).replace('.',',')} € - ${b.toFixed(2).replace('.',',')} € = ?`,hint:"Tipp: Subtrahiere erst die Euro, dann die Cent.",html:`<div style="font-size:24px;"><input type="text" class="std-input" id="inp_1" style="width:120px;"> €</div>`,ids:['inp_1'],sol:[diff],isFloat:true};}}},
+  geld_stueckeln:{hj:2,title:"Geld",sub:"Rückgeld & Einkaufen",subtypes:[{key:'rueck',label:'💶 Rückgeld'}],gen(st){let bill=[5,10,20][randInt(0,2)];let price=(randInt(1,bill-2)+randInt(1,9)/10);let change=bill-price;return{q:`Du kaufst etwas für ${price.toFixed(2).replace('.',',')} €. Du bezahlst mit einem ${bill} € Schein. Wie viel Rückgeld bekommst du?`,hint:"Tipp: Ergänze den Betrag bis zum nächsten vollen Euro, dann bis zum Schein.",html:`<div style="font-size:24px;"><input type="text" class="std-input" id="inp_1" style="width:120px;"> €</div>`,ids:['inp_1'],sol:[change],isFloat:true};}},
+  logik:{hj:2,title:"Logik",sub:"Rätsel & Zahlenreihen",subtypes:[{key:'reihe',label:'📈 Zahlenreihe'},{key:'raetsel',label:'🧠 Zahlenrätsel'}],gen(st){if(st==='reihe'){let step=randInt(2,12);let start=randInt(10,50);let seq=[start,start+step,start+step*2,start+step*3];return{q:`Führe die Zahlenreihe fort: ${seq.join(', ')}, ...`,hint:"Finde heraus, wie viel immer dazukommt oder abgezogen wird.",html:`<input type="number" class="std-input" id="inp_1">`,ids:['inp_1'],sol:[start+step*4],isFloat:false};}else{let target=randInt(10,50);let diff=randInt(2,9);let multi=randInt(2,3);let clues=[];if(multi===2)clues.push(`Ich bin die Hälfte von ${target*2}.`);else clues.push(`Wenn du mich mit 3 malnimmst, erhältst du ${target*3}.`);clues.push(`Wenn du ${diff} abziehst, hast du ${target-diff}.`);let q="Welche Zahl bin ich?<br><ul>"+clues.map(c=>`<li>${c}</li>`).join('')+"</ul>";return{q:q,hint:"Überprüfe beide Hinweise.",html:`<input type="number" class="std-input" id="inp_1">`,ids:['inp_1'],sol:[target],isFloat:false};}}},
   rechnen_gross:{title:"Rechnen",sub:"+ − ×",subtypes:[{key:'mixed',label:'🔀 Gemischt'},{key:'add',label:'➕ Addition'},{key:'sub',label:'➖ Subtraktion'},{key:'mul',label:'✖️ Multiplikation'}],gen(st){let op;if(st==='add')op='+';else if(st==='sub')op='-';else if(st==='mul')op='*';else op=['+','-','*'][randInt(0,2)];let a,b,s;if(op==='+'){a=randInt(150,500);b=randInt(150,400);s=a+b;}else if(op==='-'){a=randInt(400,900);b=randInt(110,a-50);s=a-b;}else{a=randInt(12,30);b=randInt(3,9);s=a*b;}return{q:`${a} ${op==='*'?'×':op} ${b} = ?`,hint:"Rechne halbschriftlich oder im Kopf.",html:`<input type="number" class="std-input" id="inp_1">`,ids:['inp_1'],sol:[s],isFloat:false};}},
 
   // ── NEU: MULTIPLIKATION & DIVISION ──────────────────────────────────────
@@ -587,6 +598,24 @@ function loadTask(){
   document.getElementById('checkBtn').style.display='';
   document.getElementById('nextBtn').style.display='none';
   document.getElementById('readBtn').style.display='';
+
+  // Drachen-Tipp einblenden (ca. 30% Wahrscheinlichkeit)
+  const drTips = [
+    "Wusstest du schon? 1 Euro besteht aus genau 100 Cent!",
+    "Lass dich nicht verwirren: Ein Kilo sind 1000 Gramm.",
+    "Beim schriftlichen Rechnen immer hinten bei den Einern anfangen!",
+    "Vergiss das Komma nicht, wenn du mit Geld rechnest.",
+    "Lies Textaufgaben immer zweimal langsam durch.",
+    "Beim Subtrahieren: Achte auf den Übergang, wenn die obere Zahl kleiner ist!",
+    "Ein halbes Kilo sind 500 Gramm, ein viertel Kilo sind 250 Gramm."
+  ];
+  if(Math.random() < 0.3) {
+      document.getElementById('dragonTipText').textContent = drTips[Math.floor(Math.random()*drTips.length)];
+      document.getElementById('dragonTip').style.display = 'flex';
+  } else {
+      document.getElementById('dragonTip').style.display = 'none';
+  }
+
   setTimeout(()=>{
     t.ids.forEach(id=>{
       const el=document.getElementById(id);
