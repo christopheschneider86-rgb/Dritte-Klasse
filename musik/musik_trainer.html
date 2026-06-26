@@ -295,6 +295,7 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 
 <script src="musik_fragen.js"></script>
 <script>
+function createConfetti(){for(let i=0;i<40;i++){const c=document.createElement('div');c.className='confetti';c.style.left=Math.random()*100+'vw';c.style.top='-10px';c.style.backgroundColor=['#f1c40f','#e74c3c','#3498db','#2ecc71','#9b59b6'][Math.floor(Math.random()*5)];document.body.appendChild(c);let a=Math.random()*2-1,s=Math.random()*3+2,x=0,y=0;const iv=setInterval(()=>{x+=a;y+=s;c.style.transform=`translate(${x}px,${y}px) rotate(${y*2}deg)`;if(y>window.innerHeight){clearInterval(iv);c.remove();}},20);}}
 // ── STATE ──────────────────────────────────────────────
 let profiles = {}, curProfId = null, curTopicKey = null;
 let curQuestionPool = [], curShuffled = [], curShuffleIdx = 0, curQuestion = null;
