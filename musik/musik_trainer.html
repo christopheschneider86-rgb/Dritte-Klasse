@@ -147,6 +147,15 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 .btn-lexikon:hover{background:var(--accent-soft);box-shadow:0 3px 10px rgba(233,30,140,0.2)}
 .btn-lexikon svg{width:18px;height:18px}
 </style>
+
+  <style>
+    .confetti {
+      position: fixed;
+      width: 10px; height: 10px;
+      z-index: 9999;
+      pointer-events: none;
+    }
+  </style>
 </head>
 <body>
 
@@ -504,6 +513,7 @@ function checkAnswer() {
   const sol = curQuestion._shuffledSol !== undefined ? curQuestion._shuffledSol : curQuestion.sol;
   const correct = selectedAnswer === sol;
   const fb = document.getElementById('feedbackArea');
+  if (correct) createConfetti();
   const p = profiles[curProfId];
 
   if (!curQuestion.isYesNo && curQuestion.choices) {

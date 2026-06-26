@@ -12,6 +12,27 @@
   --danger: #e74c3c; --success: #27ae60; --warning: #f1c40f; --text: #222222; --muted: #666666;
   --radius: 18px;
 }
+/* HALBJAHR TABS */
+.halbjahr-tabs{display:flex;gap:10px;margin-bottom:15px;background:#ecf0f1;padding:6px;border-radius:12px;}
+.halbjahr-tab{flex:1;text-align:center;padding:10px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:15px;color:var(--muted);transition:all .2s;}
+.halbjahr-tab.active{background:white;color:var(--accent);box-shadow:0 2px 6px rgba(0,0,0,0.05);}
+/* STREAK & CONFETTI */
+.streak-badge{display:flex;align-items:center;gap:6px;background:#ffeaa7;border:2px solid #fdcb6e;border-radius:12px;padding:7px 13px;font-weight:bold;font-size:15px;color:#d35400;white-space:nowrap;transition:transform 0.2s;}
+.streak-badge.pop{transform:scale(1.2);}
+.confetti{position:fixed;width:10px;height:10px;background-color:#f00;pointer-events:none;z-index:9999;}
+/* VERTICAL MATH (SCHRIFTLICH) */
+.vertical-math{display:inline-grid;grid-template-columns:auto repeat(3, 40px);gap:4px;font-size:24px;font-weight:bold;align-items:center;justify-items:center;font-family:monospace;}
+.v-cell{width:100%;text-align:center;}
+.v-input{width:36px;height:36px;font-size:24px;font-weight:bold;text-align:center;border:2px solid #bdc3c7;border-radius:6px;font-family:monospace;}
+.v-input:focus{border-color:var(--accent);outline:none;background:#eaf4ff;}
+.v-merke-row{border-bottom:2px solid #2c3e50;padding-bottom:4px;margin-bottom:4px;display:contents;}
+.v-merke-input{width:24px;height:24px;font-size:16px;text-align:center;border:1px solid #95a5a6;border-radius:4px;background:#f9f9f9;}
+.v-merke-input:focus{border-color:var(--accent);outline:none;}
+.v-line{grid-column:1 / -1;width:100%;height:3px;background:#2c3e50;margin:4px 0;}
+/* GEWICHTE STÜCKELN */
+.weight-btn{padding:8px 12px;border:2px solid #bdc3c7;border-radius:8px;background:#fdfdfd;font-weight:bold;cursor:pointer;font-size:16px;}
+.weight-btn:hover{background:#ecf0f1;}
+.weight-btn.selected{border-color:#d35400;background:#ffeaa7;color:#d35400;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{
   font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
@@ -175,6 +196,7 @@ body{
         <span id="curChildName">…</span>
       </div>
       <div class="icon-btn-row">
+        <div class="streak-badge" id="streakBadge" style="display:none;" title="Feuer-Serie!">🔥 <span id="streakText">0</span></div>
         <div class="coin-badge">🪙 <span id="coinText">0</span></div>
         <button class="icon-btn" id="hsBtnEl" onclick="switchView(currentView==='highscore'?'practice':'highscore')" title="Bestenliste">🏆</button>
         <button class="icon-btn" id="dashBtnEl" onclick="switchView(currentView==='dashboard'?'practice':'dashboard')" title="Eltern-Stats">📊</button>
@@ -188,6 +210,10 @@ body{
       </div>
       <div class="main-layout">
         <div>
+          <div class="halbjahr-tabs">
+            <div class="halbjahr-tab active" onclick="setHalbjahr(1, this)">1. Halbjahr</div>
+            <div class="halbjahr-tab" onclick="setHalbjahr(2, this)">2. Halbjahr</div>
+          </div>
           <div class="panel-title">Themengebiete</div>
           <div class="tile-grid" id="taskTiles"></div>
           <div class="subtype-bar" id="subtypeBar">
@@ -218,17 +244,32 @@ body{
       </div>
 
       <!-- SPIEL-BANNER -->
-      <div class="game-banner">
-        <div class="game-banner-left">
-          <img src="../images/mathe_jump.png" class="game-banner-icon" alt="🎮" onerror="this.style.display='none'">
-          <div>
-            <div class="game-banner-title">🎮 Mathe-Hüpfer</div>
-            <div class="game-banner-sub">Richtige Antwort = 1 Münze. 10 Münzen = eine Runde!</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="game-banner">
+          <div class="game-banner-left">
+            <img src="../images/mathe_jump.png" class="game-banner-icon" alt="🎮" onerror="this.style.display='none'">
+            <div>
+              <div class="game-banner-title">🎮 Mathe-Hüpfer</div>
+              <div class="game-banner-sub">Richtige Antwort = 1 Münze. 10 Münzen = eine Runde!</div>
+            </div>
+          </div>
+          <div class="game-banner-right">
+            <div class="coin-badge-big">🪙 <span id="coinBannerText">0</span></div>
+            <button class="btn-play" onclick="openGame()">Spielen →</button>
           </div>
         </div>
-        <div class="game-banner-right">
-          <div class="coin-badge-big">🪙 <span id="coinBannerText">0</span></div>
-          <button class="btn-play" onclick="openGame()">Spielen →</button>
+
+        <div class="game-banner" style="background: linear-gradient(135deg, #eaf4ff, #d4e6f1); border: 2px solid #3498db;">
+          <div class="game-banner-left">
+            <div class="game-banner-icon" style="background:#3498db; display:flex; align-items:center; justify-content:center; font-size:30px;">🧩</div>
+            <div>
+              <div class="game-banner-title" style="color:#2980b9;">🧩 2048 spielen</div>
+              <div class="game-banner-sub" style="color:#34495e;">Zahlen verbinden und gewinnen! Kostet 10 Münzen.</div>
+            </div>
+          </div>
+          <div class="game-banner-right">
+            <button class="btn-play" style="background:#3498db; color:white; border:none;" onclick="open2048()">Spielen →</button>
+          </div>
         </div>
       </div>
     </div>
@@ -261,6 +302,7 @@ body{
           <div class="filter-tab active" onclick="updateHighscores('addsub',this)">➕ und ➖</div>
           <div class="filter-tab" onclick="updateHighscores('muldiv',this)">✖️ und ➗</div>
           <div class="filter-tab" onclick="updateHighscores('mixed',this)">🎲 Gemischt</div>
+          <div class="filter-tab" onclick="updateHighscores('2048',this)" style="font-family:monospace;font-weight:bold;">2048</div>
         </div>
         <div id="hs-list" style="min-height:100px;"></div>
         <div style="text-align:center;margin-top:20px;">
@@ -329,7 +371,18 @@ function drawNumberLine(num,isHundred){
   return `<svg width="280" height="60" viewBox="0 0 280 60"><line x1="20" y1="30" x2="260" y2="30" stroke="#7f8c8d" stroke-width="4"/><line x1="20" y1="20" x2="20" y2="40" stroke="#2c3e50" stroke-width="4"/><line x1="260" y1="20" x2="260" y2="40" stroke="#2c3e50" stroke-width="4"/><text x="20" y="55" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#2c3e50">${lower}</text><text x="260" y="55" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#2c3e50">${upper}</text><circle cx="${20+pct*2.4}" cy="30" r="8" fill="#e74c3c"/><text x="${20+pct*2.4}" y="15" font-size="16" font-family="Arial" font-weight="bold" text-anchor="middle" fill="#e74c3c">${num}</text></svg>`;
 }
 
+function createConfetti(){for(let i=0;i<40;i++){const c=document.createElement('div');c.className='confetti';c.style.left=Math.random()*100+'vw';c.style.top='-10px';c.style.backgroundColor=['#f1c40f','#e74c3c','#3498db','#2ecc71','#9b59b6'][randInt(0,4)];document.body.appendChild(c);let a=Math.random()*2-1,s=Math.random()*3+2,x=0,y=0;const iv=setInterval(()=>{x+=a;y+=s;c.style.transform=`translate(${x}px,${y}px) rotate(${y*2}deg)`;if(y>window.innerHeight){clearInterval(iv);c.remove();}},20);}}
+
 const tasks = {
+  schriftliche_sub:{hj:2,title:"Subtraktion",sub:"Unter einander",subtypes:[{key:'ohne',label:'Ohne Übergang'},{key:'mit',label:'Ein Übergang'},{key:'zwei',label:'Zwei Übergänge'},{key:'null',label:'Mit Null'},{key:'klecks',label:'Klecksaufgaben'}],gen(st){let v;if(st==='ohne')v=0;else if(st==='mit')v=1;else if(st==='zwei')v=3;else if(st==='null')v=4;else if(st==='klecks')v=2;else v=randInt(0,4);if(v===0){const h1=randInt(4,9),z1=randInt(4,9),e1=randInt(4,9);const h2=randInt(1,h1-1),z2=randInt(1,z1-1),e2=randInt(1,e1-1);const a=h1*100+z1*10+e1,b=h2*100+z2*10+e2;return{q:"Schriftlich subtrahieren",hint:"Von unten nach oben rechnen.",html:`<div class="vertical-math"><div class="v-cell"></div><div class="v-cell">${h1}</div><div class="v-cell">${z1}</div><div class="v-cell">${e1}</div><div class="v-cell">−</div><div class="v-cell">${h2}</div><div class="v-cell">${z2}</div><div class="v-cell">${e2}</div><div class="v-line"></div><div class="v-cell"></div><div class="v-cell"><input type="number" class="v-input" id="inp_h"></div><div class="v-cell"><input type="number" class="v-input" id="inp_z"></div><div class="v-cell"><input type="number" class="v-input" id="inp_e"></div></div>`,ids:['inp_e','inp_z','inp_h'],sol:[e1-e2,z1-z2,h1-h2],isFloat:false};}else if(v===1){const a=randInt(400,900);const b=randInt(100,a-50);const e1=a%10, z1=Math.floor(a/10)%10, h1=Math.floor(a/100);const e2=b%10, z2=Math.floor(b/10)%10, h2=Math.floor(b/100);const res=a-b;return{q:"Schriftlich subtrahieren",hint:"Vergiss nicht den Strich zum Merken!",html:`<div class="vertical-math"><div class="v-cell"></div><div class="v-cell">${h1}</div><div class="v-cell">${z1}</div><div class="v-cell">${e1}</div><div class="v-cell">−</div><div class="v-cell">${h2}</div><div class="v-cell">${z2}</div><div class="v-cell">${e2}</div><div class="v-cell"></div><div class="v-cell"><input type="text" class="v-merke-input" id="inp_mh" placeholder=""></div><div class="v-cell"><input type="text" class="v-merke-input" id="inp_mz" placeholder=""></div><div class="v-cell"></div><div class="v-line"></div><div class="v-cell"></div><div class="v-cell"><input type="number" class="v-input" id="inp_h"></div><div class="v-cell"><input type="number" class="v-input" id="inp_z"></div><div class="v-cell"><input type="number" class="v-input" id="inp_e"></div></div>`,ids:['inp_e','inp_z','inp_h'],sol:[res%10,Math.floor(res/10)%10,Math.floor(res/100)],isFloat:false};}else if(v===3){const h1=randInt(5,9),z1=randInt(1,4),e1=randInt(1,4);const a=h1*100+z1*10+e1;const h2=randInt(1,h1-2),z2=randInt(z1+1,9),e2=randInt(e1+1,9);const b=h2*100+z2*10+e2;const res=a-b;return{q:"Schriftlich subtrahieren",hint:"Zwei Übergänge!",html:`<div class="vertical-math"><div class="v-cell"></div><div class="v-cell">${h1}</div><div class="v-cell">${z1}</div><div class="v-cell">${e1}</div><div class="v-cell">−</div><div class="v-cell">${h2}</div><div class="v-cell">${z2}</div><div class="v-cell">${e2}</div><div class="v-cell"></div><div class="v-cell"><input type="text" class="v-merke-input" id="inp_mh" placeholder=""></div><div class="v-cell"><input type="text" class="v-merke-input" id="inp_mz" placeholder=""></div><div class="v-cell"></div><div class="v-line"></div><div class="v-cell"></div><div class="v-cell"><input type="number" class="v-input" id="inp_h"></div><div class="v-cell"><input type="number" class="v-input" id="inp_z"></div><div class="v-cell"><input type="number" class="v-input" id="inp_e"></div></div>`,ids:['inp_e','inp_z','inp_h'],sol:[res%10,Math.floor(res/10)%10,Math.floor(res/100)],isFloat:false};}else if(v===4){const h1=randInt(4,9),z1=0,e1=randInt(1,9);const a=h1*100+z1*10+e1;const h2=randInt(1,h1-2),z2=randInt(1,9),e2=randInt(1,9);const b=h2*100+z2*10+e2;const res=a-b;return{q:"Schriftlich subtrahieren",hint:"Achtung bei der Null!",html:`<div class="vertical-math"><div class="v-cell"></div><div class="v-cell">${h1}</div><div class="v-cell">${z1}</div><div class="v-cell">${e1}</div><div class="v-cell">−</div><div class="v-cell">${h2}</div><div class="v-cell">${z2}</div><div class="v-cell">${e2}</div><div class="v-cell"></div><div class="v-cell"><input type="text" class="v-merke-input" id="inp_mh" placeholder=""></div><div class="v-cell"><input type="text" class="v-merke-input" id="inp_mz" placeholder=""></div><div class="v-cell"></div><div class="v-line"></div><div class="v-cell"></div><div class="v-cell"><input type="number" class="v-input" id="inp_h"></div><div class="v-cell"><input type="number" class="v-input" id="inp_z"></div><div class="v-cell"><input type="number" class="v-input" id="inp_e"></div></div>`,ids:['inp_e','inp_z','inp_h'],sol:[res%10,Math.floor(res/10)%10,Math.floor(res/100)],isFloat:false};}else{const a=randInt(500,900),b=randInt(200,a-100),res=a-b;const ds=[Math.floor(a/100),Math.floor(a/10)%10,a%10,Math.floor(b/100),Math.floor(b/10)%10,b%10,Math.floor(res/100),Math.floor(res/10)%10,res%10];let html='<div class="vertical-math">',ids=[],sol=[];let r=randInt(0,2);html+=`<div class="v-cell"></div>`;for(let i=0;i<3;i++){if(i===r){html+=`<div class="v-cell"><input type="number" class="v-input" id="inp_k${i}"></div>`;ids.push(`inp_k${i}`);sol.push(ds[i]);}else html+=`<div class="v-cell">${ds[i]}</div>`;}html+=`<div class="v-cell">−</div>`;let r2=randInt(0,2);for(let i=3;i<6;i++){if((i-3)===r2){html+=`<div class="v-cell"><input type="number" class="v-input" id="inp_k${i}"></div>`;ids.push(`inp_k${i}`);sol.push(ds[i]);}else html+=`<div class="v-cell">${ds[i]}</div>`;}html+=`<div class="v-line"></div><div class="v-cell"></div>`;let r3=randInt(0,2);for(let i=6;i<9;i++){if((i-6)===r3){html+=`<div class="v-cell"><input type="number" class="v-input" id="inp_k${i}"></div>`;ids.push(`inp_k${i}`);sol.push(ds[i]);}else html+=`<div class="v-cell">${ds[i]}</div>`;}html+='</div>';return{q:"Klecksaufgabe",hint:"Finde die fehlenden Ziffern!",html:html,ids:ids,sol:sol,isFloat:false};}}},
+  gewichte_umrechnen:{hj:2,title:"Gewichte",sub:"Umrechnen",subtypes:[{key:'kg_g',label:'kg in g'},{key:'ergaenzen',label:'Auf 1 kg ergänzen'}],gen(st){if(st==='kg_g'){const v=randInt(0,3);let q,s;if(v===0){q="1 kg = ? g";s=1000;}else if(v===1){q="1/2 kg = ? g";s=500;}else if(v===2){q="1/4 kg = ? g";s=250;}else{q="3/4 kg = ? g";s=750;}return{q:q,hint:"Denk an 1 kg = 1000 g",html:`<div style="font-size:24px;"><input type="number" class="std-input" id="inp_1" style="width:100px;"> g</div>`,ids:['inp_1'],sol:[s],isFloat:false};}else{const w=randInt(1,95)*10;return{q:`${w} g + ? g = 1 kg`,hint:"Wie viel fehlt bis 1000 g?",html:`<div style="font-size:24px;"><input type="number" class="std-input" id="inp_1" style="width:100px;"> g</div>`,ids:['inp_1'],sol:[1000-w],isFloat:false};}}},
+  sachaufgaben:{hj:2,title:"Sachaufgaben",sub:"Geld & Gewichte",subtypes:[{key:'geld',label:'💶 Geld'},{key:'gewicht',label:'⚖️ Gewichte'}],gen(st){if(st==='geld'){const price1=randInt(1,9)*10+randInt(1,9);const price2=randInt(1,9)*10+randInt(1,9);const sum=price1+price2;return{q:`Lukas kauft einen Apfel für ${price1} Cent und eine Birne für ${price2} Cent. Wie viel muss er bezahlen?`,hint:"Addiere die beiden Preise.",html:`<div style="font-size:24px;"><input type="number" class="std-input" id="inp_1" style="width:100px;"> ct</div>`,ids:['inp_1'],sol:[sum],isFloat:false};}else{const w1=randInt(1,5)*100;const w2=randInt(1,5)*50;const sum=w1+w2;return{q:`Frau Müller packt ${w1} g Mehl und ${w2} g Zucker in einen Teig. Wie schwer sind die Zutaten zusammen?`,hint:"Addiere die beiden Gewichte.",html:`<div style="font-size:24px;"><input type="number" class="std-input" id="inp_1" style="width:100px;"> g</div>`,ids:['inp_1'],sol:[sum],isFloat:false};}}},
+  gewichte_spez:{hj:2,title:"Gewichte",sub:"Stückeln & Ordnen",subtypes:[{key:'stueck',label:'⚖️ Stückeln'},{key:'ordnen',label:'🔢 Größen ordnen'}],gen(st){if(st==='stueck'){const w=randInt(300,990);return{q:`Lege ${w} g mit Gewichten.`,hint:"Verwende so wenige Stücke wie möglich.",html:`<div style="font-size:20px;margin-bottom:10px;">Ziel: <strong>${w} g</strong></div><div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:350px;"><div class="weight-btn" onclick="this.classList.toggle('selected');updateCheckBtn()">500g</div><div class="weight-btn" onclick="this.classList.toggle('selected');updateCheckBtn()">200g</div><div class="weight-btn" onclick="this.classList.toggle('selected');updateCheckBtn()">200g</div><div class="weight-btn" onclick="this.classList.toggle('selected');updateCheckBtn()">100g</div><div class="weight-btn" onclick="this.classList.toggle('selected');updateCheckBtn()">50g</div><div class="weight-btn" onclick="this.classList.toggle('selected');updateCheckBtn()">20g</div><div class="weight-btn" onclick="this.classList.toggle('selected');updateCheckBtn()">20g</div><div class="weight-btn" onclick="this.classList.toggle('selected');updateCheckBtn()">10g</div><div class="weight-btn" onclick="this.classList.toggle('selected');updateCheckBtn()">5g</div><div class="weight-btn" onclick="this.classList.toggle('selected');updateCheckBtn()">2g</div><div class="weight-btn" onclick="this.classList.toggle('selected');updateCheckBtn()">2g</div><div class="weight-btn" onclick="this.classList.toggle('selected');updateCheckBtn()">1g</div></div><input type="hidden" id="inp_1">`,ids:['inp_1'],sol:['ok'],isFloat:false,checkOverride:()=>{let sum=0;document.querySelectorAll('.weight-btn.selected').forEach(b=>{sum+=parseInt(b.textContent);});return sum===w;}};}else{const pool=[{v:1000,t:'1 kg'},{v:500,t:'1/2 kg'},{v:250,t:'1/4 kg'},{v:750,t:'3/4 kg'},{v:randInt(100,450),t:null},{v:randInt(550,700),t:null},{v:randInt(800,990),t:null}];let pick=[];while(pick.length<4){const p=pool[randInt(0,pool.length-1)];if(!pick.find(x=>x.v===p.v))pick.push(p);}pick.forEach(p=>{if(!p.t)p.t=p.v+' g';});const sorted=[...pick].sort((a,b)=>a.v-b.v);
+    window.allowDrop=function(e){e.preventDefault();};
+    window.drag=function(e){e.dataTransfer.setData("text",e.target.id);window.draggedItem=e.target;};
+    window.drop=function(e){e.preventDefault();const d=e.dataTransfer.getData("text")||window.draggedItem?.id;if(!d)return;const el=document.getElementById(d);if(e.target.classList.contains('drop-zone')&&e.target.children.length===0){e.target.appendChild(el);}else if(e.target.id==='drag-pool'){e.target.appendChild(el);}updateCheckBtn();};
+    window.clickMove=function(e){const el=e.target;if(el.parentElement.id==='drag-pool'){const zones=document.querySelectorAll('.drop-zone');for(let z of zones){if(z.children.length===0){z.appendChild(el);break;}}}else{document.getElementById('drag-pool').appendChild(el);}updateCheckBtn();};
+    return{q:"Ordne die Gewichte der Größe nach!",hint:"Ziehe die Kästchen nach unten (oder tippe sie an). Kleinste zuerst!",html:`<div style="font-size:16px;margin-bottom:10px;color:var(--muted)">Ziehe die Gewichte hier heraus:</div><div id="drag-pool" style="display:flex;gap:10px;justify-content:center;min-height:50px;background:#fef9e7;padding:10px;border-radius:10px;margin-bottom:20px;" ondrop="drop(event)" ondragover="allowDrop(event)">${pick.map((x,i)=>`<div class="drag-item" draggable="true" ondragstart="drag(event)" onclick="clickMove(event)" id="drag_${i}" data-val="${x.v}" style="background:#fff;border:2px solid #bdc3c7;border-radius:6px;padding:8px 12px;cursor:grab;font-weight:bold;">${x.t}</div>`).join('')}</div><div style="font-size:16px;margin-bottom:10px;color:var(--muted)">In die richtige Reihenfolge (klein -> groß):</div><div style="display:flex;gap:10px;justify-content:center;">${pick.map((_,i)=>`<div class="drop-zone" id="dz_${i}" ondrop="drop(event)" ondragover="allowDrop(event)" style="width:80px;height:45px;border:2px dashed #95a5a6;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#ecf0f1;"></div>`).join('')}</div><input type="hidden" id="inp_0">`,ids:['inp_0'],sol:['ok'],isFloat:false,checkOverride:()=>{let ok=true;const zones=document.querySelectorAll('.drop-zone');for(let i=0;i<zones.length;i++){if(zones[i].children.length===0) return false;const v=parseInt(zones[i].children[0].getAttribute('data-val'));if(v!==sorted[i].v) ok=false;}return ok;}};}}},
   rechnen_gross:{title:"Rechnen",sub:"+ − ×",subtypes:[{key:'mixed',label:'🔀 Gemischt'},{key:'add',label:'➕ Addition'},{key:'sub',label:'➖ Subtraktion'},{key:'mul',label:'✖️ Multiplikation'}],gen(st){let op;if(st==='add')op='+';else if(st==='sub')op='-';else if(st==='mul')op='*';else op=['+','-','*'][randInt(0,2)];let a,b,s;if(op==='+'){a=randInt(150,500);b=randInt(150,400);s=a+b;}else if(op==='-'){a=randInt(400,900);b=randInt(110,a-50);s=a-b;}else{a=randInt(12,30);b=randInt(3,9);s=a*b;}return{q:`${a} ${op==='*'?'×':op} ${b} = ?`,hint:"Rechne halbschriftlich oder im Kopf.",html:`<input type="number" class="std-input" id="inp_1">`,ids:['inp_1'],sol:[s],isFloat:false};}},
 
   // ── NEU: MULTIPLIKATION & DIVISION ──────────────────────────────────────
@@ -419,7 +472,7 @@ const tasks = {
 };
 
 // ─── STORAGE ──────────────────────────────────────────────────────────────────
-let profiles={}, curProfId=null, curTaskKey=null, curSubtype='mixed', curInstance=null, isDashOpen=false, dashPeriod='today', currentView='practice', hsMode='addsub';
+let profiles={}, curProfId=null, curTaskKey=null, curSubtype='mixed', curInstance=null, isDashOpen=false, dashPeriod='today', currentView='practice', hsMode='addsub', curHalbjahr=1;
 
 function loadStorage(){
   try{
@@ -449,15 +502,23 @@ function saveStorage(){try{localStorage.setItem('m_app_v9',JSON.stringify(profil
 function initUI(){
   document.getElementById('curChildName').textContent=profiles[curProfId]?.name||'—';
   const g=document.getElementById('taskTiles');g.innerHTML='';
-  for(const [k,v] of Object.entries(tasks))
-    g.innerHTML+=`<div class="tile" id="tile_${k}" onclick="openTask('${k}')"><div class="tile-title">${v.title}</div><div class="tile-sub">${v.sub}</div></div>`;
+  for(const [k,v] of Object.entries(tasks)){
+    const hj = v.hj || 1;
+    if(hj === curHalbjahr) g.innerHTML+=`<div class="tile" id="tile_${k}" onclick="openTask('${k}')"><div class="tile-title">${v.title}</div><div class="tile-sub">${v.sub}</div></div>`;
+  }
   updateUI();
 }
 function updateUI(){
   const p=profiles[curProfId];
   const coins=p.coins||0;
+  const streak=p.streak||0;
   document.getElementById('coinText').textContent=coins;
   document.getElementById('coinBannerText').textContent=coins;
+  const sb=document.getElementById('streakBadge');
+  if(sb){
+    sb.style.display=streak>=3?'flex':'none';
+    document.getElementById('streakText').textContent=streak;
+  }
   document.getElementById('curChildName').textContent=p.name||'—';
   const n=Math.min(5,Math.floor((p.score||0)/50));
   let h='';
@@ -465,6 +526,19 @@ function updateUI(){
     ?`<svg class="star-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`
     :`<svg class="star-icon star-empty" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
   document.getElementById('starsText').innerHTML=h;
+}
+
+function setHalbjahr(hj, el){
+  curHalbjahr=hj;
+  document.querySelectorAll('.halbjahr-tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  initUI();
+  document.getElementById('tQuestion').innerHTML='Wähle links ein Thema!';
+  document.getElementById('tVisual').innerHTML='';
+  document.getElementById('subtypeBar').classList.remove('visible');
+  document.getElementById('checkBtn').style.display='none';
+  document.getElementById('hint').textContent='';
+  curInstance=null;
 }
 
 // ─── UNTERAUFGABEN ────────────────────────────────────────────────────────────
@@ -527,10 +601,15 @@ function loadTask(){
 
 function updateCheckBtn(){
   if(!curInstance) return;
-  const allFilled=curInstance.ids.every(id=>{
-    const el=document.getElementById(id);
-    return el && el.value.trim()!=='';
-  });
+  let allFilled=true;
+  if(curInstance.checkOverride){
+    allFilled=true;
+  }else{
+    allFilled=curInstance.ids.every(id=>{
+      const el=document.getElementById(id);
+      return el && el.value.trim()!=='';
+    });
+  }
   document.getElementById('checkBtn').disabled=!allFilled;
 }
 
@@ -554,21 +633,35 @@ function checkAnswer(){
     const raw=el.value.trim().replace(',','.');
     const expected=t.sol[i];
     let ok=false;
-    if(t.isFloat){const pv=parseFloat(raw);ok=!isNaN(pv)&&Math.abs(pv-expected)<0.015;}
+    if(t.strMatch){ok=raw.replace(/\s+/g,'').toLowerCase()===String(expected).toLowerCase();}
+    else if(t.isFloat){const pv=parseFloat(raw);ok=!isNaN(pv)&&Math.abs(pv-expected)<0.015;}
     else{ok=parseInt(raw,10)===expected;}
     if(!ok) allCorrect=false;
     el.disabled=true;
   });
+  if(t.checkOverride){ allCorrect=t.checkOverride(); }
   const p=profiles[curProfId];
   if(!p.history) p.history=[];
   p.history.push({key:curTaskKey,subtype:curSubtype,ok:allCorrect,ts:Date.now()});
+  
+  let earnedCoins = 1;
+  if(curTaskKey === 'gewichte_spez' && curSubtype === 'ordnen') {
+      earnedCoins = 4;
+  }
+
   if(allCorrect){
     p.score=(p.score||0)+10;
-    p.coins=(p.coins||0)+1;
+    p.coins=(p.coins||0)+earnedCoins;
+    p.streak=(p.streak||0)+1;
+    createConfetti();
+    const sb=document.getElementById('streakBadge');
+    if(sb){sb.classList.remove('pop');void sb.offsetWidth;sb.classList.add('pop');}
+  }else{
+    p.streak=0;
   }
   saveStorage();updateUI();
   const fb=document.getElementById('feedback');
-  if(allCorrect){fb.textContent='✅ Super! Richtig! +1 🪙';fb.className='feedback ok';speak('Super! Richtig!');}
+  if(allCorrect){fb.textContent=`✅ Super! Richtig! +${earnedCoins} 🪙`;fb.className='feedback ok';speak('Super! Richtig!');}
   else{fb.innerHTML=`❌ Nicht ganz. Richtig wäre: <strong>${t.sol.join(' / ')}</strong>`;fb.className='feedback bad';speak('Nicht ganz. Die Antwort ist '+t.sol.join(' und '));}
   document.getElementById('checkBtn').style.display='none';
   document.getElementById('nextBtn').style.display='';
@@ -603,15 +696,21 @@ function canPlayGames(){
 function openGame(){
   if(canPlayGames()) window.location.href='mathe_jump.html';
 }
+function open2048(){
+  if(canPlayGames()) window.location.href='mathe_2048.html';
+}
 
 // ─── HIGHSCORE ────────────────────────────────────────────────────────────────
 function updateHighscores(mode, el){
   if(mode) hsMode=mode;
   document.querySelectorAll('#hsTabs .filter-tab').forEach(t=>t.classList.remove('active'));
   if(el) el.classList.add('active');
-  else{const idx=['addsub','muldiv','mixed'].indexOf(hsMode);document.querySelectorAll('#hsTabs .filter-tab')[idx]?.classList.add('active');}
+  else{const idx=['addsub','muldiv','mixed','2048'].indexOf(hsMode);document.querySelectorAll('#hsTabs .filter-tab')[idx]?.classList.add('active');}
   let hs=[];
-  try{hs=JSON.parse(localStorage.getItem('m_jump_hs_'+hsMode)||'[]');}catch(e){}
+  try{
+    if(hsMode==='2048') hs=JSON.parse(localStorage.getItem('m_2048_hs_mixed')||'[]');
+    else hs=JSON.parse(localStorage.getItem('m_jump_hs_'+hsMode)||'[]');
+  }catch(e){}
   const list=document.getElementById('hs-list');
   if(!hs.length){
     list.innerHTML='<p style="color:var(--muted);text-align:center;padding:30px 0;font-size:15px;">Noch keine Einträge.<br>Los spielen! 🎮</p>';
@@ -623,7 +722,7 @@ function updateHighscores(mode, el){
     <div class="hs-entry" style="background:${i===0?'#fef9e7':i===1?'#f8f9fa':i===2?'#fff8f0':'#fff'};border-color:${rankBg[i]||'#ecf0f1'};">
       <div class="hs-rank" style="background:${rankBg[i]||'#bdc3c7'};">${i<3?medals[i]:i+1}</div>
       <div class="hs-name">${e.name}</div>
-      <div class="hs-score" style="color:${i===0?'#e67e22':'#2c3e50'};">Höhe&nbsp;${e.score}</div>
+      <div class="hs-score" style="color:${i===0?'#e67e22':'#2c3e50'};">${hsMode==='2048'?'Punkte':'Höhe'}&nbsp;${e.score}</div>
     </div>`).join('');
 }
 

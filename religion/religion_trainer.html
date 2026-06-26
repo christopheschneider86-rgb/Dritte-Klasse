@@ -160,6 +160,15 @@ body{font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg)
 .hs-name{flex:1;font-weight:bold;font-size:15px;color:#2c3e50}
 .hs-score{font-size:16px;font-weight:bold;color:#2c3e50}
 </style>
+
+  <style>
+    .confetti {
+      position: fixed;
+      width: 10px; height: 10px;
+      z-index: 9999;
+      pointer-events: none;
+    }
+  </style>
 </head>
 <body>
 
@@ -504,6 +513,7 @@ function checkAnswer() {
   });
   const ok = selectedAnswer === correct;
   const msg = ok ? 'Super, Richtig! ✅' : 'Fast! Schau nochmal hin. 💪';
+  if (ok) createConfetti();
   document.getElementById('feedback').textContent = msg;
   document.getElementById('feedback').className = 'feedback ' + (ok ? 'ok' : 'bad');
   document.getElementById('checkBtn').disabled = true;

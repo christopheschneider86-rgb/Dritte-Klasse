@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="de" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>2048 - Mathe Trainer</title>
+  <style>
+    body {
+      background-color: #f4f6f8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    
+    .nav-bar {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    
+    .back-btn {
+      padding: 10px 16px;
+      background: #bdc3c7;
+      color: #2c3e50;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    .back-btn:hover { background: #95a5a6; }
+    
+    .coin-badge {
+      background: #f1c40f;
+      color: #8e44ad;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 16px;
+      border: 2px solid #f39c12;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    h1 {
+      font-size: 50px;
+      color: #776e65;
+      margin: 0 0 10px 0;
+    }
+
+    .container {
+      width: 400px;
+      position: relative;
+    }
+
+    .info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .score-container {
+      text-align: center;
+      padding: 8px 20px;
+      border-radius: 6px;
+      background-color: #8f7a66;
+      color: #ffffff;
+    }
+
+    #score { font-size: 24px; font-weight: bold; }
+    .score-title { font-size: 14px; text-transform: uppercase; }
+
+    .instructions {
+      background: #fff;
+      padding: 15px;
+      border-radius: 12px;
+      border: 2px solid #ecf0f1;
+      margin-bottom: 15px;
+      font-size: 15px;
+      color: #2c3e50;
+      line-height: 1.4;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .instructions h3 { margin: 0 0 5px 0; color: #3498db; }
+
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      width: 400px;
+      height: 400px;
+      background-color: #bbada0;
+      border: 6px solid #bbada0;
+      border-radius: 8px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .grid .square {
+      width: 88px;
+      height: 88px;
+      margin: 4.5px;
+      border-radius: 4px;
+      background-color: #eee4da;
+      color: #afa192;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 40px;
+    }
+
+    #overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(238, 228, 218, 0.85);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+    }
+    
+    #overlay h2 {
+      font-size: 40px;
+      color: #776e65;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .start-btn {
+      padding: 12px 24px;
+      font-size: 20px;
+      font-weight: bold;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #c0392b;
+    }
+    .start-btn:hover { background: #c0392b; }
+    .start-btn:active { transform: translateY(4px); box-shadow: none; }
+    .start-btn:disabled { background: #95a5a6; box-shadow: 0 4px 0 #7f8c8d; cursor: not-allowed; }
+
+  </style>
+</head>
+<body>
+
+  <div class="nav-bar">
+    <a href="mathe_trainer_3_klasse.html" class="back-btn">⬅️ Zurück</a>
+    <div class="coin-badge">🪙 <span id="coinText">0</span></div>
+  </div>
+
+  <div class="container">
+    <div class="info">
+      <h1>2048</h1>
+      <div class="score-container">
+        <div class="score-title">Punkte</div>
+        <div id="score">0</div>
+      </div>
+    </div>
+    
+    <div class="instructions">
+      <h3>Wie man spielt:</h3>
+      <p>Benutze die <strong>Pfeiltasten</strong> (oder wische auf dem Touchscreen), um die Kacheln zu verschieben. Wenn sich zwei Kacheln mit derselben Zahl berühren, <strong>verschmelzen sie zu einer!</strong> (2+2=4, 4+4=8). Versuche, die Kachel <strong>2048</strong> zu erreichen!</p>
+    </div>
+
+    <div class="grid" id="gridDisplay">
+      <!-- Overlay for Start/Game Over -->
+      <div id="overlay">
+        <h2 id="overlayText">Bereit?</h2>
+        <button class="start-btn" id="startBtn">Spielen (10 🪙)</button>
+        <p id="noCoinsMsg" style="color: #e74c3c; font-weight: bold; display: none; margin-top: 15px; text-align: center;">Du brauchst 10 Münzen!<br>Löse erst ein paar Matheaufgaben.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const gridDisplay = document.getElementById("gridDisplay");
+      const scoreDisplay = document.getElementById("score");
+      const overlay = document.getElementById("overlay");
+      const overlayText = document.getElementById("overlayText");
+      const startBtn = document.getElementById("startBtn");
+      const noCoinsMsg = document.getElementById("noCoinsMsg");
+      const coinText = document.getElementById("coinText");
+      
+      let squares = [];
+      const width = 4;
+      let score = 0;
+      let gameActive = false;
+      let myTimer = null;
+      
+      // Münzsystem (LocalStorage)
+      let profiles = {};
+      let curProfId = null;
+
+      function loadProfile() {
+        try {
+          curProfId = localStorage.getItem('m_app_active_prof');
+          profiles = JSON.parse(localStorage.getItem('m_app_v9') || '{}');
+          if (!profiles[curProfId]) {
+            profiles[curProfId] = { coins: 0 };
+          }
+          coinText.textContent = profiles[curProfId].coins || 0;
+        } catch(e) { console.error(e); }
+      }
+      
+      function saveProfile() {
+        try {
+          localStorage.setItem('m_app_v9', JSON.stringify(profiles));
+          coinText.textContent = profiles[curProfId].coins || 0;
+        } catch(e) {}
+      }
+
+      loadProfile();
+
+      startBtn.addEventListener('click', () => {
+        loadProfile();
+        const coins = profiles[curProfId].coins || 0;
+        if(coins >= 10) {
+          profiles[curProfId].coins = coins - 10;
+          saveProfile();
+          startGame();
+        } else {
+          startBtn.disabled = true;
+          noCoinsMsg.style.display = 'block';
+        }
+      });
+
+      function startGame() {
+        overlay.style.display = 'none';
+        gameActive = true;
+        score = 0;
+        scoreDisplay.innerHTML = score;
+        
+        // Clear grid
+        const allSquares = document.querySelectorAll('.grid .square');
+        allSquares.forEach(s => s.remove());
+        squares = [];
+        
+        createBoard();
+        myTimer = setInterval(addColours, 50);
+        document.addEventListener("keyup", control);
+      }
+
+      function createBoard() {
+        for (let i = 0; i < width * width; i++) {
+          let square = document.createElement("div");
+          square.innerHTML = 0;
+          square.className = 'square';
+          gridDisplay.appendChild(square);
+          squares.push(square);
+        }
+        generate();
+        generate();
+      }
+
+      function generate() {
+        let emptySquares = squares.filter(s => s.innerHTML == 0);
+        if(emptySquares.length === 0) return;
+        let randomSquare = emptySquares[Math.floor(Math.random() * emptySquares.length)];
+        randomSquare.innerHTML = 2;
+        checkForGameOver();
+      }
+
+      function moveRight() {
+        for (let i = 0; i < 16; i++) {
+          if (i % 4 === 0) {
+            let row = [
+              parseInt(squares[i].innerHTML),
+              parseInt(squares[i + 1].innerHTML),
+              parseInt(squares[i + 2].innerHTML),
+              parseInt(squares[i + 3].innerHTML)
+            ];
+            let filteredRow = row.filter((num) => num);
+            let missing = 4 - filteredRow.length;
+            let zeros = Array(missing).fill(0);
+            let newRow = zeros.concat(filteredRow);
+            
+            squares[i].innerHTML = newRow[0];
+            squares[i + 1].innerHTML = newRow[1];
+            squares[i + 2].innerHTML = newRow[2];
+            squares[i + 3].innerHTML = newRow[3];
+          }
+        }
+      }
+
+      function moveLeft() {
+        for (let i = 0; i < 16; i++) {
+          if (i % 4 === 0) {
+            let row = [
+              parseInt(squares[i].innerHTML),
+              parseInt(squares[i + 1].innerHTML),
+              parseInt(squares[i + 2].innerHTML),
+              parseInt(squares[i + 3].innerHTML)
+            ];
+            let filteredRow = row.filter((num) => num);
+            let missing = 4 - filteredRow.length;
+            let zeros = Array(missing).fill(0);
+            let newRow = filteredRow.concat(zeros);
+
+            squares[i].innerHTML = newRow[0];
+            squares[i + 1].innerHTML = newRow[1];
+            squares[i + 2].innerHTML = newRow[2];
+            squares[i + 3].innerHTML = newRow[3];
+          }
+        }
+      }
+
+      function moveUp() {
+        for (let i = 0; i < 4; i++) {
+          let column = [
+            parseInt(squares[i].innerHTML),
+            parseInt(squares[i + width].innerHTML),
+            parseInt(squares[i + width * 2].innerHTML),
+            parseInt(squares[i + width * 3].innerHTML)
+          ];
+          let filteredColumn = column.filter((num) => num);
+          let missing = 4 - filteredColumn.length;
+          let zeros = Array(missing).fill(0);
+          let newColumn = filteredColumn.concat(zeros);
+
+          squares[i].innerHTML = newColumn[0];
+          squares[i + width].innerHTML = newColumn[1];
+          squares[i + width * 2].innerHTML = newColumn[2];
+          squares[i + width * 3].innerHTML = newColumn[3];
+        }
+      }
+
+      function moveDown() {
+        for (let i = 0; i < 4; i++) {
+          let column = [
+            parseInt(squares[i].innerHTML),
+            parseInt(squares[i + width].innerHTML),
+            parseInt(squares[i + width * 2].innerHTML),
+            parseInt(squares[i + width * 3].innerHTML)
+          ];
+          let filteredColumn = column.filter((num) => num);
+          let missing = 4 - filteredColumn.length;
+          let zeros = Array(missing).fill(0);
+          let newColumn = zeros.concat(filteredColumn);
+
+          squares[i].innerHTML = newColumn[0];
+          squares[i + width].innerHTML = newColumn[1];
+          squares[i + width * 2].innerHTML = newColumn[2];
+          squares[i + width * 3].innerHTML = newColumn[3];
+        }
+      }
+
+      function combineRow() {
+        for (let i = 0; i < 15; i++) {
+          if (squares[i].innerHTML === squares[i + 1].innerHTML && squares[i].innerHTML != 0) {
+            let combinedTotal = parseInt(squares[i].innerHTML) + parseInt(squares[i + 1].innerHTML);
+            squares[i].innerHTML = combinedTotal;
+            squares[i + 1].innerHTML = 0;
+            score += combinedTotal;
+            scoreDisplay.innerHTML = score;
+          }
+        }
+        checkForWin();
+      }
+
+      function combineColumn() {
+        for (let i = 0; i < 12; i++) {
+          if (squares[i].innerHTML === squares[i + width].innerHTML && squares[i].innerHTML != 0) {
+            let combinedTotal = parseInt(squares[i].innerHTML) + parseInt(squares[i + width].innerHTML);
+            squares[i].innerHTML = combinedTotal;
+            squares[i + width].innerHTML = 0;
+            score += combinedTotal;
+            scoreDisplay.innerHTML = score;
+          }
+        }
+        checkForWin();
+      }
+
+      function control(e) {
+        if (!gameActive) return;
+        if (e.keyCode === 37) {
+          keyLeft();
+        } else if (e.keyCode === 38) {
+          keyUp();
+        } else if (e.keyCode === 39) {
+          keyRight();
+        } else if (e.keyCode === 40) {
+          keyDown();
+        }
+      }
+
+      function keyRight() {
+        moveRight();
+        combineRow();
+        moveRight();
+        generate();
+      }
+      function keyLeft() {
+        moveLeft();
+        combineRow();
+        moveLeft();
+        generate();
+      }
+      function keyUp() {
+        moveUp();
+        combineColumn();
+        moveUp();
+        generate();
+      }
+      function keyDown() {
+        moveDown();
+        combineColumn();
+        moveDown();
+        generate();
+      }
+
+      function checkForWin() {
+        for (let i = 0; i < squares.length; i++) {
+          if (squares[i].innerHTML == 2048) {
+            endGame("Du hast Gewonnen! 🎉");
+          }
+        }
+      }
+
+      function checkForGameOver() {
+        let zeros = 0;
+        for (let i = 0; i < squares.length; i++) {
+          if (squares[i].innerHTML == 0) {
+            zeros++;
+          }
+        }
+        if (zeros === 0) {
+          // Check if any moves are possible
+          let canMove = false;
+          for (let i = 0; i < 15; i++) {
+             if (i % 4 !== 3 && squares[i].innerHTML === squares[i + 1].innerHTML) canMove = true;
+          }
+          for (let i = 0; i < 12; i++) {
+             if (squares[i].innerHTML === squares[i + width].innerHTML) canMove = true;
+          }
+          if(!canMove) {
+             endGame("Game Over! 💥");
+          }
+        }
+      }
+
+      function endGame(msg) {
+        gameActive = false;
+        document.removeEventListener("keyup", control);
+        clearInterval(myTimer);
+        
+        // Highscore speichern
+        try {
+          let name = profiles[curProfId]?.name || 'Gast';
+          let hs = JSON.parse(localStorage.getItem('m_2048_hs_mixed')||'[]');
+          hs.push({name: name, score: score});
+          hs.sort((a,b)=>b.score-a.score);
+          hs = hs.slice(0,50);
+          localStorage.setItem('m_2048_hs_mixed', JSON.stringify(hs));
+        } catch(e){}
+
+        setTimeout(() => {
+          overlayText.innerHTML = msg + "<br><span style='font-size:24px'>Punkte: " + score + "</span>";
+          overlay.style.display = 'flex';
+          startBtn.innerText = "Nochmal spielen (10 🪙)";
+          startBtn.disabled = false;
+          noCoinsMsg.style.display = 'none';
+          
+          // Re-check coins for next game
+          loadProfile();
+          if((profiles[curProfId].coins||0) < 10) {
+            startBtn.disabled = true;
+            noCoinsMsg.style.display = 'block';
+          }
+        }, 1000);
+      }
+
+      function addColours() {
+        for (let i = 0; i < squares.length; i++) {
+          let val = parseInt(squares[i].innerHTML) || 0;
+          squares[i].innerHTML = val === 0 ? "" : val;
+          if (val == 0) squares[i].style.backgroundColor = "#afa192";
+          else if (val == 2) { squares[i].style.backgroundColor = "#eee4da"; squares[i].style.color = "#776e65"; }
+          else if (val == 4) { squares[i].style.backgroundColor = "#ede0c8"; squares[i].style.color = "#776e65"; }
+          else if (val == 8) { squares[i].style.backgroundColor = "#f2b179"; squares[i].style.color = "#f9f6f2"; }
+          else if (val == 16) { squares[i].style.backgroundColor = "#ffcea4"; squares[i].style.color = "#f9f6f2"; }
+          else if (val == 32) { squares[i].style.backgroundColor = "#e8c064"; squares[i].style.color = "#f9f6f2"; }
+          else if (val == 64) { squares[i].style.backgroundColor = "#ffab6e"; squares[i].style.color = "#f9f6f2"; }
+          else if (val == 128) { squares[i].style.backgroundColor = "#fd9982"; squares[i].style.color = "#f9f6f2"; squares[i].style.fontSize = "32px"; }
+          else if (val == 256) { squares[i].style.backgroundColor = "#ead79c"; squares[i].style.color = "#f9f6f2"; squares[i].style.fontSize = "32px"; }
+          else if (val == 512) { squares[i].style.backgroundColor = "#76daff"; squares[i].style.color = "#f9f6f2"; squares[i].style.fontSize = "32px"; }
+          else if (val == 1024) { squares[i].style.backgroundColor = "#beeaa5"; squares[i].style.color = "#f9f6f2"; squares[i].style.fontSize = "26px"; }
+          else if (val == 2048) { squares[i].style.backgroundColor = "#d7d4f0"; squares[i].style.color = "#f9f6f2"; squares[i].style.fontSize = "26px"; }
+          else { squares[i].style.backgroundColor = "#3c3a32"; squares[i].style.color = "#f9f6f2"; squares[i].style.fontSize = "26px"; }
+        }
+      }
+      
+      // Touch support
+      let touchStartX = 0;
+      let touchStartY = 0;
+      gridDisplay.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+      }, {passive:true});
+      
+      gridDisplay.addEventListener('touchend', e => {
+        if(!gameActive) return;
+        let touchEndX = e.changedTouches[0].screenX;
+        let touchEndY = e.changedTouches[0].screenY;
+        let dx = touchEndX - touchStartX;
+        let dy = touchEndY - touchStartY;
+        
+        if (Math.abs(dx) > Math.abs(dy)) {
+          if (dx > 30) keyRight();
+          else if (dx < -30) keyLeft();
+        } else {
+          if (dy > 30) keyDown();
+          else if (dy < -30) keyUp();
+        }
+      }, {passive:true});
+    });
+  </script>
+</body>
+</html>
