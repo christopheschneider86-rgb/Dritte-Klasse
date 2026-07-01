@@ -166,6 +166,62 @@ const DEUTSCH_THEMEN = {
       { wort: 'Stütze',   emoji: '🏗️',  beispiel: 'Eine Stütze hält die schwere Brücke.',      loch: 'tz', tipp: 'kurzes ü → tz' },
       { wort: 'hetzen',   emoji: '🏃',  beispiel: 'Man soll Tiere nicht hetzen.',               loch: 'tz', tipp: 'kurzes e → tz' },
     ]
+  },
+
+  satzglieder: {
+    titel: 'Satzglieder',
+    icon: '🧩',
+    farbe: '#e74c3c',
+    regel: 'Satzglieder erkennen: Subjekt (Wer oder was?) und Prädikat (Was tut das Subjekt?). Außerdem kannst du die Umstellprobe üben!',
+    woerter: []
+  },
+
+  wortbausteine: {
+    titel: 'Wortbausteine',
+    icon: '🧱',
+    farbe: '#8e44ad',
+    regel: 'Adjektive (Wiewörter) mit -ig, -lich etc. bilden und Verben zu Nomen machen.',
+    woerter: []
+  },
+
+  steigern: {
+    titel: 'Adjektive steigern',
+    icon: '📈',
+    farbe: '#f39c12',
+    regel: 'Adjektive vergleichen: Grundstufe, Höherstufe (Komparativ) und Meiststufe (Superlativ).',
+    woerter: []
+  },
+
+  adjektiveErkennen: {
+    titel: 'Adjektive erkennen',
+    icon: '👁️',
+    farbe: '#16a085',
+    regel: 'Finde alle Adjektive im Text anhand ihrer Endungen (-ig, -lich, -isch, -haft, -bar, -sam).',
+    woerter: []
+  },
+
+  wortrad: {
+    titel: 'Das Wortrad',
+    icon: '🎡',
+    farbe: '#d35400',
+    regel: 'Drehe das Rad und setze Wortbausteine (Vorsilben und Nachsilben) an den Wortstamm.',
+    woerter: []
+  },
+  
+  boss: {
+    titel: 'Bosskampf',
+    icon: '🐉',
+    farbe: '#c0392b',
+    regel: 'Besiege den Grammatik-Drachen in 60 Sekunden und gewinne extra Münzen!',
+    woerter: []
+  },
+  
+  grammatik_gemischt: {
+    titel: 'Grammatik Mix',
+    icon: '🔀',
+    farbe: '#2c3e50',
+    regel: 'Gemischte Übungen aus allen Grammatik-Bereichen!',
+    woerter: []
   }
 
 };
@@ -335,4 +391,112 @@ const FEHLER_TEXTE = [
       { falsch: 'Kofer', richtig: 'Koffer' },
     ]
   },
+];
+
+const GRAMMATIK_SENTENCES = [
+  { text: "Die Katze schleicht durch den Garten.", parts: ["Die Katze", "schleicht", "durch den Garten."], s: "Die Katze", p: "schleicht" },
+  { text: "Jedes Jahr fliegt Herr Müller mit dem Flugzeug in den Urlaub.", parts: ["Jedes Jahr", "fliegt", "Herr Müller", "mit dem Flugzeug", "in den Urlaub."], s: "Herr Müller", p: "fliegt" },
+  { text: "Sina und Leo spielen gerne mit ihrem Hund.", parts: ["Sina und Leo", "spielen", "gerne", "mit ihrem Hund."], s: "Sina und Leo", p: "spielen" },
+  { text: "Vormittags gehen Anna und Tim in die Schule.", parts: ["Vormittags", "gehen", "Anna und Tim", "in die Schule."], s: "Anna und Tim", p: "gehen" },
+  { text: "Gehst du ins Kino?", parts: ["Gehst", "du", "ins Kino?"], s: "du", p: "Gehst" },
+  { text: "Der Hund bellt laut im Hof.", parts: ["Der Hund", "bellt", "laut", "im Hof."], s: "Der Hund", p: "bellt" },
+  { text: "Morgen besucht uns meine Oma.", parts: ["Morgen", "besucht", "uns", "meine Oma."], s: "meine Oma", p: "besucht" },
+  { text: "Am Abend liest Lisa ein spannendes Buch.", parts: ["Am Abend", "liest", "Lisa", "ein spannendes Buch."], s: "Lisa", p: "liest" },
+  { text: "Der Löwe brüllt laut in der Wüste.", parts: ["Der Löwe", "brüllt", "laut", "in der Wüste."], s: "Der Löwe", p: "brüllt" },
+  { text: "Gestern hat es geregnet.", parts: ["Gestern", "hat", "es", "geregnet."], s: "es", p: "hat" },
+  { text: "Die Vögel singen fröhlich im Baum.", parts: ["Die Vögel", "singen", "fröhlich", "im Baum."], s: "Die Vögel", p: "singen" },
+  { text: "Plötzlich springt der Frosch in den Teich.", parts: ["Plötzlich", "springt", "der Frosch", "in den Teich."], s: "der Frosch", p: "springt" },
+  { text: "Nach der Schule spielen die Kinder auf dem Spielplatz.", parts: ["Nach der Schule", "spielen", "die Kinder", "auf dem Spielplatz."], s: "die Kinder", p: "spielen" },
+  { text: "Opa backt heute einen Kuchen.", parts: ["Opa", "backt", "heute", "einen Kuchen."], s: "Opa", p: "backt" },
+  { text: "Das Auto fährt sehr schnell auf der Straße.", parts: ["Das Auto", "fährt", "sehr schnell", "auf der Straße."], s: "Das Auto", p: "fährt" }
+];
+
+const GRAMMATIK_WORTBAUSTEINE = [
+  // Nomen -> Adjektiv
+  { noun: "Gefahr", correct: "gefährlich", wrong: "gefährig" },
+  { noun: "Sonne", correct: "sonnig", wrong: "sonnlich" },
+  { noun: "Punkt", correct: "pünktlich", wrong: "punktig" },
+  { noun: "Macht", correct: "mächtig", wrong: "machtlich" },
+  { noun: "Froh", correct: "fröhlich", wrong: "frohig" },
+  { noun: "Witz", correct: "witzig", wrong: "witzlich" },
+  { noun: "Schuld", correct: "schuldig", wrong: "schuldlich" },
+  { noun: "Ärger", correct: "ärgerlich", wrong: "ärgerig" },
+  { noun: "Lust", correct: "lustig", wrong: "lustlich" },
+  { noun: "Herr", correct: "herrlich", wrong: "herrig" },
+  { noun: "Kraft", correct: "kräftig", wrong: "kraftlich" },
+  { noun: "Dreck", correct: "dreckig", wrong: "drecklich" },
+  { noun: "Schreck", correct: "schrecklich", wrong: "schreckig" },
+  { noun: "Farbe", correct: "farbig", wrong: "farblich" },
+  { noun: "Tag", correct: "täglich", wrong: "tägig" },
+  { noun: "Wunder", correct: "wunderbar", wrong: "wunderig" },
+  { noun: "Märchen", correct: "märchenhaft", wrong: "märchenisch" },
+  { noun: "Natur", correct: "natürlich", wrong: "naturig" },
+  { noun: "Sturm", correct: "stürmisch", wrong: "stürmig" },
+  { noun: "Freund", correct: "freundlich", wrong: "freundhaft" },
+  { noun: "Traum", correct: "traumhaft", wrong: "traumbar" },
+  { noun: "Dank", correct: "dankbar", wrong: "danklich" }
+];
+
+const GRAMMATIK_VERB_NOMEN = [
+  { verb: "hoffen", correct: "die Hoffnung", wrong: "die Hoffheit" },
+  { verb: "reisen", correct: "die Reise", wrong: "die Reisung" },
+  { verb: "heilen", correct: "die Heilung", wrong: "die Heilkeit" },
+  { verb: "hindern", correct: "das Hindernis", wrong: "die Hinderung" },
+  { verb: "wundern", correct: "das Wunder", wrong: "die Wunderung" },
+  { verb: "erleben", correct: "das Erlebnis", wrong: "die Erlebung" },
+  { verb: "schlafen", correct: "der Schlaf", wrong: "die Schlafung" },
+  { verb: "springen", correct: "der Sprung", wrong: "die Springnis" },
+  { verb: "retten", correct: "die Rettung", wrong: "die Rettnis" },
+  { verb: "wissen", correct: "das Wissen", wrong: "die Wissheit" },
+  { verb: "krank", correct: "die Krankheit", wrong: "die Krankung" },
+  { verb: "gesund", correct: "die Gesundheit", wrong: "die Gesundnis" },
+  { verb: "sauber", correct: "die Sauberkeit", wrong: "die Sauberung" },
+  { verb: "dunkel", correct: "die Dunkelheit", wrong: "die Dunkelung" },
+  { verb: "fröhlich", correct: "die Fröhlichkeit", wrong: "die Fröhlichnis" }
+];
+
+const GRAMMATIK_STEIGERN = [
+  { grund: "schnell", komparativ: "schneller", superlativ: "am schnellsten" },
+  { grund: "groß", komparativ: "größer", superlativ: "am größten" },
+  { grund: "gut", komparativ: "besser", superlativ: "am besten" },
+  { grund: "hoch", komparativ: "höher", superlativ: "am höchsten" },
+  { grund: "viel", komparativ: "mehr", superlativ: "am meisten" },
+  { grund: "klein", komparativ: "kleiner", superlativ: "am kleinsten" },
+  { grund: "schön", komparativ: "schöner", superlativ: "am schönsten" },
+  { grund: "stark", komparativ: "stärker", superlativ: "am stärksten" },
+  { grund: "kalt", komparativ: "kälter", superlativ: "am kältesten" },
+  { grund: "lang", komparativ: "länger", superlativ: "am längsten" }
+];
+
+const GRAMMATIK_WORTRAD = [
+  { 
+    prefixes: ["ab", "auf", "aus", "ein", "über", "an"], 
+    verbs: ["fallen", "schließen", "fahren", "hängen", "stellen", "räumen"], 
+    valid: [
+      "abfallen", "auffallen", "ausfallen", "einfallen", "überfallen", "anfallen",
+      "abschließen", "aufschließen", "ausschließen", "einschließen", "anschließen",
+      "abfahren", "auffahren", "ausfahren", "einfahren", "überfahren", "anfahren",
+      "abhängen", "aufhängen", "aushängen", "einhängen", "überhängen", "anhängen",
+      "abstellen", "aufstellen", "ausstellen", "einstellen", "anstellen",
+      "abräumen", "aufräumen", "ausräumen", "einräumen"
+    ] 
+  },
+  {
+    prefixes: ["ver", "ein", "ab", "aus", "auf", "an", "ent"],
+    verbs: ["biegen", "reisen", "nehmen", "täuschen", "nähen", "sprechen"],
+    valid: [
+      "verbiegen", "einbiegen", "abbiegen", "ausbiegen",
+      "verreisen", "einreisen", "abreisen", "ausreisen", "anreisen",
+      "vernehmen", "einnehmen", "abnehmen", "ausnehmen", "aufnehmen", "annehmen", "entnehmen",
+      "enttäuschen", "vertäuschen", "antäuschen",
+      "annähen", "abnähen", "einnähen", "vernähen",
+      "ansprechen", "absprechen", "aussprechen", "einsprechen", "entsprechen", "versprechen"
+    ]
+  }
+];
+
+const GRAMMATIK_ADJEKTIVE_ERKENNEN = [
+  { text: "Der mutige Held kämpfte gegen den gefährlichen Drachen.", words: [{word: "Der", adj: false}, {word: "mutige", adj: true}, {word: "Held", adj: false}, {word: "kämpfte", adj: false}, {word: "gegen", adj: false}, {word: "den", adj: false}, {word: "gefährlichen", adj: true}, {word: "Drachen.", adj: false}] },
+  { text: "Das sonnige Wetter macht die Kinder fröhlich.", words: [{word: "Das", adj: false}, {word: "sonnige", adj: true}, {word: "Wetter", adj: false}, {word: "macht", adj: false}, {word: "die", adj: false}, {word: "Kinder", adj: false}, {word: "fröhlich.", adj: true}] },
+  { text: "Ein mächtiger Sturm zog über das friedliche Dorf.", words: [{word: "Ein", adj: false}, {word: "mächtiger", adj: true}, {word: "Sturm", adj: false}, {word: "zog", adj: false}, {word: "über", adj: false}, {word: "das", adj: false}, {word: "friedliche", adj: true}, {word: "Dorf.", adj: false}] }
 ];

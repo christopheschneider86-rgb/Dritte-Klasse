@@ -194,6 +194,27 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
 .ws-cell.ws-start{background:#3498db;color:white;border-color:#2980b9}
 .ws-word-chip{padding:5px 12px;border-radius:20px;font-size:13px;font-weight:bold;display:inline-block;margin:3px;border:2px solid #f0b27a;background:white}
 .ws-word-chip.ws-found{text-decoration:line-through;opacity:0.7}
+
+/* CATEGORY TABS */
+.cat-tabs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:15px;background:#ecf0f1;padding:6px;border-radius:12px;}
+.cat-tab{flex:1;text-align:center;padding:10px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:15px;color:var(--muted);transition:all .2s;min-width:130px;}
+.cat-tab.active{background:white;color:var(--accent);box-shadow:0 2px 6px rgba(0,0,0,0.05);}
+@media(max-width:400px){.cat-tab{font-size:14px;padding:8px;}}
+
+/* Drag and Drop Container */
+.dnd-container{display:flex;flex-direction:column;gap:16px;margin-bottom:16px;}
+.dropzone{border:2px dashed #bdc3c7;border-radius:12px;min-height:70px;padding:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:#f8f9fa;transition:background 0.2s;}
+.dropzone.drag-over{background:#e4f3ff;border-color:#3498db;}
+.dropzone-title{width:100%;font-size:13px;font-weight:bold;color:#7f8c8d;margin-bottom:4px;text-transform:uppercase;}
+.draggable-item{background:white;border:2px solid #3498db;color:#2c3e50;padding:10px 16px;border-radius:8px;font-weight:bold;cursor:grab;user-select:none;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+.draggable-item:active{cursor:grabbing;}
+
+/* Subjekt & Prädikat Dropzones */
+#drop-subjekt{border-color:#e74c3c;background:#fde8e8;}
+#drop-subjekt .dropzone-title{color:#c0392b;}
+#drop-praedikat{border-color:#27ae60;background:#eafaf1;}
+#drop-praedikat .dropzone-title{color:#1e8449;}
+#drop-umstell{border-color:#e67e22;background:#fef4e8;min-height:90px;}
 </style>
 
   <style>
@@ -246,6 +267,10 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
   <div class="main-layout">
 
     <div class="card">
+      <div class="cat-tabs">
+        <div class="cat-tab active" onclick="setCategory('rechtschreibung', this)">Rechtschreibung</div>
+        <div class="cat-tab" onclick="setCategory('grammatik', this)">Grammatik</div>
+      </div>
       <div class="panel-title">📖 Themen</div>
       <div class="tile-grid" id="tileGrid"></div>
       <div id="regelBox" class="regel-box hidden"></div>
@@ -277,6 +302,14 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
           <button class="mode-tab" id="tab-gap" onclick="setMode('gap')">🔤 Lückentext</button>
           <button class="mode-tab" id="tab-mc" onclick="setMode('mc')">✅ Auswählen</button>
           <button class="mode-tab" id="tab-fehler" onclick="setMode('fehler')" style="display:none">🔎 Fehler finden</button>
+          <button class="mode-tab" id="tab-satzglieder" onclick="setMode('satzglieder')" style="display:none">🧩 Satzglieder</button>
+          <button class="mode-tab" id="tab-umstellen" onclick="setMode('umstellen')" style="display:none">🔄 Umstellprobe</button>
+          <button class="mode-tab" id="tab-wortbausteine" onclick="setMode('wortbausteine')" style="display:none">🧱 Nomen & Adjektive</button>
+          <button class="mode-tab" id="tab-verbnomen" onclick="setMode('verbnomen')" style="display:none">🧱 Verben zu Nomen</button>
+          <button class="mode-tab" id="tab-steigern" onclick="setMode('steigern')" style="display:none">📈 Steigern</button>
+          <button class="mode-tab" id="tab-erkennen" onclick="setMode('erkennen')" style="display:none">👁️ Erkennen</button>
+          <button class="mode-tab" id="tab-wortrad" onclick="setMode('wortrad')" style="display:none">🎡 Wortrad</button>
+          <button class="mode-tab" id="tab-boss" onclick="setMode('boss')" style="display:none">🐉 Bosskampf</button>
         </div>
 
         <!-- SPELLING -->
@@ -390,6 +423,145 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
           </div>
         </div>
 
+        <!-- WORTBAUSTEINE -->
+        <div id="modeWortbausteine" class="mode-area hidden">
+          <div class="task-box" style="margin-bottom:14px">
+            <div class="task-question" id="wbQuestion">Macht</div>
+            <div class="task-hint">Welches Adjektiv (Wiewort) gehört dazu?</div>
+          </div>
+          <div class="mc-grid" id="wbGrid"></div>
+          <div id="wbFeedback" class="hidden"></div>
+          <div id="wbBonus" class="hidden"></div>
+          <div class="next-row">
+            <button class="btn btn-secondary" id="wbNextBtn" onclick="nextWord('wortbausteine')" style="display:none">Weiter →</button>
+          </div>
+        </div>
+
+        <!-- SATZGLIEDER -->
+        <div id="modeSatzglieder" class="mode-area hidden">
+          <div class="task-box" style="margin-bottom:14px">
+            <div class="task-question" id="sgSentence"></div>
+            <div class="task-hint">Ziehe die Satzglieder in die passenden Felder!</div>
+          </div>
+          <div class="dnd-container">
+            <div class="dropzone" id="drop-pool-sg" data-type="pool"></div>
+            <div class="dropzone" id="drop-subjekt" data-type="subjekt"><div class="dropzone-title">Subjekt (Rot)</div></div>
+            <div class="dropzone" id="drop-praedikat" data-type="praedikat"><div class="dropzone-title">Prädikat (Grün)</div></div>
+          </div>
+          <div id="sgFeedback" class="hidden"></div>
+          <div id="sgBonus" class="hidden"></div>
+          <div style="display:flex;gap:10px;margin-top:6px">
+            <button class="btn btn-primary" id="sgCheckBtn" onclick="checkSatzglieder()">Prüfen</button>
+            <button class="btn btn-secondary hidden" id="sgNextBtn" onclick="nextWord('satzglieder')">Weiter →</button>
+          </div>
+        </div>
+
+        <!-- UMSTELLPROBE -->
+        <div id="modeUmstellen" class="mode-area hidden">
+          <div class="task-box" style="margin-bottom:14px">
+            <div class="task-question" id="umSentenceOrig" style="font-size:22px;color:#c0392b;margin-bottom:10px;">Der Hund bellt.</div>
+            <div class="task-hint">Stelle den Satz um! Ziehe alle Teile in eine <b>andere, neue Reihenfolge</b>.</div>
+          </div>
+          <div class="dnd-container">
+            <div class="dropzone" id="drop-pool-um" data-type="pool"></div>
+            <div class="dropzone" id="drop-umstell" data-type="umstell"><div class="dropzone-title">Neuer Satz</div></div>
+          </div>
+          <div id="umFeedback" class="hidden"></div>
+          <div id="umBonus" class="hidden"></div>
+          <div style="display:flex;gap:10px;margin-top:6px">
+            <button class="btn btn-primary" id="umCheckBtn" onclick="checkUmstellen()">Prüfen</button>
+            <button class="btn btn-secondary hidden" id="umNextBtn" onclick="nextWord('umstellen')">Weiter →</button>
+          </div>
+        </div>
+
+        <!-- VERBEN ZU NOMEN -->
+        <div id="modeVerbnomen" class="mode-area hidden">
+          <div class="task-box" style="margin-bottom:14px">
+            <div class="task-question" id="vnQuestion">hoffen</div>
+            <div class="task-hint">Welches Nomen (Namenwort) gehört dazu?</div>
+          </div>
+          <div class="mc-grid" id="vnGrid"></div>
+          <div id="vnFeedback" class="hidden"></div>
+          <div id="vnBonus" class="hidden"></div>
+          <div class="next-row">
+            <button class="btn btn-secondary" id="vnNextBtn" onclick="nextWord('verbnomen')" style="display:none">Weiter →</button>
+          </div>
+        </div>
+
+        <!-- ADJEKTIVE STEIGERN -->
+        <div id="modeSteigern" class="mode-area hidden">
+          <div class="task-box" style="margin-bottom:14px">
+            <div class="task-question" id="stQuestion">schnell</div>
+            <div class="task-hint">Ziehe die Steigerungsformen in die richtigen Felder!</div>
+          </div>
+          <div class="dnd-container">
+            <div class="dropzone" id="drop-pool-st" data-type="pool"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div class="dropzone" id="drop-st-komp" data-type="komp"><div class="dropzone-title">Höherstufe</div></div>
+              <div class="dropzone" id="drop-st-sup" data-type="sup"><div class="dropzone-title">Meiststufe</div></div>
+            </div>
+          </div>
+          <div id="stFeedback" class="hidden"></div>
+          <div id="stBonus" class="hidden"></div>
+          <div style="display:flex;gap:10px;margin-top:6px">
+            <button class="btn btn-primary" id="stCheckBtn" onclick="checkSteigern()">Prüfen</button>
+            <button class="btn btn-secondary hidden" id="stNextBtn" onclick="nextWord('steigern')">Weiter →</button>
+          </div>
+        </div>
+
+        <!-- ADJEKTIVE ERKENNEN -->
+        <div id="modeErkennen" class="mode-area hidden">
+          <div class="task-box" style="margin-bottom:10px">
+            <div class="task-question">🔎 Finde alle <b>Adjektive</b>!</div>
+            <div class="task-hint">Klicke auf die Adjektive (Wiewörter). Denke an die Endungen -ig, -lich, -isch, -bar, -sam, -haft!</div>
+          </div>
+          <div id="erkennenTextDisplay"></div>
+          <div id="erkennenFeedback" class="hidden"></div>
+          <div id="erkennenBonus" class="hidden"></div>
+          <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap">
+            <button class="btn btn-primary" id="erkennenPruefBtn" onclick="checkErkennen()">Prüfen</button>
+            <button class="btn btn-secondary" id="erkennenNextBtn" onclick="nextWord('erkennen')" style="display:none">Weiter →</button>
+          </div>
+        </div>
+
+        <!-- WORTRAD -->
+        <div id="modeWortrad" class="mode-area hidden" style="text-align:center;">
+          <div class="task-box" style="margin-bottom:14px">
+            <div class="task-question">Das Wortrad 🎡</div>
+            <div class="task-hint">Drehe an den Ringen, um ein sinnvolles Wort zu bilden!</div>
+          </div>
+          <div style="display:flex;justify-content:center;margin-bottom:20px;">
+            <div style="display:flex;align-items:center;gap:10px;font-size:24px;font-weight:bold;color:#2c3e50;">
+              <div id="wheelPrefix" style="background:#fef4e8;border:2px solid #e67e22;border-radius:12px;padding:10px 15px;cursor:pointer;user-select:none;">ab</div>
+              <div id="wheelVerb" style="background:#eafaf1;border:2px solid #27ae60;border-radius:12px;padding:10px 15px;cursor:pointer;user-select:none;">fallen</div>
+            </div>
+          </div>
+          <div id="wrFeedback" class="hidden"></div>
+          <div id="wrBonus" class="hidden"></div>
+          <div style="display:flex;justify-content:center;gap:10px;margin-top:6px">
+            <button class="btn btn-primary" id="wrCheckBtn" onclick="checkWortrad()">Prüfen</button>
+            <button class="btn btn-secondary hidden" id="wrNextBtn" onclick="nextWord('wortrad')">Neues Rad →</button>
+          </div>
+          <div style="margin-top:10px;font-size:13px;color:#7f8c8d;">Tipp: Klicke auf die farbigen Boxen, um sie durchzuwechseln.</div>
+        </div>
+
+        <!-- BOSS -->
+        <div id="modeBoss" class="mode-area hidden">
+          <div class="task-box" style="margin-bottom:14px;background:#fde8e8;border-color:#e74c3c;">
+            <div class="task-question" style="color:#c0392b;">🐉 Der Grammatik-Drache greift an!</div>
+            <div class="task-hint">Beantworte in 60 Sekunden so viele Grammatik-Fragen wie möglich!</div>
+            <div style="font-size:32px;font-weight:bold;color:#c0392b;margin-top:10px;" id="bossTimer">60s</div>
+            <button class="btn btn-primary" id="bossStartBtn" onclick="startBosskampf()" style="margin:10px auto 0;">Starten</button>
+          </div>
+          
+          <div id="bossTaskContainer" class="hidden">
+            <div style="font-size:18px;font-weight:bold;margin-bottom:10px;text-align:center;" id="bossQuestion">Frage?</div>
+            <div class="mc-grid" id="bossGrid"></div>
+          </div>
+          
+          <div id="bossResult" class="hidden" style="text-align:center;padding:20px;"></div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -463,6 +635,25 @@ let activeThema  = null;
 let currentWord  = null;
 let currentMode  = 'spelling';
 let answeredThisRound = false;
+
+// New Grammar State
+let currentCategory = 'rechtschreibung';
+let grammatikIndex  = 0;
+let grammatikList   = [];
+let draggedItem = null;
+
+function setCategory(cat, btn) {
+  currentCategory = cat;
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  
+  document.getElementById('viewTopic').classList.remove('active');
+  document.getElementById('viewDefault').classList.add('active');
+  document.getElementById('regelBox').classList.add('hidden');
+  document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
+  
+  buildTiles();
+}
 
 // Wörter-suchen state (regular tile mode)
 let suchItems    = [];
@@ -682,6 +873,10 @@ function buildTiles() {
   const grid = document.getElementById('tileGrid');
   grid.innerHTML = '';
   Object.keys(DEUTSCH_THEMEN).forEach(key => {
+    const isGrammatik = ['satzglieder', 'wortbausteine', 'steigern', 'adjektiveErkennen', 'wortrad', 'boss', 'grammatik_gemischt'].includes(key);
+    if (currentCategory === 'rechtschreibung' && isGrammatik) return;
+    if (currentCategory === 'grammatik' && !isGrammatik) return;
+
     const t    = DEUTSCH_THEMEN[key];
     const tile = document.createElement('div');
     tile.className   = 'tile';
@@ -706,37 +901,114 @@ function selectThema(key) {
   regelBox.classList.remove('hidden');
 
   const isFehler = key === 'fehler';
+  const isSatzglieder = key === 'satzglieder';
+  const isWortbausteine = key === 'wortbausteine';
+  const isSteigern = key === 'steigern';
+  const isErkennen = key === 'adjektiveErkennen';
+  const isWortrad = key === 'wortrad';
+  const isBoss = key === 'boss';
+  const isGrammatikGemischt = key === 'grammatik_gemischt';
+
+  const isGrammatikTopic = (isSatzglieder || isWortbausteine || isSteigern || isErkennen || isWortrad || isBoss || isGrammatikGemischt);
+
   document.getElementById('topicIcon').textContent      = thema.icon;
   document.getElementById('topicTitle').textContent     = thema.titel;
-  document.getElementById('topicSub').textContent       = isFehler ? 'Texte lesen & Fehler entdecken' : 'Rechtschreibregel';
-  document.getElementById('wordCountBadge').textContent = isFehler ? '5 Texte' : thema.woerter.length + ' Wörter';
+  document.getElementById('topicSub').textContent       = isFehler ? 'Texte lesen & Fehler entdecken' : (isGrammatikTopic ? 'Grammatik üben' : 'Rechtschreibregel');
+  
+  if (isSatzglieder) document.getElementById('wordCountBadge').textContent = 'Sätze';
+  else if (isWortbausteine) document.getElementById('wordCountBadge').textContent = 'Bausteine';
+  else if (isSteigern) document.getElementById('wordCountBadge').textContent = 'Steigern';
+  else if (isErkennen) document.getElementById('wordCountBadge').textContent = 'Erkennen';
+  else if (isWortrad) document.getElementById('wordCountBadge').textContent = 'Drehen';
+  else if (isBoss) document.getElementById('wordCountBadge').textContent = 'Challenge';
+  else if (isGrammatikGemischt) document.getElementById('wordCountBadge').textContent = 'Mix';
+  else document.getElementById('wordCountBadge').textContent = isFehler ? '5 Texte' : thema.woerter.length + ' Wörter';
 
-  // Fehler-Thema: nur Fehler-Tab anzeigen; sonst normale Tabs
-  document.getElementById('modeTabs').style.display = isFehler ? 'none' : '';
-  document.getElementById('tab-fehler').style.display = 'none'; // immer verborgen in Tabs-Leiste
-
+  document.getElementById('modeTabs').style.display = (isFehler || isBoss || isWortrad) ? 'none' : '';
+  document.querySelectorAll('.mode-tab').forEach(t => t.style.display = 'none');
+  
   document.getElementById('viewDefault').classList.remove('active');
   document.getElementById('viewTopic').classList.add('active');
 
-  if (isFehler) {
+  if (isSatzglieder) {
+    document.getElementById('tab-satzglieder').style.display = 'block';
+    document.getElementById('tab-umstellen').style.display = 'block';
+    setMode('satzglieder');
+  } else if (isWortbausteine) {
+    document.getElementById('tab-wortbausteine').style.display = 'block';
+    document.getElementById('tab-verbnomen').style.display = 'block';
+    setMode('wortbausteine');
+  } else if (isSteigern) {
+    document.getElementById('tab-steigern').style.display = 'block';
+    setMode('steigern');
+  } else if (isErkennen) {
+    document.getElementById('tab-erkennen').style.display = 'block';
+    setMode('erkennen');
+  } else if (isWortrad) {
+    setMode('wortrad');
+  } else if (isBoss) {
+    setMode('boss');
+  } else if (isGrammatikGemischt) {
+    document.getElementById('tab-satzglieder').style.display = 'block';
+    document.getElementById('tab-umstellen').style.display = 'block';
+    document.getElementById('tab-wortbausteine').style.display = 'block';
+    document.getElementById('tab-verbnomen').style.display = 'block';
+    document.getElementById('tab-steigern').style.display = 'block';
+    document.getElementById('tab-erkennen').style.display = 'block';
+    setMode('satzglieder');
+  } else if (isFehler) {
     setMode('fehler');
   } else {
-    setMode(currentMode === 'fehler' ? 'spelling' : currentMode);
+    document.getElementById('tab-spelling').style.display = 'block';
+    document.getElementById('tab-such').style.display = 'block';
+    document.getElementById('tab-gap').style.display = 'block';
+    document.getElementById('tab-mc').style.display = 'block';
+    setMode(['spelling','such','gap','mc'].includes(currentMode) ? currentMode : 'spelling');
   }
 }
 
 function setMode(mode) {
   currentMode = mode;
-  ['spelling','such','gap','mc','fehler'].forEach(m => {
+  const allModes = ['spelling','such','gap','mc','fehler','satzglieder','umstellen','wortbausteine','verbnomen','steigern','erkennen','wortrad','boss'];
+  allModes.forEach(m => {
     const tab = document.getElementById('tab-' + m);
     if (tab) tab.classList.toggle('active', m === mode);
     const el = document.getElementById('mode' + m.charAt(0).toUpperCase() + m.slice(1));
     if (el) el.classList.toggle('hidden', m !== mode);
   });
-  nextWord(mode);
+  
+  if (mode === 'satzglieder' || mode === 'umstellen') {
+    grammatikList = [...GRAMMATIK_SENTENCES].sort(() => 0.5 - Math.random());
+    grammatikIndex = 0;
+  } else if (mode === 'wortbausteine') {
+    grammatikList = [...GRAMMATIK_WORTBAUSTEINE].sort(() => 0.5 - Math.random());
+    grammatikIndex = 0;
+  } else if (mode === 'verbnomen') {
+    grammatikList = [...GRAMMATIK_VERB_NOMEN].sort(() => 0.5 - Math.random());
+    grammatikIndex = 0;
+  } else if (mode === 'steigern') {
+    grammatikList = [...GRAMMATIK_STEIGERN].sort(() => 0.5 - Math.random());
+    grammatikIndex = 0;
+  } else if (mode === 'erkennen') {
+    grammatikList = [...GRAMMATIK_ADJEKTIVE_ERKENNEN].sort(() => 0.5 - Math.random());
+    grammatikIndex = 0;
+  } else if (mode === 'wortrad') {
+    grammatikList = [...GRAMMATIK_WORTRAD].sort(() => 0.5 - Math.random());
+    grammatikIndex = 0;
+  }
+  
+  if (mode !== 'boss') nextWord(mode);
 }
 
 function nextWord(mode) {
+  if (mode === 'satzglieder') { loadSatzglieder(); return; }
+  if (mode === 'umstellen') { loadUmstellen(); return; }
+  if (mode === 'wortbausteine') { loadWortbausteine(); return; }
+  if (mode === 'verbnomen') { loadVerbnomen(); return; }
+  if (mode === 'steigern') { loadSteigern(); return; }
+  if (mode === 'erkennen') { loadErkennen(); return; }
+  if (mode === 'wortrad') { loadWortrad(); return; }
+
   currentWord = pickWord();
   answeredThisRound = false;
   if (!currentWord && mode !== 'such' && mode !== 'fehler') return;
@@ -1347,6 +1619,618 @@ function checkFehlerFinden() {
   document.getElementById('fehlerPruefBtn').style.display = 'none';
   document.getElementById('fehlerNextBtn').style.display  = '';
   document.getElementById('fehlerCounter').textContent = correctFound + ' von 8 Fehlern gefunden';
+}
+
+// ── DRAG AND DROP ──
+function setupDragAndDrop() {
+  const draggables = document.querySelectorAll('.draggable-item');
+  const dropzones = document.querySelectorAll('.dropzone');
+
+  draggables.forEach(draggable => {
+    draggable.addEventListener('dragstart', () => {
+      draggable.classList.add('dragging');
+      draggedItem = draggable;
+    });
+    draggable.addEventListener('dragend', () => {
+      draggable.classList.remove('dragging');
+      draggedItem = null;
+      updateGrammarCheckBtns();
+    });
+    
+    // Touch support (tap to move between pool and zones)
+    draggable.addEventListener('click', (e) => {
+      const parent = draggable.parentElement;
+      const isPool = parent.dataset.type === 'pool';
+      
+      if (currentMode === 'satzglieder') {
+        if (isPool) {
+          const s = document.getElementById('drop-subjekt');
+          const p = document.getElementById('drop-praedikat');
+          if (s.querySelectorAll('.draggable-item').length === 0) s.appendChild(draggable);
+          else if (p.querySelectorAll('.draggable-item').length === 0) p.appendChild(draggable);
+        } else {
+          document.getElementById('drop-pool-sg').appendChild(draggable);
+        }
+      } else if (currentMode === 'umstellen') {
+        if (isPool) {
+          document.getElementById('drop-umstell').appendChild(draggable);
+        } else {
+          document.getElementById('drop-pool-um').appendChild(draggable);
+        }
+      }
+      updateGrammarCheckBtns();
+    });
+  });
+
+  dropzones.forEach(zone => {
+    zone.addEventListener('dragover', e => {
+      e.preventDefault();
+      zone.classList.add('drag-over');
+    });
+    zone.addEventListener('dragleave', () => {
+      zone.classList.remove('drag-over');
+    });
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      if (draggedItem) {
+        zone.appendChild(draggedItem);
+        updateGrammarCheckBtns();
+      }
+    });
+  });
+}
+
+function updateGrammarCheckBtns() {
+  if (currentMode === 'satzglieder') {
+    const p = document.getElementById('drop-pool-sg');
+    const s = document.getElementById('drop-subjekt');
+    const pr = document.getElementById('drop-praedikat');
+    document.getElementById('sgCheckBtn').disabled = false;
+  } else if (currentMode === 'umstellen') {
+    const um = document.getElementById('drop-umstell');
+    document.getElementById('umCheckBtn').disabled = (um.querySelectorAll('.draggable-item').length === 0);
+  }
+}
+
+// ── SATZGLIEDER ──
+function loadSatzglieder() {
+  answeredThisRound = false;
+  grammatikCurrent = grammatikList[grammatikIndex];
+  if (!grammatikCurrent) return;
+
+  document.getElementById('sgSentence').textContent = grammatikCurrent.text;
+  document.getElementById('sgFeedback').className = 'hidden';
+  document.getElementById('sgBonus').className = 'hidden';
+  document.getElementById('sgNextBtn').style.display = 'none';
+  document.getElementById('sgCheckBtn').style.display = '';
+
+  const pool = document.getElementById('drop-pool-sg');
+  const subjekt = document.getElementById('drop-subjekt');
+  const praedikat = document.getElementById('drop-praedikat');
+  
+  // Clean dropzones
+  Array.from(subjekt.querySelectorAll('.draggable-item')).forEach(el => el.remove());
+  Array.from(praedikat.querySelectorAll('.draggable-item')).forEach(el => el.remove());
+  pool.innerHTML = '';
+
+  const parts = shuffle([...grammatikCurrent.parts]);
+  parts.forEach((p, i) => {
+    const el = document.createElement('div');
+    el.className = 'draggable-item';
+    el.draggable = true;
+    el.textContent = p;
+    el.dataset.val = p;
+    pool.appendChild(el);
+  });
+
+  setupDragAndDrop();
+}
+
+function checkSatzglieder() {
+  if (answeredThisRound) return;
+  answeredThisRound = true;
+
+  const sNode = document.getElementById('drop-subjekt').querySelector('.draggable-item');
+  const pNode = document.getElementById('drop-praedikat').querySelector('.draggable-item');
+
+  const sVal = sNode ? sNode.dataset.val : '';
+  const pVal = pNode ? pNode.dataset.val : '';
+
+  const ok = (sVal === grammatikCurrent.s && pVal === grammatikCurrent.p);
+  
+  document.querySelectorAll('#modeSatzglieder .draggable-item').forEach(el => {
+    el.draggable = false;
+    if (el.dataset.val === grammatikCurrent.s) el.classList.add('placed');
+    if (el.dataset.val === grammatikCurrent.p) el.classList.add('placed');
+  });
+
+  document.getElementById('sgCheckBtn').style.display = 'none';
+  document.getElementById('sgNextBtn').style.display = '';
+
+  showFeedbackEl('sgFeedback', ok, ok ? null : `Subjekt: ${grammatikCurrent.s} | Prädikat: ${grammatikCurrent.p}`);
+  
+  if (ok) {
+    showBonus('sgBonus', 2);
+    addCoins(2);
+    sessionOk++;
+  } else {
+    document.getElementById('sgBonus').className = 'hidden';
+    sessionWrong++;
+  }
+  updateScoreBar();
+}
+
+// ── UMSTELLPROBE ──
+function loadUmstellen() {
+  answeredThisRound = false;
+  grammatikCurrent = grammatikList[grammatikIndex];
+  if (!grammatikCurrent) return;
+
+  document.getElementById('umSentenceOrig').textContent = grammatikCurrent.text;
+  document.getElementById('umFeedback').className = 'hidden';
+  document.getElementById('umBonus').className = 'hidden';
+  document.getElementById('umNextBtn').style.display = 'none';
+  document.getElementById('umCheckBtn').style.display = '';
+
+  const pool = document.getElementById('drop-pool-um');
+  const umstell = document.getElementById('drop-umstell');
+  
+  Array.from(umstell.querySelectorAll('.draggable-item')).forEach(el => el.remove());
+  pool.innerHTML = '';
+
+  const parts = shuffle([...grammatikCurrent.parts]);
+  parts.forEach((p, i) => {
+    const el = document.createElement('div');
+    el.className = 'draggable-item';
+    el.draggable = true;
+    el.textContent = p;
+    el.dataset.val = p;
+    pool.appendChild(el);
+  });
+
+  setupDragAndDrop();
+}
+
+function checkUmstellen() {
+  if (answeredThisRound) return;
+  answeredThisRound = true;
+
+  const umstellNodes = document.getElementById('drop-umstell').querySelectorAll('.draggable-item');
+  const partsOrdered = Array.from(umstellNodes).map(n => n.dataset.val);
+  
+  let isComplete = partsOrdered.length === grammatikCurrent.parts.length;
+  let changed = partsOrdered.join(' ') !== grammatikCurrent.parts.join(' ');
+  let pIndex = partsOrdered.indexOf(grammatikCurrent.p);
+  let ok = isComplete && changed && (pIndex === 1 || pIndex === 0);
+
+  document.querySelectorAll('#modeUmstellen .draggable-item').forEach(el => {
+    el.draggable = false;
+    if (ok) el.classList.add('placed');
+  });
+
+  document.getElementById('umCheckBtn').style.display = 'none';
+  document.getElementById('umNextBtn').style.display = '';
+
+  showFeedbackEl('umFeedback', ok, ok ? null : 'Das Prädikat (Tunwort) muss an der richtigen Stelle stehen!');
+  
+  if (ok) {
+    showBonus('umBonus', 2);
+    addCoins(2);
+    sessionOk++;
+  } else {
+    document.getElementById('umBonus').className = 'hidden';
+    sessionWrong++;
+  }
+  updateScoreBar();
+}
+
+// ── VERBEN ZU NOMEN ──
+function loadVerbnomen() {
+  answeredThisRound = false;
+  grammatikCurrent = grammatikList[grammatikIndex];
+  if (!grammatikCurrent) return;
+
+  document.getElementById('vnQuestion').textContent = grammatikCurrent.verb;
+  document.getElementById('vnFeedback').className = 'hidden';
+  document.getElementById('vnBonus').className = 'hidden';
+  document.getElementById('vnNextBtn').style.display = 'none';
+
+  const grid = document.getElementById('vnGrid');
+  grid.innerHTML = '';
+  
+  const options = shuffle([grammatikCurrent.correct, grammatikCurrent.wrong]);
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'mc-btn';
+    btn.textContent = opt;
+    btn.onclick = () => checkVerbnomen(opt, btn);
+    grid.appendChild(btn);
+  });
+}
+
+function checkVerbnomen(chosen, btn) {
+  if (answeredThisRound) return;
+  answeredThisRound = true;
+
+  const ok = (chosen === grammatikCurrent.correct);
+
+  document.querySelectorAll('#modeVerbnomen .mc-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === grammatikCurrent.correct) b.classList.add('correct');
+  });
+  if (!ok) btn.classList.add('wrong');
+
+  document.getElementById('vnNextBtn').style.display = '';
+
+  showFeedbackEl('vnFeedback', ok, ok ? null : grammatikCurrent.correct);
+  
+  if (ok) {
+    showBonus('vnBonus', 1);
+    addCoins(1);
+    sessionOk++;
+  } else {
+    document.getElementById('vnBonus').className = 'hidden';
+    sessionWrong++;
+  }
+  updateScoreBar();
+}
+
+// ── STEIGERN ──
+function loadSteigern() {
+  answeredThisRound = false;
+  grammatikCurrent = grammatikList[grammatikIndex];
+  if (!grammatikCurrent) return;
+
+  document.getElementById('stQuestion').textContent = grammatikCurrent.grund;
+  document.getElementById('stFeedback').className = 'hidden';
+  document.getElementById('stBonus').className = 'hidden';
+  document.getElementById('stNextBtn').style.display = 'none';
+  document.getElementById('stCheckBtn').style.display = '';
+
+  const pool = document.getElementById('drop-pool-st');
+  const komp = document.getElementById('drop-st-komp');
+  const sup = document.getElementById('drop-st-sup');
+  
+  Array.from(komp.querySelectorAll('.draggable-item')).forEach(el => el.remove());
+  Array.from(sup.querySelectorAll('.draggable-item')).forEach(el => el.remove());
+  pool.innerHTML = '';
+
+  const parts = shuffle([grammatikCurrent.komparativ, grammatikCurrent.superlativ]);
+  parts.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'draggable-item';
+    el.draggable = true;
+    el.textContent = p;
+    el.dataset.val = p;
+    pool.appendChild(el);
+  });
+
+  // Attach touch/click logic for Steigern
+  pool.querySelectorAll('.draggable-item').forEach(draggable => {
+    draggable.addEventListener('click', () => {
+      const parent = draggable.parentElement;
+      if (parent.id === 'drop-pool-st') {
+        if (komp.querySelectorAll('.draggable-item').length === 0) komp.appendChild(draggable);
+        else if (sup.querySelectorAll('.draggable-item').length === 0) sup.appendChild(draggable);
+      } else {
+        pool.appendChild(draggable);
+      }
+    });
+  });
+
+  setupDragAndDrop();
+}
+
+function checkSteigern() {
+  if (answeredThisRound) return;
+  answeredThisRound = true;
+
+  const kNode = document.getElementById('drop-st-komp').querySelector('.draggable-item');
+  const sNode = document.getElementById('drop-st-sup').querySelector('.draggable-item');
+
+  const kVal = kNode ? kNode.dataset.val : '';
+  const sVal = sNode ? sNode.dataset.val : '';
+
+  const ok = (kVal === grammatikCurrent.komparativ && sVal === grammatikCurrent.superlativ);
+  
+  document.querySelectorAll('#modeSteigern .draggable-item').forEach(el => {
+    el.draggable = false;
+    if (el.dataset.val === grammatikCurrent.komparativ) el.style.borderColor = '#f39c12';
+    if (el.dataset.val === grammatikCurrent.superlativ) el.style.borderColor = '#c0392b';
+  });
+
+  document.getElementById('stCheckBtn').style.display = 'none';
+  document.getElementById('stNextBtn').style.display = '';
+
+  showFeedbackEl('stFeedback', ok, ok ? null : `Höherstufe: ${grammatikCurrent.komparativ} | Meiststufe: ${grammatikCurrent.superlativ}`);
+  
+  if (ok) {
+    showBonus('stBonus', 2);
+    addCoins(2);
+    sessionOk++;
+  } else {
+    document.getElementById('stBonus').className = 'hidden';
+    sessionWrong++;
+  }
+  updateScoreBar();
+}
+
+// ── ADJEKTIVE ERKENNEN ──
+let erkennenSelected = new Set();
+function loadErkennen() {
+  answeredThisRound = false;
+  erkennenSelected.clear();
+  grammatikCurrent = grammatikList[grammatikIndex];
+  if (!grammatikCurrent) return;
+
+  const html = grammatikCurrent.words.map((w, idx) => {
+    return `<span class="fehler-wort" data-idx="${idx}" onclick="toggleErkennen(${idx})">${w.word}</span>`;
+  }).join(' ');
+
+  document.getElementById('erkennenTextDisplay').innerHTML = html;
+  document.getElementById('erkennenFeedback').className = 'hidden';
+  document.getElementById('erkennenBonus').className = 'hidden';
+  document.getElementById('erkennenPruefBtn').style.display = '';
+  document.getElementById('erkennenNextBtn').style.display = 'none';
+}
+
+function toggleErkennen(idx) {
+  if (answeredThisRound) return;
+  const span = document.querySelector('#modeErkennen .fehler-wort[data-idx="' + idx + '"]');
+  if (!span) return;
+  if (erkennenSelected.has(idx)) {
+    erkennenSelected.delete(idx);
+    span.classList.remove('fw-sel');
+  } else {
+    erkennenSelected.add(idx);
+    span.classList.add('fw-sel');
+  }
+}
+
+function checkErkennen() {
+  if (answeredThisRound) return;
+  answeredThisRound = true;
+
+  let correctFound = 0;
+  let falsePositives = 0;
+  let totalAdjs = grammatikCurrent.words.filter(w => w.adj).length;
+
+  grammatikCurrent.words.forEach((word, idx) => {
+    const span = document.querySelector('#modeErkennen .fehler-wort[data-idx="' + idx + '"]');
+    if (!span) return;
+    span.classList.remove('fw-sel');
+    if (word.adj && erkennenSelected.has(idx)) {
+      span.classList.add('fw-ok');
+      correctFound++;
+    } else if (word.adj && !erkennenSelected.has(idx)) {
+      span.classList.add('fw-missed');
+    } else if (!word.adj && erkennenSelected.has(idx)) {
+      span.classList.add('fw-false');
+      falsePositives++;
+    }
+  });
+
+  const allCorrect = correctFound === totalAdjs && falsePositives === 0;
+  const ok = correctFound >= (totalAdjs - 1);
+  const coins = allCorrect ? 3 : (ok ? 1 : 0);
+
+  const fb = document.getElementById('erkennenFeedback');
+  fb.className = 'feedback ' + (ok ? 'feedback-ok' : 'feedback-bad');
+  fb.innerHTML = `<span class="feedback-icon">${allCorrect ? '🌟' : (ok ? '✅' : '❌')}</span><div>${correctFound} von ${totalAdjs} Adjektiven gefunden. ${falsePositives > 0 ? `(${falsePositives} falsch)` : ''}</div>`;
+
+  if (coins > 0) {
+    showBonus('erkennenBonus', coins);
+    addCoins(coins);
+    sessionOk++;
+  } else {
+    document.getElementById('erkennenBonus').className = 'hidden';
+    sessionWrong++;
+  }
+  updateScoreBar();
+
+  document.getElementById('erkennenPruefBtn').style.display = 'none';
+  document.getElementById('erkennenNextBtn').style.display = '';
+}
+
+// ── WORTRAD ──
+let wrPrefixIdx = 0;
+let wrVerbIdx = 0;
+
+function loadWortrad() {
+  answeredThisRound = false;
+  grammatikCurrent = grammatikList[grammatikIndex];
+  if (!grammatikCurrent) return;
+
+  wrPrefixIdx = 0;
+  wrVerbIdx = 0;
+
+  updateWortradUI();
+
+  document.getElementById('wrFeedback').className = 'hidden';
+  document.getElementById('wrBonus').className = 'hidden';
+  document.getElementById('wrNextBtn').style.display = 'none';
+  document.getElementById('wrCheckBtn').style.display = '';
+  document.getElementById('wrCheckBtn').disabled = false;
+  
+  // Attach listeners
+  document.getElementById('wheelPrefix').onclick = () => { if(!answeredThisRound) { wrPrefixIdx = (wrPrefixIdx+1) % grammatikCurrent.prefixes.length; updateWortradUI(); } };
+  document.getElementById('wheelVerb').onclick = () => { if(!answeredThisRound) { wrVerbIdx = (wrVerbIdx+1) % grammatikCurrent.verbs.length; updateWortradUI(); } };
+}
+
+function updateWortradUI() {
+  document.getElementById('wheelPrefix').textContent = grammatikCurrent.prefixes[wrPrefixIdx];
+  document.getElementById('wheelVerb').textContent = grammatikCurrent.verbs[wrVerbIdx];
+}
+
+function checkWortrad() {
+  if (answeredThisRound) return;
+  
+  const formedWord = grammatikCurrent.prefixes[wrPrefixIdx] + grammatikCurrent.verbs[wrVerbIdx];
+  const ok = grammatikCurrent.valid.map(v => v.toLowerCase()).includes(formedWord.toLowerCase());
+  
+  if (ok) {
+    answeredThisRound = true;
+    showFeedbackEl('wrFeedback', true, null);
+    showBonus('wrBonus', 3);
+    addCoins(3);
+    sessionOk++;
+    document.getElementById('wrCheckBtn').style.display = 'none';
+    document.getElementById('wrNextBtn').style.display = '';
+  } else {
+    // Let them try again for Wortrad, it's fun!
+    const fb = document.getElementById('wrFeedback');
+    fb.className = 'feedback feedback-bad';
+    fb.innerHTML = `<span class="feedback-icon">❌</span><div><b>${formedWord}</b> gibt es leider nicht. Drehe weiter!</div>`;
+  }
+  updateScoreBar();
+}
+
+// ── BOSSKAMPF ──
+let bossTimer = 0;
+let bossInterval = null;
+let bossScore = 0;
+let bossQuestions = [];
+let bossQIdx = 0;
+
+function startBosskampf() {
+  document.getElementById('bossStartBtn').style.display = 'none';
+  document.getElementById('bossTaskContainer').classList.remove('hidden');
+  document.getElementById('bossResult').classList.add('hidden');
+  
+  // Build a pool of random questions from Gemischt, Verbnomen, Wortbausteine
+  bossQuestions = [];
+  DEUTSCH_THEMEN.gemischt.woerter.forEach(w => bossQuestions.push({ q: maskWord(w.beispiel, w.wort), ans: w.wort, opts: generateDistractors(w) }));
+  GRAMMATIK_WORTBAUSTEINE.forEach(w => bossQuestions.push({ q: w.noun + ' (Adjektiv)', ans: w.correct, opts: [w.wrong, w.correct+'ig', w.correct+'lich'] }));
+  GRAMMATIK_VERB_NOMEN.forEach(w => bossQuestions.push({ q: w.verb + ' (Nomen)', ans: w.correct, opts: [w.wrong, w.verb+'ung', w.verb+'keit'] }));
+  
+  bossQuestions = shuffle(bossQuestions);
+  bossScore = 0;
+  bossQIdx = 0;
+  bossTimer = 60;
+  
+  document.getElementById('bossTimer').textContent = bossTimer + 's';
+  nextBossQuestion();
+  
+  bossInterval = setInterval(() => {
+    bossTimer--;
+    document.getElementById('bossTimer').textContent = bossTimer + 's';
+    if (bossTimer <= 0) {
+      endBosskampf();
+    }
+  }, 1000);
+}
+
+function nextBossQuestion() {
+  if (bossQIdx >= bossQuestions.length) bossQIdx = 0;
+  const q = bossQuestions[bossQIdx++];
+  
+  document.getElementById('bossQuestion').innerHTML = q.q.replace(/_+/g, '____');
+  
+  const grid = document.getElementById('bossGrid');
+  grid.innerHTML = '';
+  
+  const opts = shuffle([q.ans, ...q.opts]).slice(0, 4); // max 4 options
+  if (!opts.includes(q.ans)) opts[0] = q.ans;
+  
+  shuffle(opts).forEach(o => {
+    const btn = document.createElement('button');
+    btn.className = 'mc-btn';
+    btn.textContent = o;
+    btn.onclick = () => {
+      if (o === q.ans) {
+        bossScore++;
+        btn.classList.add('correct');
+        setTimeout(nextBossQuestion, 300);
+      } else {
+        bossTimer -= 3; // Penalty!
+        btn.classList.add('wrong');
+        btn.disabled = true;
+        // Blink red timer
+        const te = document.getElementById('bossTimer');
+        te.style.color = 'black';
+        setTimeout(() => te.style.color = '#c0392b', 200);
+      }
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function endBosskampf() {
+  clearInterval(bossInterval);
+  document.getElementById('bossTaskContainer').classList.add('hidden');
+  document.getElementById('bossTimer').textContent = '0s';
+  
+  let coins = 0;
+  if (bossScore >= 20) coins = 100;
+  else if (bossScore >= 15) coins = 50;
+  else if (bossScore >= 10) coins = 25;
+  else if (bossScore >= 5) coins = 10;
+  
+  const res = document.getElementById('bossResult');
+  res.classList.remove('hidden');
+  res.innerHTML = `
+    <div style="font-size:40px;margin-bottom:10px;">${coins > 0 ? '🏆' : '🐉'}</div>
+    <div style="font-size:22px;font-weight:bold;margin-bottom:10px;">Zeit abgelaufen!</div>
+    <div style="font-size:18px;">Du hast <b>${bossScore}</b> Fragen richtig beantwortet.</div>
+    <div style="font-size:24px;font-weight:bold;color:#f39c12;margin-top:10px;">Belohnung: +${coins} 🪙</div>
+    <button class="btn btn-primary" onclick="startBosskampf()" style="margin:20px auto 0;">Nochmal spielen</button>
+  `;
+  
+  if (coins > 0) {
+    createConfetti();
+    addCoins(coins);
+  }
+}
+
+function loadWortbausteine() {
+  answeredThisRound = false;
+  grammatikCurrent = grammatikList[grammatikIndex];
+  if (!grammatikCurrent) return;
+
+  document.getElementById('wbQuestion').textContent = grammatikCurrent.noun;
+  document.getElementById('wbFeedback').className = 'hidden';
+  document.getElementById('wbBonus').className = 'hidden';
+  document.getElementById('wbNextBtn').style.display = 'none';
+
+  const grid = document.getElementById('wbGrid');
+  grid.innerHTML = '';
+  
+  const options = shuffle([grammatikCurrent.correct, grammatikCurrent.wrong]);
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'mc-btn';
+    btn.textContent = opt;
+    btn.onclick = () => checkWortbausteine(opt, btn);
+    grid.appendChild(btn);
+  });
+}
+
+function checkWortbausteine(chosen, btn) {
+  if (answeredThisRound) return;
+  answeredThisRound = true;
+
+  const ok = (chosen === grammatikCurrent.correct);
+
+  document.querySelectorAll('#modeWortbausteine .mc-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === grammatikCurrent.correct) b.classList.add('correct');
+  });
+  if (!ok) btn.classList.add('wrong');
+
+  document.getElementById('wbNextBtn').style.display = '';
+
+  showFeedbackEl('wbFeedback', ok, ok ? null : grammatikCurrent.correct);
+  
+  if (ok) {
+    showBonus('wbBonus', 1);
+    addCoins(1);
+    sessionOk++;
+  } else {
+    document.getElementById('wbBonus').className = 'hidden';
+    sessionWrong++;
+  }
+  updateScoreBar();
 }
 
 // ── Init ──
