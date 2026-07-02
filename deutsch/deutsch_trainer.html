@@ -2294,10 +2294,15 @@ function endBosskampf() {
   document.getElementById('bossTimer').textContent = '0s';
   
   let coins = 0;
-  if (bossScore >= 20) coins = 100;
-  else if (bossScore >= 15) coins = 50;
-  else if (bossScore >= 10) coins = 25;
-  else if (bossScore >= 5) coins = 10;
+  if (bossScore > 0) {
+    if (bossScore <= 10) {
+      coins = Math.round(bossScore * 1.5);
+    } else if (bossScore <= 20) {
+      coins = Math.round(bossScore * 2.0);
+    } else {
+      coins = Math.round(bossScore * 2.5);
+    }
+  }
   
   const res = document.getElementById('bossResult');
   res.classList.remove('hidden');
