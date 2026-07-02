@@ -530,7 +530,7 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
         <div id="modeWortrad" class="mode-area hidden" style="text-align:center;">
           <div class="task-box" style="margin-bottom:14px">
             <div class="task-question">Das Wortrad 🎡</div>
-            <div class="task-hint">Drehe das Wortrad (Pfeil nach unten), bis alle Wörter richtig zusammenpassen! Klicke dann auf Prüfen.</div>
+            <div class="task-hint">Drehe den inneren Kreis mit dem Finger (oder Klick auf 🔄), bis oben ein sinnvolles Wort entsteht! Klicke dann auf Prüfen.</div>
           </div>
           <div style="display:flex;justify-content:center;margin-bottom:30px;margin-top:20px;position:relative;">
             <!-- Outer Ring (Verbs) -->
@@ -539,7 +539,7 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
             </div>
             
             <!-- Inner Ring (Prefixes) -->
-            <div id="wrWheelInner" style="width:140px;height:140px;border-radius:50%;background:#fef4e8;border:4px solid #e67e22;position:absolute;top:70px;left:50%;transform:translateX(-50%);z-index:2;transition:transform 0.5s ease-in-out;">
+            <div id="wrWheelInner" style="width:140px;height:140px;border-radius:50%;background:#fef4e8;border:4px solid #e67e22;position:absolute;top:70px;left:50%;transform:translateX(-50%);z-index:2;transition:transform 0.5s ease-in-out;cursor:grab;touch-action:none;">
               <!-- JS fills items here -->
             </div>
             
@@ -547,8 +547,9 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
             <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:110px;height:145px;border:3px dashed #c0392b;border-radius:12px;z-index:3;pointer-events:none;"></div>
 
             <!-- Rotate Button -->
-            <button class="btn btn-secondary" onclick="rotateWortrad()" style="position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);height:50px;width:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 10px rgba(0,0,0,0.1);z-index:4;">🔄</button>
+            <button class="btn btn-secondary" onclick="rotateWortrad()" style="position:absolute;bottom:-60px;left:50%;transform:translateX(-50%);height:50px;width:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 10px rgba(0,0,0,0.1);z-index:4;">🔄</button>
           </div>
+          <div style="height:30px;"></div> <!-- Spacer for button -->
           <div id="wrFeedback" class="hidden"></div>
           <div id="wrBonus" class="hidden"></div>
           <div style="display:flex;justify-content:center;gap:10px;margin-top:6px">
@@ -2072,6 +2073,88 @@ function loadWortrad() {
   document.getElementById('wrNextBtn').style.display = 'none';
   document.getElementById('wrCheckBtn').style.display = '';
   document.getElementById('wrCheckBtn').disabled = false;
+  
+  // Attach rotation drag events
+  const inner = document.getElementById('wrWheelInner');
+  inner.onmousedown = wrOnDragStart;
+  inner.ontouchstart = wrOnDragStart;
+}
+
+let wrDragging = false;
+let wrStartAngle = 0;
+let wrStartOffset = 0;
+
+function wrOnDragStart(e) {
+  if (answeredThisRound) return;
+  wrDragging = true;
+  const inner = document.getElementById('wrWheelInner');
+  inner.style.transition = 'none';
+  
+  const rect = inner.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  
+  wrStartAngle = Math.atan2(clientY - centerY, clientX - centerX);
+  wrStartOffset = wrOffset;
+  
+  document.addEventListener('mousemove', wrOnDragMove, {passive:false});
+  document.addEventListener('touchmove', wrOnDragMove, {passive:false});
+  document.addEventListener('mouseup', wrOnDragEnd);
+  document.addEventListener('touchend', wrOnDragEnd);
+}
+
+function wrOnDragMove(e) {
+  if (!wrDragging) return;
+  e.preventDefault();
+  
+  const inner = document.getElementById('wrWheelInner');
+  const rect = inner.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  
+  const currentAngle = Math.atan2(clientY - centerY, clientX - centerX);
+  let diff = (currentAngle - wrStartAngle) * (180 / Math.PI); 
+  
+  const len = grammatikCurrent.verbs.length;
+  const stepSize = 360 / len;
+  
+  const currentRotation = wrStartOffset * stepSize + diff;
+  inner.style.transform = `translateX(-50%) rotate(${currentRotation}deg)`;
+}
+
+function wrOnDragEnd(e) {
+  if (!wrDragging) return;
+  wrDragging = false;
+  
+  document.removeEventListener('mousemove', wrOnDragMove);
+  document.removeEventListener('touchmove', wrOnDragMove);
+  document.removeEventListener('mouseup', wrOnDragEnd);
+  document.removeEventListener('touchend', wrOnDragEnd);
+  
+  const inner = document.getElementById('wrWheelInner');
+  inner.style.transition = 'transform 0.5s ease-in-out';
+  
+  const rect = inner.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+  const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+  
+  const endAngle = Math.atan2(clientY - centerY, clientX - centerX);
+  let diff = (endAngle - wrStartAngle) * (180 / Math.PI);
+  
+  const len = grammatikCurrent.verbs.length;
+  const stepSize = 360 / len;
+  
+  let stepsMoved = Math.round(diff / stepSize);
+  wrOffset = (wrStartOffset + stepsMoved) % len;
+  if(wrOffset < 0) wrOffset += len;
+  
+  updateWortradUI();
 }
 
 function rotateWortrad() {
@@ -2122,8 +2205,8 @@ function checkWortrad() {
   if (allOk) {
     answeredThisRound = true;
     showFeedbackEl('wrFeedback', true, null);
-    showBonus('wrBonus', 3);
-    addCoins(3);
+    showBonus('wrBonus', 5);
+    addCoins(5);
     sessionOk++;
     document.getElementById('wrCheckBtn').style.display = 'none';
     document.getElementById('wrNextBtn').style.display = '';
