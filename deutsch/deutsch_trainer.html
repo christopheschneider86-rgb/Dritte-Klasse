@@ -214,7 +214,9 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
 #drop-subjekt .dropzone-title{color:#1e8449;}
 #drop-praedikat{border-color:#e74c3c;background:#fde8e8;}
 #drop-praedikat .dropzone-title{color:#c0392b;}
-#drop-umstell{border-color:#e67e22;background:#fef4e8;min-height:90px;}
+#drop-umstell{border-color:#e67e22;background:#fef4e8;min-height:90px;position:relative;padding-right:30px;}
+#drop-umstell::after{content:'.';position:absolute;right:10px;bottom:10px;font-size:32px;font-weight:bold;color:#2c3e50;}
+#drop-umstell .draggable-item:first-of-type{text-transform:capitalize;}
 </style>
 
   <style>
@@ -452,7 +454,7 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
           <div id="sgBonus" class="hidden"></div>
           <div style="display:flex;gap:10px;margin-top:6px">
             <button class="btn btn-primary" id="sgCheckBtn" onclick="checkSatzglieder()">Prüfen</button>
-            <button class="btn btn-secondary hidden" id="sgNextBtn" onclick="nextWord('satzglieder')">Weiter →</button>
+            <button class="btn btn-secondary" style="display:none;" id="sgNextBtn" onclick="nextWord('satzglieder')">Weiter →</button>
           </div>
         </div>
 
@@ -470,7 +472,7 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
           <div id="umBonus" class="hidden"></div>
           <div style="display:flex;gap:10px;margin-top:6px">
             <button class="btn btn-primary" id="umCheckBtn" onclick="checkUmstellen()">Prüfen</button>
-            <button class="btn btn-secondary hidden" id="umNextBtn" onclick="nextWord('umstellen')">Weiter →</button>
+            <button class="btn btn-secondary" style="display:none;" id="umNextBtn" onclick="nextWord('umstellen')">Weiter →</button>
           </div>
         </div>
 
@@ -505,7 +507,7 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
           <div id="stBonus" class="hidden"></div>
           <div style="display:flex;gap:10px;margin-top:6px">
             <button class="btn btn-primary" id="stCheckBtn" onclick="checkSteigern()">Prüfen</button>
-            <button class="btn btn-secondary hidden" id="stNextBtn" onclick="nextWord('steigern')">Weiter →</button>
+            <button class="btn btn-secondary" style="display:none;" id="stNextBtn" onclick="nextWord('steigern')">Weiter →</button>
           </div>
         </div>
 
@@ -543,7 +545,7 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
           <div id="wrBonus" class="hidden"></div>
           <div style="display:flex;justify-content:center;gap:10px;margin-top:6px">
             <button class="btn btn-primary" id="wrCheckBtn" onclick="checkWortrad()">Prüfen</button>
-            <button class="btn btn-secondary hidden" id="wrNextBtn" onclick="nextWord('wortrad')">Neues Rad →</button>
+            <button class="btn btn-secondary" style="display:none;" id="wrNextBtn" onclick="nextWord('wortrad')">Neues Rad →</button>
           </div>
         </div>
 
@@ -1736,10 +1738,13 @@ function checkSatzglieder() {
   const sNode = document.getElementById('drop-subjekt').querySelector('.draggable-item');
   const pNode = document.getElementById('drop-praedikat').querySelector('.draggable-item');
 
-  const sVal = sNode ? sNode.dataset.val : '';
-  const pVal = pNode ? pNode.dataset.val : '';
+  const sVal = sNode ? sNode.dataset.val.replace(/[.,!?]/g, '') : '';
+  const pVal = pNode ? pNode.dataset.val.replace(/[.,!?]/g, '') : '';
 
-  const ok = (sVal === grammatikCurrent.s && pVal === grammatikCurrent.p);
+  const expectedS = grammatikCurrent.s.replace(/[.,!?]/g, '');
+  const expectedP = grammatikCurrent.p.replace(/[.,!?]/g, '');
+
+  const ok = (sVal === expectedS && pVal === expectedP);
   
   document.querySelectorAll('#modeSatzglieder .draggable-item').forEach(el => {
     el.draggable = false;
@@ -1799,11 +1804,12 @@ function checkUmstellen() {
   answeredThisRound = true;
 
   const umstellNodes = document.getElementById('drop-umstell').querySelectorAll('.draggable-item');
-  const partsOrdered = Array.from(umstellNodes).map(n => n.dataset.val);
+  const partsOrdered = Array.from(umstellNodes).map(n => n.dataset.val.replace(/[.,!?]/g, ''));
+  const origParts = grammatikCurrent.parts.map(p => p.replace(/[.,!?]/g, ''));
   
-  let isComplete = partsOrdered.length === grammatikCurrent.parts.length;
-  let changed = partsOrdered.join(' ') !== grammatikCurrent.parts.join(' ');
-  let pIndex = partsOrdered.indexOf(grammatikCurrent.p);
+  let isComplete = partsOrdered.length === origParts.length;
+  let changed = partsOrdered.join(' ') !== origParts.join(' ');
+  let pIndex = partsOrdered.indexOf(grammatikCurrent.p.replace(/[.,!?]/g, ''));
   let ok = isComplete && changed && (pIndex === 1 || pIndex === 0);
 
   document.querySelectorAll('#modeUmstellen .draggable-item').forEach(el => {

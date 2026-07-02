@@ -394,21 +394,21 @@ const FEHLER_TEXTE = [
 ];
 
 const GRAMMATIK_SENTENCES = [
-  { text: "Die Katze schleicht durch den Garten.", parts: ["Die Katze", "schleicht", "durch den Garten."], s: "Die Katze", p: "schleicht" },
-  { text: "Jedes Jahr fliegt Herr Müller mit dem Flugzeug in den Urlaub.", parts: ["Jedes Jahr", "fliegt", "Herr Müller", "mit dem Flugzeug", "in den Urlaub."], s: "Herr Müller", p: "fliegt" },
-  { text: "Sina und Leo spielen gerne mit ihrem Hund.", parts: ["Sina und Leo", "spielen", "gerne", "mit ihrem Hund."], s: "Sina und Leo", p: "spielen" },
-  { text: "Vormittags gehen Anna und Tim in die Schule.", parts: ["Vormittags", "gehen", "Anna und Tim", "in die Schule."], s: "Anna und Tim", p: "gehen" },
-  { text: "Gehst du ins Kino?", parts: ["Gehst", "du", "ins Kino?"], s: "du", p: "Gehst" },
-  { text: "Der Hund bellt laut im Hof.", parts: ["Der Hund", "bellt", "laut", "im Hof."], s: "Der Hund", p: "bellt" },
-  { text: "Morgen besucht uns meine Oma.", parts: ["Morgen", "besucht", "uns", "meine Oma."], s: "meine Oma", p: "besucht" },
-  { text: "Am Abend liest Lisa ein spannendes Buch.", parts: ["Am Abend", "liest", "Lisa", "ein spannendes Buch."], s: "Lisa", p: "liest" },
-  { text: "Der Löwe brüllt laut in der Wüste.", parts: ["Der Löwe", "brüllt", "laut", "in der Wüste."], s: "Der Löwe", p: "brüllt" },
-  { text: "Gestern hat es geregnet.", parts: ["Gestern", "hat", "es", "geregnet."], s: "es", p: "hat" },
-  { text: "Die Vögel singen fröhlich im Baum.", parts: ["Die Vögel", "singen", "fröhlich", "im Baum."], s: "Die Vögel", p: "singen" },
-  { text: "Plötzlich springt der Frosch in den Teich.", parts: ["Plötzlich", "springt", "der Frosch", "in den Teich."], s: "der Frosch", p: "springt" },
-  { text: "Nach der Schule spielen die Kinder auf dem Spielplatz.", parts: ["Nach der Schule", "spielen", "die Kinder", "auf dem Spielplatz."], s: "die Kinder", p: "spielen" },
-  { text: "Opa backt heute einen Kuchen.", parts: ["Opa", "backt", "heute", "einen Kuchen."], s: "Opa", p: "backt" },
-  { text: "Das Auto fährt sehr schnell auf der Straße.", parts: ["Das Auto", "fährt", "sehr schnell", "auf der Straße."], s: "Das Auto", p: "fährt" }
+  { text: "Die Katze schleicht durch den Garten.", parts: ["Die Katze", "schleicht", "durch den Garten"], s: "Die Katze", p: "schleicht" },
+  { text: "Jedes Jahr fliegt Herr Müller mit dem Flugzeug in den Urlaub.", parts: ["Jedes Jahr", "fliegt", "Herr Müller", "mit dem Flugzeug", "in den Urlaub"], s: "Herr Müller", p: "fliegt" },
+  { text: "Sina und Leo spielen gerne mit ihrem Hund.", parts: ["Sina und Leo", "spielen", "gerne", "mit ihrem Hund"], s: "Sina und Leo", p: "spielen" },
+  { text: "Vormittags gehen Anna und Tim in die Schule.", parts: ["Vormittags", "gehen", "Anna und Tim", "in die Schule"], s: "Anna und Tim", p: "gehen" },
+  { text: "Gehst du ins Kino?", parts: ["Gehst", "du", "ins Kino"], s: "du", p: "Gehst" },
+  { text: "Der Hund bellt laut im Hof.", parts: ["Der Hund", "bellt", "laut", "im Hof"], s: "Der Hund", p: "bellt" },
+  { text: "Morgen besucht uns meine Oma.", parts: ["Morgen", "besucht", "uns", "meine Oma"], s: "meine Oma", p: "besucht" },
+  { text: "Am Abend liest Lisa ein spannendes Buch.", parts: ["Am Abend", "liest", "Lisa", "ein spannendes Buch"], s: "Lisa", p: "liest" },
+  { text: "Der Löwe brüllt laut in der Wüste.", parts: ["Der Löwe", "brüllt", "laut", "in der Wüste"], s: "Der Löwe", p: "brüllt" },
+  { text: "Gestern hat es geregnet.", parts: ["Gestern", "hat", "es", "geregnet"], s: "es", p: "hat" },
+  { text: "Die Vögel singen fröhlich im Baum.", parts: ["Die Vögel", "singen", "fröhlich", "im Baum"], s: "Die Vögel", p: "singen" },
+  { text: "Plötzlich springt der Frosch in den Teich.", parts: ["Plötzlich", "springt", "der Frosch", "in den Teich"], s: "der Frosch", p: "springt" },
+  { text: "Nach der Schule spielen die Kinder auf dem Spielplatz.", parts: ["Nach der Schule", "spielen", "die Kinder", "auf dem Spielplatz"], s: "die Kinder", p: "spielen" },
+  { text: "Opa backt heute einen Kuchen.", parts: ["Opa", "backt", "heute", "einen Kuchen"], s: "Opa", p: "backt" },
+  { text: "Das Auto fährt sehr schnell auf der Straße.", parts: ["Das Auto", "fährt", "sehr schnell", "auf der Straße"], s: "Das Auto", p: "fährt" }
 ];
 
 const GRAMMATIK_WORTBAUSTEINE = [
