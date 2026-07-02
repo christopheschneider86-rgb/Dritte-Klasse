@@ -532,14 +532,22 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
             <div class="task-question">Das Wortrad 🎡</div>
             <div class="task-hint">Drehe das Wortrad (Pfeil nach unten), bis alle Wörter richtig zusammenpassen! Klicke dann auf Prüfen.</div>
           </div>
-          <div style="display:flex;justify-content:center;margin-bottom:20px;gap:15px;align-items:center;">
-            <div id="wrPrefixList" style="display:flex;flex-direction:column;gap:5px;font-size:20px;font-weight:bold;color:#2c3e50;">
-              <!-- filled by JS -->
+          <div style="display:flex;justify-content:center;margin-bottom:30px;margin-top:20px;position:relative;">
+            <!-- Outer Ring (Verbs) -->
+            <div id="wrWheelOuter" style="width:280px;height:280px;border-radius:50%;background:#eafaf1;border:4px solid #27ae60;position:relative;display:flex;justify-content:center;align-items:center;">
+              <!-- JS fills items here -->
             </div>
-            <div id="wrVerbList" style="display:flex;flex-direction:column;gap:5px;font-size:20px;font-weight:bold;color:#2c3e50;">
-              <!-- filled by JS -->
+            
+            <!-- Inner Ring (Prefixes) -->
+            <div id="wrWheelInner" style="width:140px;height:140px;border-radius:50%;background:#fef4e8;border:4px solid #e67e22;position:absolute;top:70px;left:50%;transform:translateX(-50%);z-index:2;transition:transform 0.5s ease-in-out;">
+              <!-- JS fills items here -->
             </div>
-            <button class="btn btn-secondary" onclick="rotateWortrad()" style="height:50px;width:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 10px rgba(0,0,0,0.1);">🔄</button>
+            
+            <!-- Pointer (Top position where word is read) -->
+            <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:110px;height:145px;border:3px dashed #c0392b;border-radius:12px;z-index:3;pointer-events:none;"></div>
+
+            <!-- Rotate Button -->
+            <button class="btn btn-secondary" onclick="rotateWortrad()" style="position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);height:50px;width:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 10px rgba(0,0,0,0.1);z-index:4;">🔄</button>
           </div>
           <div id="wrFeedback" class="hidden"></div>
           <div id="wrBonus" class="hidden"></div>
@@ -2055,6 +2063,8 @@ function loadWortrad() {
 
   wrOffset = Math.floor(Math.random() * (grammatikCurrent.verbs.length - 1)) + 1; // start rotated
 
+  document.getElementById('wrWheelOuter').innerHTML = '';
+  document.getElementById('wrWheelInner').innerHTML = '';
   updateWortradUI();
 
   document.getElementById('wrFeedback').className = 'hidden';
@@ -2071,25 +2081,27 @@ function rotateWortrad() {
 }
 
 function updateWortradUI() {
-  const pList = document.getElementById('wrPrefixList');
-  const vList = document.getElementById('wrVerbList');
-  
-  pList.innerHTML = '';
-  vList.innerHTML = '';
-  
+  const outer = document.getElementById('wrWheelOuter');
+  const inner = document.getElementById('wrWheelInner');
   const len = grammatikCurrent.verbs.length;
-  for (let i = 0; i < len; i++) {
-    const pEl = document.createElement('div');
-    pEl.style.cssText = 'background:#fef4e8;border:2px solid #e67e22;border-radius:8px;padding:6px 12px;text-align:right;width:80px;';
-    pEl.textContent = grammatikCurrent.prefixes[i];
-    pList.appendChild(pEl);
-    
-    const vIdx = (i + wrOffset) % len;
-    const vEl = document.createElement('div');
-    vEl.style.cssText = 'background:#eafaf1;border:2px solid #27ae60;border-radius:8px;padding:6px 12px;text-align:left;width:120px;';
-    vEl.textContent = grammatikCurrent.verbs[vIdx];
-    vList.appendChild(vEl);
+  
+  if (outer.children.length === 0) {
+    for (let i = 0; i < len; i++) {
+      const angle = i * (360 / len);
+      
+      const vEl = document.createElement('div');
+      vEl.style.cssText = `position:absolute; top:10px; left:50%; width:100px; margin-left:-50px; text-align:center; transform-origin:50% 130px; transform:rotate(${angle}deg); font-weight:bold; color:#2c3e50; font-size:17px; user-select:none;`;
+      vEl.textContent = grammatikCurrent.verbs[i];
+      outer.appendChild(vEl);
+      
+      const pEl = document.createElement('div');
+      pEl.style.cssText = `position:absolute; top:15px; left:50%; width:80px; margin-left:-40px; text-align:center; transform-origin:50% 55px; transform:rotate(${angle}deg); font-weight:bold; color:#2c3e50; font-size:17px; user-select:none;`;
+      pEl.textContent = grammatikCurrent.prefixes[i];
+      inner.appendChild(pEl);
+    }
   }
+  
+  inner.style.transform = `translateX(-50%) rotate(${wrOffset * (360 / len)}deg)`;
 }
 
 function checkWortrad() {
@@ -2098,8 +2110,8 @@ function checkWortrad() {
   let allOk = true;
   const len = grammatikCurrent.verbs.length;
   for (let i = 0; i < len; i++) {
-    const vIdx = (i + wrOffset) % len;
-    const formedWord = grammatikCurrent.prefixes[i] + grammatikCurrent.verbs[vIdx];
+    const pIdx = (i - wrOffset + len * 10) % len;
+    const formedWord = grammatikCurrent.prefixes[pIdx] + grammatikCurrent.verbs[i];
     const ok = grammatikCurrent.valid.map(v => v.toLowerCase()).includes(formedWord.toLowerCase());
     if (!ok) {
       allOk = false;
