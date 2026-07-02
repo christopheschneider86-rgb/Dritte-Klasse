@@ -456,16 +456,16 @@ const GRAMMATIK_VERB_NOMEN = [
 ];
 
 const GRAMMATIK_STEIGERN = [
-  { grund: "schnell", komparativ: "schneller", superlativ: "am schnellsten" },
-  { grund: "groß", komparativ: "größer", superlativ: "am größten" },
-  { grund: "gut", komparativ: "besser", superlativ: "am besten" },
-  { grund: "hoch", komparativ: "höher", superlativ: "am höchsten" },
-  { grund: "viel", komparativ: "mehr", superlativ: "am meisten" },
-  { grund: "klein", komparativ: "kleiner", superlativ: "am kleinsten" },
-  { grund: "schön", komparativ: "schöner", superlativ: "am schönsten" },
-  { grund: "stark", komparativ: "stärker", superlativ: "am stärksten" },
-  { grund: "kalt", komparativ: "kälter", superlativ: "am kältesten" },
-  { grund: "lang", komparativ: "länger", superlativ: "am längsten" }
+  { grund: "schnell", komparativ: "schneller", superlativ: "am schnellsten", falsch: ["am schneller", "schnellig"] },
+  { grund: "groß", komparativ: "größer", superlativ: "am größten", falsch: ["grosser", "am großten"] },
+  { grund: "gut", komparativ: "besser", superlativ: "am besten", falsch: ["guter", "am gutesten"] },
+  { grund: "hoch", komparativ: "höher", superlativ: "am höchsten", falsch: ["hocher", "am hochsten"] },
+  { grund: "viel", komparativ: "mehr", superlativ: "am meisten", falsch: ["vieler", "am vielsten"] },
+  { grund: "klein", komparativ: "kleiner", superlativ: "am kleinsten", falsch: ["am kleiner", "kleinig"] },
+  { grund: "schön", komparativ: "schöner", superlativ: "am schönsten", falsch: ["schonner", "am schönigsten"] },
+  { grund: "stark", komparativ: "stärker", superlativ: "am stärksten", falsch: ["starker", "am starksten"] },
+  { grund: "kalt", komparativ: "kälter", superlativ: "am kältesten", falsch: ["kalter", "am kaltesten"] },
+  { grund: "lang", komparativ: "länger", superlativ: "am längsten", falsch: ["langer", "am langsten"] }
 ];
 
 const GRAMMATIK_WORTRAD = [

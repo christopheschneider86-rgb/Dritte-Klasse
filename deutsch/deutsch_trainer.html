@@ -210,10 +210,10 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
 .draggable-item:active{cursor:grabbing;}
 
 /* Subjekt & Prädikat Dropzones */
-#drop-subjekt{border-color:#e74c3c;background:#fde8e8;}
-#drop-subjekt .dropzone-title{color:#c0392b;}
-#drop-praedikat{border-color:#27ae60;background:#eafaf1;}
-#drop-praedikat .dropzone-title{color:#1e8449;}
+#drop-subjekt{border-color:#27ae60;background:#eafaf1;}
+#drop-subjekt .dropzone-title{color:#1e8449;}
+#drop-praedikat{border-color:#e74c3c;background:#fde8e8;}
+#drop-praedikat .dropzone-title{color:#c0392b;}
 #drop-umstell{border-color:#e67e22;background:#fef4e8;min-height:90px;}
 </style>
 
@@ -528,13 +528,16 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
         <div id="modeWortrad" class="mode-area hidden" style="text-align:center;">
           <div class="task-box" style="margin-bottom:14px">
             <div class="task-question">Das Wortrad 🎡</div>
-            <div class="task-hint">Drehe an den Ringen, um ein sinnvolles Wort zu bilden!</div>
+            <div class="task-hint">Drehe das Wortrad (Pfeil nach unten), bis alle Wörter richtig zusammenpassen! Klicke dann auf Prüfen.</div>
           </div>
-          <div style="display:flex;justify-content:center;margin-bottom:20px;">
-            <div style="display:flex;align-items:center;gap:10px;font-size:24px;font-weight:bold;color:#2c3e50;">
-              <div id="wheelPrefix" style="background:#fef4e8;border:2px solid #e67e22;border-radius:12px;padding:10px 15px;cursor:pointer;user-select:none;">ab</div>
-              <div id="wheelVerb" style="background:#eafaf1;border:2px solid #27ae60;border-radius:12px;padding:10px 15px;cursor:pointer;user-select:none;">fallen</div>
+          <div style="display:flex;justify-content:center;margin-bottom:20px;gap:15px;align-items:center;">
+            <div id="wrPrefixList" style="display:flex;flex-direction:column;gap:5px;font-size:20px;font-weight:bold;color:#2c3e50;">
+              <!-- filled by JS -->
             </div>
+            <div id="wrVerbList" style="display:flex;flex-direction:column;gap:5px;font-size:20px;font-weight:bold;color:#2c3e50;">
+              <!-- filled by JS -->
+            </div>
+            <button class="btn btn-secondary" onclick="rotateWortrad()" style="height:50px;width:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 10px rgba(0,0,0,0.1);">🔄</button>
           </div>
           <div id="wrFeedback" class="hidden"></div>
           <div id="wrBonus" class="hidden"></div>
@@ -542,7 +545,6 @@ body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--b
             <button class="btn btn-primary" id="wrCheckBtn" onclick="checkWortrad()">Prüfen</button>
             <button class="btn btn-secondary hidden" id="wrNextBtn" onclick="nextWord('wortrad')">Neues Rad →</button>
           </div>
-          <div style="margin-top:10px;font-size:13px;color:#7f8c8d;">Tipp: Klicke auf die farbigen Boxen, um sie durchzuwechseln.</div>
         </div>
 
         <!-- BOSS -->
@@ -1896,7 +1898,11 @@ function loadSteigern() {
   Array.from(sup.querySelectorAll('.draggable-item')).forEach(el => el.remove());
   pool.innerHTML = '';
 
-  const parts = shuffle([grammatikCurrent.komparativ, grammatikCurrent.superlativ]);
+  const partsArr = [grammatikCurrent.komparativ, grammatikCurrent.superlativ];
+  if (grammatikCurrent.falsch) {
+    partsArr.push(...grammatikCurrent.falsch);
+  }
+  const parts = shuffle(partsArr);
   parts.forEach(p => {
     const el = document.createElement('div');
     el.className = 'draggable-item';
@@ -2034,16 +2040,14 @@ function checkErkennen() {
 }
 
 // ── WORTRAD ──
-let wrPrefixIdx = 0;
-let wrVerbIdx = 0;
+let wrOffset = 0;
 
 function loadWortrad() {
   answeredThisRound = false;
   grammatikCurrent = grammatikList[grammatikIndex];
   if (!grammatikCurrent) return;
 
-  wrPrefixIdx = 0;
-  wrVerbIdx = 0;
+  wrOffset = Math.floor(Math.random() * (grammatikCurrent.verbs.length - 1)) + 1; // start rotated
 
   updateWortradUI();
 
@@ -2052,24 +2056,52 @@ function loadWortrad() {
   document.getElementById('wrNextBtn').style.display = 'none';
   document.getElementById('wrCheckBtn').style.display = '';
   document.getElementById('wrCheckBtn').disabled = false;
-  
-  // Attach listeners
-  document.getElementById('wheelPrefix').onclick = () => { if(!answeredThisRound) { wrPrefixIdx = (wrPrefixIdx+1) % grammatikCurrent.prefixes.length; updateWortradUI(); } };
-  document.getElementById('wheelVerb').onclick = () => { if(!answeredThisRound) { wrVerbIdx = (wrVerbIdx+1) % grammatikCurrent.verbs.length; updateWortradUI(); } };
+}
+
+function rotateWortrad() {
+  if (answeredThisRound) return;
+  wrOffset = (wrOffset + 1) % grammatikCurrent.verbs.length;
+  updateWortradUI();
 }
 
 function updateWortradUI() {
-  document.getElementById('wheelPrefix').textContent = grammatikCurrent.prefixes[wrPrefixIdx];
-  document.getElementById('wheelVerb').textContent = grammatikCurrent.verbs[wrVerbIdx];
+  const pList = document.getElementById('wrPrefixList');
+  const vList = document.getElementById('wrVerbList');
+  
+  pList.innerHTML = '';
+  vList.innerHTML = '';
+  
+  const len = grammatikCurrent.verbs.length;
+  for (let i = 0; i < len; i++) {
+    const pEl = document.createElement('div');
+    pEl.style.cssText = 'background:#fef4e8;border:2px solid #e67e22;border-radius:8px;padding:6px 12px;text-align:right;width:80px;';
+    pEl.textContent = grammatikCurrent.prefixes[i];
+    pList.appendChild(pEl);
+    
+    const vIdx = (i + wrOffset) % len;
+    const vEl = document.createElement('div');
+    vEl.style.cssText = 'background:#eafaf1;border:2px solid #27ae60;border-radius:8px;padding:6px 12px;text-align:left;width:120px;';
+    vEl.textContent = grammatikCurrent.verbs[vIdx];
+    vList.appendChild(vEl);
+  }
 }
 
 function checkWortrad() {
   if (answeredThisRound) return;
   
-  const formedWord = grammatikCurrent.prefixes[wrPrefixIdx] + grammatikCurrent.verbs[wrVerbIdx];
-  const ok = grammatikCurrent.valid.map(v => v.toLowerCase()).includes(formedWord.toLowerCase());
+  let allOk = true;
+  const len = grammatikCurrent.verbs.length;
+  for (let i = 0; i < len; i++) {
+    const vIdx = (i + wrOffset) % len;
+    const formedWord = grammatikCurrent.prefixes[i] + grammatikCurrent.verbs[vIdx];
+    const ok = grammatikCurrent.valid.map(v => v.toLowerCase()).includes(formedWord.toLowerCase());
+    if (!ok) {
+      allOk = false;
+      break;
+    }
+  }
   
-  if (ok) {
+  if (allOk) {
     answeredThisRound = true;
     showFeedbackEl('wrFeedback', true, null);
     showBonus('wrBonus', 3);
@@ -2078,10 +2110,9 @@ function checkWortrad() {
     document.getElementById('wrCheckBtn').style.display = 'none';
     document.getElementById('wrNextBtn').style.display = '';
   } else {
-    // Let them try again for Wortrad, it's fun!
     const fb = document.getElementById('wrFeedback');
     fb.className = 'feedback feedback-bad';
-    fb.innerHTML = `<span class="feedback-icon">❌</span><div><b>${formedWord}</b> gibt es leider nicht. Drehe weiter!</div>`;
+    fb.innerHTML = `<span class="feedback-icon">❌</span><div>Das passt noch nicht ganz zusammen. Drehe weiter, bis alle Paare ein echtes Wort ergeben!</div>`;
   }
   updateScoreBar();
 }
