@@ -992,28 +992,33 @@ function setMode(mode) {
   
   if (mode === 'satzglieder' || mode === 'umstellen') {
     grammatikList = [...GRAMMATIK_SENTENCES].sort(() => 0.5 - Math.random());
-    grammatikIndex = 0;
+    grammatikIndex = -1;
   } else if (mode === 'wortbausteine') {
     grammatikList = [...GRAMMATIK_WORTBAUSTEINE].sort(() => 0.5 - Math.random());
-    grammatikIndex = 0;
+    grammatikIndex = -1;
   } else if (mode === 'verbnomen') {
     grammatikList = [...GRAMMATIK_VERB_NOMEN].sort(() => 0.5 - Math.random());
-    grammatikIndex = 0;
+    grammatikIndex = -1;
   } else if (mode === 'steigern') {
     grammatikList = [...GRAMMATIK_STEIGERN].sort(() => 0.5 - Math.random());
-    grammatikIndex = 0;
+    grammatikIndex = -1;
   } else if (mode === 'erkennen') {
     grammatikList = [...GRAMMATIK_ADJEKTIVE_ERKENNEN].sort(() => 0.5 - Math.random());
-    grammatikIndex = 0;
+    grammatikIndex = -1;
   } else if (mode === 'wortrad') {
     grammatikList = [...GRAMMATIK_WORTRAD].sort(() => 0.5 - Math.random());
-    grammatikIndex = 0;
+    grammatikIndex = -1;
   }
   
   if (mode !== 'boss') nextWord(mode);
 }
 
 function nextWord(mode) {
+  const grammarModes = ['satzglieder', 'umstellen', 'wortbausteine', 'verbnomen', 'steigern', 'erkennen', 'wortrad'];
+  if (grammarModes.includes(mode) && grammatikList.length > 0) {
+    grammatikIndex = (grammatikIndex + 1) % grammatikList.length;
+  }
+
   if (mode === 'satzglieder') { loadSatzglieder(); return; }
   if (mode === 'umstellen') { loadUmstellen(); return; }
   if (mode === 'wortbausteine') { loadWortbausteine(); return; }
