@@ -456,16 +456,16 @@ const GRAMMATIK_VERB_NOMEN = [
 ];
 
 const GRAMMATIK_STEIGERN = [
-  { grund: "schnell", komparativ: "schneller", superlativ: "am schnellsten", falsch: ["am schneller", "schnellig"] },
-  { grund: "groß", komparativ: "größer", superlativ: "am größten", falsch: ["grosser", "am großten"] },
-  { grund: "gut", komparativ: "besser", superlativ: "am besten", falsch: ["guter", "am gutesten"] },
-  { grund: "hoch", komparativ: "höher", superlativ: "am höchsten", falsch: ["hocher", "am hochsten"] },
-  { grund: "viel", komparativ: "mehr", superlativ: "am meisten", falsch: ["vieler", "am vielsten"] },
-  { grund: "klein", komparativ: "kleiner", superlativ: "am kleinsten", falsch: ["am kleiner", "kleinig"] },
-  { grund: "schön", komparativ: "schöner", superlativ: "am schönsten", falsch: ["schonner", "am schönigsten"] },
-  { grund: "stark", komparativ: "stärker", superlativ: "am stärksten", falsch: ["starker", "am starksten"] },
-  { grund: "kalt", komparativ: "kälter", superlativ: "am kältesten", falsch: ["kalter", "am kaltesten"] },
-  { grund: "lang", komparativ: "länger", superlativ: "am längsten", falsch: ["langer", "am langsten"] }
+  { grund: "schnell", komparativ: "schneller als", superlativ: "am schnellsten", falsch: ["am schneller", "schnellig", "schneller wie"] },
+  { grund: "groß", komparativ: "größer als", superlativ: "am größten", falsch: ["grosser", "am großten", "größer wie"] },
+  { grund: "gut", komparativ: "besser als", superlativ: "am besten", falsch: ["guter", "am gutesten", "besser wie"] },
+  { grund: "hoch", komparativ: "höher als", superlativ: "am höchsten", falsch: ["hocher", "am hochsten", "höher wie"] },
+  { grund: "viel", komparativ: "mehr als", superlativ: "am meisten", falsch: ["vieler", "am vielsten", "mehr wie"] },
+  { grund: "klein", komparativ: "kleiner als", superlativ: "am kleinsten", falsch: ["am kleiner", "kleinig", "kleiner wie"] },
+  { grund: "schön", komparativ: "schöner als", superlativ: "am schönsten", falsch: ["schonner", "am schönigsten", "schöner wie"] },
+  { grund: "stark", komparativ: "stärker als", superlativ: "am stärksten", falsch: ["starker", "am starksten", "stärker wie"] },
+  { grund: "kalt", komparativ: "kälter als", superlativ: "am kältesten", falsch: ["kalter", "am kaltesten", "kälter wie"] },
+  { grund: "lang", komparativ: "länger als", superlativ: "am längsten", falsch: ["langer", "am langsten", "länger wie"] }
 ];
 
 const GRAMMATIK_WORTRAD = [
@@ -483,14 +483,39 @@ const GRAMMATIK_WORTRAD = [
   },
   {
     prefixes: ["ver", "ein", "ab", "aus", "auf", "an", "ent"],
-    verbs: ["biegen", "reisen", "nehmen", "täuschen", "nähen", "sprechen"],
+    verbs: ["biegen", "reisen", "nehmen", "täuschen", "nähen", "sprechen", "decken"],
     valid: [
       "verbiegen", "einbiegen", "abbiegen", "ausbiegen",
       "verreisen", "einreisen", "abreisen", "ausreisen", "anreisen",
       "vernehmen", "einnehmen", "abnehmen", "ausnehmen", "aufnehmen", "annehmen", "entnehmen",
       "enttäuschen", "vertäuschen", "antäuschen",
       "annähen", "abnähen", "einnähen", "vernähen",
-      "ansprechen", "absprechen", "aussprechen", "einsprechen", "entsprechen", "versprechen"
+      "ansprechen", "absprechen", "aussprechen", "einsprechen", "entsprechen", "versprechen",
+      "entdecken", "verdecken", "abdecken", "aufdecken", "eindecken"
+    ]
+  },
+  {
+    prefixes: ["vor", "ver", "aus", "ein", "mit", "nach"],
+    verbs: ["lesen", "spielen", "machen", "gehen", "laufen", "schlagen"],
+    valid: [
+      "vorlesen", "verlesen", "auslesen", "einlesen", "mitlesen", "nachlesen",
+      "vorspielen", "verspielen", "ausspielen", "einspielen", "mitspielen", "nachspielen",
+      "vormachen", "vermachen", "ausmachen", "einmachen", "mitmachen", "nachmachen",
+      "vorgehen", "vergehen", "ausgehen", "eingehen", "mitgehen", "nachgehen",
+      "vorlaufen", "verlaufen", "auslaufen", "einlaufen", "mitlaufen", "nachlaufen",
+      "vorschlagen", "verschlagen", "ausschlagen", "einschlagen", "nachschlagen"
+    ]
+  },
+  {
+    prefixes: ["vor", "ver", "ab", "auf", "zu", "be"],
+    verbs: ["schreiben", "sagen", "stellen", "bauen", "ziehen", "arbeiten"],
+    valid: [
+      "vorschreiben", "verschreiben", "abschreiben", "aufschreiben", "zuschreiben", "beschreiben",
+      "vorsagen", "versagen", "absagen", "aufsagen", "zusagen", "besagen",
+      "vorstellen", "verstellen", "abstellen", "aufstellen", "zustellen", "bestellen",
+      "vorbauen", "verbauen", "abbauen", "aufbauen", "zubauen", "bebauen",
+      "vorziehen", "verziehen", "abziehen", "aufziehen", "zuziehen", "beziehen",
+      "vorarbeiten", "verarbeiten", "abarbeiten", "aufarbeiten", "zuarbeiten", "bearbeiten"
     ]
   }
 ];
